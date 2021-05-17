@@ -61,7 +61,7 @@
     		    //ajax 관련 내용 정리 하기 
     		     var postData = {};
     		     grid.jqGrid({
-    		    	url : '/backoffice/companyManage/userListAjax.do' ,
+    		    	url : '/backoffice/companyManage/tennSubListAjax.do' ,
     		        mtype :  'POST',
     		        datatype :'json',
     		        pager: $('#pager'),  
@@ -78,18 +78,15 @@
 	   		             repeatitems:false
    		            },
     		        colModel :  [
-    		        	        { label: 'com_code', key: true, name:'com_code',       index:'com_code',      align:'center', hidden:true},
-    		 	                { label: '상태', name:'code_nm',       index:'code_nm',      align:'center', width:'10%'},
+    		        	        { label: 'his_seq', key: true, name:'his_seq',       index:'his_seq',      align:'center', hidden:true},
     		 	                { label: '회사명', name:'com_name',     index:'com_name',      align:'center', width:'10%'},
-    		 	                { label: '사번', name:'user_no',       index:'user_no',      align:'center', width:'10%'},
-    			                { label: '직급', name:'user_position',   index:'user_position',      align:'center', width:'10%' },
-    			                { label: '직책', name:'user_rank',       index:'user_rank',      align:'center', width:'10%' },
-    			                { label: '이메일', name:'user_email',     index:'user_email',      align:'center', width:'10%' },
-    			                { label: '연락처', name:'user_cellphone', index:'user_cellphone',      align:'center', width:'10%' },
-    			                { label: '최종 수정자', name:'user_updateid', index:'user_updateid',     align:'center', width:'10%'},
-    			                { label: '최종 수정 일자', name:'user_update', index:'com_update', align:'center', width:'12%', 
-    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
-    			                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
+    		 	                { label: '사용자명', name:'user_name',   index:'user_name',      align:'center', width:'10%' },
+    			                { label: '사용구분', name:'code_nm',       index:'code_nm',      align:'center', width:'10%' },
+    			                { label: '사용처', name:'item_name', index:'item_name',      align:'center', width:'10%' },
+    			                { label: '타이틀', name:'res_title', index:'res_title',      align:'center', width:'10%' },
+    			                { label: '사용수량', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width:'10%'},
+    			                { label: '사용일', name:'reg_date', index:'reg_date', align:'center', width:'12%', 
+    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}}
     			         ],  //상단면 
     		        rowNum : 10,  //레코드 수
     		        rowList : [10,20,30,40,50,100],  // 페이징 수
@@ -162,118 +159,30 @@
     	                
     	            }
     		    });
-    	   },rowBtn: function (cellvalue, options, rowObject){
-               if (rowObject.user_no != "")
-            	   return '<a href="javascript:jqGridFunc.delRow(&#34;'+rowObject.user_no+'&#34;);">삭제</a>';
-           }, refreshGrid : function(){
+    	   }, refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	       }, delRow : function (user_no){
-        	    if(user_no != "") {
-        		   var params = {'userNo':user_no };
-        		   //여기 수정 
-        		   fn_uniDelAction("/backoffice/companyManage/userDelete.do",params, "jqGridFunc.fn_search");
-		        }
-           }, fn_userInfo : function (mode, userNo){
-        	    $("#dv_userInfo").trigger("click");
-			    $("#mode").val(mode);
-		        $("#userNo").val(userNo);
-		        if (mode == "Ins"){
-				   $("#userNo").attr("style", "width:200px;");
-				   $("#sp_uniCheck").html("<a href='javascript:userFunc.fn_uniCheck()'>중복체크</a>");
-				   $('input:text[name^=user]').val("");
-		           $('select[name^=user]').val("");
-		           
-			    }else {
-				   $("#sp_uniCheck").text("");
-				   $("#btnUserUpdate").text("수정");
-				   var url = "/backoffice/companyManage/userDetail.do";
-	      		   var param = {"userNo" : userNo };
-	      		   uniAjaxSerial(url, param, 
-     		     			function(result) {
-     						       if (result.status == "LOGIN FAIL"){
-     								   location.href="/backoffice/login.do";
-     		  					   }else if (result.status == "SUCCESS"){
-     	                               //관련자 보여 주기 
-     	                                var obj = result.regist;
-	     		  						$("#userNo").val(obj.user_no);
-	     		  						$("#userName").val(obj.user_name);
-	     		  						$("#userRank").val(obj.user_rank);
-	     		  						$("#userPosition").val(obj.user_position);
-	     		  						$("#userCellphone").val(obj.user_cellphone);
-	     		  						$("#userEmail").val(obj.user_email);
-	     		  						$("#userState").val(obj.user_state);
-	     		  						$("#userNo").attr('readonly', true);
-     		  					   }else{
-     		  						  alert(result.message); 
-     		  					   }
-     						       
-     						},
-  						    function(request){
-  							    alert("Error:" +request.status );	       						
-  						    }    		
-     		       );
-			    }
-           },clearGrid : function() {
+	       },clearGrid : function() {
                $("#mainGrid").clearGridData();
-           },fn_CheckForm  : function (){
-        	   if (any_empt_line_id("userNo", "사번을 입력해 주세요.") == false) return;	
-			   if ($("#mode").val() == "Ins"){
-				   if (fn_UniCheckAlert("uniCheck", "userNo") == false) return;	
-			   }
-     		   if (any_empt_line_id("userName", "사용자며을 입력해주세요.") == false) return;
-     		   if (any_empt_line_id("userCellphone", "연락처를 기입해 주세요.") == false) return;
-     		   if (any_empt_line_id("userEmail", "이메일를 기입해  주세요.") == false) return;
-     		   if (any_empt_line_id("userState", "상태를 선택해 주세요.") == false) return;
-     		  
-     		   
-     		  
-     		   var param = {"userNo" : $("#userNo").val(),
-	     		     		"userName" : $("#userName").val(),
-	     		     		"userRank" : $("#userRank").val(),
-	     		     		"userPosition" : $("#userPosition").val(),
-	     		     		"userCellphone" : $("#userCellphone").val(),
-	     		     		"userEmail" : $("#userEmail").val(),
-	     		     		"userState" : $("#userState").val(),
-     				        "mode" : $("#mode").val(),
-     				        "comCode" : $("#comCode").val()
-     		                }
-     			  
-     		   var commentTxt = ($("#mode").val() == "Ins") ? "등록 하시겠습니까?":"저장 하시겠습니까?";
-     		   
-     		   if (confirm(commentTxt)== true){
-     			   uniAjax("/backoffice/companyManage/userUpdate.do", param, 
-     		     			function(result) {
-     						       if (result.status == "LOGIN FAIL"){
-     								   location.href="/backoffice/login.do";
-     		  					   }else if (result.status == "SUCCESS"){
-     	                               //관련자 보여 주기 
-     		  						  userFunc.fn_userList();
-     	                              
-     		  					   }else {
-     		  						  alert(result.message);  
-     		  					   }
-     						       need_close();
-     						},
-  						    function(request){
-  							    alert("Error:" +request.status );	       						
-  						    }    		
-     		        );
-     		   }
-		  }, fn_comNumber: function (){
+           }, fn_comNumber: function (){
 			 //사업자 등록 번호
-		  }, fn_search : function(){
+		   }, fn_search : function(){
 			  $("#mainGrid").setGridParam({
     	    	 datatype	: "json",
     	    	 postData	: JSON.stringify(  {
           			"pageIndex": 1,
-         			"searchKeyword" : $("#searchKeyword").val(),
+          			"searchKeyword" : $("#searchKeyword").val(),
          			"pageUnit":$('.ui-pg-selbox option:selected').val()
          		 }),
     	    	 loadComplete	: function(data) {
     	    		 console.log(data);
     	    	 }
     	      }).trigger("reloadGrid");
-		  } 
+		   }, fn_floorState : function(){
+			  //층수 보여주기 
+			   var _url = "/backoffice/basicManage/floorListAjax.do";
+			   var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+		       fn_comboListPost("sp_floorCombo", "floorSeq",_url, _params, "", "120px", "");  
+		   } 
     }
   </script>
 </head>
@@ -301,12 +210,13 @@
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="jqGridFunc.fn_floorState()">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
 				                         </c:forEach>
 						    	</select> 
+						    	<span id="sp_floorCombo"></span>
 						    	<select id="searchCondition" name="searchCondition">
 						    	    <option>선택</option>
 						    	    <option value="comName">회사명</option>

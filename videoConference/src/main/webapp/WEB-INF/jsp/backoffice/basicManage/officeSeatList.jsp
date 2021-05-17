@@ -201,12 +201,15 @@
 	       						       if (obj.part_seq != "0"){
 	       						    	  jqGridFunc.fn_partState(obj.part_seq);
 	       						       }
+	       						       $("#payClassification").val( obj.pay_classification);
+						    		   jqGridFunc.fn_payClassGubun(obj.pay_gubun, obj.pay_cost)
 						    		   $("#seatName").val( obj.seat_name);
 						    		   $("#seatTop").val( obj.seat_top);
 						    		   $("#seatLeft").val( obj.seat_left);
 						    		   $("#seatOrder").val( obj.seat_order);
 						    		   toggleClick("seatFixUseryn", obj.seat_fix_useryn);
 						    		   toggleClick("seatUseyn", obj.seat_useyn);
+						    		   //담당자 만들기 
 						    		   $("#orgCd").val(obj.org_cd);
 		       					   }else{
 		       						   alert(result.meesage);
@@ -240,6 +243,11 @@
 				    			 'seatLeft' : fn_emptyReplace($("#seatLeft").val(),"0"),
 				    			 'seatOrder' : fn_emptyReplace($("#seatOrder").val(),"0"),
 				    			 'seatFixUseryn' : fn_emptyReplace($("#seatFixUseryn").val(),"Y"),
+				    			 //신규 추가
+				    			 'swcGubun' : $("#swcGubun").val(),
+				    			 'payClassification' , fn_emptyReplace($("#payClassification").val(),"PAY_CLASSIFICATION_2"),
+				     			 'payGubun' , fn_emptyReplace($("#payGubun").val(),""),
+				     			 'payCost' , fn_emptyReplace($("#payCost").val(),"0"),
 				    			 'orgCd' : $("#orgCd").val(),
 				    			 'seatUseyn' :  $('seatUseyn').val(),
 				    			 'mode' : $("#mode").val()
@@ -286,7 +294,20 @@
 		            alert(result.value);
 		        }
 		    });
-
+	     }, fn_payClassGubun : function(payGubun, payCost){
+	    	 //유료 무료 구분 PAY_CLASSIFICATION_1 -> 유료 
+	    	  var payHtml = "";
+	    	  if ( $("#payClassification").val() == "PAY_CLASSIFICATION_1"){
+	        	 var _url = "/backoffice/basicManage/CmmnDetailAjax.do"
+		    	 var _params = {"codeId" : "PAY_GUBUN"}
+	        	 fn_comboList("sp_PayInfo", "payGubun",_url, _params, "", "120px", payGubun);
+	        	 payHtml = $("#sp_PayInfo").html() + "<input type='number' id='payCost' name='payCost' value='"+payCost+"' onkeypress='only_num();' style='width:120px;'>";
+	         }else {
+	        	 payHtml = "";
+	         }	 
+	    	  $("#sp_PayInfo").html(payHtml);
+	     }, fn_FixInfo : function (){
+	    	 
 	     }
     }
   </script>
@@ -334,7 +355,7 @@
 		                	<td class="text-right">
 		                	    <a href="#" ><span class="deepBtn">라벨등록</span></a>
 		                	    <a href="#" ><span class="deepBtn">QR생성</span></a>
-		                		<a href="javascript:jqGridFunc.fn_MessageInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
+		                		<a href="javascript:jqGridFunc.fn_SeatInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="#" onClick="jqGridFunc.fn_delCheck()"><span class="deepBtn">삭제</span></a>
 		                	</td>
 						</tr>
@@ -365,71 +386,85 @@
         <div class="popCon">
             <!--// 팝업 필드박스-->
             <div class="pop_box100">
-                <div class="padding15">
-                    <p class="pop_tit">*구역 선택 <span class="join_id_comment joinSubTxt"></span></p>
-                    <select id="centerId" style="width:120px" onChange="jqGridFunc.fn_floorState()">
-                        <option value="">지점 선택</option>
-                         <c:forEach items="${centerInfo}" var="centerInfo">
-                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
-                         </c:forEach>
-                    </select>
-                    <span id="sp_floor"></span>
-                    <span id="sp_part"></span>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">* 좌석명  <span class="join_id_comment joinSubTxt"></span></p>
-                    <input type="text" name="seatName" id="seatName" class="input_noti" size="10"/>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">* 도명 Top 위치 <span class="join_id_comment joinSubTxt"></span></p>
-                    <input type="number" name="seatTop" id="seatTop" class="input_noti" size="10"  onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">* 도명 Left 위치  <span class="join_id_comment joinSubTxt"></span></p>
-                    <input type="number" name="seatLeft" id="seatLeft" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">정렬 순서<span class="join_id_comment joinSubTxt"></span></p>
-                    <input type="number" name="seatOrder" id="seatOrder" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">고정여부<span class="join_id_comment joinSubTxt"></span></p>
-                    <label class="switch">                                               
-                    	<input type="checkbox" id="seatFixUseryn" onclick="toggleValue(this)" value="Y">
-	                    <span class="slider round"></span> 
-                    </label> 
-                </div>
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">관련 부서<span class="join_id_comment joinSubTxt"></span></p>
-                     <select id="orgCd" style="width:120px">
-                        <option value="">층 선택</option>
-                         <c:forEach items="${orgInfo}" var="orgCombo">
-                            <option value="${orgCombo.deptcode}">${orgCombo.deptname}</option>
-                         </c:forEach>
-                    </select>
-                </div>                
-            </div>
-      
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">*<spring:message code="common.UseYn.title" /> <span class="join_id_comment joinSubTxt"></span></p>
-                    <label class="switch">                                               
-                    	<input type="checkbox" id="seatUseyn" name="seatUseyn" onclick="toggleValue(this)" value="Y">
-	                    <span class="slider round"></span> 
-                    </label> 
-                </div>                
+             <div class="padding15">
+                   <table class="pop_table thStyle">
+		                <tbody>
+		                    <tr>
+		                        <th style="width:180px"><span class="redText">*</span>구역 선택</th>
+		                        <td style="text-align:left" colspan="3">
+		                        	 <select id="centerId" style="width:120px" onChange="jqGridFunc.fn_floorState()">
+				                         <option value="">지점 선택</option>
+				                         <c:forEach items="${centerInfo}" var="centerInfo">
+				                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
+				                         </c:forEach>
+				                    </select>
+				                    <span id="sp_floor"></span>
+                                    <span id="sp_part"></span>
+		                        </td>
+		                    </tr>
+		                    <tr>
+		                        <th><span class="redText">*</span> 유료구분</th>
+		                        <td style="text-align:left" colspan="3">
+		                            <select id="payClassification" style="width:120px" onChange="jqGridFunc.fn_payClassGubun('0','0')">
+				                        <option value=""> 선택</option>
+				                         <c:forEach items="${payGubun}" var="payGubun">
+				                            <option value="${payGubun.code}">${payGubun.codeNm}</option>
+				                         </c:forEach>
+				                    </select>
+				                    <span id="sp_PayInfo"/>
+		                        </td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">*</span>예약 구분</th>
+		                       <td>
+		                           <select id="swcGubun" style="width:120px">
+				                        <option value="">구분 선택</option>
+				                         <c:forEach items="${centerInfo}" var="centerInfo">
+				                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
+				                         </c:forEach>
+				                    </select>
+		                       </td>
+		                       <th><span class="redText">*</span>좌석명</th>
+		                       <td><input type="text" name="seatName" id="seatName" class="input_noti" size="10"/></td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">도명 Top 위치</th>
+		                       <td><input type="number" name="seatTop" id="seatTop" class="input_noti" size="10"  onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
+		                       <th><span class="redText"> 도명 Left 위치 </th>
+		                       <td><input type="number" name="seatLeft" id="seatLeft" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">고정여부 </th>
+		                       <td>
+			                        <label class="switch">                                               
+				                    	<input type="checkbox" id="seatFixUseryn" onclick="toggleValue(this)" value="Y">
+					                    <span class="slider round"></span> 
+				                    </label> 
+		                       </td>
+		                       <th><span class="redText">정렬 순서</th>
+		                       <td><input type="number" name="seatOrder" id="seatOrder" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">관련 부서</th>
+		                       <td>
+		                            <select id="orgCd" style="width:120px">
+				                        <option value="">예약 관련 부서 선택</option>
+				                         <c:forEach items="${orgInfo}" var="orgCombo">
+				                            <option value="${orgCombo.deptcode}">${orgCombo.deptname}</option>
+				                         </c:forEach>
+				                    </select>
+		                       </td>
+		                       <th><span class="redText">*<spring:message code="common.UseYn.title" /> <span class="join_id_comment joinSubTxt"></span> </th>
+		                       <td>
+			                        <label class="switch">                                               
+				                    	<input type="checkbox" id="seatUseyn" name="seatUseyn" onclick="toggleValue(this)" value="Y">
+					                    <span class="slider round"></span> 
+				                    </label> 
+		                       </td>
+		                    </tr>
+		                 </tbody>
+                    </table>
+               </div>                
             </div>
         </div>
         <div class="clear"></div>

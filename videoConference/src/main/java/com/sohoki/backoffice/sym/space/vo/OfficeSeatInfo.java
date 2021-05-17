@@ -36,5 +36,9 @@ public class OfficeSeatInfo {
 	private String floorStr = "";
 	private String floorEnd = "";
 	private String seatNumber = "";
+	private String swcGubun = "";
+	private String payClassification = "";
+	private String payGubun = "";
+	private String payCost = "";
 }
 

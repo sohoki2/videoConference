@@ -20,17 +20,21 @@
                                        WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE)
 						            ELSE 
 						               '사용안함'
-						       END TENN_INFO       
+						       END TENN_INFO, a.COM_PLAY_FLOOR, FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
 					    FROM  tb_companyinfo a, lettccmmndetailcode b, tb_centerinfo c, tb_floorinfo d
 					    WHERE a.COM_STATE = b.CODE       
 					          AND a.CENTER_ID = c.CENTER_ID
 					          AND a.FLOOR_SEQ = d.FLOOR_SEQ
+					          
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							    AND (a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  OR a.COM_CEO_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 							  </if>		
-							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
-							  AND a.CENTER_ID = #{params.centerId}
-							</if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+							    AND a.CENTER_ID = #{params.searchCenter}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
+							  </if>
 					    ORDER BY a.COM_CODE  DESC
 	        ) TB  
 	         ORDER BY TB.COM_CODE  DESC
@@ -45,20 +49,20 @@
     <select id="selectCompanyInfoManageDetail"  resultType="lmap">
            SELECT  COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 				   COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, COM_LOGO,
-				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN
-		    FROM tb_companyinfo a
-		    WHERE COM_CODE = #{comCode}
+				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR
+		   FROM tb_companyinfo a
+		   WHERE COM_CODE = #{comCode}
     </select>
     <insert id="insertCompanyInfoManage" >
          
          INSERT INTO tb_companyinfo(COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 								    COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, 
 								    COM_HOMEPAGE, COM_STATE, COM_LOGO, CENTER_ID, FLOOR_SEQ,
-								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN)
+								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN, COM_PLAY_FLOOR)
          VALUES (#{comCode}, #{comNumber,jdbcType=VARCHAR}, #{comName}, #{comGubun,jdbcType=VARCHAR}, #{comBuscondition,jdbcType=VARCHAR},  #{comItem,jdbcType=VARCHAR},  #{comCeoName,jdbcType=VARCHAR}, 
                  #{comTel,jdbcType=VARCHAR}, #{comFax,jdbcType=VARCHAR},  #{comZipcode,jdbcType=VARCHAR}, #{comAddr1,jdbcType=VARCHAR}, #{comAddr2,jdbcType=VARCHAR},
                  #{comHomepage,jdbcType=VARCHAR}, #{comState,jdbcType=VARCHAR},  #{comLogo,jdbcType=VARCHAR},  #{centerId,jdbcType=VARCHAR},  #{floorSeq,jdbcType=VARCHAR}, 
-                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, #{tennUseyn,jdbcType=VARCHAR})
+                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, #{comPlayFloor,jdbcType=VARCHAR})
                 
     </insert>
     <update id="updateCompanyInfoManage" >
@@ -86,6 +90,9 @@
 	                                , CENTER_ID = #{centerId, jdbcType=VARCHAR}
 	                                <if test="floorSeq != '' ">  
 	                                , FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR}
+	                                </if>
+	                                <if test="comPlayFloor != '' ">  
+	                                , COM_PLAY_FLOOR = #{comPlayFloor, jdbcType=VARCHAR}
 	                                </if>
 	      WHERE COM_CODE = #{comCode}           
     </update> 

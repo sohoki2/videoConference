@@ -25,6 +25,7 @@ import com.sohoki.backoffice.cus.com.servie.CompanyInfoManageService;
 import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 import com.sohoki.backoffice.cus.ten.service.TennantInfoManageService;
 import com.sohoki.backoffice.cus.ten.vo.TennantInfo;
+import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
 import com.sohoki.backoffice.sym.cnt.vo.CenterInfoVO;
 import com.sohoki.backoffice.util.SmartUtil;
 
@@ -36,7 +37,7 @@ import egovframework.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @RestController
-@RequestMapping("/backoffice/company")
+@RequestMapping("/backoffice/companyManage")
 public class TennantInfoManageController {
 
 	
@@ -57,6 +58,9 @@ public class TennantInfoManageController {
 	
 	@Autowired
 	private SmartUtil util;
+	
+	@Autowired
+    private CenterInfoManageService centerInfoService;
 	
 	
 	@RequestMapping(value="tennUpdate.do", method=RequestMethod.POST)
@@ -118,7 +122,8 @@ public class TennantInfoManageController {
 		  
 		  
 		  model.addObject(Globals.STATUS_REGINFO , searchVO);
-		  model.addObject("floorInfo", companyService.selectCompanyInfoManageCombo("COM_STATE_1") );
+		  //model.addObject("floorInfo", companyService.selectCompanyInfoManageCombo("COM_STATE_1") );
+		  model.addObject("searchCenter", centerInfoService.selectCenterInfoManageCombo());
 	      model.setViewName("/backoffice/companyManage/tennList");
 		  return model;	
 	}
@@ -183,13 +188,15 @@ public class TennantInfoManageController {
 			  
 		       /** pageing */       
 		   	  PaginationInfo paginationInfo = new PaginationInfo();
-			  paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex").toString(), "1") ) );
+			  paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1").toString()));
 			  paginationInfo.setRecordCountPerPage(pageUnit);
 			  paginationInfo.setPageSize(propertiesService.getInt("pageSize"));
 
 			  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 			  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 			  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+			  //추후 리스트 아닐겨우 확인 필요 
+			  searchVO.put("mode", "list");
 			  
 			  
 			  List<Map<String, Object>> list = tennService.selectTennantSubInfoManageListByPagination(searchVO);

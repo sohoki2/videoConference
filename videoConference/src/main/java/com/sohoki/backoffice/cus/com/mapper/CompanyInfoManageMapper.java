@@ -12,7 +12,7 @@ public interface CompanyInfoManageMapper {
 	
 	    public List<Map<String, Object>> selectCompanyInfoManageListByPagination(@Param("params") Map<String, Object> params);
 		
-		public List<Map<String, Object>> selectCompanyInfoManageCombo (@Param("centerId") String comCode);
+		public List<Map<String, Object>> selectCompanyInfoManageCombo (@Param("com_state") String com_state);
 		
 		public Map<String, Object> selectCompanyInfoManageDetail(String comCode);
 			

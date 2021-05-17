@@ -35,21 +35,33 @@
     <select id="selectTennantSubInfoManageListByPagination"  resultType="lmap">
 		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
 	        TB.* FROM (
-					    SELECT a.TENN_SEQ, a.COM_CODE, a.USER_NO, a.REG_ID, a.REG_DATE, a.TENN_CNT, a.TENN_PLAY_GUBUN,
-					           a.TENN_APPRIVAL, b.CODE_NM,
-					           CASE WHEN USER_NO IS NOT NULL THEN 
+					    SELECT a.HIS_SEQ, a.TENN_SEQ, a.COM_CODE, a.USER_NO, a.REG_ID, a.TENN_CNT, a.TENN_PLAY_GUBUN,
+					           a.TENN_APPRIVAL, b.CODE_NM, d.COM_NAME,
+					           CASE  WHEN a.USER_NO IS NOT NULL THEN 
 								    ( SELECT USER_NAME  FROM tb_userinfo WHERE USER_NO = a.USER_NO )
 							   ELSE 
 								    '관리자'
-							   END USER_NAME 
-					    FROM  tb_compay_tennant_history a, lettccmmndetailcode b
+							   END USER_NAME ,
+							   CASE c.ITEM_GUBUN WHEN 'ITEM_GUBUN_1' THEN '회의실 사용'
+							        ELSE '좌석 사용'
+							   END AS ITEM_GUBUN, c.RES_TITLE,
+							   CASE c.ITEM_GUBUN WHEN 'ITEM_GUBUN_1' THEN 
+							        (SELECT MEETING_NAME FROM tb_meeting_room WHERE tb_meeting_room.MEETING_ID = c.ITEM_ID)
+							        ELSE 
+							        (SELECT SEAT_NAME FROM tb_seatinfo WHERE tb_seatinfo.SEAT_ID = c.ITEM_ID)
+							   END AS ITEM_NAME, 
+							   DATE_FORMAT(a.REG_DATE,'%Y-%m-%d %H:%i:%s') REG_DATE
+					    FROM  tb_compay_tennant_history a, lettccmmndetailcode b, 
+					          tb_swcreservation c, tb_companyinfo d
 					    WHERE a.TENN_PLAY_GUBUN = b.CODE       
+					          AND a.RES_SEQ = c.RES_SEQ 
+					          AND a.COM_CODE = d.COM_CODE
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							    AND a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
 							  </if>	
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchComCode)">
 							    AND a.COM_CODE =  #{params.searchComCode}
-							  </if>		
+							  </if>	
 					    ORDER BY a.HIS_SEQ  DESC
 	        ) TB  
 	        ORDER BY TB.HIS_SEQ  DESC

@@ -497,7 +497,6 @@ function fn_comboList(_spField, _Field, _url, _params, _onChangeAction, _width, 
 								    for (var i in obj) {
 								        var array = Object.values(obj[i])
 								        var ckString = (array[0] === _checkVal) ? "selected" : "";
-								        console.log(array);
 								        $("#"+_Field).append("<option value='"+ array[0]+"' "+ckString+">"+array[1]+"</option>");
 								    }
 							    }else {
@@ -557,16 +556,15 @@ function fn_checkListPost(_spField, _Field, _url, _params, _checkVal, _checkTxt)
 					    	   location.href="/backoffice/login.do";
 						   }else if (result.status == "SUCCESS"){
 							   //총 게시물 정리 하기
+							    $("#"+_spField).empty();
 							    if (result.resultlist.length > 0){
 							        var obj  = result.resultlist;
 							        var checked = "";
-								    for (var i in obj) {
+							        for (var i in obj) {
 								        var array = Object.values(obj[i])
-								        var jbSplit = _checkVal.split(',');
-								        for (var a in jbSplit){
-								          checked = jbSplit[a] === array[0] ? "checked" : "";
-								          $("#"+_spField).append("&nbsp;<input type='checkbox' name='"+_Field+"'  value='"+array[0]+"' "+checked+">" + array[1]+ _checkTxt);
-								        }
+								        checked = CommonJsUtil.NVL(_checkVal).toString().includes(array[0]) ? "checked" : "";
+								        console.log("checked:" +checked);
+								        $("#"+_spField).append("&nbsp;<input type='checkbox' name='"+_Field+"'  value='"+array[0]+"' "+checked+">" + array[1]+ _checkTxt);
 								        
 								     }
 								}else {

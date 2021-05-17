@@ -43,11 +43,13 @@
          INSERT INTO tb_seatinfo(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
 								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER
-								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE)
+								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, SWC_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST)
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
                  #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
-                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW());
+                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW()
+                 #{swcGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
+                 );
                  
          UPDATE tb_floorinfo SET SEAT_CNT = SEAT_CNT + 1
 		 WHERE FLOOR_SEQ = #{floorSeq};
@@ -175,6 +177,10 @@
 	                              , SEAT_NUMBER = #{seatNumber,jdbcType=VARCHAR} 
 	                              , UPDATE_DATE = NOW()
 	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
+	                              , SWC_GUBUN = #{swcGubun,jdbcType=VARCHAR}
+	                              , PAY_CLASSIFICATION = #{payClassification,jdbcType=VARCHAR}
+	                              , PAY_GUBUN = #{payGubun,jdbcType=VARCHAR}
+	                              , PAY_COST = #{payCost,jdbcType=VARCHAR}
 	    WHERE SEAT_ID = #{seatId}           
     </update>
     <update id="updateOfficeSeatQrInfoManage" >

@@ -65,6 +65,7 @@
 <input type="hidden" name="pageIndex" id="pageIndex">
 <input type="hidden" name="mode" id="mode" >
 <input type="hidden" name="comCode" id="comCode" >
+<input type="hidden" name="comPlayFloor" id="comPlayFloor" >
 <div class="Aconbox">
         <div class="rightT">
             <div class="Smain">
@@ -82,14 +83,15 @@
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="jqGridFunc.fn_floorSearchState()">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
 				                         </c:forEach>
 						    	</select> 
+						    	<span id="sp_floorCombo"></span>
 		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"> 
-								<a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
+								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
@@ -205,8 +207,15 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">사용층수<span class="join_id_comment joinSubTxt"></span></p>
+                    <p class="pop_tit">근무층/예약 가능 층<span class="join_id_comment joinSubTxt"></span></p>
                     <span id="sp_floor" />
+                   
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">예약 가능 층<span class="join_id_comment joinSubTxt"></span></p>
+                    <span id="sp_floorCheck" />
                 </div>                
             </div>
             <div class="pop_box50">
@@ -360,10 +369,11 @@
 	    		 	                { label: '', name:'',       index:'checkBox',      align:'center', width:'5%'
 	    		 	                  , formatter: jqGridFunc.checkbox},
 	    		 	                { label: '로고',  name:'com_logo',         index:'com_logo',        align:'left',   width:'12%', formatter: jqGridFunc.imageFomatter },
-	    			                { label: '회사명', name:'com_name',       index:'com_name',      align:'center', width:'20%'},
-	    			                { label: '지점', name:'center_nm',       index:'center_nm',      align:'center', width:'20%'},
-	    			                { label: '층수', name:'floor_name',       index:'floor_name',      align:'center', width:'20%'},
-	    			                { label: '대표자명', name:'com_ceo_name',       index:'com_ceo_name',      align:'center', width:'20%'},
+	    			                { label: '회사명', name:'com_name',       index:'com_name',      align:'center', width:'10%'},
+	    			                { label: '지점', name:'center_nm',       index:'center_nm',      align:'center', width:'10%'},
+	    			                { label: '사용층수', name:'floor_name',       index:'floor_name',      align:'center', width:'10%'},
+	    			                { label: '예약가능층수', name:'floor_nm',       index:'floor_nm',      align:'center', width:'10%'},
+	    			                { label: '대표자명', name:'com_ceo_name',       index:'com_ceo_name',      align:'center', width:'10%'},
 	    			                { label: '주소', name:'com_addr',       index:'com_addr',      align:'center', width:'20%', formatter:jqGridFunc.address },
 	    			                { label: '테턴트 여부', name:'tenn_info',       index:'tenn_info',      align:'center', width:'15%'},
 	    			                { label: '최종 수정자', name:'com_updateid',      index:'com_updateid',     align:'center', width:'14%'},
@@ -565,7 +575,10 @@
 				       						$("#comState").val(obj.com_state);
 								    		$("#comFax").val( obj.com_fax  );
 								    		$("#centerId").val( obj.center_id);
+								    		//$("#floorSeq").val( obj.floor_seq);
+								    		//sp_floorCheck
 								    		jqGridFunc.fn_floorState(obj.floor_seq);
+								    		jqGridFunc.fn_floorPlayState(obj.com_play_floor);
 								    		toggleClick("tennUseyn", obj.tenn_useyn);
 								       }
 			     				    },
@@ -578,15 +591,15 @@
 			        	$('input:text[name^=com]').val("");
 			        	$('select[name^=com]').val("");
 			        	$("#centerId").val("");
-			        	$("#floorSeq").remove();
 			        	toggleDefault("tennUseyn");
 			        }
 	           },clearGrid : function() {
 	                $("#mainGrid").clearGridData();
 	           },fn_CheckForm  : function (){
 				    if (any_empt_line_id("comName", "회사명을 입력해주세요.") == false) return;	
-				    if (any_empt_line_id("centerId", "지점을 선택해 주세요.") == false) return;	
-				    if (any_empt_line_id("floorSeq", "사용 층수를 선택해주세요.") == false) return;	
+				    if (any_empt_line_id("centerId", "지점을 선택해 주세요.") == false) return;
+				    if (any_empt_line_id("floorSeq", "층을 선택해 주세요.") == false) return;
+				    if (fn_CheckBoxMsg("사용할 층수를 선택 하지 않았습니다.", "floorPlaySeq") == false) return;	
 		     		var commentTxt = ($("#mode").val() == "Ins") ? "등록 하시겠습니까?":"저장 하시겠습니까?";
 		     		
 		     		if (confirm(commentTxt)== true){
@@ -609,10 +622,10 @@
 		     			  formData.append('comTel' , $("#comTel").val());
 		     			  formData.append('comFax' , $("#comFax").val());
 		     			  formData.append('centerId' , $("#centerId").val());
-		     			  formData.append('floorSeq' , $("#floorSeq").val());
+		     			  formData.append('floorSeq' ,  $("#floorSeq").val());
+		     			  formData.append('comPlayFloor' , ckeckboxValue("사용할 층수를 선택 하지 않았습니다.", "floorPlaySeq"));
 		     			  formData.append('tennUseyn' , fn_emptyReplace($("#tennUseyn").val(),"N"));
-		     			 
-		     		      uniAjaxMutipart("/backoffice/companyManage/companyUpdate.do", formData, 
+		     			  uniAjaxMutipart("/backoffice/companyManage/companyUpdate.do", formData, 
 		     						function(result) {
 		     						       //결과값 추후 확인 하기 	
 		     		    	               if (result.status == "SUCCESS"){
@@ -638,6 +651,8 @@
 	    	    	 postData	: JSON.stringify(  {
 	          			"pageIndex": 1,
 	         			"searchKeyword" : $("#searchKeyword").val(),
+	         			"searchCenter" : $("#searchCenter").val(),
+	         			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		 }),
 	    	    	 loadComplete	: function(data) {
@@ -651,7 +666,12 @@
 			  }, fn_floorState : function (floorSeq){
 				  var _url = "/backoffice/basicManage/floorListAjax.do";
 			      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
-			      fn_checkListPost("sp_floor", "floorSeq",_url, _params, floorSeq, "");
+			      fn_comboListPost("sp_floor", "floorSeq",_url, _params, "", "120px", floorSeq); 
+			  }, fn_floorPlayState : function (floorPlaySeq){
+				  var _url = "/backoffice/basicManage/floorListAjax.do";
+			      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
+			      //alert(floorPlaySeq);
+			      fn_checkListPost("sp_floorCheck", "floorPlaySeq",_url, _params, floorPlaySeq, "");
 			  }, fn_tennUpdate : function (){
 				 //배열 값 정리 하기 
 				 if (confirm('저장 하시겠습니까?')){
@@ -691,6 +711,10 @@
 					  return;
 				  }
 			     
+			  }, fn_floorSearchState : function (){
+				  var _url = "/backoffice/basicManage/floorListAjax.do";
+				  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+			      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
 			  }    
 	    }
        
