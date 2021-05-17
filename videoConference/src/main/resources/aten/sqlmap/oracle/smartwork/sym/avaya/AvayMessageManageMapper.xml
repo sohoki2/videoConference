@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.AvayMessageManageMapper">
+	
+    <select id="selectAvayaInfoManageListByPagination"  resultType="AvayaMessageInfoVO">
+		
+		 
+	SELECT TA.* FROM ( 
+		 	SELECT rownum RNUM, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* FROM (
+		    SELECT
+		        REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
+                REQ_REGDATE		        
+		    FROM    TB_AVAYASENDMESSAGE
+		    WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+					and to_char(REQ_REGDATE, 'yyyyMMdd') between  #{searchStrDay} and #{searchEndDay} 
+				</if>		        		     
+		    ORDER BY REQUESTID  DESC
+	        ) TB ) TA WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    
+    
+     <select id="selectRequestId" resultType="java.lang.String">
+        select fn_AvayaReqID
+        from dual
+     </select>
+    
+     <select id="selectAvayaInfoManageDetail"  resultType="AvayaMessageInfoVO">
+           SELECT  REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
+                   REQ_REGDATE
+		    FROM TB_AVAYASENDMESSAGE
+		    WHERE REQUESTID = #{requestid}		  
+    </select>
+     
+    
+    <select id="selectAvayaMessageManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+       FROM    TB_AVAYASENDMESSAGE
+	   WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+					and to_char(REQ_REGDATE, 'yyyyMMdd') between  #{searchStrDay} and #{searchEndDay} 
+				</if>	  
+    </select>
+     <insert id="insertAvayaInfoInsertManage" >
+        <![CDATA[
+             INSERT INTO TB_AVAYASENDMESSAGE (REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT)
+             VALUES (fn_AvayaReqID, #{reqMessage},    #{reqMessageTxt}, #{resMessage,jdbcType=VARCHAR},  #{resMessageTxt,jdbcType=VARCHAR}
+             )
+         ]]>
+     </insert>
+     <delete id="deleteAvayaInfoManage">
+       DELETE FROM TB_AVAYASENDMESSAGE
+       WHERE REQUESTID = #{requestid}
+     </delete>
+</mapper>

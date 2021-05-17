@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.equ.mapper.EquipmentManageMapper">
+
+    <select id="selectEqupManageListByPagination" resultType="lmap">     	      
+		 	SELECT CAST( SUM(1) OVER(PARTITION BY NULL) AS INTEGER ) AS TOTAL_RECORD_COUNT, TA.* FROM ( 
+		 	          SELECT TB.* 
+					  FROM (  SELECT 	a.EQUP_CODE  , a.EQUIPMENT_ID, a.EQUIPMENT_NAME
+				                                , (SELECT CENTER_NM FROM tb_centerinfo WHERE center_id=a.CENTER_ID) centerNm
+				                                , a.REG_DATE, a.COMPANY, a.REMARK
+				                                , a.USE_YN   , a.EQUIP_STATE
+				                                , CASE a.EQUIP_STATE WHEN 'EQUIP_STATE_2'  THEN 
+				                                   DATE_FORMAT(a.EQUP_INDATE, '%Y-%m-%d')
+				                                ELSE
+				                                   ''
+				                                END  as EQUP_INDATE, 
+				                                
+				                                CASE a.EQUIP_STATE WHEN 'EQUIP_STATE_2'  THEN  
+				                                    DATE_FORMAT(a.EQUP_OTDATE, '%Y-%m-%d')  
+				                                ELSE
+				                                   ''
+				                                END  AS EQUP_OTDATE 
+				                                , fn_DetailCodeNm(a.EQUIP_STATE) EQUIP_STATE_TXT
+										FROM 	tb_equipmentinfo a
+										WHERE 1=1 
+											<if test="searchKeyword != ''">
+									        	<choose>
+									        		<when test="searchCondition == 0">
+									        			<![CDATA[    
+															AND ( COMPANY LIKE CONCAT('%',#{searchKeyword},'%')   OR  
+															         EQUIPMENT_NAME LIKE CONCAT('%',#{searchKeyword},'%') OR  
+															       )
+														]]>
+									        		</when>
+									        		<otherwise>
+									        			<choose>
+															<when test="searchCondition == 1">
+															<![CDATA[    
+																AND  SWC_SEQ LIKE CONCAT('%',#{searchKeyword},'%')
+															 ]]>
+															</when>
+															<when test="searchCondition == 1">
+															<![CDATA[    
+																AND EQUIPMENT_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+															 ]]>
+															</when>
+															<otherwise>
+															<![CDATA[    
+																AND  COMPANY LIKE CONCAT('%',#{searchKeyword},'%') 
+															 ]]>
+															</otherwise>
+														</choose>
+									        		</otherwise>
+								        	</choose>
+										</if>		        
+											<if test="searchcenterId != ''">
+											         AND CENTER_ID = #{searchcenterId}
+											</if>
+											<if test="searchEquipState != ''">
+											        AND EQUIP_STATE = #{searchEquipState}
+											</if>
+					                    ORDER BY 	a.EQUP_CODE  DESC
+			               	    ) TB 
+							  
+				 )TA
+				 ORDER BY TA.EQUP_CODE DESC
+				 LIMIT   #{firstIndex},   #{recordCountPerPage}  		 	
+   </select>
+      
+   <select id="selectEqupManageDetail" resultType="Equipment">
+		SELECT		a.EQUP_CODE
+						, a.EQUIPMENT_ID
+				        , a.EQUIPMENT_NAME
+				        , a.CENTER_ID
+				        , a.REG_DATE
+				        , a.COMPANY
+				        , a.REMARK
+				        , a.USE_YN
+				        , EQUIP_STATE
+   		FROM 		tb_equipmentinfo a
+		WHERE 		a.EQUP_CODE = #{equpCode}
+    
+   </select>
+   <select id="selectEqupManageView" resultType="EquipmentVO">
+		SELECT		a.EQUP_CODE 
+						, a.EQUIPMENT_ID 
+				        , a.EQUIPMENT_NAME 
+				        , a.CENTER_ID 
+				        , a.SWC_SEQ 
+				        , a.REG_DATE 
+				        , a.COMPANY 
+				        , a.CNT 
+				        , a.REMARK 
+				        , a.USE_YN 
+				        , CASE a.SWC_SEQ WHEN NULL then '좌석없음' 
+				        	ELSE (SELECT SEAT_NAME FROM tb_swc_room e where a.SWC_SEQ = e.SWC_SEQ) 
+				          END seatNm 
+				        , a.EQUP_INDATE 
+				        , d.CENTER_NM 
+				        , a.EQUIP_SERIAL
+		FROM 		tb_equipmentinfo a, tb_centerinfo d
+		WHERE 		EQUP_CODE = #{equpCode}
+		AND 			a.CENTER_ID = d.CENTER_ID
+   </select>
+   <select id="selectResEquipList" resultType="lmap">
+        SELECT a.EQUP_CODE 
+					, a.EQUIPMENT_ID 
+			        , a.EQUIPMENT_NAME 
+			        , a.EQUIP_STATE
+			        , a.EQUIP_SERIAL
+                    , fn_DetailCodeNm(a.EQUIP_STATE) EQUIP_STATE_TXT
+        FROM tb_equipmentinfo a
+        WHERE a.EQUP_CODE IN 
+                 <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
+                                  #{equpList}                           
+               </foreach>  
+   </select>
+   <select id="selectResEquipCnt" resultType="java.lang.Integer">
+        SELECT IFNULL(COUNT(*), 0)
+        FROM tb_equipmentinfo a
+           WHERE a.EQUP_CODE IN 
+		               <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
+		                                  #{equpList}                           
+		               </foreach>  
+                       AND EQUIP_STATE != #{equipState}
+   </select>
+   <insert id="insertEqupManage">
+	      INSERT INTO tb_equipmentinfo( EQUP_CODE
+     														,EQUIPMENT_ID
+     														,EQUIPMENT_NAME
+     														, CENTER_ID
+     														, REG_DATE
+     														, COMPANY
+     														, REMARK
+     														, USE_YN
+     														, EQUIP_SERIAL
+     														, EQUIP_STATE)
+      	VALUES (	#{equpCode}
+	      				, #{equipmentId,  jdbcType=VARCHAR}
+	      				, #{equipmentName, jdbcType=VARCHAR}
+	      				, #{centerId}
+	      				, NOW()
+	      				, #{company ,jdbcType=VARCHAR}
+	      				, #{remark ,jdbcType=VARCHAR}
+	      				, #{useYn ,jdbcType=VARCHAR}
+	      				, #{equipSerial ,jdbcType=VARCHAR}
+	      				, 'EQUIP_STATE_1'
+      				)
+   </insert>
+   <update id="updateEqupManage_State">
+             UPDATE tb_equipmentinfo SET EQUIP_STATE = #{equipState}
+                                                         , SWC_SEQ = #{swcSeq}
+                                                         , USER_ID = #{userId}
+                                                         <if test="equpIndate !=  '' ">
+                                                         , EQUP_INDATE = now()
+                                                         </if>
+                                                         <if test="equpOtdate !=  '' ">  
+                                                         , EQUP_OTDATE = now()
+                                                         </if>
+                                                          <if test="equipSerial !=  '' ">  
+                                                         , EQUIP_SERIAL = #{equipSerial,jdbcType=VARCHAR}
+                                                         </if>
+              WHERE EQUP_CODE IN
+              <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
+               #{equpList}                           
+               </foreach>             
+   </update>
+   <update id="updateEqupManage">
+		      UPDATE tb_equipmentinfo SET EQUIPMENT_NAME = #{equipmentName}
+		                             ,  EQUIPMENT_ID = #{equipmentId,jdbcType=VARCHAR }
+		                             ,  CENTER_ID = #{centerId}
+		                             ,  COMPANY = #{company, jdbcType=VARCHAR }
+		                             ,  REMARK = #{remark, jdbcType=VARCHAR }
+		                             ,  USE_YN = #{useYn, jdbcType=VARCHAR }
+		      WHERE EQUP_CODE = #{equpCode}
+   </update>
+   <delete id="deleteEqupManage">
+		      DELETE FROM tb_equipmentinfo
+		      WHERE EQUP_CODE = #{equpCode}   
+   </delete>
+
+</mapper>

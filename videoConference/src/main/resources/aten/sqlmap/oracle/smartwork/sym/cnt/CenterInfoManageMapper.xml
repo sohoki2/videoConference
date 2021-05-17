@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.CentertInfoManagerMapper">
+	
+    <select id="selectCenterInfoManageListByPagination"  resultType="CenterInfoVO">
+		
+		 
+		 	SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TA.* FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		        CENTER_ID          as "centerId",
+		        CENTER_NM          as "centerNm",
+		        CENTER_IMG         as "centerImg",
+		        CENTER_ZIPCODE     as "centerZipcode",
+                CENTER_ADDR1       as "centerAddr1",
+                <!-- CENTER_ADDR2       as "centerAddr2", -->
+		        CENTER_USE_YN       as "centerUseYn"		,      	
+		        ADMIN_APPROVAL_YN       as "adminApprovalYn" ,	        
+		        CENTER_REGDATE as "centerRegdate"		        
+		    FROM    TB_CENTERINFO
+		        WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+							<![CDATA[    
+								and CENTER_ID LIKE '%' || #{searchKeyword} || '%'		
+							 ]]>  
+								
+							</when>
+							<otherwise>
+							<![CDATA[    
+								and CENTER_NM LIKE '%' || #{searchKeyword} || '%'		
+							 ]]>  
+							</otherwise>
+						</choose>
+				</if>		        		     
+		        ORDER BY CENTER_ID  DESC
+	        ) TB ) TA WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    <select id="selectCenterInfoManageCombo"       resultType="CenterInfoVO">
+       select  CENTER_ID as centerId, CENTER_NM as centerNm
+       from TB_CENTERINFO
+       where CENTER_USE_YN = 'Y'
+       order by  CENTER_NM  asc
+    </select>
+    <select id="selectCenterInfoManageDetail"  resultType="CenterInfoVO">
+           SELECT  CENTER_ID as centerId, CENTER_NM as centerNm, CENTER_ZIPCODE as centerZipcode, CENTER_ADDR1 as centerAddr1, <!-- CENTER_ADDR2 as centerAddr2,  -->CENTER_TEL as centerTel,
+						CENTER_FAX as centerFax, CENTER_USER_ID as centerUserId, CENTER_REGDATE as centerRegdate, CENTER_UPDATE_USER_ID as centerUpdateId, 
+						CENTER_UPDATE_DATE as centerUpdateDate, 
+						CENTER_IMG as centerImg, CENTER_URL as centerUrl, CENTER_SEAT_IMG as centerSeatImg, CENTER_USE_YN as centerUseYn, 
+						REST_INFO as restInfo, MEETINGROOM_INFO as meetingroomInfo, CENTER_INFO as       centerInfo,
+						SUBSTR(CENTER_ZIPCODE,0,3) AS centerZipcode1, SUBSTR(CENTER_ZIPCODE,4,6) AS centerZipcode2 ,     
+						ADMIN_APPROVAL_YN adminApprovalYn
+		    FROM TB_CENTERINFO
+		    WHERE CENTER_ID = #{centerId}		  
+    </select>
+    
+    
+    <select id="selectCenterInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_CENTERINFO
+       where 1=1 
+        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+							<![CDATA[    
+								and CENTER_ID LIKE '%' || #{searchKeyword} || '%'		
+							 ]]>  
+							</when>
+							<otherwise>
+							<![CDATA[    
+								and CENTER_NM LIKE '%' || #{searchKeyword} || '%'		
+							 ]]>  
+							</otherwise>
+						</choose>
+				</if>		  
+    </select>
+     <insert id="insertCenterInfoManage" >
+        <![CDATA[
+             INSERT INTO TB_CENTERINFO (CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1,CENTER_TEL,CENTER_FAX, 
+                                 CENTER_USER_ID, CENTER_REGDATE, CENTER_UPDATE_USER_ID, CENTER_UPDATE_DATE, CENTER_IMG, CENTER_URL, 
+                                 CENTER_SEAT_IMG, CENTER_USE_YN, REST_INFO, MEETINGROOM_INFO, CENTER_INFO, ADMIN_APPROVAL_YN
+                                 )
+             VALUES (FN_CENTERID, #{centerNm},    #{centerZipCode,jdbcType=VARCHAR}, #{centerAddr1}, #{centerTel,jdbcType=VARCHAR},  #{centerFax,jdbcType=VARCHAR},
+             #{centerUserId,jdbcType=VARCHAR}, SYSDATE, #{centerUserId,jdbcType=VARCHAR}, SYSDATE,  #{centerImg,jdbcType=VARCHAR}, #{centerUrl ,jdbcType=VARCHAR}, 
+             #{centerSeatImg,jdbcType=VARCHAR}, 'Y', #{restInfo,jdbcType=VARCHAR}, #{meetingroomInfo,jdbcType=VARCHAR},  #{centerInfo,jdbcType=VARCHAR} , 
+             #{adminApprovalYn, jdbcType=VARCHAR}
+             )
+         ]]>
+     </insert>
+     <update id="updateCenterInfoManage" >
+       UPDATE  TB_CENTERINFO SET CENTER_NM = #{centerNm} ,
+                                CENTER_ZIPCODE = #{centerZipCode,jdbcType=VARCHAR} ,
+                                CENTER_ADDR1 = #{centerAddr1} ,
+                                <!-- CENTER_ADDR2 = #{centerAddr2} , -->
+                                CENTER_TEL = #{centerTel,jdbcType=VARCHAR} ,
+                                CENTER_FAX = #{centerFax,jdbcType=VARCHAR} ,
+                                CENTER_UPDATE_USER_ID =#{centerUserId,jdbcType=VARCHAR} ,
+                                CENTER_UPDATE_DATE = SYSDATE ,
+                                CENTER_URL = #{centerUrl ,jdbcType=VARCHAR} ,
+                                CENTER_USE_YN = #{centerUseYn,jdbcType=VARCHAR} ,
+                                REST_INFO = #{restInfo,jdbcType=VARCHAR} ,
+                                MEETINGROOM_INFO = #{meetingroomInfo,jdbcType=VARCHAR} ,                                
+                                CENTER_INFO = #{centerInfo,jdbcType=CLOB}   
+                                <if test="centerImg != null ">                                    
+                               , CENTER_IMG = #{centerImg,jdbcType=VARCHAR}
+                               </if>
+                                <if test="centerSeatImg !=  null ">                     
+                               , CENTER_SEAT_IMG = #{centerSeatImg,jdbcType=VARCHAR}
+                               </if>                               
+                               , ADMIN_APPROVAL_YN  = #{adminApprovalYn, jdbcType=VARCHAR}
+      WHERE CENTER_ID = #{centerId}           
+     </update>
+     
+     <delete id="deleteCenterInfoManage">
+       DELETE FROM TB_CENTERINFO
+       WHERE CENTER_ID = #{centerId}
+     </delete>
+</mapper>

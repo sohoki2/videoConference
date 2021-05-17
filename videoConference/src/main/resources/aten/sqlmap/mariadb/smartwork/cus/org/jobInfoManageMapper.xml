@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.cus.org.mapper.jobInfoManageMapper">
+
+    <select id="selectJobInfoCombo"  resultType="jobInfo">
+      SELECT EMPJIKW, EMPJIKWCODE
+      FROM tb_jobinfo 
+      WHERE 1=1
+      ORDER BY cast (SORT_ORDE  as int) ASC
+    </select>
+    
+    
+    <select id="selectJobInfoComboSearch"  resultType="jobInfo">
+      SELECT EMPJIKW, EMPJIKWCODE
+      FROM tb_jobinfo 
+      WHERE 1=1 AND  EMPJIKWCODE LIKE CONCAT('%',#{searchKeyword},'%')
+      ORDER BY SORT_ORDE ASC 
+    </select>
+    <insert id="insertJobInfo">
+         INSERT INTO tb_jobinfo (EMPJIKW, EMPJIKWCODE, SORT_ORDE)
+		 VALUES(#{empjikw},#{empjikwcode}, #{sortOrde})
+    </insert>
+    <delete id="deleteJobInfo">
+         DELETE FROM tb_jobinfo
+    </delete>
+    
+</mapper>

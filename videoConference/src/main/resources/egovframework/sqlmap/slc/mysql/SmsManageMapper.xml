@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.eai.sts.mail.mapper.SmsManageMapper">
+    <insert id="SmsInsertInfo">
+        <selectKey resultType="String" keyProperty="campaignId" order="BEFORE">
+		                       SELECT (IFNULL(MAX(CAMPAIGN_ID),0 ) +1) 
+		                       FROM sms_if
+		                       WHERE CLIENT = 201 and MEMBER_SEQ = 2 
+	    </selectKey>
+		             
+        INSERT INTO SMS_IF(CLIENT,  CAMPAIGN_ID,  MEMBER_SEQ, MEMBER_NAME,  COUPON_NO,  MSGID,
+		                   MSG,  URLCALL, DESTEL1, DESTEL2, DESTEL3,
+		                   SRCTEL1, SRCTEL2, SRCTEL3, RESERVETIME, SMS_JDT )
+		VALUES (201, #{campaignId},  '2',  #{memberName},
+		        '', '', #{msg} , '', #{destel1}, #{destel2},  #{destel3}, 
+		        #{srctel1}, #{srctel2},  #{srctel3}, NOW(), NOW()  
+		        )
+    </insert>
+</mapper>

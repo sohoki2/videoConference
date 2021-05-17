@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="btn_focusroom_popup_increase" transform="translate(-379 -457)">
+    <rect id="area" width="24" height="24" transform="translate(379 457)" fill="#ff3ebf" opacity="0"/>
+    <g id="ic" transform="translate(379 457)">
+      <rect id="area-2" data-name="area" width="24" height="24" rx="12" fill="#71d1d1"/>
+      <rect id="area_path" width="12.923" height="12.923" transform="translate(5.538 5.538)" fill="#ff3ebf" opacity="0"/>
+      <path id="패스_20796" data-name="패스 20796" d="M9021,12118.383h9.229l-4.614,5.537Zm0-1.848,4.615-5.539,4.614,5.539Z" transform="translate(-9013.614 -12105.458)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.cus.com.mapper.UserInfoManageMapper">
+
+    <select id="selectUserInfoManageListByPagination"  resultType="lmap">
+		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+	        TB.* FROM (
+					    SELECT b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
+							   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
+							   DATE_FORMAT(b.USER_UPDATE,'%Y-%m-%d %H:%i:%s') USER_UPDATE, 
+							   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME, b.AUTHOR_CODE	        
+					    FROM  tb_companyinfo a, tb_userinfo b, lettccmmndetailcode c
+					    WHERE a.COM_CODE = b.COM_CODE 
+					          AND  b.USER_STATE = c.CODE     
+						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+								  AND (b.USER_NO LIKE CONCAT('%',#{params.searchKeyword},'%')  OR b.USER_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  )
+							  </if>		
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.comCode)">
+								  AND a.COM_CODE = #{params.comCode}
+							  </if>
+					    ORDER BY b.USER_UPDATE  DESC
+	        ) TB  
+	         ORDER BY TB.USER_UPDATE  DESC
+	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+    </select>
+    <select id="selectUserInfoManageCombo" resultType="lmap">
+	       SELECT a.EMP_NO , a.EMP_NAME 
+	       FROM tb_userinfo a
+	       WHERE a.COM_CODE =  #{comCode}
+	       ORDER BY a.EMP_NO ASC
+    </select>
+    <select id="selectUserInfoManageDetail"  resultType="lmap">
+           SELECT USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
+			      USER_TEL, USER_STATE, USER_CELLPHONE, 
+			      USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, AUTHOR_CODE
+		    FROM tb_userinfo a
+		    WHERE USER_NO = #{userNo}
+    </select>
+    <insert id="insertUserInfoManage" >
+         INSERT INTO tb_userinfo(USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
+							     USER_TEL, USER_STATE, USER_CELLPHONE, 
+							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, AUTHOR_CODE)
+         VALUES (#{userId ,jdbcType=VARCHAR}, #{userName}, #{userNo}, #{comCode}, #{userRank,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR},  #{userEmail,jdbcType=VARCHAR},  
+                 #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},
+                 NOW(), #{updateId,jdbcType=VARCHAR},  NOW(), #{updateId,jdbcType=VARCHAR}, #{authorCode,jdbcType=VARCHAR})
+                
+    </insert>
+    <update id="updateUserInfoManage" >
+        UPDATE  tb_userinfo SET USER_ID = #{userId,jdbcType=VARCHAR} 
+                                , USER_NAME = #{userName} 
+                                , COM_CODE = #{comCode}
+                                , USER_RANK = #{userRank,jdbcType=VARCHAR}
+                                , USER_POSITION = #{userPosition,jdbcType=VARCHAR} 
+                                , USER_EMAIL = #{userEmail,jdbcType=VARCHAR} 
+                                , USER_STATE = #{userState,jdbcType=VARCHAR} 
+                                , USER_CELLPHONE = #{userCellphone,jdbcType=VARCHAR} 
+                                , USER_UPDATE = NOW()
+                                , USER_UPDATEID = #{updateId,jdbcType=VARCHAR}
+                                , AUTHOR_CODE = #{authorCode,jdbcType=VARCHAR}
+	    WHERE USER_NO = #{userNo}           
+    </update> 
+</mapper>

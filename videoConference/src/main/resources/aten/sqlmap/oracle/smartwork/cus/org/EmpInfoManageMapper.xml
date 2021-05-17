@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.EmpInfoManageMapper">
+
+
+    <select id="selectEmpInfoList" resultType="EmpInfoVO">
+        SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TA.* FROM ( 
+    	 SELECT	rownum RNUM, TB.NO_EMP, TB.NM_KORNAME, TB.NM_ENGNAME, TB.NM_EMAIL 
+				 , FN_ORGNM(TB.CD_DEPT) AS nmDept
+				 , FN_ORGNM(TB.CD_TEAM) AS ceTeamNm
+				 , TB.CD_DEPT
+		  FROM		(SELECT a.NO_EMP, a.NM_KORNAME, a.NM_ENGNAME, a.CD_DEPT, a.NM_EMAIL, a.CD_TEAM
+		          	 FROM TB_EMP_INFO a, TB_ORGINFO b
+					 WHERE a.CD_DEPT = b.CD_DEPT           
+	                 <if test="searchKeyword != ''">
+						  <choose>
+						    <when test="searchCondition == 'NM_KORNAME'">
+							    <![CDATA[
+							      AND a.NM_KORNAME LIKE '%'|| #{searchKeyword} || '%'
+							     ]]> 
+							</when>							
+							<otherwise>
+							      AND b.NM_DEPT LIKE '%'|| #{searchKeyword} || '%' 
+							</otherwise>
+					      </choose>
+					  </if>	
+					  <if test="searchJobpst != ''">
+					      and (a.CD_JOBDUTY = #{searchJobpst} or a.CD_JOBPST = #{searchJobpst})
+					  </if>
+					 <if test="searchAvayaCheck != ''">
+					      AND a.AVAYA_USERID is null  and a.NM_EMAIL is not null
+					 </if> 	             
+               )TB
+		)TA
+		ORDER BY TA.NM_KORNAME  ASC   
+    
+    </select>
+    
+    <select id="selectMeetinngUserList" resultType="EmpInfoVO">
+         SELECT NO_EMP, NM_KORNAME, FN_ORGNM(CD_DEPT) NM_DEPT, CD_DEPT , NM_EMAIL
+         FROM TB_EMP_INFO 
+         WHERE 1=1  AND NO_EMP IN
+               <foreach collection="list" item="item" open="(" close=")" separator=",">
+                  #{item}
+               </foreach>
+    </select>
+    <select id="selectEmpInfoDetail" resultType="EmpInfoVO">
+	      SELECT	a.NO_EMP, a.NM_KORNAME , a.NM_ENGNAME
+	       			, a.NM_EMAIL , fn_OrgNm(a.CD_DEPT) as orgName
+	       			, b.CD_DEPT as orgId
+	   	  FROM 		TB_EMP_INFO a, TB_ORGINFO b 
+	   	WHERE 		a.CD_DEPT = b.CD_DEPT 
+	   		AND  	A.NO_EMP = #{noEmp}
+    </select>
+    <insert id="insertEaiInfo">
+		INSERT INTO TB_EMP_INFO (NO_EMP, NM_KORNAME, NM_ENGNAME, CD_LOCATE, CD_DEPT, CD_TEAM, CD_JOBKIND, CD_JOBPST, CD_JOBGRD, CD_JOBDUTY, CD_HOBONG, DT_PROMOTION,
+		        DT_LVLGRD, DT_BIRTHDAY, CD_APPOINT, DT_RESTSTR, DT_RESTEND, NM_EMAIL, COM_CD, FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO,
+		        FINL_CHG_DTTM, DT_COENT, CD_LVLGRD)
+		SELECT NO_EMP, NM_KORNAME, NM_ENGNAME, CD_LOCATE, CD_DEPT, CD_TEAM, CD_JOBKIND, CD_JOBPST, CD_JOBGRD, CD_JOBDUTY, CD_HOBONG, DT_PROMOTION,
+		        DT_LVLGRD, DT_BIRTHDAY, CD_APPOINT, DT_RESTSTR, DT_RESTEND, NM_EMAIL, COM_CD, FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO,
+		        FINL_CHG_DTTM, DT_COENT, CD_LVLGRD
+		FROM    TB_EMP_INFO_TMP a 
+		WHERE a.NO_EMP not IN (SELECT b.NO_EMP FROM TB_EMP_INFO b)
+    </insert>
+    
+    
+    <update id="updateEaiInfo">
+	    UPDATE TB_EMP_INFO t1  SET 
+	       (NM_KORNAME, NM_ENGNAME, CD_LOCATE, CD_DEPT, CD_TEAM, CD_JOBKIND, CD_JOBPST, CD_JOBGRD, CD_JOBDUTY, CD_HOBONG, DT_PROMOTION,
+	        DT_LVLGRD, DT_BIRTHDAY, CD_APPOINT, DT_RESTSTR, DT_RESTEND, NM_EMAIL, COM_CD, FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO,
+	        FINL_CHG_DTTM, DT_COENT, CD_LVLGRD) = 
+		(SELECT t2.NM_KORNAME, t2.NM_ENGNAME, t2.CD_LOCATE, t2.CD_DEPT, t2.CD_TEAM, t2.CD_JOBKIND, t2.CD_JOBPST, t2.CD_JOBGRD, t2.CD_JOBDUTY, 
+		        t2.CD_HOBONG, t2.DT_PROMOTION, t2.DT_LVLGRD, t2.DT_BIRTHDAY, t2.CD_APPOINT, t2.DT_RESTSTR, t2.DT_RESTEND, 
+		        t2.NM_EMAIL, t2.COM_CD, t2.FRST_REG_EMP_NO, t2.FRST_REG_DTTM, t2.FINL_CHG_EMP_NO,
+		        t2.FINL_CHG_DTTM, t2.DT_COENT, t2.CD_LVLGRD
+		FROM  TB_EMP_INFO_TMP t2  WHERE t1.NO_EMP = t2.NO_EMP)
+		WHERE  EXISTS ( SELECT t2.NM_KORNAME, t2.NM_ENGNAME, t2.CD_LOCATE, t2.CD_DEPT, t2.CD_TEAM, t2.CD_JOBKIND, t2.CD_JOBPST, t2.CD_JOBGRD, t2.CD_JOBDUTY, 
+		        t2.CD_HOBONG, t2.DT_PROMOTION, t2.DT_LVLGRD, t2.DT_BIRTHDAY, t2.CD_APPOINT, t2.DT_RESTSTR, t2.DT_RESTEND, 
+		        t2.NM_EMAIL, t2.COM_CD, t2.FRST_REG_EMP_NO, t2.FRST_REG_DTTM, t2.FINL_CHG_EMP_NO,
+		        t2.FINL_CHG_DTTM, t2.DT_COENT, t2.CD_LVLGRD
+		FROM  TB_EMP_INFO_TMP t2  WHERE t1.NO_EMP = t2.NO_EMP )
+    </update>
+    
+    
+    <update id="updateAvayaUserUpdate">
+         update TB_EMP_INFO set AVAYA_USERID =#{avayaUserid}
+         where NO_EMP = #{noEmp}
+    </update>
+    
+    <delete id="deleteEaiEmpTmp">
+       delete from TB_EMP_INFO_TMP
+    </delete>
+    
+    
+</mapper>

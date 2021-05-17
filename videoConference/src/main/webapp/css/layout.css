@@ -1,0 +1,117 @@
+.clearfix { clear: both; }
+html,
+body {
+    margin:0;
+    padding:0;
+    min-height:100%;
+}
+#wrapper{
+    position:relative;
+    min-height:100%;
+    min-width: 1240px;
+    margin: auto;
+}
+
+
+/*width layout*/
+.container{
+	padding-top: 30px
+}
+.content {
+	width: 90%;
+	margin: 0 auto;
+}
+
+/*layout*/
+.margin-top5 { margin-top: 5px; }
+.margin-top10 { margin-top: 10px; }
+.margin-top20 { margin-top: 20px; }
+.margin-top30 { margin-top: 20px; }
+.margin-left10 { margin-left: 10px }
+.margin-left20 { margin-left: 20px }
+.margin-botttom20 { margin-bottom: 20px; }
+.padding-left20{ padding-left: 20px; }
+.padding30 {padding: 0 30px;}
+.text-center { text-align: center; }
+.redText { color: #fa4b4b; }
+.height65 {height: 65px}
+.font-weight { font-weight: 500 !important; }
+.text-left {text-align: left;}
+.text-right{ text-align: right; }
+.float-left {float: left;}
+.float-right {float: right;}
+.border-bottom{
+	border-bottom: 1px solid #d4d4d4;
+}
+
+
+
+/*header*/
+.header{
+	border-bottom: 1px solid #4a4a4a;
+}
+.logoB {float: left;width: 10%;padding-top: 10px;}
+.nav {float: left;width: 70%;text-align: center;height: 71px;}
+.nav ul{ display: inline-block; }
+.nav li {float: left; }
+.nav li a {font-size: 18px;color: #343434;padding: 25px 40px;display: inline-block;}
+.dropIcon { width: 9px; height: 6px; display: inline-block;margin-left: 10px;background: url("../img/select_icon.png")no-repeat; vertical-align:middle;}
+.nav li a:hover{
+color:#dc2c33;
+}
+.nav li ul{
+background:#fff;
+display:none; /* 평상시에는 드랍메뉴가 안보이게 하기 */
+position:absolute;
+width:150px;
+z-index:200;
+-moz-box-shadow: 0px 3px 6px 0px #cccccc;
+-webkit-box-shadow: 0px 3px 6px 0px #cccccc;
+box-shadow: 0px 3px 6px 0px #cccccc;
+}
+.nav li:hover ul{
+display:block; /* 마우스 커서 올리면 드랍메뉴 보이게 하기 */
+}
+.nav li li {
+display:block;
+float:none;
+margin:0px;
+padding:0px;
+padding: 3px 15px 0;
+}
+.nav li ul a{
+display:block;
+padding:8px 15px 8px 15px;
+border-bottom: 1px solid #ccc;
+color: #4b4b4b;
+font-size: 14px
+}
+.nav li ul li:last-child a{
+	border-bottom: 0;
+	padding-bottom: 15px;
+}
+
+.loginInfo{
+	text-align: right;
+    float: left;
+    width: 20%;
+    padding-top: 20px;
+}
+.header_log { 
+	background: #e1e2e3 
+}
+.loginBar { 
+	color: #000; 
+	display: inline-block; 
+	padding: 8px 4px; 
+}
+.header_logout{
+	padding: 9px 25px 6px 16px;
+    background: url(../img/logout.png) center right no-repeat;
+    float: right;
+    color: #666666;
+    text-align: left;
+}
+.header_logout:hover{
+	font-weight: bold;
+}		

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.ResInfoManageMapper">
+	<select id="selectResManageListByPagination" resultType="ResInfoVO">
+		SELECT TA.*
+		  FROM (SELECT rownum RNUM , SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
+		               TB.*
+		          FROM (SELECT DISTINCT a.RES_SEQ , a.SWC_SEQ , a.CENTER_ID, a.RES_GUBUN , FN_DETAILCODENM(a.RES_GUBUN) resGubunTxt,
+		                       a.USER_ID, a.DEPT_ID, a.RANK_ID,
+		                       TO_CHAR (TO_DATE(a.RES_STARTDAY, 'yyyy-MM-dd'), 'YYYY-MM-DD') AS resStartday ,
+		                       TO_CHAR (TO_DATE(a.RES_ENDDAY, 'yyyy-MM-dd'), 'YYYY-MM-DD') AS resEndday ,
+		                       FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , FN_TIMESPLIT(fn_upsTimedown(a.RES_ENDTIME)) resEndtime,
+		                       a.REG_DATE, 
+		                       FN_DETAILCODENM(a.RESERV_PROCESS_GUBUN) AS reservProcessGubunTxt ,
+		                       a.RESERVATION_REASON, a.RESERV_PROCESS_GUBUN , a.CANCEL_REASON ,
+		                       FN_DETAILCODENM(a.CANCEL_CODE) cancelCodeTxt ,
+		                       case a.PROXY_YN WHEN 'P' THEN '승인 요청' 
+		                            ELSE '본인'
+		                       END proxyYnTxt, a.PROXY_YN, 
+		                       a.PROXY_USER_ID , TO_CHAR (a.UPDATE_DATE, 'yyyy-MM-dd') AS updateDate ,
+		                       a.UPDATE_ID , to_char(a.RES_REPLY_DATE, 'yyyy-MM-dd') as resReplyDate ,
+		                       a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE ,
+		                       a.USE_YN , FN_ORGNM(b.CD_DEPT) nmDept, c.SEAT_NAME, d.CENTER_NM, b.NM_KORNAME,
+		                       b.CD_DEPT, b.NM_EMAIL, 
+		                       a.RES_TITLE, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST,
+		                       FN_ATTENTLIST(a.RES_ATTENDLIST) attendListTxt    ,
+		                       case when length(a.RES_PASSWORD) > 0 then  '비공개' else '공개' end as resPassTxt,
+		                       CONFERENCE_ID, CON_NUMBER, CON_PIN, 
+                               CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI
+		                  FROM TB_SWCRESERVATION a, TB_EMP_INFO b, TB_SWC_ROOM c, TB_CENTERINFO d
+		                 WHERE a.USER_ID = b.NO_EMP
+		                       AND a.SWC_SEQ = c.SWC_SEQ
+		                       AND a.CENTER_ID = d.CENTER_ID
+                               <if test="searchResSeq != ''">
+								AND a.res_seq = #{searchResSeq}
+							   </if>
+					           <if test="searchKeyword != ''">
+					              <choose>
+					                <when test="searchCondition == 'EMP_NM'">
+					                   <![CDATA[    
+										AND  b.EMP_NM LIKE '%'|| #{searchKeyword} || '%' 
+										]]>
+					                </when>
+					                <otherwise>
+										<![CDATA[    
+									      AND c.SEAT_NAME LIKE '%'||  #{searchKeyword} || '%'
+									     ]]>
+					                </otherwise>
+					               </choose>
+								</if>
+								<if test="searchUserId != ''">
+								 	AND (a.PROXY_USER_ID = #{searchUserId} or a.USER_ID  = #{searchUserId})
+								</if>
+								<if test="searchCenterId != ''">
+								 	AND a.CENTER_ID = #{searchCenterId}
+								 	<if test="searchSeatSeq != ''">
+								 	   AND a.SWC_SEQ = #{searchSeatSeq}
+								 	</if>
+								</if>
+								<if test="searchProxyYn != ''">
+									AND a.PROXY_YN = #{searchProxyYn}
+								</if>
+								<if test="searchOrgId != ''">
+									AND b.CD_DEPT = #{searchOrgId}
+								</if>
+								<if test="searchReservProcessGubun != ''">
+									AND a.RESERV_PROCESS_GUBUN = #{searchReservProcessGubun}
+								</if>
+								<if test="searchNotProcessGubun != ''">
+								    AND a.RESERV_PROCESS_GUBUN NOT IN ('PROCESS_GUBUN_5', 'PROCESS_GUBUN_6', 'PROCESS_GUBUN_3', 'PROCESS_GUBUN_7') 
+								</if>
+								<choose>
+									<when test="searchStartDay != '' and searchEndDay != ''">						
+									 <choose>
+										 <when test="searchDayGubun == 'REG_DATE'">
+										  <![CDATA[    			
+											AND A.REG_DATE >= TRUNC(TO_DATE(#{searchStartDay}, 'YYYYMMDD'))
+                  							AND A.REG_DATE < TRUNC(TO_DATE(#{searchEndDay}, 'YYYYMMDD') + 1)
+                  						  ]]>
+										  </when>
+										  <otherwise>					      
+											  <![CDATA[    			
+											   AND a.RES_STARTDAY BETWEEN #{searchStartDay} and #{searchEndDay}
+                  								]]>
+										    </otherwise>
+										</choose>
+									</when>
+								</choose>
+				 ORDER BY 	a.REG_DATE desc 	
+		      ) TB 
+	    ) TA 
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
+    </select>
+    <select id="selectCalenderInfo" resultType="ResInfoVO">
+	    SELECT YEAR || MONTH as calenderTitle, YEAR || '-'|| MONTH || ' 월' as calenderTitleTxt
+	    FROM TB_CALENDER
+	    WHERE DATES BETWEEN TO_CHAR(add_months(SYSDATE,-3), 'YYYYMMDD') AND  TO_CHAR( add_months(SYSDATE, 24), 'YYYYMMDD')  
+	    GROUP BY YEAR, MONTH
+	    ORDER BY YEAR ASC , month ASC 
+    </select>
+    <select id="selectCalenderDetailInfo"  resultType="ResInfoVO">
+        SELECT DATES, CASE WHEN DATES > TO_CHAR(SYSDATE, 'yyyyMMdd') THEN 0
+		                 ELSE 1
+		              END AS passDate , TO_CHAR( TO_DATE( DATES, 'yyyyMMdd'), 'd') weekTxt,
+		       COUNT(b.RES_STARTDAY) AS resCnt
+		FROM TB_CALENDER a,  (SELECT RES_STARTDAY  
+		                      FROM TB_SWCRESERVATION 
+                              WHERE substr(RES_STARTDAY, 0, 6) = #{searchCalenderTitle}
+                                    <if test="searchCenterId != ''">
+		                               AND CENTER_ID = #{searchCenterId}
+		                             </if> 
+		                             <if test="searchRoomType != ''">
+		                               AND RES_GUBUN = #{searchRoomType}
+		                             </if>
+                              AND RESERV_PROCESS_GUBUN NOT IN ('PROCESS_GUBUN_5', 'PROCESS_GUBUN_6', 'PROCESS_GUBUN_3', 'PROCESS_GUBUN_7')
+                              ) b
+		WHERE substr(dates, 0, 6) = #{searchCalenderTitle}
+		      AND  b.RES_STARTDAY(+) = a.DATES
+		group BY DATES 
+		ORDER BY a.DATES ASC  
+    </select>
+    <select id="selectIndexList" resultType="ResInfoVO">
+		    SELECT b.SWC_USEYN, a.RES_SEQ , a.TIME_SEQ, b.SEAT_NAME , a.SWC_TIME, 
+		       c.RES_TITLE, c.RES_STARTDAY, c.RES_ENDTIME, a.SWC_SEQ, a.CENTER_ID,
+		       CASE WHEN (a.RES_SEQ > 0) THEN 
+		          FN_ATTENTLIST(c.RES_ATTENDLIST)
+		       ELSE 
+		          ''
+		       END  attendListTxt
+			FROM TB_SWCTIME a, TB_SWC_ROOM b, TB_SWCRESERVATION c
+			WHERE a.SWC_SEQ = b.SWC_SEQ
+			      AND a.RES_SEQ = c.RES_SEQ(+)
+			      AND a.SWC_TIME  BETWEEN TO_CHAR(SYSDATE, 'HH24MI')  AND  TO_CHAR(SYSDATE + 30/(24*60), 'HH24MI') 
+			      AND a.SWC_RESDAY = TO_CHAR(SYSDATE, 'yyyyMMdd')
+			      AND b.SWC_USEYN ='Y'
+			      and b.SEAT_VIEW = 'Y'
+			      order by b.CENTER_ID asc, b.SEAT_ORDER asc 
+    </select>
+    <select id="selectResManageView" resultType="ResInfoVO">
+     <![CDATA[
+       SELECT a.RES_SEQ, a.SWC_SEQ, a.CENTER_ID, FN_DETAILCODENM(a.RES_GUBUN) resGubunTxt,   a.RES_GUBUN, a.USER_ID, a.DEPT_ID, a.RANK_ID, 
+			  TO_CHAR (TO_DATE(a.RES_STARTDAY, 'yyyy-MM-dd'), 'YYYY-MM-DD') AS resStartday,
+			  a.RES_ENDDAY, FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , FN_TIMESPLIT(fn_upsTimedown(a.RES_ENDTIME)) resEndtime, 
+			  a.REG_DATE, a.RESERV_PROCESS_GUBUN, FN_DETAILCODENM(a.RESERV_PROCESS_GUBUN) AS reservProcessGubunTxt ,
+			  a.RESERVATION_REASON, a.CANCEL_REASON, FN_DETAILCODENM(a.CANCEL_CODE) cancelCodeTxt, a.CANCEL_CODE, 
+			  a.PROXY_YN, a.PROXY_USER_ID, a.UPDATE_DATE,
+			  a.UPDATE_ID, a.RES_REPLY_DATE, a.ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE, 
+			  FN_DETAILCODENM(a.ADMIN_CANCELCODE) adminCancelcodeTxt, a.USE_YN,
+			  b.CD_DEPT, b.NM_EMAIL, b.NM_KORNAME, d.SEAT_NAME, c.NM_DEPT,
+			  b.AVAYA_USERID, 
+			  a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST, a.RES_TITLE,
+			  a.MEETINGLOG, a.RES_FILE1, a.RES_FILE2,
+		      FN_ATTENTLIST(a.RES_ATTENDLIST) attendListTxt    ,
+		      case when length(a.RES_PASSWORD) > 0 then  '비공개' else '공개' end as resPassTxt,
+		      case a.PROXY_YN WHEN 'P' THEN '승인 요청'  ELSE '본인'  END proxyYnTxt,
+		      a.CONFERENCE_ID, a.CON_NUMBER, a.CON_PIN, 
+              a.CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI,
+              TO_CHAR(TO_DATE(a.RES_STARTDAY||a.RES_STARTTIME||'00', 'yyyy-MM-dd HH24:mi:ss'), 'yyyy-MM-dd HH24:mi:ss') resDayInfo,
+              TO_CHAR(TO_DATE(a.RES_STARTDAY||fn_upsTimedown(a.RES_ENDTIME)||'00', 'yyyy-MM-dd HH24:mi:ss'), 'yyyy-MM-dd HH24:mi:ss') resDayEndInfo,
+              fn_Duration((fn_upsTimedown(a.RES_ENDTIME) - a.RES_STARTTIME))  resDurationT, 
+              fn_meetingNumber(a.MEETING_SEQ) as meetingNumber,
+              d.AVAYA_CONFI_ID, d.AVAYA_USERID, d.TERMINAL_ID, d.END_NAME, d.TERMINAL_NUMBER,
+              d.TERMINAL_TEL, d.USER_FIRST_NM, d.USER_LAST_NM, d.USER_EMAIL
+		FROM TB_SWCRESERVATION a, TB_EMP_INFO b, TB_SWC_ROOM d, TB_ORGINFO c
+		WHERE a.USER_ID = b.NO_EMP AND B.CD_DEPT = C.CD_DEPT  AND a.SWC_SEQ = d.SWC_SEQ
+		    and a.RES_SEQ = #{resSeq}   
+	 ]]>
+    </select>
+    
+    <select id="selectCancelReason" resultType="ResInfoVO">
+			SELECT	a.RES_SEQ
+						, a.CANCEL_REASON
+				        , FN_DETAILCODENM(RESERVATION_REASON) AS reservationReason 
+				        , a.RESERVATION_REASON_DETAIL
+				        , CASE a.COWORKER_YN WHEN '1' THEN CASE a.PROXY_YN WHEN 'P' THEN (SELECT NM_KORNAME FROM TB_EMP_INFO WHERE EMP_NO =a.proxy_user_id) 
+													 								   ELSE (SELECT NM_KORNAME FROM TB_EMP_INFO WHERE  EMP_NO = a.USER_ID) 
+													 								   END 
+						  ELSE a.OUT_USER_NM
+						  end userName 
+              			, a.MOB_TEL_NO
+			FROM		TB_SWCRESERVATION a
+			WHERE		res_seq = #{resSeq}
+    </select>
+    <select id="selectResMacSeq" resultType="java.lang.Integer">
+      select max(RES_SEQ)
+      from TB_SWCRESERVATION
+    </select>
+   <select id="selectReport01" resultType="ResInfoVO">   
+    SELECT XX.year, XX.month, (XX.cnt*XX.roomRealCnt) AS totalSeat, XX.resCount, XX.roomInCount,
+	       ROUND(CASE   XX.resCount WHEN 0 THEN 0 
+	          ELSE ((TO_NUMBER(XX.resCount)/(TO_NUMBER(XX.cnt)* TO_NUMBER(XX.roomRealCnt))) * 100)
+	       END, 2) AS per, 
+	       XX.resCancel , 
+	       ROUND(CASE XX.resCancel  WHEN 0 THEN 0
+	            ELSE (  ( TO_NUMBER(XX.resCancel) / TO_NUMBER(XX.regCount) ) * 100 ) 
+	       END, 2) AS per1,
+	       ((XX.cnt*XX.roomRealCnt) - XX.resCount) AS remindSeat
+	FROM (       
+	SELECT X.year, X.month, X.roomInCount, X.resCount, X.resCancel, X.regCount,
+	       (SELECT COUNT(*) FROM TB_SWC_ROOM WHERE Use_YN = 'Y' and ROOM_TYPE in ('swc_gubun_1', 'swc_gubun_3')) AS roomRealCnt,
+	       (SELECT COUNT(*) FROM TB_CALENDER f WHERE f.YEAR = X.year AND f.MONTH = X.month AND f.DATES between #{searchStartDay} and #{searchEndDay} ) AS cnt 
+	FROM (
+	  SELECT a.year, a.month,
+	        (SELECT NVL(COUNT(d.ATT_SEQ),0)  FROM TB_ATTENDANCE d , TB_SWC_ROOM c, TB_SWCRESERVATION b
+	              WHERE a.year = SUBSTR(d.RES_DAY,0,4) AND a.MONTH = SUBSTR(d.RES_DAY,5,2) AND d.ROOM_INTIME IS NOT NULL 
+	                  AND c.SWC_SEQ = b.SWC_SEQ and c.ROOM_TYPE in ('swc_gubun_1', 'swc_gubun_3')
+	                  and d.RES_SEQ = b.RES_SEQ                               
+	        ) AS roomInCount,
+	        ( SELECT NVL(COUNT(XX.RES_SEQ),0) FROM 
+	            (
+	                SELECT E.RES_SEQ, e.swc_resday FROM TB_SWCTIME e , TB_SWC_ROOM c
+	                WHERE e.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE in ('swc_gubun_1', 'swc_gubun_3') AND e.RES_SEQ ! =0
+	                GROUP BY   E.RES_SEQ, E.swc_resday
+	            ) XX                 	
+	           WHERE a.year = SUBSTR(XX.swc_resday,0,4) AND a.MONTH = SUBSTR(XX.swc_resday,5,2)  
+	        )AS resCount,
+	        ( SELECT NVL(COUNT(b.RES_SEQ),0) FROM  TB_SWCRESERVATION b , TB_SWC_ROOM c
+	              where  a.year = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),0,4) AND a.MONTH = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),5,2)
+	                     AND b.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE in ('swc_gubun_1', 'swc_gubun_3') 
+	                     AND (b.RESERV_PROCESS_GUBUN = 'resProcess06' or b.RESERV_PROCESS_GUBUN = 'resProcess05')                                 
+	        ) AS resCancel,
+	       (SELECT NVL(COUNT(RES_SEQ),0) 
+	          FROM TB_SWCRESERVATION b , TB_SWC_ROOM c
+	          WHERE b.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE in ('swc_gubun_1', 'swc_gubun_3')
+	                AND a.year = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),0,4) AND a.MONTH = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),5,2)         
+	        ) AS regCount       
+	  FROM  TB_CALENDER a 
+	  WHERE a.DATES between #{searchStartDay} and #{searchEndDay}
+	  GROUP BY a.year, a.month
+	  ORDER BY a.month ASC 
+	)  X
+	) XX  	
+   </select>
+   <select id="selectReport02" resultType="ResInfoVO">
+   	
+    SELECT XX.year, XX.month, (XX.cnt*XX.roomRealCnt) AS totalSeat, XX.resCount, XX.roomInCount,
+	       ROUND(CASE   XX.resCount WHEN 0 THEN 0 
+	          ELSE ((TO_NUMBER(XX.resCount)/(TO_NUMBER(XX.cnt)* TO_NUMBER(XX.roomRealCnt))) * 100)
+	       END, 2) AS per, 
+	       XX.resCancel , 
+	       ROUND(CASE XX.resCancel  WHEN 0 THEN 0
+	            ELSE (  ( TO_NUMBER(XX.resCancel) / TO_NUMBER(XX.regCount) ) * 100 ) 
+	       END, 2) AS per1,
+	       ((XX.cnt*XX.roomRealCnt) - XX.resCount) AS remindSeat
+	FROM (       
+	SELECT X.year, X.month, X.roomInCount, X.resCount, X.resCancel, X.regCount,
+	       (SELECT COUNT(*) FROM TB_SWC_ROOM WHERE Use_YN = 'Y' and ROOM_TYPE = 'swc_gubun_3') AS roomRealCnt,
+	       (SELECT COUNT(*) FROM TB_CALENDER f WHERE f.YEAR = X.year AND f.MONTH = X.month AND f.DATES between #{searchStartDay} and #{searchEndDay} ) AS cnt
+	FROM (
+	  SELECT a.year, a.month,
+	        (SELECT NVL(COUNT(d.ATT_SEQ),0)  FROM TB_ATTENDANCE d , TB_SWC_ROOM c, TB_SWCRESERVATION b
+	              WHERE a.year = SUBSTR(d.RES_DAY,0,4) AND a.MONTH = SUBSTR(d.RES_DAY,5,2) AND d.ROOM_INTIME IS NOT NULL 
+	                  AND c.SWC_SEQ = b.SWC_SEQ and c.ROOM_TYPE = 'swc_gubun_3'
+	                  and d.RES_SEQ = b.RES_SEQ                               
+	        ) AS roomInCount,
+	        ( SELECT NVL(COUNT(XX.RES_SEQ),0) FROM 
+	            (
+	                SELECT E.RES_SEQ, e.swc_resday FROM TB_SWCTIME e , TB_SWC_ROOM c
+	                WHERE e.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE = 'swc_gubun_3' AND e.RES_SEQ ! =0
+	                GROUP BY   E.RES_SEQ, E.swc_resday
+	            ) XX                 	
+	           WHERE a.year = SUBSTR(XX.swc_resday,0,4) AND a.MONTH = SUBSTR(XX.swc_resday,5,2)  
+	        )AS resCount,
+	        ( SELECT NVL(COUNT(b.RES_SEQ),0) FROM  TB_SWCRESERVATION b , TB_SWC_ROOM c
+	              where  a.year = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),0,4) AND a.MONTH = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),5,2)
+	                     AND b.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE = 'swc_gubun_3'
+	                     AND (b.RESERV_PROCESS_GUBUN = 'resProcess06' or b.RESERV_PROCESS_GUBUN = 'resProcess05')                                 
+	        ) AS resCancel,
+	       (SELECT NVL(COUNT(RES_SEQ),0) 
+	          FROM TB_SWCRESERVATION b , TB_SWC_ROOM c
+	          WHERE b.SWC_SEQ = c.SWC_SEQ and c.ROOM_TYPE = 'swc_gubun_3'
+	                AND a.year = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),0,4) AND a.MONTH = SUBSTR(to_char(b.REG_DATE,'yyyyMMdd'),5,2)         
+	        ) AS regCount       
+	  FROM  TB_CALENDER a 
+	  WHERE a.DATES between #{searchStartDay} and #{searchEndDay}
+	  GROUP BY a.year, a.month
+	  ORDER BY a.month ASC 
+	)  X
+	) XX  	
+   </select>
+   <select id="selectReport03"  resultType="ResInfoVO">
+	   SELECT c.ORG_NAME, c.ORG_PARENT_ID, 
+	       (SELECT COUNT(a.RES_SEQ) FROM TB_SWC_ROOM b
+	        WHERE a.SWC_SEQ = b.SWC_SEQ AND  b.ROOM_TYPE IN ('swc_gubun_1','swc_gubun_3')
+	        ) AS woorkCnt,
+	        (SELECT COUNT(a.RES_SEQ) FROM TB_SWC_ROOM b 
+	        WHERE a.SWC_SEQ = b.SWC_SEQ AND b.ROOM_TYPE = 'swc_gubun_3'
+	        ) AS meetingCnt
+	FROM TB_SWCRESERVATION a, 
+	     TB_ORGINFO c, TB_EMP_INFO d, TB_SWCTIME e
+	WHERE a.PROXY_USER_ID = d.USER_ID
+	      AND d.USER_ID = c.CP_DEPT
+	      AND A.RES_SEQ = E.RES_SEQ 
+	      AND e.SWC_RESDAY between #{searchStartDay} and #{searchEndDay}
+	      AND a.RESERV_PROCESS_GUBUN IN ('resProcess02','resProcess03')
+	GROUP BY c.ORG_NAME, c.ORG_PARENT_ID, a.SWC_SEQ, c.ORG_ODR, c.CP_DEPT  
+	ORDER BY ORG_ODR asc, ORG_PARENT_ID asc, CP_DEPT asc, ORG_NAME asc 
+   </select>
+   <select id="selectReport04"  resultType="ResInfoVO">
+	   SELECT f.GRADE_NAME,
+	       (SELECT COUNT(a.RES_SEQ) FROM TB_SWC_ROOM b
+	        WHERE a.SWC_SEQ = b.SWC_SEQ AND  b.ROOM_TYPE IN ('swc_gubun_1','swc_gubun_3')
+	        ) AS workCnt,
+	        (SELECT COUNT(a.RES_SEQ) FROM TB_SWC_ROOM b 
+	        WHERE a.SWC_SEQ = b.SWC_SEQ AND b.ROOM_TYPE = 'swc_gubun_3'
+	        ) AS meetingCnt
+	FROM TB_SWCRESERVATION a, 
+	     TB_ORGINFO c, TB_EMP_INFO d, TB_SWCTIME e
+	WHERE a.PROXY_USER_ID = d.USER_ID
+	      AND A.RES_SEQ = E.RES_SEQ 
+	      AND e.SWC_RESDAY between #{searchStartDay} and #{searchEndDay}
+	      AND a.RESERV_PROCESS_GUBUN IN ('resProcess02','resProcess03')
+	GROUP BY c.ORG_NAME, c.ORG_PARENT_ID, a.SWC_SEQ, c.ORG_ODR, c.CP_DEPT
+	ORDER BY GRADE_NAME asc
+   </select>
+  <insert id="insertResManage">
+        insert into TB_SWCRESERVATION ( RES_SEQ, SWC_SEQ, CENTER_ID, RES_GUBUN, USER_ID, DEPT_ID, RANK_ID, 
+                                        RES_STARTDAY, RES_ENDDAY, RES_STARTTIME, RES_ENDTIME, REG_DATE, 
+                                        RESERV_PROCESS_GUBUN, RESERVATION_REASON, RES_REMARK, PROXY_YN, PROXY_USER_ID, 
+                                        UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
+                                        CONFERENCE_ID, CON_NUMBER, CON_PIN, 
+                                        CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI
+                                        )
+        values (RES_SEQ.NEXTVAL , #{swcSeq}, #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}, #{deptId, jdbcType=VARCHAR}, #{rankId, jdbcType=VARCHAR}
+			        , #{resStartday, jdbcType=VARCHAR} , #{resEndday, jdbcType=VARCHAR } , #{resStarttime, jdbcType=VARCHAR} , #{resEndtime, jdbcType=VARCHAR}, SYSDATE
+			        , 'PROCESS_GUBUN_1', #{reservationReason, jdbcType=VARCHAR}
+			        , #{resRemark, jdbcType=VARCHAR} , #{proxyYn, jdbcType=VARCHAR}, #{proxyUserId, jdbcType=VARCHAR}
+			        , SYSDATE, #{userId}, 'Y', #{resTitle}, #{resPassword , jdbcType=VARCHAR}, #{meetingSeq, jdbcType=VARCHAR}
+			        , #{resAttendlist, jdbcType=VARCHAR}
+			        , #{conferenceId, jdbcType=VARCHAR} , #{conNumber, jdbcType=VARCHAR} , #{conPin, jdbcType=VARCHAR}
+			        , #{conVirtualPin, jdbcType=VARCHAR} , #{conAllowstream, jdbcType=VARCHAR} , #{conBlackdial, jdbcType=VARCHAR}
+			        , #{conSendnoti, jdbcType=VARCHAR}
+                )
+    </insert>
+    <update id="updateResManageChange">
+        update TB_SWCRESERVATION set   RESERV_PROCESS_GUBUN = #{reservProcessGubun},
+                                       UPDATE_DATE = SYSDATE
+                                       <if test="resAttendlist != '' ">
+                                       , RES_ATTENDLIST =  #{resAttendlist, jdbcType=VARCHAR}
+                                       </if>
+                                       <if test="reservProcessGubun == 'PROCESS_GUBUN_2' or reservProcessGubun == 'PROCESS_GUBUN_3'">
+                                       , PROXY_USER_ID = #{userId}
+                                       , RES_REPLY_DATE = SYSDATE
+                                       </if> 
+                                       <if test="reservProcessGubun == 'PROCESS_GUBUN_4' or reservProcessGubun == 'PROCESS_GUBUN_5'">
+                                       , ADMIN_REPLY_DATE = SYSDATE
+                                       , ADMIN_PROCESS_GUBUN = #{reservProcessGubun}
+                                       </if>
+                                       <if test="resTitle != '' ">
+                                       , RES_TITLE = #{resTitle}
+                                       </if>
+                                       <if test="cancelCode != '' ">
+                                       , CANCEL_CODE = #{cancelCode, jdbcType=VARCHAR}
+                                       , CANCEL_REASON = #{cancelReason, jdbcType=VARCHAR} 
+                                       </if>
+                                       <if test="resPassword != ''">
+                                       , RES_PASSWORD = #{resPassword , jdbcType=VARCHAR}
+                                       </if>
+                                       <if test="conferenceId != ''">
+                                       ,CONFERENCE_ID = #{conferenceId}
+                                       </if> 
+                                       , CON_NUMBER = #{conNumber, jdbcType=VARCHAR}
+                                       , CON_PIN = #{conPin, jdbcType=VARCHAR}
+                                       , CON_VIRTUAL_PIN = #{conVirtualPin, jdbcType=VARCHAR}
+                                       , CON_ALLOWSTREAM = #{conAllowstream, jdbcType=VARCHAR} 
+                                       , CON_BLACKDIAL = #{conBlackdial, jdbcType=VARCHAR}
+                                       , CON_SENDNOTI = #{conSendnoti, jdbcType=VARCHAR}
+        where RES_SEQ = #{resSeq}
+   </update>
+   
+    <update id="updateResManageChangeAvaya">
+        update TB_SWCRESERVATION set  RES_SEND_RESULT =  #{resSendResult, jdbcType=VARCHAR}
+                                      , RES_SEND_RESULT_TXT =  #{resSendResultTxt, jdbcType=VARCHAR}
+                                      , CONFERENCE_ID = #{conferenceId, jdbcType=VARCHAR}
+        where RES_SEQ = #{resSeq}                                      
+    </update>
+    
+    
+    
+   <update id="updateResManageDateChange">
+        update TB_SWCRESERVATION set   res_reply_date = sysdate
+        where RES_SEQ = #{resSeq}
+    </update>
+    
+
+    <update id="updateDayChange">
+        update TB_SWCRESERVATION set RES_STARTDAY = #{resStartday}, RES_ENDDAY = #{resEndday}
+         where RES_SEQ = #{resSeq}
+    </update>
+    <update id="updateResMeetingLog">
+       update TB_SWCRESERVATION set MEETINGLOG = #{meetinglog, jdbcType=CLOB}
+                                   <if test="resFile1 != '' ">
+                                   , RES_FILE1 = #{resFile1}
+                                   </if>
+                                   <if test="resFile2 != '' ">
+                                   , RES_FILE2 = #{resFile2}
+                                   </if>
+       where RES_SEQ = #{resSeq}
+   </update>
+    
+    <delete id="deleteResManage">
+        delete from TB_SWCRESERVATION where RES_SEQ = #{resSeq}
+    </delete>
+  
+   <select id="selectSeatEquipmentStat" resultType="java.lang.String">
+   		SELECT	xmlagg(xmlelement(a,equipment_name ,'(', cnt,')' , ',  ') ORDER BY equipment_name ).extract('//text()').getstringval() AS equipmentStat 
+		FROM 		TB_EQUIPMENTINFO
+		WHERE		SWC_SEQ=#{swcSeq}
+   </select>
+ 
+    <update id="updateCancelReason">
+	<![CDATA[
+		UPDATE TB_SWCRESERVATION
+		   SET 	CANCEL_REASON=#{cancelReason, jdbcType=VARCHAR}
+		   			, UPDATE_ID = #{updateId,jdbcType=VARCHAR},
+		       UPDATE_DATE = sysdate
+		 WHERE RES_SEQ = #{resSeq}
+		 ]]>
+	</update>
+	
+	<update id="errorResDateStep01" >
+	    update TB_SWCTIME set RES_SEQ = 0 where RES_SEQ = #{resSeq};	    
+	</update>
+	<update id="errorResDateStep02" >
+	    update TB_SWCRESERVATION set RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_8' where RES_SEQ = #{resSeq}	    
+	</update>
+	
+	
+	<select id="selectMessagentList" resultType="ResInfoVO">
+	
+
+    SELECT a.USER_ID, a.RES_ATTENDLIST, a.RES_TITLE, FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , a.RES_GUBUN,
+	       FN_TIMESPLIT(fn_upsTimedown(a.RES_ENDTIME)) resEndtime,
+	       TO_CHAR (TO_DATE(a.RES_STARTDAY, 'yyyy-MM-dd'), 'YYYY-MM-DD') AS resStartday, 
+	       CASE WHEN (a.RES_GUBUN = 'SWC_GUBUN_2') THEN 
+	          (SELECT b.TERMINAL_TEL  FROM TB_SWC_ROOM b WHERE b.SWC_SEQ = a.SWC_SEQ) 
+	       ELSE
+	           ''
+	       END meetingTel 
+	FROM TB_SWCRESERVATION a 
+	WHERE RES_STARTDAY = TO_CHAR(SYSDATE, 'yyyyMMdd') AND RESERV_PROCESS_GUBUN IN ('PROCESS_GUBUN_1','PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+    
+	</select>
+	
+   
+</mapper>

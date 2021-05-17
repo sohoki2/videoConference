@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.OrgInfoManagerMapper">
+
+    <select id="selectOrgInfoCombo"  resultType="orgInfo">
+      select CD_DEPT, NM_DEPT
+      from TB_ORGINFO 
+      where 1=1 and YN_USE ='Y'
+    </select>
+    
+    
+    <select id="selectOrgInfoComboSearch"  resultType="orgInfo">
+      select CD_DEPT, NM_DEPT from TB_ORGINFO where YN_USE ='Y' and   NM_DEPT like '%'|| #{searchKeyword} || '%'
+      order by CD_DIVISION asc, NM_DEPT asc 
+    </select>
+    
+    
+    
+    
+    <update id="updateEaiOrgInfo">
+	     UPDATE TB_ORGINFO t1  SET 
+	       (CD_DEPT, NM_DEPT, NO_LEVEL, CD_DIVISION, CD_LOCATE, DT_FROM, DT_TO, YN_USE, CD_INDEPT, COM_CD, FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO, FINL_CHG_DTTM) = 
+		(SELECT t2.CD_DEPT, t2.NM_DEPT, t2.NO_LEVEL, t2.CD_DIVISION, t2.CD_LOCATE, t2.DT_FROM, t2.DT_TO, t2.YN_USE, t2.CD_INDEPT, t2.COM_CD, 
+		        t2.FRST_REG_EMP_NO, t2.FRST_REG_DTTM, t2.FINL_CHG_EMP_NO, t2.FINL_CHG_DTTM
+		FROM  TB_ORGINFO_TMP t2  WHERE t1.CD_DEPT = t2.CD_DEPT)
+		WHERE  EXISTS ( SELECT t2.CD_DEPT, t2.NM_DEPT, t2.NO_LEVEL, t2.CD_DIVISION, t2.CD_LOCATE, t2.DT_FROM, t2.DT_TO, t2.YN_USE, t2.CD_INDEPT, t2.COM_CD, 
+		        t2.FRST_REG_EMP_NO, t2.FRST_REG_DTTM, t2.FINL_CHG_EMP_NO, t2.FINL_CHG_DTTM
+		FROM  TB_ORGINFO_TMP t2  WHERE t1.CD_DEPT = t2.CD_DEPT )
+    </update>
+    <insert id="insertEaiOrgInfo">
+		INSERT INTO TB_ORGINFO (CD_DEPT, NM_DEPT, NO_LEVEL, CD_DIVISION, CD_LOCATE, DT_FROM, DT_TO, YN_USE, CD_INDEPT, COM_CD, 
+		                        FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO, FINL_CHG_DTTM)
+		SELECT CD_DEPT, NM_DEPT, NO_LEVEL, CD_DIVISION, CD_LOCATE, DT_FROM, DT_TO, YN_USE, CD_INDEPT, COM_CD, 
+		       FRST_REG_EMP_NO, FRST_REG_DTTM, FINL_CHG_EMP_NO, FINL_CHG_DTTM
+		FROM    TB_ORGINFO_TMP a 
+		WHERE a.CD_DEPT not IN (SELECT b.CD_DEPT FROM TB_ORGINFO b)        		
+    </insert>
+    
+    <delete id="deleteEaiOrgTmp">
+        DELETE FROM TB_ORGINFO_TMP 
+    </delete>
+    
+
+</mapper>

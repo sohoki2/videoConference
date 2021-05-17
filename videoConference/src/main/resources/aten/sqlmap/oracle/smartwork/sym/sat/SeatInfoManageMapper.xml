@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.SeatInfoManageMapper">
+
+   <select id="selectSeatManageListByPagination" resultType="SeatInfoVO">     	      
+		 	SELECT    TA.* FROM 
+		 	      ( SELECT rownum RNUM , SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* 
+					FROM ( SELECT a.SWC_SEQ
+              						, a.SEAT_NAME
+			                        , b.CENTER_NM
+                                    , a.SWC_USEYN
+                                    , fn_DetailCodeNm(a.ROOM_TYPE) AS roomTypeTxt
+				                    , a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID
+				                    , a.MAX_CNT
+				                    , a.SEAT_IMG1, a.SEAT_IMG2
+				                    , a.AVAYA_CONFI_ID, a.AVAYA_USERID
+                                    , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
+                                    , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
+                                    , a.SEAT_VIEW , a.SEAT_ORDER
+		                    FROM 	TB_SWC_ROOM a ,TB_CENTERINFO b
+		                    WHERE 	a.CENTER_ID = b.CENTER_ID 
+						        <if test="searchKeyword != ''">
+						        	<choose>
+						        		<when test="searchCondition == 0 ">
+						        			and ( a.SEAT_NAME LIKE '%'||  #{searchKeyword} || '%')
+						        		</when>
+						        		<otherwise>
+											<![CDATA[    
+											   and c.CENTER_NM '%' ||  #{searchKeyword} || '%'
+											]]>
+										</otherwise>
+									</choose>
+								</if>		        
+								<if test="searchCenterId != ''">
+									<![CDATA[    
+								     and a.CENTER_ID = #{searchCenterId}
+								     ]]>
+								</if>		     
+								<if test="searchRoomType != ''">
+								     and a.ROOM_TYPE = #{searchRoomType}
+								</if>	
+								<if test="searchRoomView != ''">
+								     and a.SEAT_VIEW = #{searchRoomView}
+								</if>	
+								<if test="notSearchSeq !=''">
+								    <![CDATA[  
+								     and a.SWC_SEQ != #{notSearchSeq}
+								     ]]>
+								</if>
+								<if test="searchSwcUseyn != ''">
+								     and a.SWC_USEYN = #{searchSwcUseyn}
+								</if>
+					        	ORDER BY a.SEAT_ORDER ASC,  a.SWC_SEQ  DESC ) TB 
+			) TA
+			WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+   </select>
+   <select id="selectSeatEmptyManageList" resultType="SeatInfoVO">
+
+		SELECT 	a.SWC_SEQ, a.SEAT_NAME, a.EQUIPMENT_STATE, a.CENTER_ID
+		FROM 		TB_SWC_ROOM a
+		WHERE  1=1 
+		  <choose>
+			 <when test="searchCenterId != ''">
+			    AND a.CENTER_ID = #{searchCenterId}	
+		     </when>
+		     <otherwise>
+		        AND a.CENTER_ID =  ( SELECT X.CENTER_ID FROM ( select CENTER_ID FROM TB_CENTERINFO order by CENTER_ID ASC ) X WHERE rownum =1 ) 
+		     </otherwise>
+		  </choose>
+		   
+		   <if test="searchSeatView !=''">
+		         AND SEAT_VIEW = #{searchSeatView} 
+		     </if>
+		   <if test="searchRoomType !=''">
+		         AND ROOM_TYPE = #{searchRoomType} 
+		     </if>
+	    ORDER BY SEAT_ORDER asc , SEAT_NAME asc, SWC_SEQ asc
+		 
+   </select>
+   
+   <select id="selectHolyCheckInfo" resultType="java.lang.String">      
+      select case HOL_DT_YN WHEN  'Y' THEN 
+              CASE WHEN  ( select NVL(count(*),0)  from TB_HOLYWORKINFO where HOLY_DATE = #{seatStartDay} and NO_EMP = #{noEmp}) > 0 then 'N'
+                 else HOL_DT_YN
+               END 
+             else
+               HOL_DT_YN
+             end HOL_DT_YN      
+      from TB_HOLY
+      where DT = #{seatStartDay}
+   </select>
+   
+   <select id="selectSeatEmptyIntervalStatus" resultType="SeatInfoVO">
+   <![CDATA[
+		SELECT 	X.SWC_SEQ
+						, X.SEAT_NAME
+				        , CASE WHEN (chCount <= realCnt AND resCnt =0) THEN 'O'
+				          ELSE 'F'
+				          END seatDayCheck
+				        , SEAT_CHECK(#{noEmp}, x.SWC_SEQ) AS seatCheck
+		FROM (
+						SELECT 	a.SWC_SEQ , a.AVAYA_CONFI_ID
+								        , a.SEAT_NAME
+								        , (		SELECT		NVL(COUNT(*),0) 
+							        			FROM 		TB_SWCTIME c 
+							       				WHERE 		a.SWC_SEQ = c.SWC_SEQ 
+								            	AND 			c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
+								            	AND 			c.SWC_TIME < 1800)
+							       			AS realCnt
+								        ,	(	SELECT 	NVL(COUNT(*),0) 
+								        		FROM 		TB_SWCTIME c 
+								          		WHERE		a.SWC_SEQ = c.SWC_SEQ 
+								            	AND 			c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
+								            	AND 			c.RES_SEQ != 0 
+								            	AND 			c.SWC_TIME < 1800)
+							       			AS resCnt
+								        , (((TO_DATE(#{seatEndDay},'yyyyMMdd') - TO_DATE(#{seatStartDay},'yyyyMMdd')) +1) * 18) AS chCount 
+						FROM 		TB_SWC_ROOM a , TB_CENTERINFO b
+						WHERE  	a.CENTER_ID = b.CENTER_ID
+						AND 			a.ROOM_TYPE = #{roomType}
+						AND 			a.CENTER_ID = #{centerId}
+					) X
+		ORDER BY X.SEAT_NAME ASC
+    ]]>
+   </select>
+   <select id="selectSeatManageCombo" resultType="SeatInfo">
+      select SWC_SEQ, SEAT_NAME
+      from  TB_SWC_ROOM
+      where SWC_USEYN ='Y'
+            <if test="searchCenterId != ''">
+             AND CENTER_ID = #{searchCenterId}
+            </if>
+      order by SEAT_NAME asc
+   </select>
+   <select id="selectConferenceList" parameterType="java.util.List" resultType="SeatInfoVO">
+      SELECT a.SWC_SEQ, a.SEAT_NAME, b.CENTER_NM
+      FROM TB_SWC_ROOM a,  TB_CENTERINFO b    
+	   WHERE a.CENTER_ID = b.CENTER_ID
+	         AND SWC_SEQ IN 
+	         <foreach collection="list" item="item" open="(" close=")" separator=",">
+	           #{item}
+	         </foreach>
+   </select>
+   <select id="selectSeatManageView" resultType="SeatInfoVO">
+	     SELECT	a.SWC_SEQ , a.CENTER_ID , b.CENTER_NM, a.SEAT_NAME, a.AVAYA_CONFI_ID
+				, a.EQUIPMENT_STATE 
+				, a.AVAYA_CONFI_ID, a.ROOM_TYPE  
+				, a.MAX_CNT , a.SWC_USEYN 
+				, a.AVAYA_ROOMCODE   
+				, a.SEAT_IMG1, a.SEAT_IMG2
+				, a.AVAYA_CONFI_ID, a.AVAYA_USERID
+                , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
+                , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
+                , fn_DetailCodeNm(a.ROOM_TYPE) AS roomTypeTxt
+                , a.SEAT_VIEW, a.SEAT_ORDER
+	     FROM  TB_SWC_ROOM a,  TB_CENTERINFO b    
+	     WHERE SWC_SEQ = #{swcSeq}
+	           AND a.CENTER_ID = b.CENTER_ID
+   </select>   
+   
+   <insert id="insertSeatManage">
+      insert into TB_SWC_ROOM( SWC_SEQ, SEAT_NAME,  CENTER_ID, ROOM_TYPE, MAX_CNT, SWC_USEYN, EQUIPMENT_STATE,
+                               FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, AVAYA_CONFI_ID,
+                               SEAT_IMG1, SEAT_IMG2, 
+                               AVAYA_USERID,
+                               TERMINAL_ID, END_NAME, TERMINAL_NUMBER, TERMINAL_TEL,
+                               USER_FIRST_NM, USER_LAST_NM, USER_EMAIL, SEAT_VIEW, SEAT_ORDER
+                               )
+      values (SEAT_SEQ.nextval, #{seatName}, #{centerId}, #{roomType}, #{maxCnt}, #{swcUseyn}, #{equipmentState,jdbcType=VARCHAR },
+      sysdate, #{userId, jdbcType=VARCHAR}, sysdate, #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR},
+      #{seatImg1, jdbcType=VARCHAR}, #{seatImg2, jdbcType=VARCHAR},
+      #{avayaUserid, jdbcType=VARCHAR},
+      #{terminalId, jdbcType=VARCHAR}, #{endName, jdbcType=VARCHAR}, #{terminalNumber, jdbcType=VARCHAR} , #{terminalTel, jdbcType=VARCHAR},
+      #{userFirstNm, jdbcType=VARCHAR}, #{userLastNm, jdbcType=VARCHAR} , #{userEmail, jdbcType=VARCHAR}
+      , #{seatView, jdbcType=VARCHAR}, #{seatOrder, jdbcType=VARCHAR}
+      )
+   </insert>
+   <update id="updateSeatManage">
+      update TB_SWC_ROOM set SEAT_NAME = #{seatName}
+                             , CENTER_ID = #{centerId}
+                             , SWC_USEYN = #{swcUseyn, jdbcType=VARCHAR }
+							 , ROOM_TYPE = #{roomType,jdbcType=VARCHAR}
+							 , MAX_CNT = #{maxCnt, jdbcType=VARCHAR}
+							 , EQUIPMENT_STATE = #{equipmentState, jdbcType=VARCHAR }
+							 , LAST_UPDT_PNTTM = sysdate
+							 , LAST_UPDUSR_ID =  #{userId, jdbcType=VARCHAR}
+							 , AVAYA_CONFI_ID = #{avayaConfiId, jdbcType=VARCHAR}
+							 <if test="seatImg1 != ''">
+							 ,SEAT_IMG1 = #{seatImg1}
+							 </if>
+							 <if test="seatImg2 != ''">
+							 ,SEAT_IMG2 = #{seatImg2}
+							 </if>
+							 , AVAYA_USERID  = #{avayaUserid, jdbcType=VARCHAR}
+							 , TERMINAL_ID  = #{terminalId, jdbcType=VARCHAR}
+							 , END_NAME   = #{endName, jdbcType=VARCHAR}
+							 , TERMINAL_NUMBER  = #{terminalNumber, jdbcType=VARCHAR}
+							 , TERMINAL_TEL  = #{terminalTel, jdbcType=VARCHAR}
+                             , USER_FIRST_NM  = #{userFirstNm, jdbcType=VARCHAR}
+                             , USER_LAST_NM  = #{userLastNm, jdbcType=VARCHAR}
+                             , USER_EMAIL  = #{userEmail, jdbcType=VARCHAR}
+							 , SEAT_VIEW  = #{seatView, jdbcType=VARCHAR}
+							 , SEAT_ORDER  = #{seatOrder, jdbcType=VARCHAR}
+							 
+      where SWC_SEQ = #{swcSeq}
+   </update>
+   <delete id="deleteSeatManage">
+      delete from TB_SWC_ROOM
+      where SWC_SEQ = #{swcSeq}   
+   </delete>
+
+	<select id="selectRoomId" resultType="SeatInfoVO">     	      
+	      SELECT 	b.* 
+			FROM 	(
+							SELECT 	DISTINCT(a.ROOM_ID) as roomId
+										, (SELECT 	CODE_NM 
+											FROM 	LETTCCMMNDETAILCODE 
+											WHERE 	CODE=a.ROOM_ID) as roomNm 
+							FROM 		TB_SWC_ROOM a
+							WHERE 		a.ROOM_TYPE=#{roomType} 
+							AND 			a.CENTER_ID=#{centerId}
+							
+			      		)b
+		ORDER BY roomNm
+   </select>
+
+	<select id="selectRoomSeat" resultType="SeatInfoVO">     	      
+		SELECT 	SWC_SEQ
+						, seat_name
+				        , room_id
+				        , center_id
+				        , room_type 
+				        , max_cnt
+		FROM 		tb_swc_room 	
+		<![CDATA[  
+		WHERE 		room_id=#{roomId}
+		AND			center_id=#{centerId}
+		AND			room_type=#{roomType}
+		AND 			SWC_USEYN='Y'
+		]]>
+   </select>
+   
+   <select id="selectRoomEquipmentList" resultType="SeatInfoVO">
+		SELECT		EQUP_CODE
+						, EQUIPMENT_ID
+				        , EQUIPMENT_NAME
+				        , CENTER_ID
+				        , ROOM_ID
+				        , ROOM_TYPE
+				        , SWC_SEQ
+				        , CNT 
+		FROM 		TB_EQUIPMENTINFO
+		WHERE		CENTER_ID = #{centerId}
+		AND			ROOM_ID = #{roomId}
+		AND			SWC_SEQ = #{swcSeq}
+		and			SWC_USEYN='Y'
+   </select>
+   
+   
+</mapper>

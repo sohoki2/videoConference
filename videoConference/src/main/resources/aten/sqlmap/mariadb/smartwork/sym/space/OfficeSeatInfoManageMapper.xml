@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.space.mapper.OfficeSeatInfoManageMapper">
+   <select id="selectOfficeSeatInfoManageListByPagination"  resultType="lmap">
+		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+	        TB.* FROM (
+					    SELECT a.CENTER_ID, a.FLOOR_SEQ, a.PART_SEQ, a.SEAT_ID, a.SEAT_NAME, a.SEAT_USEYN, 
+							   a.SEAT_TOP, a.SEAT_LEFT, a.SEAT_FIX_USERYN, a.SEAT_FIX_USER_ID, a.ORG_CD,
+							   a.SEAT_QR_CODE, a.SEAT_QR_CODE_PATH, a.SEAT_QR_CODE_FULL_PATH, a.SEAT_ORDER, a.SEAT_NUMBER, 
+							   a.UPDATE_ID, DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, b.CENTER_NM  , c.FLOOR_NAME     
+					    FROM  tb_seatinfo a, tb_centerinfo b, tb_floorinfo c
+					    WHERE a.CENTER_ID = b.CENTER_ID  
+					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
+						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+								  AND (    a.SEAT_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
+							  </if>		
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
+								  AND a.CENTER_ID = #{params.centerId}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorSeq)">
+								  AND a.FLOOR_SEQ = #{params.floorSeq}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
+								  AND a.PART_SEQ = #{params.partSeq}
+							  </if>
+					    ORDER BY a.SEAT_ORDER  DESC
+	        ) TB  
+	         ORDER BY TB.SEAT_ORDER  DESC
+	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+    </select>
+    <select id="selectOfficeSeatInfoManageDetail"  resultType="lmap">
+           SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
+				   SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
+				   SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
+				   REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE
+		    FROM tb_seatinfo a
+		    WHERE SEAT_ID = #{seatId}
+    </select>
+    <insert id="insertOfficeSeatInfoManage" >
+         <selectKey resultType="String"  keyProperty="seatId" order="BEFORE">
+            select FN_SEATID(#{floorSeq})
+         </selectKey>
+         INSERT INTO tb_seatinfo(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
+								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
+								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER
+								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE)
+         VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
+                 #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
+                 #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
+                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW());
+                 
+         UPDATE tb_floorinfo SET SEAT_CNT = SEAT_CNT + 1
+		 WHERE FLOOR_SEQ = #{floorSeq};
+    </insert>
+    <insert id="insertFloorInfoOfficeSeatInfoManage">
+        <choose>
+           <when test='params.viewMode == "S"'>
+                <choose>
+		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
+		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
+		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID)
+						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       NOW(), NOW(), #{params.userId}, #{params.userId}
+						FROM (
+						      <![CDATA[
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
+							  FROM tb_floorpart a, (WITH RECURSIVE cte AS (
+														SELECT ${params.seatStr} AS RN FROM dual
+														union all
+														SELECT RN + 1 FROM cte
+														WHERE RN < ${params.seatEnd} 
+														)SELECT RN FROM cte )b 
+							  WHERE PART_SEQ = #{params.partSeq}
+							  ORDER BY b.RN ASC 
+							  ]]>
+						)TA;
+		           </when>
+		           <otherwise>
+		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER
+		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID)
+						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ, TA.RN, 'Y', 0,0 , TA.RNUM,
+						       NOW(), NOW(), #{params.userId}, #{params.userId}
+						FROM (
+						      <![CDATA[
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT(a.FLOOR_NAME, '_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
+							  FROM tb_floorinfo a, (WITH RECURSIVE cte AS (
+														SELECT ${params.seatStr} AS RN FROM dual
+														union all
+														SELECT RN + 1 FROM cte
+														WHERE RN < ${params.seatEnd} 
+														)SELECT RN FROM cte )b 
+							  WHERE FLOOR_SEQ = #{params.floorSeq}
+							  ORDER BY b.RN ASC 
+							  ]]>
+						)TA;
+		
+		           </otherwise>
+		        </choose>
+		        UPDATE tb_floorinfo SET SEAT_CNT = (SELECT IFNULL(count(*),0) 
+						                            FROM tb_seatinfo 
+						                            WHERE FLOOR_SEQ = #{params.floorSeq} )
+				WHERE FLOOR_SEQ = #{params.floorSeq};
+           </when>
+           <when test='params.viewMode == "M"'>
+                 <choose>
+		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
+		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
+		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
+		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, ROOM_TYPE, MAIL_SENDCHECK, SMS_SENDCHECK,
+		                                            PAY_CLASSIFICATION, MEETING_CONFIRMGUBUN
+		                                            )
+						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						       'Y','Y',0, 'SWC_GUBUN_1', 'N','N',
+						       'PAY_CLASSIFICATION_2', 'S'
+						FROM (
+						      <![CDATA[
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(''M_', a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
+							  FROM tb_floorpart a, (WITH RECURSIVE cte AS (
+														SELECT ${params.seatStr} AS RN FROM dual
+														union all
+														SELECT RN + 1 FROM cte
+														WHERE RN < ${params.seatEnd} 
+														)SELECT RN FROM cte )b 
+							  WHERE PART_SEQ = #{params.partSeq}
+							  ORDER BY b.RN ASC 
+							  ]]>
+						)TA;
+		           </when>
+		           <otherwise>
+		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
+		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
+		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, ROOM_TYPE, MAIL_SENDCHECK, SMS_SENDCHECK,
+		                                            PAY_CLASSIFICATION, MEETING_CONFIRMGUBUN
+		                                            )
+						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						       'Y','Y',0, 'SWC_GUBUN_1', 'N','N',
+						       'PAY_CLASSIFICATION_2', 'S'
+						FROM (
+						      <![CDATA[
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT('M_',a.FLOOR_NAME, '_',LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
+							  FROM tb_floorinfo a, (WITH RECURSIVE cte AS (
+														SELECT ${params.seatStr} AS RN FROM dual
+														union all
+														SELECT RN + 1 FROM cte
+														WHERE RN < ${params.seatEnd} 
+														)SELECT RN FROM cte )b 
+							  WHERE FLOOR_SEQ = #{params.floorSeq}
+							  ORDER BY b.RN ASC 
+							  ]]>
+						)TA;
+		
+		           </otherwise>
+		        </choose>
+		        UPDATE tb_floorinfo SET MEET_CNT = (SELECT IFNULL(count(*),0) 
+						                            FROM tb_meeting_room 
+						                            WHERE FLOOR_SEQ = #{params.floorSeq} )
+				WHERE FLOOR_SEQ = #{params.floorSeq};
+           </when>
+        </choose>
+    </insert>
+    <update id="updateOfficeSeatInfoManage" >
+        UPDATE tb_seatinfo SET CENTER_ID = #{centerId} 
+	                              , FLOOR_SEQ = #{floorSeq,jdbcType=VARCHAR} 
+	                              , PART_SEQ = #{partSeq,jdbcType=VARCHAR} 
+	                              , SEAT_NAME = #{seatName}
+	                              , SEAT_USEYN = #{seatUseyn, jdbcType=VARCHAR}
+	                              , SEAT_TOP = #{seatTop,jdbcType=VARCHAR}
+	                              , SEAT_LEFT = #{seatLeft,jdbcType=VARCHAR}
+	                              , SEAT_FIX_USERYN = #{seatFixUseryn, jdbcType=VARCHAR}
+	                              , SEAT_FIX_USER_ID = #{seatFixUserId, jdbcType=VARCHAR}
+	                              , ORG_CD = #{orgCd,jdbcType=VARCHAR} 
+	                              , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
+	                              , SEAT_NUMBER = #{seatNumber,jdbcType=VARCHAR} 
+	                              , UPDATE_DATE = NOW()
+	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
+	    WHERE SEAT_ID = #{seatId}           
+    </update>
+    <update id="updateOfficeSeatQrInfoManage" >
+        UPDATE tb_seatinfo SET  SEAT_QR_CODE = #{seatQrCode,jdbcType=VARCHAR} 
+	                            , SEAT_QR_CODE_PATH = #{seatQrCodePath,jdbcType=VARCHAR} 
+	                            , SEAT_QR_CODE_FULL_PATH = #{seatQrCodeFullPath,jdbcType=VARCHAR} 
+	                            , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
+	                            , UPDATE_DATE = NOW()
+	                            , UPDATE_ID = #{userId,jdbcType=VARCHAR}
+	    WHERE SEAT_ID = #{seatId}           
+    </update>
+    <update id="updateOfficeSeatPositionInfoManage" parameterType="java.util.List">
+        <choose>
+            <when test='type == "S"'>
+                <foreach collection="list" item="item" separator=";">
+			        UPDATE tb_seatinfo SET SEAT_TOP = #{item.seatTop,jdbcType=VARCHAR}
+				                           , SEAT_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
+				                           , UPDATE_DATE = NOW()
+				                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
+				    WHERE SEAT_ID = #{item.seatId} 
+			    </foreach> 
+            </when>
+            <otherwise>
+                <foreach collection="list" item="item" separator=";">
+		            UPDATE tb_meeting_room SET MEETING_TOP = #{item.seatTop,jdbcType=VARCHAR}
+					                           , MEETING_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
+					                           , UPDATE_DATE = NOW()
+					                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
+				    WHERE MEETING_ID = #{item.seatId} 
+	            </foreach> 
+            </otherwise>
+        </choose>
+           
+    </update> 
+</mapper>

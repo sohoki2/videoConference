@@ -1,0 +1,58 @@
+function fn_resView(resSeq){
+        	//예약 정보 보기 
+	        
+	        
+        	var params = {'resSeq': resSeq};
+        	uniAjax("/front/resInfo/resInfo.do", params, 
+         			function(result) {
+        			       if (result.status == "LOGIN FAIL"){
+        			    	    alert(result.message);
+        							location.href="/front/resInfo/noInfo.do";
+        					   }else if (result.status == "SUCCESS"){
+        						    //예약 정보 넣기 
+        						    var obj = result.resInfo;
+        						    $("#sp_res_swcName").html(obj.seatName);
+        						    $("#sp_resTitle").html(obj.resTitle);
+        						    var passCheck = (obj.resPassword == "Y") ? "공개" : "비공개";
+          						    $("#sp_resPassword").html(passCheck);
+          						    $("#sp_ResStartDay").html(obj.resStartday);
+          						    $("#sp_ResStartTime").html(obj.resStarttime+"~"+obj.resEndtime);
+          						    var proxyYnTxt = (obj.proxyYn == "S") ? "승인" : "관리자요청";
+          						    $("#sp_proxyYn").html(proxyYnTxt);
+          						    $("#sp_regGubun").html(obj.resGubunTxt);
+	          						if (obj.resGubun == "SWC_GUBUN_2"){
+	          							var meetingInfoTxt = "동시 진행할 영상회의실: ";
+	          							if (result.resRoomInfo.length > 0){
+	          							  	for (var i =0; i < result.resRoomInfo.length; i++){
+	          							  		var meetinginfo = result.resRoomInfo[i];
+	          							      	meetingInfoTxt += "<span style='padding-left: 10px;'>※"+meetinginfo.seatName+"</span>";
+	          							  	}
+	          							  	
+	          								$("#div_meetingResRoomInfo").show();
+	          								$("#sp_meegintRoomInfo").html(meetingInfoTxt);
+	          							}
+	          						}
+	          						var userYnMessage = (obj.useYn == "Y") ? "사용" : "사용안함";
+	          						$("#sp_useYn").html(userYnMessage);
+	          						$("#sp_resPorcess").html(obj.reservProcessGubunTxt);
+	          						if (result.resUserList.length > 0){
+	          							var userInfoTxt = "참석자: ";
+	          							if (obj.resPassword == "Y"){
+	          								for (var i=0; i < result.resUserList.length; i++){
+	        							  		var userInfos = result.resUserList[i];
+	        							  	    userInfoTxt += "<span style='padding-left: 10px;'>"+userInfos.empname+"("+userInfos.deptname+")</span>";
+	        							  	}	
+	          							}else {
+	          								userInfoTxt += "*****************";
+	          							}
+	          							$("#sp_ResMeetingAttendList").html(userInfoTxt);
+	          						}
+        						    	
+        					   }
+        			    },
+        			    function(request){
+        				    alert("Error:" +request.status );	       						
+        			    }    		
+             );
+        	$("#btn_res").trigger("click");
+        }

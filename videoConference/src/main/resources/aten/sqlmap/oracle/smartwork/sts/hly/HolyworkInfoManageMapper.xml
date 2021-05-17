@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.HolyworkInfoManageMapper">
+
+    <select id="selectHolyManageListByPagination" resultType="HolyworkInfoVO">     	      
+		 	SELECT	* 
+			FROM 		( SELECT	rownum RNUM
+											, TB.* 
+					          FROM 		(	SELECT 	a.HOLY_SEQ
+					          									, a.HOLY_DATE
+									                            , a.HOLY_NM
+									                            , a.HOLY_INFO
+									                            , a.HOLY_GUBUN
+									                            , a.ORG_ID
+									                            , a.EMP_NO
+									                            , a.HOLY_REGDATE
+									                            , a.HOLY_REG_ID
+									                            , a.HOLY_UPDATEDATE
+									                            , a.HOLY_UPDATE_ID
+									                            , a.HOLY_REMARK
+									                            , fn_orgFullName(a.emp_no) AS orgName
+									                            , (SELECT GRADE_NAME FROM TB_POS_GRD_INFO WHERE GRADE_ID=b.GRADE_CD) AS posGrdNm
+									                            , b.USER_NAME as empNm
+							                    FROM 		TB_HOLYWORKINFO a, TB_EMP_INFO b 
+							                    WHERE 	a.EMP_NO = b.USER_ID 
+							                    <if test="searchKeyword != ''">
+										        	<choose>
+														<when test=" searchCondition == 0 ">
+															<![CDATA[						
+															   and ( a.EMP_NO LIKE '%'||  #{searchKeyword} || '%'  OR  b.USER_NAME LIKE '%'|| #{searchKeyword} || '%' )
+															 ]]> 	
+														</when>
+														<otherwise>
+															<choose>
+																<when test="searchCondition == 1">
+																<![CDATA[
+																	and b.USER_NAME LIKE '%'|| #{searchKeyword} || '%'
+																]]>
+																</when>
+																<otherwise>
+																 
+																<![CDATA[    
+																	and a.EMP_NO LIKE '%'||  #{searchKeyword} || '%'
+																 ]]>  
+																</otherwise>
+															</choose>
+														</otherwise>
+													</choose>
+												</if>		 
+							                    ORDER BY a.HOLY_SEQ DESC 
+					                  		) TB 
+					        ) 
+			WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
+   </select>
+      
+   <select id="selectHolyManageDetail" resultType="HolyworkInfoVO">
+		SELECT		a.HOLY_SEQ
+						, a.HOLY_DATE
+				        , a.HOLY_NM
+				        , a.HOLY_INFO
+				        , a.HOLY_GUBUN
+				        , a.ORG_ID
+				        , a.EMP_NO
+				        , a.HOLY_REGDATE
+				        , a.HOLY_REG_ID
+				        , a.HOLY_UPDATEDATE
+				        , a.HOLY_UPDATE_ID
+				        , a.HOLY_REMARK
+				        , fn_orgFullName(a.EMP_NO) AS orgName
+				        , (select GRADE_NAME from tb_pos_grd_info where GRADE_ID=b.GRADE_CD) as posGrdNm
+				        , b.USER_NAME as empNm
+		FROM 		TB_HOLYWORKINFO a, TB_EMP_INFO b
+		WHERE 		a.HOLY_SEQ = #{holySeq}
+		AND 			a.EMP_NO = b.USER_ID
+   </select>
+   <select id="selectHolyManageView" resultType="HolyworkInfoVO">
+     SELECT		a.HOLY_SEQ
+						, a.HOLY_DATE
+				        , a.HOLY_NM
+				        , a.HOLY_INFO
+				        , a.HOLY_GUBUN
+				        , a.ORG_ID
+				        , a.EMP_NO
+				        , a.HOLY_REGDATE
+				        , a.HOLY_REG_ID
+				        , a.HOLY_UPDATEDATE
+				        , a.HOLY_UPDATE_ID
+				        , a.HOLY_REMARK
+				        , fn_orgFullName(a.EMP_NO) AS orgName
+				       , (select GRADE_NAME from tb_pos_grd_info where GRADE_ID=b.GRADE_CD) as posGrdNm
+				        , b.USER_NAME as empNm
+		FROM 		TB_HOLYWORKINFO a, TB_EMP_INFO b
+		WHERE 		a.HOLY_SEQ = #{holySeq}
+		AND 			a.EMP_NO = b.USER_ID
+   </select>
+   <select id="selectHolyManageListTotCnt_S" resultType="java.lang.Integer">
+        SELECT  	NVL(count(*),0)      
+	    FROM 		TB_HOLYWORKINFO a, TB_EMP_INFO b
+	    WHERE 		a.EMP_NO = b.USER_ID
+	        <if test="searchKeyword != ''">
+					<choose>
+						<when test=" searchCondition == 0 ">
+							<![CDATA[						
+							   and ( a.EMP_NO LIKE '%'||  #{searchKeyword} || '%'  OR  b.EMP_NM LIKE '%'|| #{searchKeyword} || '%' )
+							 ]]> 	
+						</when>
+						<otherwise>
+							<choose>
+								<when test="searchCondition == 1">
+								<![CDATA[
+									and b.EMP_NM LIKE '%'|| #{searchKeyword} || '%'
+								]]>
+								</when>
+								<otherwise>
+								 
+								<![CDATA[    
+									and a.EMP_NO LIKE '%'||  #{searchKeyword} || '%'
+								 ]]>  
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+			</if>		 			    	     
+   </select>
+   
+   
+   <insert id="insertHolyManage">
+      INSERT INTO 	TB_HOLYWORKINFO	(	HOLY_SEQ
+	 															, HOLY_DATE
+								                                , HOLY_NM
+								                                , HOLY_INFO
+								                                , HOLY_GUBUN
+								                                , ORG_ID
+								                                , EMP_NO
+								                                , HOLY_REGDATE
+								                                , HOLY_REG_ID
+								                                , HOLY_UPDATEDATE
+								                                , HOLY_UPDATE_ID
+								                                , HOLY_REMARK
+                              								)
+      		VALUES		(	HOLY_SEQ.NEXTVAL
+	      						, #{holyDate,jdbcType=VARCHAR}
+				                , #{holyNm,jdbcType=VARCHAR}
+				                , #{holyInfo,jdbcType=VARCHAR}
+				                , #{holyGubun,jdbcType=VARCHAR }
+				                , #{orgId}
+				                , #{noEmp}
+				                , SYSDATE
+				                , #{holyRegId ,jdbcType=VARCHAR}
+				                , SYSDATE
+				                , #{holyRegId ,jdbcType=VARCHAR}
+				                , #{holyRemark ,jdbcType=VARCHAR}
+              				)
+   </insert>
+   <update id="updateHolyManage">
+      update TB_HOLYWORKINFO set HOLY_DATE = #{holyDate}
+                             ,  HOLY_NM = #{holyNm,jdbcType=VARCHAR }
+                             ,  HOLY_INFO = #{holyInfo,jdbcType=VARCHAR }
+                             ,  HOLY_GUBUN = #{holyGubun,jdbcType=VARCHAR }
+                             ,  CD_DEPT = #{cdDept}
+                             ,  NO_EMP = #{noEmp}
+                             ,  HOLY_UPDATEDATE = sysdate
+                             ,  HOLY_UPDATE_ID = #{holyUpdateId ,jdbcType=VARCHAR}
+                             ,  HOLY_REMARK = #{holyRemark, jdbcType=VARCHAR }                             
+      where HOLY_SEQ = #{holySeq}
+   </update>
+   <delete id="deleteHolyManage">
+      delete from TB_HOLYWORKINFO
+      where HOLY_SEQ = #{holySeq}   
+   </delete>
+   
+   <update id="smartBatch" statementType="CALLABLE" >
+   	{call SP_EMPCOPY()}
+   </update>
+   
+   <update id="timeBatch" statementType="CALLABLE" >
+   	{call sp_Room_TimeCreate()}
+   </update>
+
+	
+</mapper>

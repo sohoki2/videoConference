@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.ContentFileManagerMapper">
+
+
+<select id="selectFilePageListByPagination" resultType="ContentFileInfoVO">
+        SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+        
+        SELECT X.* FROM (
+        
+			      	select a.ATCH_FILE_ID, substr(a.FILE_STRE_COURS, INSTR(a.FILE_STRE_COURS, '/',-1,3)) AS FILE_STRE_COURS, a.STRE_FILE_NM, a.FILE_EXTSN, a.CON_SEQ, a.FILE_ORDER, a.FILE_THUMNAIL
+			      	          , a.ORIGNL_FILE_NM
+			      	          , CASE 
+			                      WHEN  a.FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+			                      WHEN  a.FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+			                      WHEN  a.FILE_EXTSN IN ('mp3', 'wav', 'mid') THEN 'MUSIC'
+			                   END AS mediaType ,
+			                   a.PLAY_TIME, a.FILE_WIDTH  , a.FILE_HEIGHT, 
+			                   a.UseYN
+			      	from LETTNFILEDETAIL a
+			      	where 1=1
+			      	   <if test="searchKeyword != ''">
+									<choose>
+										<when test="searchCondition != 'orignlFileNm'">
+										<![CDATA[
+											and A.STRE_FILE_NM LIKE '%' ||  #{searchKeyword} || '%'
+										]]> 
+										</when>							
+										<otherwise>
+										<![CDATA[
+											and A.ORIGNL_FILE_NM LIKE '%' || #{searchKeyword} || '%'
+										]]> 
+										</otherwise>
+									</choose>
+							</if>							
+					        ORDER BY a.ATCH_FILE_ID  DESC
+              )X
+              where 1=1 
+              <if test="conType != '' ">
+				   and X.mediaType = #{conType} 
+			  </if>		
+			  <if test="notConType != null ">
+			       and X.mediaType != #{notConType}
+			  </if>     	      
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      	
+   </select>
+         
+    <select id="selectFilePageListByPaginationTotCnt_S" resultType="java.lang.Integer">
+           select NVL(count(*),0)  FROM  
+            (
+                SELECT CASE 
+                        WHEN  FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+                        WHEN  FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                        WHEN  FILE_EXTSN IN ('mp3', 'wav', 'mid') THEN 'MUSIC'
+                      END AS mediaType
+                 FROM LETTNFILEDETAIL
+                 where 1=1
+      	         <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'atchFileId'">
+							<![CDATA[
+								and STRE_FILE_NM LIKE '%' || #{searchKeyword} || '%'
+							]]>
+							</when>							
+							<otherwise>
+							<![CDATA[
+								and ORIGNL_FILE_NM LIKE '%' || #{searchKeyword} || '%'
+							]]>
+							</otherwise>
+						</choose>
+				</if>            
+            ) X
+            where 1=1 
+           	<if test="conType != '' ">
+				   and X.mediaType = #{conType} 
+			</if>
+			<if test="notConType != null ">
+			       and X.mediaType != #{notConType}
+			</if>     	      	       
+    </select>   
+    <select id="selectFileListTotCnt_S"  resultType="java.lang.Integer">
+               select NVL(count(*),0)
+                FROM    LETTNFILEDETAIL
+		        WHERE con_seq =  #{conSeq}		        
+   </select>
+   
+   <select id="selectFileDetail" resultType="ContentFileInfoVO">
+     select ATCH_FILE_ID, substr(FILE_STRE_COURS, INSTR(FILE_STRE_COURS, '/',-1,3)) AS FILE_STRE_COURS, STRE_FILE_NM, ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, CON_SEQ, FILE_ORDER, FILE_THUMNAIL
+               , CASE 
+                      WHEN  FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+                      WHEN  FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                   END AS mediaType 
+                , FILE_WIDTH, FILE_HEIGHT   , PLAY_TIME
+     from LETTNFILEDETAIL
+     where ATCH_FILE_ID = #{atchFileId}
+   </select>
+   
+   <insert id="insertFileManage" >
+        insert into LETTNFILEDETAIL(ATCH_FILE_ID, FILE_STRE_COURS, STRE_FILE_NM, ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_THUMNAIL, PLAY_TIME)
+        values ( #{atchFileId} , #{fileStreCours}, #{streFileNm}, #{orignlFileNm}, #{fileExtsn}  , #{fileSize},  #{fileThumnail ,jdbcType=VARCHAR}   , #{playTime,  jdbcType=VARCHAR })
+   </insert>
+   <update id="updateFileManage">
+          update LETTNFILEDETAIL set FILE_STRE_COURS =  #{fileStreCours}, 
+                                                                     STRE_FILE_NM =     #{streFileNm},
+                                                                     ORIGNL_FILE_NM =     #{orignlFileNm},
+                                                                     FILE_EXTSN =     #{fileExtsn},
+                                                                     FILE_SIZE =     #{fileSize},
+                                                                     PLAY_TIME =     #{playTime,jdbcType=VARCHAR},
+                                                                     FILE_WIDTH = #{fileWidth,jdbcType=VARCHAR}, 
+   	                                                                 FILE_HEIGHT =  #{fileHeight,jdbcType=VARCHAR} 
+                                                                     
+         where ATCH_FILE_ID = #{atchFileId}
+   </update>
+   
+     <update id="updateFileManageUseYn">
+          update LETTNFILEDETAIL set UseYN =  #{useYn}
+                                                                     
+         where ATCH_FILE_ID = #{atchFileId}
+   </update>
+      
+   <delete id="deleteFileManage">
+        DELETE FROM LETTNFILEDETAIL where ATCH_FILE_ID = #{atchFileId}   
+   </delete>
+              
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.cnt.mapper.FloorPartInfoManageMapper">
+     <select id="selectFloorPartInfoManageListByPagination"  resultType="lmap">
+		SELECT TB.* , SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
+	    FROM (
+					    SELECT c.PART_SEQ, c.PART_NAME, b.FLOOR_SEQ, b.FLOOR_INFO, b.FLOOR_NAME,
+					           a.CENTER_ID,  a.CENTER_NM  ,
+						       CASE  WHEN  length(PART_MAP1) > 0 THEN 
+				  	               PART_MAP1
+							   ELSE 
+						          'no_image.gif'
+						       END PART_MAP1, 
+						       b.FLOOR_PART,  c.UPDATE_ID,     	
+						       DATE_FORMAT(c.UPDATE_DATE,'%Y-%m-%d %H:%i:%s') UPDATE_DATE,
+				               c.PART_SEATRULE, c.PART_MINI_CSS, c.PART_MINI_TOP, c.PART_MINI_LEFT, 
+			 	               c.PART_USEYN, c.PART_ORDER, c.PART_CSS
+					    FROM  tb_centerinfo a, tb_floorinfo b, tb_floorpart c
+					    WHERE a.CENTER_ID = b.CENTER_ID       
+					          AND b.FLOOR_SEQ = c.FLOOR_SEQ
+					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+							      AND (    b.FLOOR_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  OR a.CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%')  )
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorSeq)">
+							      AND b.FLOOR_SEQ = #{params.floorSeq}
+							  </if>	
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
+							      AND b.CENTER_ID = #{params.centerId}
+							  </if>	
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partUseyn)">
+							      AND c.PART_USEYN = #{params.partUseyn}
+							  </if>		
+					    ORDER BY c.PART_ORDER asc , c.PART_SEQ  DESC
+	        ) TB  
+        ORDER BY TB.PART_ORDER asc ,  TB.PART_SEQ  DESC
+        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+    </select>
+    <select id="selectFloorPartInfoManageCombo" resultType="lmap">
+	       SELECT  PART_SEQ , PART_NAME 
+	       FROM tb_floorpart
+	       WHERE PART_USEYN = 'Y'
+	             <if test="centerId != '' ">  
+	             AND CENTER_ID = #{centerId}
+	             </if>
+	             <if test="floorSeq != '' ">  
+	             AND FLOOR_SEQ = #{floorSeq}
+	             </if>
+	       ORDER BY  PART_SEQ  ASC
+    </select>
+    <select id="selectFloorPartInfoManageDetail"  resultType="lmap">
+           SELECT  CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,
+				   PART_SEATRULE, PART_MINI_CSS, PART_MINI_TOP, PART_MINI_LEFT, 
+			 	   PART_USEYN, PART_ORDER,
+				   REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID
+		    FROM tb_floorpart
+		    WHERE PART_SEQ = #{partSeq}  	  
+    </select>
+    <insert id="insertFloorPrartInfoManage" >
+         INSERT INTO tb_floorpart(CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,
+								  PART_SEATRULE, PART_MINI_CSS, PART_MINI_TOP, PART_MINI_LEFT, 
+								  PART_USEYN, PART_ORDER,
+								  REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
+         VALUES (#{centerId}, #{floorSeq}, #{partMap1,jdbcType=VARCHAR}, #{partMap2,jdbcType=VARCHAR}, #{partCss,jdbcType=VARCHAR}, #{partName,jdbcType=VARCHAR}, 
+                 #{partSeatrule,jdbcType=VARCHAR},#{partMiniCss,jdbcType=VARCHAR},  #{partMiniTop,jdbcType=VARCHAR}, #{partMiniLeft,jdbcType=VARCHAR},
+                 #{partUseyn,jdbcType=VARCHAR}, #{partOrder,jdbcType=VARCHAR},
+                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR})
+                
+    </insert>
+    <update id="updateFloorPrartInfoManage" >
+         UPDATE  tb_floorpart SET CENTER_ID = #{centerId} 
+	                              , FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR} 
+	                              , PART_CSS = #{partCss,jdbcType=VARCHAR}
+	                              , PART_NAME = #{partName,jdbcType=VARCHAR}
+	                              , PART_SEATRULE = #{partSeatrule,jdbcType=VARCHAR} 
+	                              , PART_MINI_CSS = #{partMiniCss,jdbcType=VARCHAR} 
+	                              , PART_MINI_TOP = #{partMiniTop,jdbcType=VARCHAR} 
+	                              , PART_MINI_LEFT = #{partMiniLeft,jdbcType=VARCHAR} 
+	                              , PART_USEYN = #{partUseyn,jdbcType=VARCHAR} 
+	                              , PART_ORDER = #{partOrder,jdbcType=VARCHAR} 
+                                  <if test="partMap1 != '' ">                                    
+                                    , PART_MAP1 = #{partMap1,jdbcType=VARCHAR}
+                                  </if>
+                                  <if test="partMap2 !=  '' ">                     
+                                    , FLOOR_MAP2 = #{partMap2,jdbcType=VARCHAR}
+                                  </if>      
+	                              , UPDATE_DATE = NOW()
+	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
+	     WHERE PART_SEQ = #{partSeq}           
+    </update> 
+
+</mapper>

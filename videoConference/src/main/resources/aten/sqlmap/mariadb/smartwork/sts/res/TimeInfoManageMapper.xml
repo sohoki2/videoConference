@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper">
+    <!--  수정 신규 테이블에 맞게 변경 회의실만 -->
+    <select id="selectSTimeInfoBarList" resultType="lmap">
+      <![CDATA[
+        SELECT a.TIME_SEQ, a.SWC_TIME, 
+               CASE WHEN a.SWC_RESDAY != SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),1,8) THEN RES_SEQ
+        	               WHEN a.SWC_TIME > SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),9,4)  THEN RES_SEQ
+        	              WHEN a.RES_SEQ > 0 THEN a.RES_SEQ
+               ELSE -1
+               END AS RES_SEQ,  a.APPRIVAL, a.USE_YN, a.MEETING_ID, a.SWC_RESDAY
+	    FROM tb_swctime a, tb_meeting_room b 
+	    WHERE a.SWC_RESDAY = #{params.swcResday} AND a.MEETING_ID = #{params.meetingId} 
+	          AND a.SWC_TIME between 0800 and 1830
+	          AND a.MEETING_ID = b.MEETING_ID
+	    ORDER BY SWC_TIME ASC
+	   ]]>
+    </select>
+    <select id="selectSTimeInfoBarListKiosk" resultType="TimeInfoVO">
+      <![CDATA[
+        SELECT TIME_SEQ, SWC_TIME, 
+			        CASE  WHEN SWC_TIME > SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),9,4)  THEN RES_SEQ
+			        ELSE -1
+			        END AS resSeq,
+			        APPRIVAL, USE_YN, SWC_SEQ, SWC_RESDAY
+	    FROM tb_swctime
+	    WHERE SWC_RESDAY = #{swcResday} AND SWC_SEQ = #{swcSeq} and SWC_TIME between 0800 and 1830
+	    ORDER BY SWC_TIME ASC
+	   ]]>
+    </select>
+    <select id="selectLTimeInfoBarList" resultType="TimeInfoVO">
+    <![CDATA[
+        
+        SELECT d.DATES as SWC_RESDAY,
+			       CASE  x.RES_POSSIBLE 
+			         WHEN  'O' THEN 'S'
+			         WHEN 'F' THEN 'D'
+			         ELSE 'W'
+			       END AS RES_POSSIBLE,
+			       x.SWC_SEQ, 
+			       x.SEAT_NAME,
+			       x.HOL_DT_YN
+		FROM tb_calender  d
+		LEFT OUTER JOIN  
+		 (SELECT CASE when (SELECT ifnull(count(RES_SEQ),0) FROM tb_swctime e 
+		               WHERE a.SWC_RESDAY = e.SWC_RESDAY and  e.SWC_SEQ = a.SWC_SEQ
+		                     AND (e.RES_SEQ = 0)  ) 
+		               >  17 THEN 'O'
+					   ELSE 'F'
+			         END AS RES_POSSIBLE,
+					 count(TIME_SEQ)as count , 
+					 a.SWC_SEQ, b.SEAT_NAME, a.SWC_RESDAY,
+					 e.HOL_DT_YN  
+		  FROM tb_swcTime a, TB_SWC_ROOM b , TB_CENTERINFO c, TB_HOLY e
+		  WHERE  a.SWC_SEQ = b.SWC_SEQ AND b.CENTER_ID = c.CENTER_ID  
+				      AND b.CENTER_ID = #{centerId} AND b.SWC_SEQ = #{swcSeq}
+					  AND a.SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay}
+					  AND e.DT = a.SWC_RESDAY		 				
+		  GROUP BY a.SWC_SEQ, b.SEAT_NAME, a.SWC_RESDAY, e.HOL_DT_YN
+		 ) x
+		 ON d.DATES = x.SWC_RESDAY 
+		 WHERE d.DATES BETWEEN #{timeStartDay} AND #{timeEndDay} 
+		 ORDER BY d.DATES asc,  x.SEAT_NAME ASC		
+	     ]]>
+    </select>
+    <select id="selectTimeUp" resultType="java.lang.String">
+      SELECT fn_upsTimedown(#{endTime}) as endTime
+    </select>
+    
+    
+    
+    <!--  좌석 화인  -->
+    <select id="selectResPreCheckInfo" resultType="java.lang.Integer">
+          SELECT  IFNULL(COUNT(*),0)
+	      FROM tb_swctime
+	      WHERE  SWC_RESDAY = #{params.timeStartDay}  and MEETING_ID = #{params.meetingId} and swc_time between #{params.strTime} and #{params.endTime}      
+		         AND RES_SEQ != 0       
+		         AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+		         <if test="params.resGubun == 'SWC_GUBUN_2' ">
+		            AND MEETING_ID IN 
+		            <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		               #{item}
+		            </foreach>
+	             </if>
+    </select>
+    
+    <!-- <select id="selectResPreCheckMeetingCount" resultType="java.lang.Integer">
+          SELECT  IFNULL(COUNT(*),0)
+	      FROM tb_swctime
+	      WHERE  SWC_RESDAY = #{timeStartDay}  and swc_time between #{strTime} and #{endTime}      
+	      and RES_SEQ != 0       
+	      and SWC_SEQ IN 
+	      <foreach collection="meetingSeq" item="meetingSeq" open="(" close=")" separator=",">
+	          #{meetingSeq}
+	      </foreach>
+	      and USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+    </select> -->
+    <!--  좌석 화인  끝 -->
+    
+    
+    
+    <!--  회의실 장기 예약 -->
+    <select id="selectResPreCheckInfoL" resultType="java.lang.Integer">
+          SELECT  IFNULL(COUNT(*),0)
+	      FROM tb_swctime
+	      WHERE  SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay}  
+	                 AND MEETING_ID = #{meetingId} 
+	                 AND swc_time BETWEEN #{strTime} AND #{endTime}      
+				     AND RES_SEQ != 0       
+				     AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+    </select>
+    
+    
+    <update id="updateTimeInfo">
+        UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
+        WHERE MEETING_ID = #{params.meetingId} 
+              AND SWC_RESDAY = #{params.timeStartDay} 
+              AND SWC_TIME BETWEEN #{params.strTime} AND #{params.endTime}
+              <if test="params.resGubun == 'SWC_GUBUN_2' ">
+              AND MEETING_ID IN 
+	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		            #{item}
+		           </foreach>
+              </if>
+    </update>
+    
+    <!-- <update id="updateTimeInfoMeeting">
+        UPDATE tb_swctime set RES_SEQ = #{resSeq} , APPRIVAL =#{apprival}
+        WHERE  SWC_RESDAY = #{timeStartDay} AND SWC_TIME BETWEEN #{strTime} AND #{endTime}
+                    AND SWC_SEQ IN 
+	               <foreach collection="meetingSeq" item="meetingSeq" open="(" close=")" separator=",">
+		            #{meetingSeq}
+		           </foreach>
+    </update> -->
+    
+    <update id="updateTimeInfoY">
+        UPDATE tb_swctime SET APPRIVAL =#{apprival}
+        WHERE RES_SEQ = #{resSeq}
+     </update>
+
+    
+    <update id="updateTimeInfoL">
+        UPDATE tb_swctime set RES_SEQ = #{resSeq}, APPRIVAL =#{apprival}
+        WHERE SWC_SEQ = #{swcSeq} 
+                   AND SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay} 
+                   AND SWC_TIME BETWEEN #{strTime} AND #{endTime}
+    </update>
+    
+    <update id="resTimeReset">
+        UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL =#{apprival}
+        WHERE RES_SEQ = #{resSeq}
+    </update>
+    
+    <insert id="inseretTimeCreate">
+       { call SP_ROOM_TIMECREATE() }
+    </insert>
+    
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.eai.cus.org.app.mapper.EmpInfoAppManageMapper">
+
+      <select id="selectOracleEmpInfoList"  resultType="EmpInfoVO">
+          SELECT  a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGARDCODE, a.EMPJIKW, a.EMPJIKWCODE,
+                      a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL
+          FROM slc_mis.VI_MIEMPL a
+     </select>
+     <select id="selectJobInfoList"  resultType="EmpInfoVO">
+         SELECT CODD_VALU as empjikwcode , CODD_DESC empjikw, SORT_ORDE sortOrde
+         FROM slc_mis.tm_codexd
+         WHERE CODH_FLNM = 'HR03'
+			   AND CODD_YSNO = '1'
+			   ORDER BY SORT_ORDE
+     </select>
+     
+</mapper>

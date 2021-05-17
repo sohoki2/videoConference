@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.uat.uia.mapper.AdminInfoManagerMapper">
+
+   <select id="selectAdminUserManageListByPagination" resultType="AdminInfoVO">     	      
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					      a.ADMIN_ID  "adminId",
+			              a.ADMIN_NAME  "adminName",
+			              a.ADMIN_TEL  "adminTel",
+                          a.ADMIN_EMAIL  "adminEmail",
+			              a.DEPT_ID   "deptId",
+			              a.DEPT_NAME "deptName",
+                          a.lock_yn,
+                          a.use_yn,		
+                          TO_CHAR (a.REG_DATE, 'YYYY-MM-DD') AS regDate,
+			              c.AUTHOR_NM "deptLevel"			                 
+		    FROM   TB_ADMIN a , LETTNAUTHORINFO c
+			WHERE   a.ADMIN_LEVEL = c.AUTHOR_CODE
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test=" searchCondition == 0 ">
+								<![CDATA[						
+								   and ( a.ADMIN_ID LIKE '%'|| #{searchKeyword} ||'%'  or a.ADMIN_NAME LIKE '%' || #{searchKeyword} || '%' )
+								 ]]> 	
+							</when>
+							<otherwise>
+								<choose>
+									<when test=" searchCondition == 1">
+										<![CDATA[		
+										and a.ADMIN_ID LIKE '%' || #{searchKeyword} || '%'
+										]]> 	
+									</when>
+									<otherwise>
+										<![CDATA[		
+										and a.ADMIN_NAME LIKE '%' || #{searchKeyword} || '%'
+										]]> 	
+									</otherwise>
+								</choose>
+							</otherwise>
+						</choose>
+				</if>		        
+				<if test="useYn != ''">
+				         and a.USE_YN = #{useYn}
+				</if>		     
+		        ORDER BY a.REG_DATE  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+   </select>
+      
+   <select id="selectAdminUserManageDetail" resultType="AdminInfoVO">
+     select ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, DEPT_ID, DEPT_NAME, ADMIN_EMAIL, ADMIN_TEL, ADMIN_LEVEL, UPDATE_PASSWORD, 
+            LOCK_YN, USE_YN, EMP_NO, REG_DATE
+     from TB_ADMIN
+     where ADMIN_ID = #{adminId}
+   </select>
+   <select id="selectAdminUserManageListTotCnt_S" resultType="java.lang.Integer">
+      SELECT  NVL(count(*),0)      
+		    FROM   TB_ADMIN a , LETTNAUTHORINFO c
+			WHERE  a.ADMIN_LEVEL = c.AUTHOR_CODE    
+        <if test="searchKeyword != ''">
+					<choose>
+						<when test=" searchCondition == 0 ">
+							<![CDATA[						
+							   and ( a.ADMIN_ID LIKE '%'|| #{searchKeyword} ||'%'  or a.ADMIN_NAME LIKE '%' || #{searchKeyword} || '%' )
+							 ]]> 	
+						</when>
+						<otherwise>
+							<choose>
+								<when test=" searchCondition == 1">
+									<![CDATA[		
+									and a.ADMIN_ID LIKE '%' || #{searchKeyword} || '%'
+									]]> 	
+								</when>
+								<otherwise>
+									<![CDATA[		
+									and a.ADMIN_NAME LIKE '%' || #{searchKeyword} || '%'
+									]]> 	
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+			</if>		      
+			<if test="useYn != ''">
+			         and a.USE_YN = #{useYn}
+			</if>		     
+   </select>
+   
+   <select id="selectAdminUserMangerIDCheck" resultType="java.lang.Integer">
+            SELECT  NVL(count(*),0)      
+		    FROM   TB_ADMIN
+		    WHERE  ADMIN_ID = #{adminId}
+   </select>
+   
+   <insert id="insertAdminUserManage">
+      insert into TB_ADMIN( ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, DEPT_ID, DEPT_NAME, ADMIN_EMAIL, 
+       ADMIN_TEL, REG_DATE, UPDATE_PASSWORD, ADMIN_LEVEL, LOCK_YN, EMP_NO)
+      values (
+      	#{adminId}
+      	<!-- , CRYPTION_AES256.ENC_AES(#{adminPassword}) -->
+      	, #{adminPassword} 
+      	, #{adminName}, #{useYn}, #{deptId,jdbcType=VARCHAR }, #{deptName}, #{adminEmail ,jdbcType=VARCHAR},
+       #{adminTel ,jdbcType=VARCHAR}, sysdate, sysdate, #{adminLevel ,jdbcType=VARCHAR}, 'N' , #{empNo ,jdbcType=VARCHAR}  )
+   </insert>
+   <update id="updateAdminUserManage">
+      update TB_ADMIN set ADMIN_NAME = #{adminName}
+                                                  ,  USE_YN = #{useYn}
+                                                  ,  DEPT_ID = #{deptId, jdbcType=VARCHAR }
+                                                  ,  DEPT_NAME = #{deptName}
+                                                  ,  ADMIN_EMAIL = #{adminEmail, jdbcType=VARCHAR }
+                                                  ,  ADMIN_TEL = #{adminTel, jdbcType=VARCHAR }
+                                                  ,  ADMIN_LEVEL = #{adminLevel , jdbcType=VARCHAR }
+                                                  <if test="adminPassword != ''">
+                                                  <!-- , ADMIN_PASSWORD = CRYPTION_AES256.ENC_AES(#{adminPassword}) -->
+                                                  , ADMIN_PASSWORD = #{adminPassword} 
+                                                  , UPDATE_PASSWORD = sysdate
+                                                  , LOCK_YN ='N'
+                                                  </if> 
+                                                  <if test="empNo != ''">
+                                                  ,  EMP_NO = #{empNo, jdbcType=VARCHAR }
+                                                  </if>
+      where ADMIN_ID = #{adminId}
+   </update>
+   <update id="updateAdminUserLockManage">
+      update TB_ADMIN set LOCK_YN = 'Y'
+             where ADMIN_ID = #{adminId}
+   </update>
+   <delete id="deleteAdminUserManage">
+      delete from TB_ADMIN
+      where ADMIN_ID = #{adminId}   
+   </delete>
+   
+</mapper>
+

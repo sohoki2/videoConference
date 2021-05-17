@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.MessageInfoManageMapper">
+
+    <select id="selectMsgManageListByPagination" resultType="MessageInfoVO">     	      
+		SELECT 	* 
+		FROM   (           
+				        SELECT 	ROWNUM rnum
+				               			 , tb.*
+				        FROM 	(    
+						                SELECT		c.MSG_SEQ
+								                        , c.MSG_TITLE 
+								                        , TO_CHAR (c.MSG_REG_DATE,'YYYY-MM-DD') AS msgRegDate
+								                        , c.msg_reg_id
+								                        , c.MSG_GUBUN       
+								                        , c.msg_sendType
+								                        , FN_DETAILCODENM(c.msg_sendType01)|| ', ' || FN_DETAILCODENM(c.msg_sendType02)|| ', ' || FN_DETAILCODENM(c.msg_sendType03) as msgSendtype
+						                FROM 		( SELECT 		b.msg_Seq
+										                                  , b.msg_title
+										                                  , b.msg_reg_date
+										                                  , b.MSG_REG_ID
+										                                  , b.MSG_GUBUN                  
+										                                  , b.msg_sendType
+										                                  , regexp_substr(a.msg_sendType, '[^,]+', 1, 1)msg_sendType01
+										                                  , regexp_substr(a.msg_sendType, '[^,]+', 1, 2)msg_sendType02
+										                                  , regexp_substr(a.msg_sendType, '[^,]+', 1, 3)msg_sendType03  
+						                          			FROM	(		SELECT 	msg_seq
+						                          												, msg_sendType 
+						                                  						FROM 		TB_MESSAGEINFO
+						                              					)a, TB_MESSAGEINFO b  
+						                              	    WHERE 	a.msg_seq = b.msg_seq
+						                              	    ORDER BY msg_reg_date desc
+						                        		)c
+						          	)tb
+				        WHERE 1=1
+				                        <if test="searchKeyword != ''">
+				                          <choose>
+				                            <when test="searchCondition == 0">
+				                              <![CDATA[
+				                            and (TB.MSG_TITLE LIKE '%'||  #{searchKeyword} || '%' OR TB.msg_gubun LIKE '%'|| #{searchKeyword} || '%')
+				                          ]]>
+				                            </when>
+				                            <otherwise>
+				                              <choose>
+				                            <when test="searchCondition == 1">
+				                            <![CDATA[
+				                              and TB.MSG_TITLE LIKE '%'||  #{searchKeyword} || '%'
+				                            ]]>
+				                            </when>
+				                            <otherwise>
+				                            <![CDATA[
+				                              and TB.msg_gubun LIKE '%'|| #{searchKeyword} || '%'
+				                            ]]>
+				                            </otherwise>
+				                          </choose>
+				                            </otherwise>
+				                          </choose>
+				                  </if>		 	
+				        )
+		WHERE 	RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}       		 	    
+   </select>
+      
+   <select id="selectMsgManageDetail" resultType="MessageInfoVO">
+	     SELECT 	b.msg_Seq
+			              , b.msg_title
+			              , b.msg_reg_date
+			              , b.MSG_REG_ID
+			              , b.MSG_GUBUN                  
+			              , b.msg_sendType
+			              , regexp_substr(a.msg_sendType, '[^,]+', 1, 1)msgSendtype01
+			              , regexp_substr(a.msg_sendType, '[^,]+', 1, 2)msgSendtype02
+			              , regexp_substr(a.msg_sendType, '[^,]+', 1, 3)msgSendtype03  
+			              , MSG_STARTDAY
+			              , MSG_ENDDAY
+			              , MSG_CONTENT
+			              , MSG_UPDATE_ID
+			              , MSG_UPDATE_DATE
+			              , MSG_VARINFO
+	     FROM		(	SELECT 	msg_seq
+			                      			,msg_sendType 
+			              	FROM 		TB_MESSAGEINFO
+			          	)a, TB_MESSAGEINFO b  
+	     WHERE 	a.msg_seq = b.msg_seq    
+	     AND 		a.MSG_SEQ = #{msgSeq}
+   </select>
+   
+   <select id="selectMsgManageListTotCnt_S" resultType="java.lang.Integer">
+        SELECT  NVL(count(*),0)      
+	    FROM TB_MESSAGEINFO a
+		WHERE 1=1
+	        <if test="searchKeyword != ''">
+	         	<choose>
+	         		<when test="searchCondition == 0">
+	         			<![CDATA[
+							and (a.MSG_TITLE LIKE '%'||  #{searchKeyword} || '%' OR (SELECT FN_DETAILCODENM(a.MSG_GUBUN) FROM dual ) LIKE '%'|| #{searchKeyword} || '%')
+						]]>
+	         		</when>
+	         		<otherwise>
+	         			<choose>
+							<when test="searchCondition == 1">
+							<![CDATA[
+								and a.MSG_TITLE LIKE '%'||  #{searchKeyword} || '%'
+							]]>
+							</when>
+							<otherwise>
+							<![CDATA[
+								and (SELECT FN_DETAILCODENM(a.MSG_GUBUN) FROM dual ) LIKE '%'|| #{searchKeyword} || '%'
+							]]>
+							</otherwise>
+						</choose>
+	         		</otherwise>
+	         	</choose>
+			</if>				    	     
+   </select>
+   
+   
+   <insert id="insertMsgManage">
+      insert into TB_MESSAGEINFO( MSG_SEQ, MSG_GUBUN, MSG_TITLE, MSG_SENDTYPE, MSG_STARTDAY, MSG_ENDDAY, MSG_CONTENT, 
+                                 MSG_REG_ID, MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE, MSG_VARINFO)
+      values (MSG_SEQ.NextVal, #{msgGubun}, #{msgTitle}, #{msgSendtype}, #{msgStartday,jdbcType=VARCHAR }, #{msgEndday,jdbcType=VARCHAR },
+              #{msgContent,jdbcType=VARCHAR },#{msgRegId ,jdbcType=VARCHAR}, sysdate, #{msgRegId ,jdbcType=VARCHAR},
+              sysdate, #{msgVarinfo ,jdbcType=VARCHAR})
+   </insert>
+   <update id="updateMsgManage">
+      update TB_MESSAGEINFO set MSG_GUBUN = #{msgGubun}
+                             ,  MSG_TITLE = #{msgTitle }
+                             ,  MSG_SENDTYPE = #{msgSendtype }
+                             ,  MSG_STARTDAY = #{msgStartday,jdbcType=VARCHAR }
+                             ,  MSG_ENDDAY = #{msgEndday,jdbcType=VARCHAR }
+                             ,  MSG_CONTENT = #{msgContent,jdbcType=VARCHAR }                             
+                             ,  MSG_UPDATE_DATE = sysdate
+                             ,  MSG_UPDATE_ID = #{msgUpdateId ,jdbcType=VARCHAR}
+                             ,  MSG_VARINFO = #{msgVarinfo, jdbcType=VARCHAR }                             
+      where MSG_SEQ = #{msgSeq}
+   </update>
+   <delete id="deleteMsgManage">
+      delete from TB_MESSAGEINFO
+      where MSG_SEQ = #{msgSeq}   
+   </delete>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	
+	
+	<!-- <bean id="resRoomCancelSchedulering"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="resStateCreateSchedulerService" />
+		<property name="targetMethod" value="resRaiSchedule10Minute" />
+		<property name="concurrent" value="false" />
+	</bean> 
+	
+	<bean id="resRoomCancelScheduleringTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="resRoomCancelSchedulering" />
+		<property name="cronExpression" value="0 0/10 * * * ?" />
+	</bean>
+	
+	<bean id="resMessageSendScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="resRoomCancelScheduleringTrigger" />
+			</list>
+		</property>
+	</bean>  -->
+	
+	
+	
+	<bean id="resEaiScheduleSchedulering"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="resStateCreateSchedulerService" />
+		<property name="targetMethod" value="resTimeCreateStateSchede" />
+		<property name="concurrent" value="false" />
+	</bean> 
+	
+	<bean id="resEaiScheduleScheduleringTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="resEaiScheduleSchedulering" />
+		<property name="cronExpression" value="0 0 23 * * ?" />
+	</bean>
+	
+	<bean id="resEaiScheduleScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="resEaiScheduleScheduleringTrigger" />
+			</list>
+		</property>
+	</bean> 
+	
+</beans>

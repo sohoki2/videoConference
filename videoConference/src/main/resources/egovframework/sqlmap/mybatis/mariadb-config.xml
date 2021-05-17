@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>		
+		<setting name="mapUnderscoreToCamelCase" value="true" />		
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="cacheEnabled" value="true"/>		
+	</settings>
+	
+
+	<typeAliases>
+	    <typeAlias alias="lmap" type="com.sohoki.backoffice.util.service.LowerKeyMap"/>
+	    <package name="com.sohoki.backoffice.sym.ccm.cca.service"/>
+	    	    
+		<package name="com.sohoki.backoffice.sym.ccm.ccc.service"/>
+		<package name="com.sohoki.backoffice.sym.ccm.cde.vo"/>
+		<package name="egovframework.com.cmm"/>
+		<!-- 스마트워크 사용자 정의 -->
+		<package name="com.sohoki.backoffice.cus.org.vo"/>
+		<!-- 스마트워크 사용자 정의 끝 -->
+		<!-- backoffice 사용자 정의 -->
+		<package name="com.sohoki.backoffice.sts.hly.vo"/>
+		<package name="com.sohoki.backoffice.sts.msg.vo"/>
+		<package name="com.sohoki.backoffice.sts.brd.vo"/>
+		<package name="com.sohoki.backoffice.sts.res.vo"/>
+		
+		<package name="com.sohoki.backoffice.sts.cnt.vo"/>
+		<package name="com.sohoki.backoffice.sym.cnt.vo"/>
+		<package name="com.sohoki.backoffice.sym.sat.vo"/>
+		<package name="com.sohoki.backoffice.sym.equ.vo"/>
+		<package name="com.sohoki.backoffice.sym.rnt.vo"/>
+		<package name="com.sohoki.backoffice.sym.did.vo"/>
+		<package name="com.sohoki.backoffice.uat.uia.vo"/>
+		
+		<package name="com.sohoki.backoffice.util.vo"/>
+		<package name="com.sohoki.backoffice.sts.iot.vo"/>
+		<package name="com.sohoki.backoffice.sym.avaya.vo"/>
+		
+	</typeAliases>
+	
+	 
+</configuration>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.cus.org.mapper.OrgInfoManagerMapper">
+
+    <select id="selectOrgInfoCombo"  resultType="orgInfo">
+      SELECT DEPTCODE, DEPTNAME
+      FROM tb_orginfo 
+      WHERE 1=1 and USE_YN ='Y'
+      ORDER BY DEPTCODE ASC
+    </select>
+    
+    
+    <select id="selectOrgInfoComboSearch"  resultType="orgInfo">
+      SELECT DEPTCODE, DEPTNAME
+      FROM tb_orginfo WHERE USE_YN ='Y' and   AND a.DEPTNAME LIKE CONCAT('%',#{searchKeyword},'%')   
+      ORDER BY  DEPTCODE ASC
+    </select>
+    
+    <insert id="insertOrgInfo">
+         INSERT INTO tb_orginfo (DEPTCODE, DEPTNAME)
+		 SELECT DEPTCODE, DEPTNAME FROM tb_empInfo
+		 GROUP BY  DEPTCODE, DEPTNAME 
+    </insert>
+    <delete id="deleteEaiOrgTmp">
+        DELETE FROM tb_orginfo 
+    </delete>
+    
+
+</mapper>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.EquipmentManageMapper">
+
+    <select id="selectEqupManageListByPagination" resultType="EquipmentVO">     	      
+		 	SELECT * FROM ( SELECT 	rownum RNUM
+                      							, TB.* 
+					                  FROM ( SELECT 		a.EQUP_CODE
+								                                , a.EQUIPMENT_ID
+								                                , a.EQUIPMENT_NAME
+								                                , (SELECT center_nm FROM TB_CENTERINFO WHERE center_id=a.CENTER_ID) centerNm
+								                                , fn_DetailCodeNm(a.ROOM_ID) AS roomId 
+								                                , (SELECT seat_name FROM TB_SWC_ROOM WHERE seat_id = a.SEAT_ID) seatId
+								                                , a.REG_DATE
+								                                , a.COMPANY
+								                                , a.CNT
+								                                , a.REMARK
+								                                , TO_CHAR (TO_DATE(a.EQUP_INDATE,'yyyy-MM-dd'),'YYYY-MM-DD') AS EQUP_INDATE
+								                                , a.USE_YN                    
+								                                , a.ROOM_TYPE             
+													FROM 	TB_EQUIPMENTINFO a
+					                           ORDER BY 	a.EQUP_CODE  DESC
+			               	        	     ) TB 
+			               	        	     WHERE		1=1
+												  <if test="searchKeyword != ''">
+											        	<choose>
+											        		<when test="searchCondition == 0">
+											        			<![CDATA[    
+																	and (COMPANY LIKE '%'||  #{searchKeyword} || '%' OR  EQUIPMENT_NAME LIKE '%'|| #{searchKeyword} || '%' OR  seatId LIKE '%'|| #{searchKeyword} || '%')
+																]]>
+											        		</when>
+											        		<otherwise>
+											        			<choose>
+																	<when test="searchCondition == 1">
+																	<![CDATA[    
+																		and seatId LIKE '%'||  #{searchKeyword} || '%'
+																	 ]]>
+																	</when>
+																	<when test="searchCondition == 1">
+																	<![CDATA[    
+																		and EQUIPMENT_NAME LIKE '%'|| #{searchKeyword} || '%'
+																	 ]]>
+																	</when>
+																	<otherwise>
+																	<![CDATA[    
+																		and COMPANY LIKE '%'||  #{searchKeyword} || '%'
+																	 ]]>
+																	</otherwise>
+																</choose>
+											        		</otherwise>
+											        	</choose>
+													</if>		        
+													<if test="searchcenterId != ''">
+													         and CENTER_ID = #{searchcenterId}
+													</if>	
+													<if test="searchRoomId != ''">
+													         and ROOM_ID = #{searchRoomId}
+													</if>	
+									)
+							WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	
+   </select>
+      
+   <select id="selectEqupManageDetail" resultType="EquipmentVO">
+		SELECT		a.EQUP_CODE
+						, a.EQUIPMENT_ID
+				        , a.EQUIPMENT_NAME
+				        , a.CENTER_ID
+                		, a.ROOM_ID
+				        , fn_DetailCodeNm(a.ROOM_ID) roomIdNm
+				        , a.SEAT_ID
+				        , CASE a.SEAT_ID WHEN NULL then '좌석없음' ELSE (select SEAT_NAME from TB_SWC_ROOM e where a.SEAT_ID = e.SEAT_ID) END seatNm 
+				        , a.REG_DATE
+				        , a.COMPANY
+				        , a.CNT
+				        , a.REMARK
+				        , a.USE_YN
+				        , a.EQUP_INDATE
+                		, a.ROOM_TYPE
+				        , fn_DetailCodeNm(a.ROOM_TYPE)roomTypeNm
+		FROM 		TB_EQUIPMENTINFO a
+		WHERE 		a.EQUP_CODE = #{equpCode}
+    
+   </select>
+   <select id="selectEqupManageView" resultType="EquipmentVO">
+		SELECT		a.EQUP_CODE 
+						, a.EQUIPMENT_ID 
+				        , a.EQUIPMENT_NAME 
+				        , a.CENTER_ID 
+				        , a.SEAT_ID 
+				        , a.REG_DATE 
+				        , a.COMPANY 
+				        , a.CNT 
+				        , a.REMARK 
+				        , a.USE_YN 
+				        , fn_DetailCodeNm(a.ROOM_TYPE)roomType 
+				        , fn_DetailCodeNm(a.ROOM_ID) AS roomId 
+				        , CASE a.SEAT_ID WHEN NULL then '좌석없음' 
+				        	ELSE (select SEAT_NAME from TB_SWC_ROOM e where a.SEAT_ID = e.SEAT_ID) 
+				          END seatNm 
+				        , a.EQUP_INDATE 
+				        , d.CENTER_NM 
+		FROM 		TB_EQUIPMENTINFO a, TB_CENTERINFO d
+		WHERE 		EQUP_CODE = #{equpCode}
+		AND 			a.CENTER_ID = d.CENTER_ID
+   </select>
+   <select id="selectEqupManageListTotCnt_S" resultType="java.lang.Integer">
+        SELECT  NVL(count(*),0)      
+	    FROM 		TB_EQUIPMENTINFO a, TB_CENTERINFO d
+	    WHERE 			a.CENTER_ID = d.CENTER_ID
+	        <if test="searchKeyword != ''">
+	        	<choose>
+	        		<when test="searchCondition == 0">
+	        			<![CDATA[    
+							and (a.COMPANY LIKE '%'||  #{searchKeyword} || '%' OR  a.EQUIPMENT_NAME LIKE '%'|| #{searchKeyword} || '%')
+						]]>
+	        		</when>
+	        		<otherwise>
+	        			<choose>
+							<when test="searchCondition == 1">
+							<![CDATA[    
+								and a.COMPANY LIKE '%'||  #{searchKeyword} || '%'
+							 ]]>
+							</when>
+							<otherwise>
+							<![CDATA[    
+								and a.EQUIPMENT_NAME LIKE '%'|| #{searchKeyword} || '%'
+							 ]]>
+							</otherwise>
+						</choose>
+	        		</otherwise>
+	        	</choose>
+			</if>		        
+			<if test="searchcenterId != ''">
+			         and a.CENTER_ID = #{searchcenterId}
+			</if>	
+			<if test="searchRoomId != ''">
+			         and a.ROOM_ID = #{searchRoomId}
+			</if>			    	     
+   </select>
+   
+   
+   <insert id="insertEqupManage">
+	      INSERT INTO TB_EQUIPMENTINFO( EQUP_CODE
+	      														,EQUIPMENT_ID
+	      														,EQUIPMENT_NAME
+	      														, CENTER_ID
+	      														, ROOM_ID
+	      														, ROOM_TYPE
+	      														, SEAT_ID
+	      														, REG_DATE
+	      														, COMPANY
+	      														, CNT
+	      														, REMARK
+	      														, USE_YN
+	      														, EQUP_INDATE
+      														 )
+      	VALUES (	#{equpCode}
+	      				, #{equpCode,jdbcType=VARCHAR}
+	      				, #{equipmentName}
+	      				, #{centerId}
+	      				, #{roomId,jdbcType=VARCHAR }
+	      				, #{roomType,jdbcType=VARCHAR }
+	      				, #{seatId,jdbcType=VARCHAR }
+	      				, sysdate
+	      				, #{company ,jdbcType=VARCHAR}
+	      				, #{cnt}
+	      				, #{remark ,jdbcType=VARCHAR}
+	      				, #{useYn ,jdbcType=VARCHAR}
+	      				, #{equpIndate}
+      				)
+   </insert>
+   <update id="updateEqupManage">
+      update TB_EQUIPMENTINFO set EQUIPMENT_NAME = #{equipmentName}
+                             ,  EQUIPMENT_ID = #{equpCode,jdbcType=VARCHAR }
+                             ,  ROOM_ID = #{roomId,jdbcType=VARCHAR }
+                             ,  CENTER_ID = #{centerId}
+                             ,  SEAT_ID =  #{seatId,jdbcType=VARCHAR }
+                             ,  ROOM_TYPE =  #{roomType,jdbcType=VARCHAR }
+                             ,  COMPANY = #{company, jdbcType=VARCHAR }
+                             ,  CNT = #{cnt}
+                             ,  REMARK = #{remark, jdbcType=VARCHAR }
+                             ,  USE_YN = #{useYn, jdbcType=VARCHAR }
+                             , EQUP_INDATE = #{equpIndate, jdbcType=VARCHAR }
+      where EQUP_CODE = #{equpCode}
+   </update>
+   <delete id="deleteEqupManage">
+      delete from TB_EQUIPMENTINFO
+      where EQUP_CODE = #{equpCode}   
+   </delete>
+
+</mapper>

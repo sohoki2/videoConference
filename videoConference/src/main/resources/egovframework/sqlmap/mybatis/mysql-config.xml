@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>		
+		<setting name="mapUnderscoreToCamelCase" value="true" />		
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="cacheEnabled" value="true"/>		
+	</settings>
+	
+	<!-- 전자정부 프레임워크 공통 Alias 정의-->	  
+	<typeAliases>
+	    <package name="com.sohoki.backoffice.sts.mail.vo"/>
+	</typeAliases>
+</configuration>

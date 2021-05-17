@@ -1,0 +1,58 @@
+﻿html, body{width:1920px; height:1080px; background:url(../img/back.jpg)no-repeat left top; background-size:100%;}
+.contents{width:1860px; margin:0 auto;}
+header{background-color:rgba(255,255,255,0.9);padding: 25px 30px;box-sizing:border-box;height:125px;position: relative;box-shadow: 0px 2px 5px 0px #636363;}
+header::after{clear:both;}
+header h1{position: absolute;left: 30px;top: 25px;}
+header h4{text-align: center;font-size: 75px;line-height: 75px;}
+.dateBox{position: absolute;right: 25px;top: 23px;}
+.time{font-size: 50px;line-height: 34px;}
+.day{font-size: 37px;letter-spacing: 0;color: #5a5a5a;}
+table{width:100%; text-align:center; margin-top:35px;}
+table th, table thead tr{font-weight:600; color:white;}
+.redBox{background-color: rgba(225,0,0,0.8) !important;}
+.redFont{color:red !important;}
+
+table thead{font-size: 65px;}
+table thead tr th{padding-bottom: 20px;}
+table thead tr th p{background-color:#333434; border-radius:10px;}
+table thead tr td{padding: 0 0 20px 30px;}
+table thead tr td p{background-color:#4d5a68; border-radius: 10px;}
+table tbody tr th{padding-bottom: 20px;}
+table tbody tr th p{background-color: rgba(113,123,132,0.9);border-radius:10px;font-size: 60px;}
+table tbody tr td{padding: 0 0 20px 30px;}
+table tbody tr td p{background-color:rgba(255,255,255,0.9); color:#585757; border-radius:10px;}
+
+.work table thead tr th{width:270px;}
+.work table thead tr p{height:110px;line-height: 110px;}
+.work table tbody tr p{height: 135px;line-height: 135px;}
+.work table tbody tr td p{font-size: 90px;font-weight: 600;}
+
+.consulting table thead tr th{width:270px;}
+.consulting table thead tr p{height:110px;line-height: 110px;}
+.consulting table tbody tr p{height:355px; line-height:355px;}
+.consulting table tbody tr td p{font-size: 140px;font-weight: 600;}
+
+.language table thead tr th{width:270px;}
+.language table thead tr p{height:110px;line-height: 110px;width: 240px;}
+.language table tbody tr p{height:90px; line-height:90px;}
+.language table tbody tr td p{font-size: 70px;font-weight: 600;}
+
+.type table {margin-top: 60px;}
+.type table thead tr p{height:110px;line-height: 110px;width: 380px;}
+.type table tbody tr p{height:345px; line-height:345px;}
+.type table thead tr th p{width: 220px;}
+.type table tbody tr td p{font-size: 100px;font-weight: 600;}
+.type table tr td:first-child{padding:0 0 20px 0 !important; }
+
+.call table {margin-top: 40px;}
+.call table thead tr p{height: 110px;line-height: 110px;width: 599px;}
+.call table tbody tr p{height: 280px;line-height: 280px;}
+.call table tbody tr td p{font-size: 130px;font-weight: 600;}
+.call table tr td:first-child{padding:0 0 20px 0 !important; }
+
+.allcon table {margin-top: 40px;}
+.allcon table thead tr p{height: 160px;line-height: 50px;width: 599px;font-size: 40px;}
+.allcon table tbody tr p{height: 225px;line-height: 225px;}
+.allcon table tbody tr td p{font-size: 115px;font-weight: 600;}
+.allcon table tr td:first-child{padding:0 0 20px 0 !important;}
+.allcon table:last-child thead tr td:last-child p{line-height: 160px;}

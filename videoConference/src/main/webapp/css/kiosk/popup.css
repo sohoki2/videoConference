@@ -1,0 +1,146 @@
+﻿/* popup style */
+.button.b-close {
+    position: absolute;
+    right: 26px;
+    top: 20px;
+    font-size: 0;
+    width: 28px;
+    height: 28px;
+    background: url(/img/popup_close.png) no-repeat;
+    }
+.popup{
+    background-color: #232726; color: #fff; 
+    box-shadow: 0 8px 14px 0 rgba(0, 0, 0, 0.3);
+    display: none; border-radius: 4px; padding:26px;
+}
+/* login popup */
+.login{padding: 26px 40px 40px 40px;border-radius: 10px;width: 477px;box-sizing: border-box;}
+.login .top p{font-weight: 700;font-size: 32px;margin: 24px 0 10px 0;}
+.login .top span{font-size: 20px;color: #ccc;}
+.key_header{
+    border-top: 1px solid #373b3a;
+    padding: 15px 0;
+    margin: 20px 0 10px 0;
+}
+.key_header li{
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    height: 55px;
+    line-height: 46px;
+    font-size: 26px;
+    text-align: center;
+    color: #e6effa;
+    background-color: #181c1b;
+    border-radius: 2px;
+}
+.num_hidden:before{
+    content:"·";
+    font-size: 0;
+    width: 16px;
+    height: 16px;
+    background: #e6effa;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+}
+.login .keyboard li{
+    float:left;
+    font-size:32px;
+    font-weight:700;
+    text-align:center;
+    line-height:65px;
+    width: 31.6%;
+    height:65px;
+    margin-left: 10px;
+    margin-bottom:10px;
+    background-color:#2b2f2e;
+    border-radius:4px;
+}
+.login .keyboard li:nth-child(3n+1){margin-left:0;} /*처음 오는 버튼 margin-left는 margin0*/
+.login .keyboard li:nth-child(10), .login .keyboard li:nth-child(11), .login .keyboard li:nth-child(12){margin-bottom:0;}/*마지막 줄은 margin 0*/
+.key_back{background:url(/img/key_back.png) no-repeat center;}
+.login .keyboard .clear{font-size: 26px;}
+.notiPop{
+    opacity: 0.98!important;
+    width: 358px;
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    font-size: 22px;
+    padding:0 40px;
+}
+.notiPop_b{line-height: 1.45;}
+.notiPop_b p{margin-top: 70px;}
+.check_icon{background:url(/img/check_icon.png) no-repeat center;padding-top: 110px;line-height: 42px;}
+
+/* popup button style */
+.greenBtn{
+     text-align: center;
+     display: inline-block;
+     font-weight: 700;
+     background-color: #31465d!important;
+     width: 100%;
+     height: 52px;
+     line-height: 52px;
+}
+.grayBtn{
+     text-align: center;
+     display: inline-block;
+     font-weight: 700;
+     background-color: #575c59!important;
+     width: 100%;
+     height: 52px;
+     line-height: 52px;
+}
+.pop_btnBox a{width: 49%; float:left;}
+.pop_btnBox a:last-child{float: right;}
+
+.focusPop{width: 476px; height: 260px; text-align: center;}
+.focusPop .top{text-align:left;padding-bottom: 16px; border-bottom:1px solid #383b39;}
+.focusPop .top p{font-size: 22px; display: inline-block; border-right: 1px solid #383b39; padding-right: 14px; margin-right: 14px; }
+.focusPop .top span{color: #b1b1b1;font-size: 22px;}
+.focusPop .con{margin:42px 0;}
+.focusPop .con p{padding-left: 30px;font-size: 26px;font-weight: 700;margin-bottom:20px;}
+.focusPop .con span{color: #b1b1b1;}
+.check_line{background: url(/img/check_line.png) no-repeat 45px;}
+.fail_icon{background: url(/img/fail_icon.png)no-repeat 114px;}
+
+.checkOut_pop{width: 396px; text-align: center;border-radius: 8px;}
+.checkOut_pop .top{margin:40px 0 28px;olor: #79cea7}
+.checkOut_pop .top p{font-size: 26px; margin-bottom: 12px; color: #fff;}
+.checkOut_pop .con{border:1px solid #383b39;margin-bottom: 30px;}
+.checkOut_pop .con .row {height: 124px; margin: 0 20px; font-size: 20px;}
+.checkOut_pop .con .row:first-child{border-bottom: 1px solid #383b39;}
+.checkOut_pop .con .row p {padding:30px 0 20px 0; font-size: 18px;}
+.checkOut_pop input[type="radio"] { display: none;}
+.checkOut_pop input[type="radio"] + label::before{
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background: #ffffff;
+}
+.checkOut_pop label[for^="radio"]::before {border-radius: 50%;}
+.checkOut_pop input[type="radio"]:checked + label::before{
+    border: 4px solid #9df0ca;
+    background: #108d54;
+    box-sizing: border-box;
+}
+.checkOut_pop input[type="radio"]:disabled + label::before{ box-shadow: 0 0 0 3px #ecf0f1;}
+.checkOut_pop input[type="radio"]:disabled + label{ color: #ecf0f1;}
+.meeting_select{width: 408px;padding:24px;}
+.meeting_select a{background-position: 158px 13px;}
+
+.staffList{width: 396px; height: 596px; top:10%!important;}
+.staffList .tit{font-size: 26px; font-weight: 700; margin-bottom: 37px;}
+.staffList ul{height: 558px; overflow: auto;}
+.staffList ul li{height: 114px;padding:0 8px;padding-left: 90px;position: relative;}
+.staffList ul li{background: url(/img/staff_ex.jpg) no-repeat;}
+.staffList ul li.visitor{background:url(/img/visitor_icon.png)no-repeat;}
+.staffList ul li.visitor p{padding-top: 26px;}
+.staffList ul li p{font-size: 20px;padding-top: 14px;display: inline-block;}
+.staffList ul li span{font-size: 16px; color: #bababa;}
+.staffList ul li em{font-size: 16px;color: #beddff;position: absolute;right: 0;top: 28px;}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean name="propertiesService" class="egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl" destroy-method="destroy">
+		<property name="properties">
+	        <map>
+	        	<entry key="pageUnit" value="10"/>
+	        	<entry key="pageSize" value="10"/>
+	        	<entry key="pageUnitImage" value="12"/>
+                <entry key="pageSize" value="10"/>
+                <entry key="pageSizeImage" value="12"/>
+                <entry key="posblAtchFileSize" value="5242880"/>                
+                <entry key="Globals.filePath" value="C:\dev\eGovFrameDev-3.10.0-64bit\workspace\videoConference\src\main\webapp\upload"/>
+                <entry key="Globals.addedOptions" value="false"/>
+                
+                <entry key="mgMessageIP" value="172.31.7.65"/>
+                <entry key="mgMessagePort" value="1234"/>
+                <entry key="mgMessageUrl" value="http://www.kfcc.co.kr"/>
+                
+                <entry key="smtpIp" value="10.10.5.81"/>
+                <entry key="smtpUser" value="slcAdmin"/>
+                <entry key="smtpPwd" value="slcAdmin"/>
+                
+                
+                <entry key="avayaID" value="slc"/>
+                <entry key="avayaPassword" value="Arisys123$"/>
+                <entry key="avayaServer" value="10.10.5.170"/>
+                <entry key="avayaPullUrl" value="http://10.10.5.170:8080/xmlservice/entry"/>
+                <entry key="avayaPort" value="8080"/>
+                
+                
+                
+	        </map>
+		</property>
+	</bean>
+	
+</beans>	
