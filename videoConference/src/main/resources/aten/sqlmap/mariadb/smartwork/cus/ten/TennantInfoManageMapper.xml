@@ -57,11 +57,17 @@
 					          AND a.RES_SEQ = c.RES_SEQ 
 					          AND a.COM_CODE = d.COM_CODE
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
-							    AND a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+							      AND a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
 							  </if>	
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchComCode)">
-							    AND a.COM_CODE =  #{params.searchComCode}
+							      AND a.COM_CODE =  #{params.searchComCode}
 							  </if>	
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+							      AND c.CENTER_ID = #{params.searchCenter}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+							      AND c.FLOOR_SEQ = #{params.searchFloorSeq}
+							  </if>
 					    ORDER BY a.HIS_SEQ  DESC
 	        ) TB  
 	        ORDER BY TB.HIS_SEQ  DESC

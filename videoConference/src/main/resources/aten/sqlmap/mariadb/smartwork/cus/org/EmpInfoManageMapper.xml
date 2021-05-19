@@ -5,16 +5,18 @@
         SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TA.* FROM 
                      ( 
 			    	 SELECT	TB.EMPID, TB.EMPNO, TB.EMPNAME, TB.DEPTNAME, TB.DEPTCODE, TB.EMPGRAD, TB.EMPGRADCODE, TB.EMPJIKW, TB.EMPJIKWCODE,
-                                TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN
+                            TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN
 					  FROM		(SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE, a.EMPJIKW, a.EMPJIKWCODE,
-                                                a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN
-						         FROM tb_empInfo a
-								 WHERE 1=1           
-					                 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+                                        a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN
+						         FROM   tb_empInfo a 
+								 WHERE  AUTHOR_CODE != 'ROLE_USER'
+					                   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 										  <choose>
 										    <when test="params.searchCondition == 'empname'">
 											    <![CDATA[
-											      AND a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											      AND ( a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											            OR a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											           )
 											     ]]> 
 											</when>							
 											<otherwise>
@@ -24,13 +26,13 @@
 									  </if>	
 									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchAvayaCheck)">
 									      AND a.AVAYA_USERID is null  and a.EMPMAIL is not null
-									 </if> 	 
-									 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchJobpst)">
+									  </if> 	 
+									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchJobpst)">
 									      AND a.DEPTCODE= #{params.searchJobpst}
-									 </if>
-									 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSwcEmpNo)">
+									  </if>
+									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSwcEmpNo)">
 									      AND a.EMPID IN  (SELECT ADMIN_ID FROM tb_admin WHERE ADMIN_LEVEL = 'ROLE_ANONYMOUS')
-									 </if>      
+									  </if>      
                                  )TB
 		)TA
 		ORDER BY TA.EMPNAME  ASC   

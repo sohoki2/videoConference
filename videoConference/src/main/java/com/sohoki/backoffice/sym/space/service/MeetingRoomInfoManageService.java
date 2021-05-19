@@ -35,6 +35,8 @@ public interface MeetingRoomInfoManageService {
 	int updateMeetingRoomAdminManage(MeetingRoomInfo vo) throws Exception;
 	
 	int updateMeetingRoomSync(MeetingRoomInfo vo) throws Exception;
+	//삭제 구문 추가 
+	int deleteMeetingRoomManage(List<String> meetinglist) throws Exception;
 	
 	
 }

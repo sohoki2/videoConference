@@ -51,7 +51,6 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	@Override
 	public int updateUserInfoManage(UserInfo vo) throws Exception {
 		// TODO Auto-generated method stub
-		vo.setAuthorCode("ROLE_USER");
 		return vo.getMode().equals("Ins") ?  userMapper.insertUserInfoManage(vo) :  userMapper.updateUserInfoManage(vo);
 	}
 
@@ -121,6 +120,12 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 
 		}
 		return ret;
+	}
+
+	@Override
+	public int deleteUserInfoManage(String userNo, String comCode) throws Exception {
+		// TODO Auto-generated method stub
+		return userMapper.deleteUserInfoManage(userNo, comCode);
 	}
 
 }

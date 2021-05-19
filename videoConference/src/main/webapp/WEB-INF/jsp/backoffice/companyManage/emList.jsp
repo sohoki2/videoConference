@@ -63,7 +63,7 @@
     		
                 var postData = {};
     		    grid.jqGrid({
-    		    	url : '/backoffice/basicManage/empListAjax.do' ,
+    		    	url : '/backoffice/orgManage/empListAjax.do' ,
     		        mtype :  'POST',
     		        datatype :'json',
     		        pager: $('#pager'),  
@@ -103,7 +103,7 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "380px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
@@ -133,7 +133,6 @@
     		            	  gridPage = totalPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
-    		            	  
     		            	  if (totalPage >= nowPage && nowPage > 0 ){
     		            		  gridPage = nowPage;
     		            	  }else {
@@ -179,7 +178,6 @@
 		        $("#empno").val(empno);
 		        if (mode == "Edt"){
 		        	$("#btnUpdate").text("수정");
-		        	
 		     	    var params = "empno="+$("#empno").val();
 		     	    var url = "/backoffice/basicManage/msgDetail.do?"+params;
 		     	    uniAjaxSerial(url, params, 
@@ -253,27 +251,23 @@
                     <div class="infomenuA">
                         <img src="/images/home.png" alt="homeicon" />
                         <span>></span> <spring:message code="menu.menu01" /><span>></span>
-                        <strong>메시지 관리</strong>
+                        <strong>인사 관리</strong>
                     </div>
                 </div>
             </div>
 
             <div class="Swrap Asearch">
-                <div class="Atitle"><spring:message code="page.common.pageCnt"  arguments="${totalCnt}"/></div>
+                <div class="Atitle"></div>
                 <section class="Bclear">
-                   
-                	<table class="pop_table searchThStyle">
+                   <table class="pop_table searchThStyle">
 		                <tr class="tableM">
-		                	<th>
-		                		검색어
-		                	</th>
 		                	<td>
 		                		<select name="searchCondition"  id="searchCondition">
 											<option value="0">전체</option>
-											<option value="1" <c:if test="${searchVO.searchCondition == '1' }"> selected="selected" </c:if>>메시지 제목</option>
-											<option value="2" <c:if test="${searchVO.searchCondition == '2' }"> selected="selected" </c:if>>발송시점</option>
+											<option value="1">메시지 제목</option>
+											<option value="2">발송시점</option>
 								</select>
-								<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}"> 
+								<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword" > 
 								 <a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
@@ -282,7 +276,6 @@
 						</tr>
                     </table>
                 <br/>
-        이
                </section>
             </div>
 
@@ -299,42 +292,14 @@
 <c:import url="/backoffice/inc/bottom_inc.do" />
 
 
-<div id='app_message' class="needpopup">
+   <div id='app_message' class="needpopup">
         <div class="popHead" id="popTitle">
             <h2>메세지 관리</h2>
         </div>
         <!-- pop contents-->   
         <div class="popCon">
             <!--// 팝업 필드박스-->
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">*<spring:message code="page.message.messageGubun" /> <span class="join_id_comment joinSubTxt"></span></p>
-                    <form:select path="msgGubun" id="msgGubun" title="소속" onChange="fn_messageView();">
-										         <form:option value="" label="메세지 선택"/>
-						                         <form:options items="${selectMsgGubun}" itemValue="code" itemLabel="codeNm"/>
-					</form:select>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">*<spring:message code="page.message.messageNm" /> <span class="join_id_comment joinSubTxt"></span></p>
-                    <form:input path="msgTitle" id="msgTitle" class="input_noti" size="10"/>
-                </div>                
-            </div>
-            <div class="pop_box1000">
-                <div class="padding15">
-                    <p class="pop_tit"><spring:message code="page.message.messageContent" /> <span class="join_id_comment joinSubTxt"></span></p>
-                     <form:input path="msgContent" id="msgContent" class="input_noti" size="100"/>
-                </div>                
-            </div>
-      
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">*<spring:message code="common.UseYn.title" /> <span class="join_id_comment joinSubTxt"></span></p>
-                       <input type="radio" id="centerUseYn" name="centerUseYn" value="Y"  /><label>사용</label>
-			           <input type="radio" id="centerUseYn" name="centerUseYn" value="N"  /><label>사용안함</label>
-                </div>                
-            </div>
+            
         </div>
         <div class="clear"></div>
          <div class="pop_footer">

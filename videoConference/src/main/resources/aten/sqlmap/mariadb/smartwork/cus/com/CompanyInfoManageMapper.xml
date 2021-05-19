@@ -21,11 +21,11 @@
 						            ELSE 
 						               '사용안함'
 						       END TENN_INFO, a.COM_PLAY_FLOOR, FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
+						       
 					    FROM  tb_companyinfo a, lettccmmndetailcode b, tb_centerinfo c, tb_floorinfo d
 					    WHERE a.COM_STATE = b.CODE       
 					          AND a.CENTER_ID = c.CENTER_ID
 					          AND a.FLOOR_SEQ = d.FLOOR_SEQ
-					          
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							    AND (a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  OR a.COM_CEO_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 							  </if>		
@@ -62,7 +62,8 @@
          VALUES (#{comCode}, #{comNumber,jdbcType=VARCHAR}, #{comName}, #{comGubun,jdbcType=VARCHAR}, #{comBuscondition,jdbcType=VARCHAR},  #{comItem,jdbcType=VARCHAR},  #{comCeoName,jdbcType=VARCHAR}, 
                  #{comTel,jdbcType=VARCHAR}, #{comFax,jdbcType=VARCHAR},  #{comZipcode,jdbcType=VARCHAR}, #{comAddr1,jdbcType=VARCHAR}, #{comAddr2,jdbcType=VARCHAR},
                  #{comHomepage,jdbcType=VARCHAR}, #{comState,jdbcType=VARCHAR},  #{comLogo,jdbcType=VARCHAR},  #{centerId,jdbcType=VARCHAR},  #{floorSeq,jdbcType=VARCHAR}, 
-                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, #{comPlayFloor,jdbcType=VARCHAR})
+                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, 
+                 #{tennUseyn,jdbcType=VARCHAR} , #{comPlayFloor,jdbcType=VARCHAR})
                 
     </insert>
     <update id="updateCompanyInfoManage" >

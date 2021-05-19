@@ -31,9 +31,9 @@
 											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchAdminid)">	  
 											    AND a.MEETING_ADMINID = #{params.searchAdminid}
 											 </if>
-											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenterId)">
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
 												<![CDATA[    
-											    AND a.CENTER_ID = #{params.searchCenterId}
+											    AND a.CENTER_ID = #{params.searchCenter}
 											    ]]>
 											 </if>
 											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
@@ -313,7 +313,21 @@
 									 , PAY_COST  = #{payCost, jdbcType=VARCHAR}
 	      WHERE MEETING_ID = #{meetingId}
    </update>
-  
-
-
+   <delete id="deleteMeetingRoomManage">
+         DELETE FROM tb_meeting_room WHERE MEETING_ID IN
+         <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
+            #{item}
+         </foreach>
+         ;
+         UPDATE tb_floorinfo  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+						          FROM tb_meeting_room
+						          WHERE MEETING_ID IN 
+						          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
+							            #{item}
+							      </foreach>
+						          GROUP  by FLOOR_SEQ) b
+						  
+        SET MEET_CNT = MEET_CNT - b.CNT
+        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+   </delete>
 </mapper>

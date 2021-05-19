@@ -35,4 +35,7 @@ public interface MeetingRoomInfoManageMapper {
 	public int updateMeetingRoomSync(MeetingRoomInfo vo);
 	
 	public int updateMeetingRoomManage(MeetingRoomInfo vo);
+	//삭제 구문 추가 
+	public int deleteMeetingRoomManage(@Param("meetinglist") List<String> meetinglist);
+	
 }

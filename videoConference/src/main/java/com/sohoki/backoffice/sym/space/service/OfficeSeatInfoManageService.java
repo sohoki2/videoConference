@@ -16,4 +16,6 @@ public interface OfficeSeatInfoManageService {
 	int updateOfficeSeatInfoManage(OfficeSeatInfo vo) throws Exception;
 	
 	int updateOfficeSeatPositionInfoManage(List<OfficeSeatInfo> list , String type) throws Exception;
+	
+	int deleteOfficeSeatQrInfoManage(List<String> seatList)throws Exception;
 }

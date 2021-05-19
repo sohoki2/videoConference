@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="/css/needpopup.min.css" />
     <link rel="stylesheet" href="/css/needpopup.css">
     
-    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
     <script>
 	jQuery.browser = {};
 	(function () {
@@ -103,7 +103,7 @@
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert("error:" + error); 
     		        }, onPaging: function(pgButton){
@@ -159,22 +159,23 @@
     	                
     	            }
     		    });
-    	   }, refreshGrid : function(){
+    	   },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
 	       },clearGrid : function() {
                $("#mainGrid").clearGridData();
-           }, fn_comNumber: function (){
-			 //사업자 등록 번호
-		   }, fn_search : function(){
+           }, fn_search : function(){
 			  $("#mainGrid").setGridParam({
     	    	 datatype	: "json",
     	    	 postData	: JSON.stringify(  {
-          			"pageIndex": 1,
-          			"searchKeyword" : $("#searchKeyword").val(),
-         			"pageUnit":$('.ui-pg-selbox option:selected').val()
+    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
+	          		 "searchCenter" :  $("#searchCenter").val(),
+	          		 "searchCondition" :  $("#searchCondition").val(),
+	          		 "searchFloorSeq" : $("#searchFloorSeq").val(),
+          			 "searchKeyword" : $("#searchKeyword").val(),
+         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
          		 }),
     	    	 loadComplete	: function(data) {
-    	    		 console.log(data);
+    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     	    	 }
     	      }).trigger("reloadGrid");
 		   }, fn_floorState : function(){
@@ -205,12 +206,13 @@
                 </div>
             </div>
             <div class="Swrap Asearch">
+                <div class="Atitle">총 크레딧 <span id="sp_totcnt" /></div>
                 <section class="Bclear">
                    <table class="pop_table searchThStyle">
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="jqGridFunc.fn_floorState()">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="fn_floorSearchState()">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -223,7 +225,7 @@
 						    	    <option value="userName">이름</option>
 						    	</select>
 		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"> 
-								<a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
+								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel DOWNLOAD</span></a>

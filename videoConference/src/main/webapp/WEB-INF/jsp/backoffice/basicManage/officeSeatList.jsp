@@ -85,6 +85,9 @@
 	    		 	                { label: '지점명',  name:'center_nm',         index:'center_nm',        align:'left',   width:'12%'},
 	    		 	                { label: '층수',  name:'floor_name',         index:'floor_name',        align:'left',   width:'12%'},
 	    		 	                { label: '좌석명',  name:'seat_name',         index:'seat_name',        align:'left',   width:'12%'},
+	    		 	                { label: '좌석구분',  name:'code_nm',         index:'code_nm',        align:'left',   width:'12%'},
+	    		 	                { label: '비용 구분', name:'pay_classification',       index:'mail_sendcheck',      align:'center', width:'20%', 
+		    			                  sortable : false,	formatter:jqGridFunc.classinfo},
 	    			                { label: '좌석 Top', name:'seat_top',          index:'seat_top',        align:'center', width:'12%'},
 	    			                { label: '좌석 Left', name:'seat_left',        index:'seat_left',       align:'center', width:'12%'},
 	    			                { label: '고정석여부', name:'seat_fix_useryn',  index:'seat_fix_useryn',  align:'center', width:'12%' , 
@@ -107,7 +110,7 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "480px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
@@ -163,7 +166,7 @@
     	            },onCellSelect : function (rowid, index, contents, action){
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
     	                //console.log(cm);
-    	                if (cm[index].name=='seat_name'){
+    	                if (cm[index].name=='seat_name' || cm[index].name=='code_nm'){
     	                	jqGridFunc.fn_SeatInfo("Edt", $(this).jqGrid('getCell', rowid, 'seat_id'));
             		    }
     	            }
@@ -175,8 +178,21 @@
            	    return rowObject.seat_fix_useryn == "Y" ? "고정석: [" +  CommonJsUtil.NVL(rowObject.user_name) + "]": "일반";
      	    },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	        }, delRow : function (seat_id){
-        	    if(seat_id != "") {
+	        }, fn_delCheck  : function(){                        
+		    	 var ids = $('#mainGrid').jqGrid('getGridParam','selarrrow'); //체크된 row id들을 배열로 반환
+		    	 if (ids.length < 1) {
+		    		 alert("선택한 값이 없습니다.");
+		    		 return false;
+		    	 }
+		    	 var SeatsArray = new Array();
+		    	 for(var i=0; i <ids.length; i++){
+		    	        var rowObject = ids[i]; //체크된 id의 row 데이터 정보를 Object 형태로 반환
+		    	        SeatsArray.push(ids[i]);
+		    	 } 
+		    	 var params = {'seatId':SeatsArray.join(',')};
+      		     fn_uniDelAction("/backoffice/basicManage/officeSeatDelete.do",params, "jqGridFunc.fn_search");
+		    }, delRow : function (seat_id){
+		    	if(seat_id != "") {
         		   var params = {'seatId':seat_id };
         		   fn_uniDelAction("/backoffice/basicManage/officeSeatDelete.do",params, "jqGridFunc.fn_search");
 		        }
@@ -184,6 +200,7 @@
         	    $("#btn_message").trigger("click");
 			    $("#mode").val(mode);
 		        $("#seatId").val(seat_id);
+		        jqGridFunc.fn_seatChoic("V");
 		        if (mode == "Edt"){
 		        	$("#btnUpdate").text("수정");
 		        	var params = {"seatId" : seat_id};
@@ -207,10 +224,20 @@
 						    		   $("#seatTop").val( obj.seat_top);
 						    		   $("#seatLeft").val( obj.seat_left);
 						    		   $("#seatOrder").val( obj.seat_order);
+						    		   $("#seatGubun").val( obj.seat_gubun);
+						    		   $("#seatNumber").val( obj.seat_number);
+						    		   $("#orgCd").val(obj.org_cd);
+						    		   $("#seatFixGubun").val(obj.seat_fix_gubun);
+						    		   $("#seatFixUserId").val(obj.seat_fix_user_id);
+						    		   if (obj.empname !== "")
+						    			   $("#sp_fixUser").html(obj.empname);
+						    		   
 						    		   toggleClick("seatFixUseryn", obj.seat_fix_useryn);
 						    		   toggleClick("seatUseyn", obj.seat_useyn);
-						    		   //담당자 만들기 
-						    		   $("#orgCd").val(obj.org_cd);
+						    		   toggleClick("seatConfirmgubun", obj.seat_confirmgubun);
+						    		   
+						    		   //좌석 관리 세팅으로 이동
+						    		   jqGridFunc.fn_seatChoic("V");
 		       					   }else{
 		       						   alert(result.meesage);
 		       					   }
@@ -225,31 +252,41 @@
 		        	$("#orgCd").val("");
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
+		        	toggleDefault("seatFixUseryn");
+		        	toggleDefault("seatConfirmgubun");
+		        	toggleDefault("seatUseyn");
+		        	
 		        }
            },clearGrid : function() {
                 $("#mainGrid").clearGridData();
            },fn_CheckForm  : function (){
 			    if (any_empt_line_id("centerId", "지점을 선택해주세요.") == false) return;
 			    if (any_empt_line_id("floorSeq", "층수을 선택해주세요.") == false) return;
-		    	if (any_empt_line_id("seatName", "좌석명 입력해 주세요.") == false) return;		
+		    	if (any_empt_line_id("seatName", "좌석명 입력해 주세요.") == false) return;	
+		    	
+		    	
 		    	//확인 
+		    	
 		    	var url = "/backoffice/basicManage/officeSeatUpdate.do";
-		    	var params = { 'centerId' : $("#centerId").val(),
-				    			 'floorSeq' : $("#floorSeq").val(),
-				    			 'partSeq' : fn_emptyReplace($("#partSeq").val(),"0"),
+		    	var params = {   'centerId' : $("#centerId").val(),
+				    		     'floorSeq' : $("#floorSeq").val(),
+				    		     'partSeq' : fn_emptyReplace($("#partSeq").val(),"0"),
 				    			 'seatId' : $("#seatId").val(),
 				    			 'seatName' : $("#seatName").val(),
 				    			 'seatTop' : fn_emptyReplace($("#seatTop").val(),"0"),
 				    			 'seatLeft' : fn_emptyReplace($("#seatLeft").val(),"0"),
 				    			 'seatOrder' : fn_emptyReplace($("#seatOrder").val(),"0"),
 				    			 'seatFixUseryn' : fn_emptyReplace($("#seatFixUseryn").val(),"Y"),
-				    			 //신규 추가
-				    			 'swcGubun' : $("#swcGubun").val(),
-				    			 'payClassification' , fn_emptyReplace($("#payClassification").val(),"PAY_CLASSIFICATION_2"),
-				     			 'payGubun' , fn_emptyReplace($("#payGubun").val(),""),
-				     			 'payCost' , fn_emptyReplace($("#payCost").val(),"0"),
+				    			 'seatGubun' : $("#seatGubun").val(),
+				    			 'payClassification' : fn_emptyReplace($("#payClassification").val(),"PAY_CLASSIFICATION_2"),
+				     			 'payGubun' : fn_emptyReplace($("#payGubun").val(),""),
+				     			 'payCost' : fn_emptyReplace($("#payCost").val(),"0"),
 				    			 'orgCd' : $("#orgCd").val(),
-				    			 'seatUseyn' :  $('seatUseyn').val(),
+				    			 'seatUseyn' :  $('#seatUseyn').val(),
+				    			 'seatConfirmgubun' :  fn_emptyReplace($('#seatConfirmgubun').val(),"N"),
+				    			 'seatNumber' :  $('#seatNumber').val(),
+				    			 'seatFixGubun' :  $('#seatFixGubun').val(),
+				    			 'seatFixUserId' :  $('#seatFixUserId').val(),
 				    			 'mode' : $("#mode").val()
 		    	               }; 
 		    	uniAjax(url, params, 
@@ -268,17 +305,20 @@
 		 					    $("#btn_needPopHide").trigger("click");
 		 				    }    		
 		        );
+		    	
 		  },fn_search: function(){
-	    	 $("#mainGrid").setGridParam({
+			  //검색 
+	    	  $("#mainGrid").setGridParam({
 	    	    	datatype	: "json",
 	    	    	postData	: JSON.stringify({
-	          			"pageIndex": 1,
+	          			"pageIndex": $("#pager .ui-pg-input").val(),
 	          			"searchCenter" :  $("#searchCenter").val(),
+	          			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
-	    	    	loadComplete	: function(data) {console.log(data);}
-	    	 }).trigger("reloadGrid");
+	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
+	    	  }).trigger("reloadGrid");
 		 }, fn_floorState : function (floorSeq){
 	    	 var _url = "/backoffice/basicManage/floorListAjax.do";
 	    	 var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
@@ -287,13 +327,6 @@
 	    	 var _url = "/backoffice/basicManage/partListAjax.do";
 	    	 var _params = {"floorSeq" : $("#floorSeq").val(), "partUseyn": "Y"};
 	    	 fn_comboListPost("sp_part", "partSeq",_url, _params, "", "120px", partSeq);  
-	     }, fn_delCheck  : function(){
-	    	 alert("1")
-	    	 $('[name=chk]').each(function(index,result){
-		        if(result.checked){
-		            alert(result.value);
-		        }
-		    });
 	     }, fn_payClassGubun : function(payGubun, payCost){
 	    	 //유료 무료 구분 PAY_CLASSIFICATION_1 -> 유료 
 	    	  var payHtml = "";
@@ -306,11 +339,36 @@
 	        	 payHtml = "";
 	         }	 
 	    	  $("#sp_PayInfo").html(payHtml);
-	     }, fn_FixInfo : function (){
-	    	 
-	     }
+	     }, fn_adminChoic : function (empId){
+	    	 var empTxt =  $("#seatConfirmgubun").val() == "Y" ? "[관리자 선택]" : "";
+	    	 $("#sp_empView").html(empTxt);
+	     },classinfo : function(cellvalue, options, rowObject){
+             var costInfo  = rowObject.pay_classification === "PAY_CLASSIFICATION_2" ? rowObject.pay_classification_txt : rowObject.pay_classification_txt 
+       		      + ":" + rowObject.pay_gubun_txt +": 사용 크레딧:" + rowObject.pay_cost;
+             return costInfo;
+        }, fn_seatChoic : function (viewGubun){
+             //고정석 일때 사용자 정보 선택 
+             
+             if (viewGubun === "S"){
+            	 $("#tb_seatInfo").hide();
+                 $("#tb_userInfo").show();
+             }else {
+            	 $("#searchUserGubun").val("");
+            	 $("#searchUserKeyword").val("");
+            	 $("#tb_seatInfo").show();
+                 $("#tb_userInfo").hide();
+             }
+        }, fn_floorSearch : function (){
+			  var _url = "/backoffice/basicManage/floorListAjax.do";
+			  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+		      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
+		} 
     }
   </script>
+  
+  
+  
+  
 </head>
 <body>
 <div id="wrapper">	
@@ -346,6 +404,7 @@
 			                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
 			                         </c:forEach>
 			                    </select>
+			                    <span id="sp_floorCombo"></span>
 		                	</td>
 		                	<th>검색</th>
 		                	<td>
@@ -387,7 +446,7 @@
             <!--// 팝업 필드박스-->
             <div class="pop_box100">
              <div class="padding15">
-                   <table class="pop_table thStyle">
+                   <table class="pop_table thStyle" id="tb_seatInfo">
 		                <tbody>
 		                    <tr>
 		                        <th style="width:180px"><span class="redText">*</span>구역 선택</th>
@@ -417,10 +476,10 @@
 		                    <tr>
 		                       <th><span class="redText">*</span>예약 구분</th>
 		                       <td>
-		                           <select id="swcGubun" style="width:120px">
+		                           <select id="seatGubun" style="width:120px">
 				                        <option value="">구분 선택</option>
-				                         <c:forEach items="${centerInfo}" var="centerInfo">
-				                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
+				                         <c:forEach items="${seatGubun}" var="seatGubun">
+				                            <option value="${seatGubun.code}">${seatGubun.codeNm}</option>
 				                         </c:forEach>
 				                    </select>
 		                       </td>
@@ -437,9 +496,13 @@
 		                       <th><span class="redText">고정여부 </th>
 		                       <td>
 			                        <label class="switch">                                               
-				                    	<input type="checkbox" id="seatFixUseryn" onclick="toggleValue(this)" value="Y">
+				                    	<input type="checkbox" id="seatFixUseryn" onclick="toggleValue(this);jqGridFunc.fn_seatChoic('S')" value="Y">
 					                    <span class="slider round"></span> 
 				                    </label> 
+				                    <!--  고정 여부에 대한 정보 보여주기  -->
+				                    <span id="sp_fixUser"></span>
+				                    <input type="hidden" id="seatFixGubun">
+				                    <input type="hidden" id="seatFixUserId">
 		                       </td>
 		                       <th><span class="redText">정렬 순서</th>
 		                       <td><input type="number" name="seatOrder" id="seatOrder" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
@@ -462,11 +525,53 @@
 				                    </label> 
 		                       </td>
 		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">관리자 승인여부</th>
+		                       <td>
+		                            <label class="switch">                                               
+				                    	<input type="checkbox" id="meetingConfirmgubun" onclick="toggleValue(this);jqGridFunc.fn_adminChoic('')" value="Y">
+					                    <span class="slider round"></span> 
+				                      </label> 
+				                      <span id="sp_empView" /
+		                       </td>
+		                       <th><span class="redText">좌석 기본번호</th>
+		                       <td><input type="text" name="seatNumber" id="seatNumber" class="input_noti" size="10"/></td>
+		                    </tr>
 		                 </tbody>
+                    </table>
+                    
+                    <table class="pop_table thStyle" id="tb_userInfo">
+                        <thead>
+                           <tr>
+                              <td>
+	                              <select id="searchUserGubun" style="width:120px;">
+	                                 <option value=""></option>
+	                                 <option value="G">사용자</option>
+	                                 <option value="U">입주사</option>
+	                              </select>
+	                           </td>
+	                           <td colspan="2">
+	                           <input class="nameB"  type="text" name="searchUserKeyword" id="searchUserKeyword" > 
+							   <a href="javascript:fn_userSearch();"><span class="searchTableB">조회</span></a>
+							   </td>
+							   <td><a href="#" onClick="jqGridFunc.fn_seatChoic('V')">닫기</a>
+							   </td>
+                           </tr>
+                           <tr>
+                              <th>회사명</th>
+                              <th>이름</th>
+                              <th>사번</th>
+                              <th>연락처</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
                     </table>
                </div>                
             </div>
         </div>
+        
+        
         <div class="clear"></div>
          <div class="pop_footer">
             <span id="join_confirm_comment" class="join_pop_main_subTxt">내용을 모두 입력후 클릭해주세요.</span>
@@ -484,13 +589,6 @@
 	 function need_close(){
      	needPopup.hide();
      }
-	 function toggleValue(obj){
-		 $(obj).is(":checked") ? $(obj).val("Y") : $(obj).val("N");
-	 }
-	 function toggleClick(obj, val){
-		 if (val == "Y")
-			 $("#"+obj).trigger("click");
-	 }
 	 needPopup.config.custom = {
          'removerPlace': 'outside',
          'closeOnOutside': false,

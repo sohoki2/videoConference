@@ -81,6 +81,8 @@
     		 	                { label: '상태', name:'code_nm',       index:'code_nm',      align:'center', width:'10%'},
     		 	                { label: '회사명', name:'com_name',     index:'com_name',      align:'center', width:'10%'},
     		 	                { label: '사번', name:'user_no',       index:'user_no',      align:'center', width:'10%'},
+    		 	                { label: '이름', name:'user_name',       index:'user_name',      align:'center', width:'10%'},
+    		 	                { label: '상태', name:'code_nm',       index:'code_nm',      align:'center', width:'10%'},
     			                { label: '직급', name:'user_position',   index:'user_position',      align:'center', width:'10%' },
     			                { label: '직책', name:'user_rank',       index:'user_rank',      align:'center', width:'10%' },
     			                { label: '이메일', name:'user_email',     index:'user_email',      align:'center', width:'10%' },
@@ -105,7 +107,7 @@
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert("error:" + error); 
     		        }, onPaging: function(pgButton){
@@ -264,12 +266,15 @@
 			  $("#mainGrid").setGridParam({
     	    	 datatype	: "json",
     	    	 postData	: JSON.stringify(  {
-          			"pageIndex": 1,
-         			"searchKeyword" : $("#searchKeyword").val(),
-         			"pageUnit":$('.ui-pg-selbox option:selected').val()
+    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
+	          		 "searchCenter" :  $("#searchCenter").val(),
+	          		 "searchCondition" :  $("#searchCondition").val(),
+	          		 "searchFloorSeq" : $("#searchFloorSeq").val(),
+         			 "searchKeyword" : $("#searchKeyword").val(),
+         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
          		 }),
     	    	 loadComplete	: function(data) {
-    	    		 console.log(data);
+    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     	    	 }
     	      }).trigger("reloadGrid");
 		  } 
@@ -295,24 +300,26 @@
                 </div>
             </div>
             <div class="Swrap Asearch">
+                <div class="Atitle">총 사용자 <span id="sp_totcnt" /></div>
                 <section class="Bclear">
                    <table class="pop_table searchThStyle">
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="fn_floorSearchState()">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
 				                         </c:forEach>
 						    	</select> 
+						    	<span id="sp_floorCombo"></span>
 						    	<select id="searchCondition" name="searchCondition">
 						    	    <option>선택</option>
 						    	    <option value="comName">회사명</option>
 						    	    <option value="userName">이름</option>
 						    	</select>
 		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"> 
-								<a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
+								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>

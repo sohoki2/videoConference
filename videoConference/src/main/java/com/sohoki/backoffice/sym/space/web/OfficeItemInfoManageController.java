@@ -128,6 +128,9 @@ public class OfficeItemInfoManageController {
 	    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
 		  }
 		  model.addObject("centerInfo", centerInfoManageService.selectCenterInfoManageCombo());
+		  //비용 관련 내용 넣기 
+		  model.addObject("payGubun", cmmnDetailService.selectCmmnDetailCombo("PAY_CLASSIFICATION"));
+		  model.addObject("seatGubun", cmmnDetailService.selectCmmnDetailCombo("SEAT_GUBUN"));
 		  model.addObject("orgInfo", orgService.selectOrgInfoCombo());
 	      model.setViewName("/backoffice/basicManage/officeSeatList");
 		  return model;	
@@ -239,13 +242,15 @@ public class OfficeItemInfoManageController {
 				return model;	
 	    }	
 		try{
-			  int ret = 	uniService.deleteUniStatement("", "tb_seatinfo", "SEAT_ID=["+seatId+"[");		      
-		      if (ret > 0 ) {		
+			  //삭제 관련 내용 수정 공용에서 수정으로 
+			  int ret =  officeService.deleteOfficeSeatQrInfoManage(util.dotToList(seatId));
+			  if (ret > 0 ) {		
 		    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		    	  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("success.common.delete") );		    	 
 		      }else {
 		    	  throw new Exception();		    	  
 		      }
+		      
 		}catch (Exception e){
 			LOGGER.info(e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -341,10 +346,7 @@ public class OfficeItemInfoManageController {
 		try {
 			
 			int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
-			  
-		    searchVO.put("pageSize", propertiesService.getInt("pageSize"));
-		  
-		    LOGGER.info("pageUnit:" + pageUnit);
+			searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 		          
 	   	    PaginationInfo paginationInfo = new PaginationInfo();
 		    paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
@@ -446,8 +448,7 @@ public class OfficeItemInfoManageController {
 	 */
 	@RequestMapping (value="officeMeetingDelete.do")
 	public ModelAndView deleteOfficeMeetingInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO,
-			                                       @RequestParam("meetingId") String meetingId)throws Exception{
-		
+			                                          @RequestParam("meetingId") String meetingId)throws Exception{
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
 	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -457,12 +458,9 @@ public class OfficeItemInfoManageController {
 				return model;	
 	    }	
 		try{
-			  int ret = 	uniService.deleteUniStatement("MEETING_IMG1, MEETING_IMG2", "tb_meeting_room", "MEETING_ID=["+meetingId+"[");	
-			  
-			  
+			  // 추가 수정 
+			  int ret = 	meetingService.deleteMeetingRoomManage(util.dotToList(meetingId));
 		      if (ret > 0 ) {	
-		    	  //층 
-		    	  uniService.updateUniStatement("MEET_CNT = MEET_CNT - 1", "tb_floorinfo", "FLOOR_SEQ = (SELECT FLOOR_SEQ FROM tb_meeting_room WHERE MEETING_ID=["+meetingId+"[)");
 		    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		    	  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("success.common.delete") );		    	 
 		      }else {

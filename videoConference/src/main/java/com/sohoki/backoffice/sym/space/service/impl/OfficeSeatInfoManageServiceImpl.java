@@ -45,5 +45,11 @@ public class OfficeSeatInfoManageServiceImpl extends EgovAbstractServiceImpl imp
 		return officeSeatMapper.updateOfficeSeatPositionInfoManage(list, type);
 	}
 
+	@Override
+	public int deleteOfficeSeatQrInfoManage(List<String> seatList) throws Exception {
+		// TODO Auto-generated method stub
+		return officeSeatMapper.deleteOfficeSeatQrInfoManage(seatList);
+	}
+
 	
 }

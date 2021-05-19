@@ -7,10 +7,13 @@
 					    SELECT a.CENTER_ID, a.FLOOR_SEQ, a.PART_SEQ, a.SEAT_ID, a.SEAT_NAME, a.SEAT_USEYN, 
 							   a.SEAT_TOP, a.SEAT_LEFT, a.SEAT_FIX_USERYN, a.SEAT_FIX_USER_ID, a.ORG_CD,
 							   a.SEAT_QR_CODE, a.SEAT_QR_CODE_PATH, a.SEAT_QR_CODE_FULL_PATH, a.SEAT_ORDER, a.SEAT_NUMBER, 
-							   a.UPDATE_ID, DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, b.CENTER_NM  , c.FLOOR_NAME     
-					    FROM  tb_seatinfo a, tb_centerinfo b, tb_floorinfo c
+							   a.UPDATE_ID, DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, b.CENTER_NM, c.FLOOR_NAME,
+							   d.CODE_NM , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION,
+							   fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN
+					    FROM  tb_seatinfo a, tb_centerinfo b, tb_floorinfo c, lettccmmndetailcode d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
+					          AND a.SEAT_GUBUN = d.CODE
 						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 								  AND (    a.SEAT_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 							  </if>		
@@ -32,7 +35,17 @@
            SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 				   SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
 				   SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
-				   REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE
+				   REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE,
+				   SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_CONFIRMGUBUN,
+				   
+				   CASE  
+				      WHEN SEAT_FIX_USERYN = 'Y' AND SEAT_FIX_USER_ID IS NOT NULL AND SEAT_FIX_GUBUN = 'G'  THEN 
+				         ( SELECT EMPNAME FROM tb_empInfo WHERE EMPNO = a.SEAT_FIX_USER_ID )
+				      WHEN SEAT_FIX_USERYN = 'Y' AND SEAT_FIX_USER_ID IS NOT NULL AND SEAT_FIX_GUBUN = 'C'  THEN 
+				         ( SELECT USER_NAME FROM tb_userinfo WHERE USER_NO = a.SEAT_FIX_USER_ID )
+				   ELSE 
+				    
+				   END EMPNAME
 		    FROM tb_seatinfo a
 		    WHERE SEAT_ID = #{seatId}
     </select>
@@ -42,13 +55,16 @@
          </selectKey>
          INSERT INTO tb_seatinfo(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
-								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER
-								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, SWC_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST)
+								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
+								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, 
+								 SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, 
+								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN )
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
                  #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
-                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW()
-                 #{swcGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
+                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW(),
+                 #{seatGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
+                 #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  
                  );
                  
          UPDATE tb_floorinfo SET SEAT_CNT = SEAT_CNT + 1
@@ -177,10 +193,12 @@
 	                              , SEAT_NUMBER = #{seatNumber,jdbcType=VARCHAR} 
 	                              , UPDATE_DATE = NOW()
 	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
-	                              , SWC_GUBUN = #{swcGubun,jdbcType=VARCHAR}
+	                              , SEAT_GUBUN = #{seatGubun,jdbcType=VARCHAR}
 	                              , PAY_CLASSIFICATION = #{payClassification,jdbcType=VARCHAR}
 	                              , PAY_GUBUN = #{payGubun,jdbcType=VARCHAR}
 	                              , PAY_COST = #{payCost,jdbcType=VARCHAR}
+	                              , SEAT_CONFIRMGUBUN = #{seatConfirmgubun,jdbcType=VARCHAR}
+	                              , SEAT_FIX_GUBUN = #{seatFixGubun,jdbcType=VARCHAR}
 	    WHERE SEAT_ID = #{seatId}           
     </update>
     <update id="updateOfficeSeatQrInfoManage" >
@@ -215,4 +233,21 @@
         </choose>
            
     </update> 
+    <delete id="deleteOfficeSeatQrInfoManage">
+        DELETE FROM tb_seatinfo WHERE SEAT_ID IN
+        <foreach collection="seatList" item="item"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ;
+        UPDATE tb_floorinfo  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+						          FROM tb_seatinfo
+						          WHERE SEAT_ID IN 
+						          <foreach collection="seatList" item="item"  open="(" separator="," close=")">
+							            #{item}
+							      </foreach>
+						          GROUP  by FLOOR_SEQ) b
+						  
+        SET SEAT_CNT = SEAT_CNT - b.CNT
+        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+    </delete>
 </mapper>

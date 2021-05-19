@@ -17,8 +17,11 @@ import com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.sym.space.vo.MeetingRoomInfo;
 import com.sohoki.backoffice.util.SmartUtil;
+import com.sohoki.backoffice.util.mapper.UniSelectInfoManageMapper;
+import com.sohoki.backoffice.util.service.fileService;
 
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import egovframework.rte.fdl.property.EgovPropertyService;
 
 
 @Service
@@ -38,6 +41,15 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 	
 	@Autowired
 	private SmartUtil util;
+	
+	@Autowired
+    protected EgovPropertyService propertiesService;
+	
+	@Autowired
+	private UniSelectInfoManageMapper uniMapper;
+	
+	@Autowired
+	private fileService fileservice;
 
 	@Override
 	public List<Map<String, Object>> selectMeetingRoomManageListByPagination(Map<String, Object> params)throws Exception {
@@ -179,6 +191,29 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 			LOGGER.error("sendMeetingEmpMessage error:" + e.toString());
 		}
 		return result;
+	}
+
+	@Override
+	public int deleteMeetingRoomManage(List<String> meetinglist) throws Exception {
+		// TODO Auto-generated method stub
+		// 파일 삭제 구문 추가
+		for (String meetingId : meetinglist) {
+			Map<String, Object> fileInfo = uniMapper.selectFieldStatement("MEETING_IMG1, MEETING_IMG2", "tb_meeting_room", "MEETING_ID=["+ meetingId +"[");
+			if (fileInfo != null ) {
+				List column = util.dotToList("MEETING_IMG1, MEETING_IMG2");
+				column.forEach(target->{
+					if (fileInfo.get(target)!= null)
+						try {
+							fileservice.deleteFile(fileInfo.get(target).toString(), propertiesService.getString("Globals.filePath"));
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				});
+			}
+		}
+		LOGGER.debug("size:" + meetinglist.size());
+		return meetingMapper.deleteMeetingRoomManage(meetinglist);
 	}
 	
 }

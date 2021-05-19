@@ -2,6 +2,7 @@ package com.sohoki.backoffice.cus.org.web;
 
 
 
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,6 +23,7 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.org.vo.OrgInfo;
@@ -32,8 +34,12 @@ import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
 import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
 import com.sohoki.backoffice.cus.org.service.jobInfoManageService;
 
+
+
+	
+	
 @RestController
-@RequestMapping("/backoffice/backoffice")
+@RequestMapping("/backoffice/orgManage")
 public class EmpInfoManageController {
 
 	    private static final Logger LOGGER = LoggerFactory.getLogger(EmpInfoManageController.class);
@@ -73,10 +79,14 @@ public class EmpInfoManageController {
 		}
 		@RequestMapping(value="empList.do")
 		public ModelAndView  selectEmpinfoList(@ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
-				                               , @RequestBody Map<String, Object> searchVO
+				                               , @ModelAttribute("EmpInfo") EmpInfo info
 											   , HttpServletRequest request
 											   , BindingResult bindingResult) throws Exception {
 			ModelAndView model = new ModelAndView("/backoffice/companyManage/emList");
+			
+			model.addObject(Globals.STATUS_REGINFO , info);
+			
+			
 			return model;
 		}
 		@RequestMapping(value="empDetail.do")
@@ -123,12 +133,10 @@ public class EmpInfoManageController {
 			    
 			    
 				//페이징 처리 할 부분 정리 하기 
-				/*
+				
 				int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
 				  
 				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
-				  
-			    /** pageing        
 			   	PaginationInfo paginationInfo = new PaginationInfo();
 				paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
 				paginationInfo.setRecordCountPerPage(pageUnit);
@@ -137,16 +145,23 @@ public class EmpInfoManageController {
 				searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 				searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 				searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
-				 */
 				//페이징 처리 하기 끝 부분  
 				 
 				
 				if (util.NVL(searchVO.get("code"), "").equals("except")){
 					searchVO.put("searchswcempno","swcCheck");
 				}
-				model.addObject(Globals.JSON_RETURN_RESULTLISR,   empService.selectEmpInfoList(searchVO)  );
+				if (util.NVL(searchVO.get("mode"), "").equals(""))
+				   searchVO.put("mode", "list");
+				List<Map<String, Object>> list =  empService.selectEmpInfoList(searchVO) ;
+				int totCnt = list.size() > 0 ?  Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
+				
+				model.addObject(Globals.JSON_RETURN_RESULTLISR,  list );
+				model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+			      
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-	            model.addObject(Globals.STATUS_REGINFO, searchVO);
+	           
 			}catch(Exception e) {
 				StackTraceElement[] ste = e.getStackTrace();
 				int lineNumber = ste[0].getLineNumber();

@@ -405,7 +405,6 @@
 				           <input type="radio" id="partUseyn" name="partUseyn" value="N" /><label>사용안함</label>
 	                </div>                
 	            </div>
- 
         </div>
         <div class="clear"></div>
          <div class="pop_footer">
@@ -425,7 +424,6 @@
                      <option value="${cnt}">${cnt}</option>
                   </c:forEach> 
                </select>~
-               
                <select id="seatEnd" name="seatEnd">
                   <c:forEach var="cnt" begin="1" end="100" step="1">
                      <option value="${cnt}">${cnt}</option>
@@ -726,7 +724,6 @@
     		  var floorCheck = fn_returnVal("/backoffice/basicManage/seatCount.do",params, "fn_seatCheck");
     	  }, fn_SeatUpdate : function (){
     		  //좌석 업데이트 하기 
-    		  
     		  if (any_empt_line_id("seatStr", "장비 시작명을 선택해주세요.") == false) return;		  
      		  if (any_empt_line_id("seatEnd", "장비 종료명를 선택해주세요.") == false) return;
      		  if (fnIntervalCheck($("#seatStr").val(), $("#seatEnd").val(), "시작이 종료 보다 클수 없습니다.") == false) return;
@@ -779,7 +776,6 @@
     	  
     	  $(".sp_title").text(title);
     	  var params = {"floorSeq" : $("#floorSeq").val(), "partSeq" : $("#partSeq").val()};
-    	  
 		  uniAjax("/backoffice/basicManage/"+url, params, 
 		 			function(result) {
 					       if (result.status == "LOGIN FAIL"){
@@ -900,7 +896,6 @@
 		            SeatsView.seatLeft = $(this).css('left').replace('px', '');
 		            SeatsArray.push(SeatsView);
 		        });
-		        
 		        var param =  new Object();
 		        param.data = SeatsArray;
 		        if(SeatsArray.length == 0){

@@ -78,12 +78,13 @@
                 </div>
             </div>
             <div class="Swrap Asearch">
+                <div class="Atitle">총 입주사 <span id="sp_totcnt" /></div>
                 <section class="Bclear">
                    <table class="pop_table searchThStyle">
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="jqGridFunc.fn_floorSearchState()">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="fn_floorSearchState()">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -197,7 +198,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">지점<span class="join_id_comment joinSubTxt"></span></p>
-                    <select path="centerId" id="centerId" title="지점구분" onChange="jqGridFunc.fn_floorState()">
+                    <select path="centerId" id="centerId" title="지점구분" onChange="jqGridFunc.fn_floorState();jqGridFunc.fn_floorPlayState();">
 				         <option value="">지점 선택</option>
                          <c:forEach items="${searchCenter}" var="centerList">
                             <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -370,6 +371,8 @@
 	    		 	                  , formatter: jqGridFunc.checkbox},
 	    		 	                { label: '로고',  name:'com_logo',         index:'com_logo',        align:'left',   width:'12%', formatter: jqGridFunc.imageFomatter },
 	    			                { label: '회사명', name:'com_name',       index:'com_name',      align:'center', width:'10%'},
+	    			                { label: '구분', name:'com_gubun_txt',     index:'com_gubun_txt',      align:'center', width:'10%'},
+	    			                { label: '거래상태', name:'code_nm',     index:'com_gubun_txt',      align:'center', width:'10%'},
 	    			                { label: '지점', name:'center_nm',       index:'center_nm',      align:'center', width:'10%'},
 	    			                { label: '사용층수', name:'floor_name',       index:'floor_name',      align:'center', width:'10%'},
 	    			                { label: '예약가능층수', name:'floor_nm',       index:'floor_nm',      align:'center', width:'10%'},
@@ -426,6 +429,7 @@
 	    		                colModel :  [
 	    		 	                { label: '상태', name:'code_nm',       index:'code_nm',      align:'center', width:'10%'},
 	    		 	                { label: '회사명', name:'com_name',     index:'com_name',      align:'center', width:'10%'},
+	    		 	                { label: '사용자 상태', name:'code_nm',     index:'com_name',      align:'center', width:'10%'},
 	    		 	                { label: '사번', name:'user_no',       index:'user_no',      align:'center', width:'10%'},
 	    		 	                { label: '이름', name:'user_name',       index:'user_name',      align:'center', width:'10%'},
 	    			                { label: '직급', name:'user_position',   index:'user_position',      align:'center', width:'10%' },
@@ -468,7 +472,7 @@
 	    		             
 	    		          
 	    		        },loadComplete : function (data){
-	    		        	
+	    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
 	    		        },loadError:function(xhr, status, error) {
 	    		            alert("error:" + error); 
 	    		        }, onPaging: function(pgButton){
@@ -592,6 +596,10 @@
 			        	$('select[name^=com]').val("");
 			        	$("#centerId").val("");
 			        	toggleDefault("tennUseyn");
+			        	//층 및 예약 층 삭제 
+			        	$("#sp_floor").html("");
+			        	$("#sp_floorCheck").html("");
+			        	
 			        }
 	           },clearGrid : function() {
 	                $("#mainGrid").clearGridData();
@@ -649,14 +657,14 @@
 				  $("#mainGrid").setGridParam({
 	    	    	 datatype	: "json",
 	    	    	 postData	: JSON.stringify(  {
-	          			"pageIndex": 1,
+	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
+		          		"searchCenter" :  $("#searchCenter").val(),
+		          		"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
-	         			"searchCenter" : $("#searchCenter").val(),
-	         			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		 }),
 	    	    	 loadComplete	: function(data) {
-	    	    		 console.log(data);
+	    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
 	    	    	 }
 	    	      }).trigger("reloadGrid");
 			  }, fn_userList :  function(comCode){
@@ -711,11 +719,7 @@
 					  return;
 				  }
 			     
-			  }, fn_floorSearchState : function (){
-				  var _url = "/backoffice/basicManage/floorListAjax.do";
-				  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
-			      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
-			  }    
+			  }  
 	    }
        
 	   var userFunc  = {

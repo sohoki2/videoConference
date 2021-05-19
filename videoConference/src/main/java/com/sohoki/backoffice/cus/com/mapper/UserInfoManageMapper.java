@@ -19,4 +19,6 @@ public interface UserInfoManageMapper {
 	public int insertUserInfoManage(UserInfo vo);
 	
 	public int updateUserInfoManage(UserInfo vo);
+	
+	public int deleteUserInfoManage(@Param("userNo") String userNo , @Param("comCode") String comCode);
 }

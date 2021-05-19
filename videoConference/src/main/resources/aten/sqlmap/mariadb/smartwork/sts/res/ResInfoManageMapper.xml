@@ -341,7 +341,7 @@
 	) XX  	
    </select>
    <select id="selectReport03"  resultType="ResInfoVO">
-			   SELECT c.ORG_NAME, c.ORG_PARENT_ID, 
+		   SELECT c.ORG_NAME, c.ORG_PARENT_ID, 
 			       (SELECT COUNT(a.RES_SEQ) FROM tb_meeting_room b
 			        WHERE a.MEETING_ID = b.MEETING_ID AND  b.ROOM_TYPE IN ('swc_gubun_1','swc_gubun_3')
 			        ) AS woorkCnt,
@@ -358,7 +358,7 @@
 			ORDER BY ORG_ODR asc, ORG_PARENT_ID asc, CP_DEPT asc, ORG_NAME asc 
    </select>
    <select id="selectReport04"  resultType="ResInfoVO">
-			   SELECT f.GRADE_NAME,
+			 SELECT f.GRADE_NAME,
 			       (SELECT COUNT(a.RES_SEQ) FROM tb_meeting_room b
 			        WHERE a.MEETING_ID = b.MEETING_ID AND  b.ROOM_TYPE IN ('swc_gubun_1','swc_gubun_3')
 			        ) AS workCnt,
@@ -409,7 +409,7 @@
                                         RESERV_PROCESS_GUBUN, RESERVATION_REASON, RES_REMARK, PROXY_YN, PROXY_USER_ID, 
                                         UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
                                         CONFERENCE_ID, CON_NUMBER, CON_PIN, 
-                                        CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, TENN_CNT
+                                        CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, TENN_CNT, FLOOR_SEQ 
                                         )
          VALUES ( #{itemId}, #{itemGubun},  #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}, #{userType}
 			     , #{resStartday, jdbcType=VARCHAR} , #{resEndday, jdbcType=VARCHAR } , #{resStarttime, jdbcType=VARCHAR} , #{resEndtime, jdbcType=VARCHAR}, NOW()
@@ -420,7 +420,7 @@
 			     , #{conferenceId, jdbcType=VARCHAR} , #{conNumber, jdbcType=VARCHAR} , #{conPin, jdbcType=VARCHAR}
 			     , #{conVirtualPin, jdbcType=VARCHAR} , #{conAllowstream, jdbcType=VARCHAR} , #{conBlackdial, jdbcType=VARCHAR}
 			     , #{conSendnoti, jdbcType=VARCHAR} , #{resEqupinfo, jdbcType=VARCHAR}  , #{resEqupcheck, jdbcType=VARCHAR}  
-			     , #{tennCnt, jdbcType=VARCHAR}  
+			     , #{tennCnt, jdbcType=VARCHAR}, #{floor_seq, jdbcType=VARCHAR}  
 			    )
          <selectKey resultType="String" keyProperty="resSeq" order="AFTER">
 		   SELECT CAST(MAX(RES_SEQ) as CHAR(10))

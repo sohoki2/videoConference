@@ -218,9 +218,11 @@ public class CompanyInfoManageController {
 			try{
 				  // 이미지 삭제 먼저 하기 
 				
-			      int ret = 	uniService.deleteUniStatement("COM_LOGO", "tb_companyinfo", "COM_CODE=["+comCode+"[");		      
+			      int ret = 	uniService.deleteUniStatement("COM_LOGO", "tb_companyinfo", "COM_CODE=["+comCode+"[");	
+			      
 			      if (ret > 0 ) {		
-			    	  //층 삭제
+			    	  //관련 사용자 삭제 
+			    	  userService.deleteUserInfoManage("", comCode);
 			    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			    	  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("success.common.delete") );
 			      }else {
@@ -351,8 +353,7 @@ public class CompanyInfoManageController {
 		    }	
 			try{
 				  // 이미지 삭제 먼저 하기 
-				
-			      int ret = 	uniService.deleteUniStatement("", "tb_userinfo", "USER_NO=["+userNo+"[");		      
+				  int ret = 	userService.deleteUserInfoManage(userNo, "");		      
 			      if (ret > 0 ) {		
 			    	  //층 삭제
 			    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -391,6 +392,7 @@ public class CompanyInfoManageController {
 		 *  사번 중복 체크 
 		 *  userNo : 사번 
 		 *  결과값 : SUCCESS/FAIL
+		 *  기존 user 에서 사용자로 변경 통합 사용자 관리 변경 
 		 */
 		@RequestMapping (value="userUniCheck.do")
 		public ModelAndView selectUserUniCheck(@ModelAttribute("loginVO") AdminLoginVO loginVO
@@ -405,7 +407,7 @@ public class CompanyInfoManageController {
 					model.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
 					return model;	
 		    }	
-			String result =  uniService.selectIdDoubleCheck("USER_NO", "tb_userinfo", "USER_NO=["+userNo+"[") > 0 ? Globals.STATUS_FAIL : Globals.STATUS_SUCCESS;
+			String result =  uniService.selectIdDoubleCheck("EMPNO", "tb_empInfo", "EMPNO=["+userNo+"[") > 0 ? Globals.STATUS_FAIL : Globals.STATUS_SUCCESS;
 			model.addObject(Globals.STATUS, result);
 			return model;
 		}

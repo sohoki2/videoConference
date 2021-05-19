@@ -263,7 +263,7 @@ function fn_uniDel(_url, _data, _action_url){
 }
 function fn_uniDelAction(_url, _data, _action_url){
 	if (confirm("삭제 하시겠습니까?")== true){
-		$.ajax({
+	    $.ajax({
 			url: _url,
 			type : "POST",
 			beforeSend:function(jxFax, settings){
@@ -619,6 +619,8 @@ function toggleValue(obj){
 }
 function toggleClick(obj, val){
      $("#"+obj).val(val);
+     console.log(obj + ":" + val);
+     
      if (val == "Y" && !$("#"+obj).is(":checked"))
 		 $("#"+obj).trigger("click");
 }
@@ -627,6 +629,67 @@ function toggleDefault(obj){
      if ($("#"+obj).is(":checked"))
 		 $("#"+obj).trigger("click");
 }
+//jqgrid 체크 박스 선택 
+function jqGridCheckValue(){
+   
+}
+//사용자 검색 
+function fn_userSearch(){
+    var url = ($("#searchUserGubun").val() === "G") ? "/backoffice/orgManage/empListAjax.do" : "/backoffice/companyManage/userListAjax.do";
+    if (any_empt_line_id("searchUserKeyword", "검색어를 입력해 주세요.") == false) return;
+    var params = {"searchCondition" : "empname", "searchKeyword" : $("#searchUserKeyword").val()};
+    uniAjax(url, params, 
+		      			function(result) {
+		 				       if (result.status == "LOGIN FAIL"){
+		 				    	   alert(result.meesage);
+		   						   location.href="/backoffice/login.do";
+		   					   }else if (result.status == "SUCCESS"){
+		   						   //사용자 리스트 보여 주기 
+		   						   $("#tb_userInfo > tbody").empty();
+		   						   var obj = result.resultlist;
+		   						   if (obj.length > 0){
+		   						      var html = "";
+		   						      for (var i in obj){
+		   						          if ($("#searchUserGubun").val() === "G"){
+		   						             html  = "<tr onClick='fn_useChoice(\"G\", \""+ obj[i].empno +"\", \""+ obj[i].empname +"\")'>"
+		   						                   + "   <td>" + obj[i].com_name + "</td>"
+		   						                   + "   <td>" + obj[i].empno + "</td>"
+		   						                   + "   <td>" + obj[i].empname + "</td>"
+		   						                   + "   <td>" + obj[i].emptelphone + "</td>"
+		   						                   + " </tr>";
+		   						          }else {
+		   						             html  = "<tr onClick='fn_useChoice(\"C\", \""+ obj[i].user_no +"\", \""+ obj[i].user_name +"\")'>"
+		   						                   + "  <td>" + obj[i].com_name + "</td>"
+		   						                   + "  <td>" + obj[i].user_no + "</td>"
+		   						                   + "  <td>" + obj[i].user_name + "</td>"
+		   						                   + "  <td>" + obj[i].user_cellphone + "</td>"
+		   						                   + "</tr>";
+		   						          }
+		   						          $("#tb_userInfo > tbody").append(html);
+		   						          html = "";
+		   						      }
+		   						   }else{
+		   						     alert("검색한 내용이 없습니다");
+		   						   }
+		   						  
+		   					   }
+		 				    },
+		 				    function(request){
+		 					    alert("Error:" +request.status );	   
+		 					    $("#btn_needPopHide").trigger("click");
+		 				    }    		
+	);
+
+}
+// 담당자 값 넣어주기 
+
+function fn_useChoice(SearchGubun, empno, empnm){
+    $("#seatFixGubun").val(SearchGubun);
+    $("#seatFixUserId").val(empno);
+    $("#sp_fixUser").html(empnm);
+    jqGridFunc.fn_seatChoic("V");
+}
+
 //업로드
 function uniAjaxMutipart(url, formData, done_callback, fail_callback){
 	var jxFax =  $.ajax({
@@ -967,6 +1030,14 @@ function menuOutOver(id,e){
 		 }
 	 }
 }
+//지점 층수 함수
+function fn_floorSearchState(){
+      var _url = "/backoffice/basicManage/floorListAjax.do";
+	  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", ""); 
+}
+ 
+
 function mouseoverAction(name, type)
 {
 //keyword Trend onmouseover onmouseout

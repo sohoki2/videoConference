@@ -20,4 +20,6 @@ public interface UserInfoManageService {
 	int updateUserInfoManage(UserInfo vo) throws Exception;
 	
 	int excelUpload(HttpServletRequest request) throws Exception;
+	
+	int deleteUserInfoManage(String userNo,String comCode)throws Exception;
 }

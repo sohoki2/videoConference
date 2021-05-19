@@ -30,7 +30,8 @@ public class EmpInfo implements Serializable {
     private int cnt = 0;
     private String mode = "";
     private String authorCode = "";
-    
+    private String comCode = "";
+    private String emp_state = "";
    
 
 }

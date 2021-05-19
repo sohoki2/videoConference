@@ -20,6 +20,8 @@ import com.sohoki.backoffice.sym.sat.vo.SeatInfoVO;
 import com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.util.SmartUtil;
+import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
+
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,6 +75,8 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	  @Autowired
 	  private TennantInfoManageService tennService;
 	  
+	  @Autowired
+	  private UniSelectInfoManageService  uniService;
 	  
 	  @Override
 	  public List<Map<String, Object>> selectResManageListByPagination(Map<String, Object> searchVO)   throws Exception  {
@@ -117,7 +121,13 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			    if (vo.getMeetingSeq().toString().equals("on")) {
 			        vo.setMeetingSeq("");
 			    }
-		        ret = this.resMapper.insertResManage(vo);
+			    // 여기 구문에 FLOOR_SEQ 내용 넣기 
+			    //돌아 버리겠다 왜 좌석 회의실을 쪼갰는지 모르겠네
+			    
+			    Map<String, Object> floorInfo = vo.getItemGubun().equals("ITEM_GUBUN_1") ? uniService.selectFieldStatement("FLOOR_SEQ", "tb_meeting_room", "MEETING_ID=[" +vo.getItemId()+"[" )
+			    		                                                                  : uniService.selectFieldStatement("FLOOR_SEQ", "tb_seatinfo", "SEAT_ID=[" +vo.getItemId()+"[" );
+		        vo.setFloorSeq(floorInfo.get("floor_seq").toString());
+			    ret = this.resMapper.insertResManage(vo);
 		
 		        if (ret > 0){
 		        	resSeq = Integer.valueOf(vo.getResSeq()).intValue();

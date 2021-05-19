@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="/css/needpopup.min.css" />
     <link rel="stylesheet" href="/css/needpopup.css">
     
-    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
     <script>
 	jQuery.browser = {};
 	(function () {
@@ -112,7 +112,7 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "480px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
@@ -156,10 +156,10 @@
     		              grid.setGridParam({
 		    		          	  page : gridPage,
 		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
-		    		          	  postData : JSON.stringify(  {
+		    		          	  postData : JSON.stringify({
 							    		          			"pageIndex": gridPage,
 							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
-							    		          		})
+							    		          		    })
     		          		}).trigger("reloadGrid");
     		        },onSelectRow: function(rowId){
     	                if(rowId != null) {  }// 체크 할떄
@@ -174,8 +174,8 @@
     	            }
     		    });
     		}, imageFomatter: function(cellvalue, options, rowObject){
-     		   var meetingImg = (rowObject.meeting_img1 == "no_image.gif") ? "/img/no_image.gif": "/upload/"+ rowObject.meeting_img1;
-     		   return '<img src="' + meetingImg + ' " style="width:120px">';
+    			var meetingImg = (rowObject.meeting_img1 == "no_image.gif"  || rowObject.meeting_img1 == undefined) ? "/img/no_image.gif": "/upload/"+ rowObject.meeting_img1;
+     		    return '<img src="' + meetingImg + ' " style="width:120px">';
      		},rowBtn: function (cellvalue, options, rowObject){
             	if (rowObject.meeting_id != "")
             	     return "<a href='javascript:jqGridFunc.delRow(\""+rowObject.meeting_id+"\");'>삭제</a>";
@@ -184,16 +184,30 @@
                 		      + ":" + rowObject.pay_gubun_txt +": 사용 테넌트:" + rowObject.pay_cost;
                 return costInfo;
             },confirmGubun: function (cellvalue, options, rowObject){
-            	//관리자 승인 여부
            	    return rowObject.meeting_confirmgubun == "Y" ? "관리자승인: [" +  CommonJsUtil.NVL(rowObject.seat_admini_txt) + "]": "바로사용";
      	    },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
 	        }, delRow : function (meeting_id){
+	        	//단위 삭제 
         	    if(meeting_id != "") {
-        		   var params = {'meetingId':meetingId };
-        		   fn_uniDelAction("/backoffice/basicManage/officeMeetingDelete.do",params, "jqGridFunc.fn_search");
+        	    	var params = {'meetingId':meeting_id};
+        		    fn_uniDelAction("/backoffice/basicManage/officeMeetingDelete.do",params, "jqGridFunc.fn_search");
 		        }
-           },fn_ObjectInfo : function (mode, meeting_id){
+            }, fn_delCheck  : function(){
+   	    	    //체크값 삭제 
+	   	    	var ids = $('#mainGrid').jqGrid('getGridParam','selarrrow'); //체크된 row id들을 배열로 반환
+	   	    	if (ids.length < 1) {
+	   	    		 alert("선택한 값이 없습니다.");
+	   	    		 return false;
+	   	    	}
+	   	    	var SeatsArray = new Array();
+	   	    	for(var i=0; i <ids.length; i++){
+	   	    	        var rowObject = ids[i]; //체크된 id의 row 데이터 정보를 Object 형태로 반환
+	   	    	        SeatsArray.push(ids[i]);
+	   	    	} 
+	   	    	var params = {'meetingId':SeatsArray.join(',')};
+	   	    	fn_uniDelAction("/backoffice/basicManage/officeMeetingDelete.do",params, "jqGridFunc.fn_search");
+   	        },fn_ObjectInfo : function (mode, meeting_id){
         	    $("#btn_message").trigger("click");
 			    $("#mode").val(mode);
 		        $("#meetingId").val(meeting_id);
@@ -217,7 +231,6 @@
 	       						       
 						    		   $("#meetingName").val( obj.meeting_name);
 						    		   $("#roomType").val( obj.room_type);
-						    		   //어바이어 보여주기 
 						    		   jqGridFunc.fn_AyavaView();
 						    		   $("#payClassification").val( obj.pay_classification);
 						    		   jqGridFunc.fn_payClassGubun(obj.pay_gubun, obj.pay_cost)
@@ -318,7 +331,7 @@
      						       if (result.status == "SUCCESS"){
      		    	            	   
      		    	               }else if (result.status == "LOGIN FAIL"){
-     									document.location.href="/backoffice/login.do";
+     								   document.location.href="/backoffice/login.do";
      				               }else {
      				            	   alert("입력 도중 문제가 발생 하였습니다");
      				               }
@@ -334,8 +347,9 @@
 	    	 $("#mainGrid").setGridParam({
 	    	    	datatype	: "json",
 	    	    	postData	: JSON.stringify({
-	          			"pageIndex": 1,
+	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
 	          			"searchCenter" :  $("#searchCenter").val(),
+	          			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
@@ -349,19 +363,6 @@
 	    	 var _url = "/backoffice/basicManage/partListAjax.do";
 	    	 var _params = {"floorSeq" : $("#floorSeq").val(), "partUseyn": "Y"};
 	    	 fn_comboListPost("sp_part", "partSeq",_url, _params, "", "120px", partSeq);  
-	     }, fn_delCheck  : function(){
-	    	 var ids = $("#mainGrid").jqGrid('getDataIDs');
-	    	 var array = new Array();
-	    	 for(var i=0; i<ids.length; i++){
-    	    	if($("input:checkbox[id='jqg_"+ids[i]+"']").is(":checked")){
-    	            var rowObject = $("#mainGrid").getRowData(ids[i]);
-    	            var value = rowObject.meeting_id;
-    	            console.log( ids[i] +":" + value);
-    	            array.push(value);
-    	        }
-    	     }
-	    	 //삭제 값 넘기기 
-    	     //alert("array:" + array);
 	     }, fn_payClassGubun : function(payGubun, payCost){
 	    	 //유료 무료 구분 PAY_CLASSIFICATION_1 -> 유료 
 	    	  var payHtml = "";
@@ -375,8 +376,6 @@
 	         }	 
 	    	  $("#sp_PayInfo").html(payHtml);
 	     }, fn_msgView : function(msgType){
-	    	console.log("mailSendcheck:" + $("#mailSendcheck").val());
-	    	
 	    	if (msgType == "M" && $("#mailSendcheck").val() == "Y"){
 	 			$("#tr_resMial").show();
 	 		}else if (msgType == "M" && $("#mailSendcheck").val() == "N") {
@@ -391,7 +390,11 @@
 	     }, fn_adminChoic : function (empId){
 	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "[관리자 선택]" : "";
 	    	 $("#sp_empView").html(empTxt);
-	     }
+	     }, fn_floorSearch : function (){
+			  var _url = "/backoffice/basicManage/floorListAjax.do";
+			  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+		      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
+		 } 
     }
     
     
@@ -433,6 +436,7 @@
 			                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
 			                         </c:forEach>
 			                    </select>
+			                    <span id="sp_floorCombo"></span>
 		                	</td>
 		                	<th>검색</th>
 		                	<td>
