@@ -188,6 +188,8 @@
 		       					   }else if (result.status == "SUCCESS"){
 		       						   //총 게시물 정리 하기
 		       						   var obj  = result.regist;
+		       						   
+		       						   
 		       						   $("#msgTitle").val(obj.msg_title);
 							    	   $("#msgGubun").val( obj.msg_gubun  );
 							    	   $("#msgContent").val(obj.msg_content);

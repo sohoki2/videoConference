@@ -43,7 +43,7 @@ if(loginVO == null ){
                           <ul class="dropdown-content">
                               <li><a href="/backoffice/orgManage/empList.do">인사관리</a></li>
                               <li><a href="/backoffice/orgManage/depthList.do">부서관리</a></li>
-                              <li><a href="/backoffice/companyManage/empSettingInfo.do">환경설정</a></li>
+                              <li><a href="/backoffice/orgManage/swcInfo.do">환경설정</a></li>
                           </ul>
                       </li>
                       <li class="dropdown">

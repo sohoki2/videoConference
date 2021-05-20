@@ -4,6 +4,7 @@
         xmlns:context="http://www.springframework.org/schema/context"
         xmlns:mvc="http://www.springframework.org/schema/mvc"
         xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:task="http://www.springframework.org/schema/task"
         xsi:schemaLocation="http://www.springframework.org/schema/beans 
                             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                             http://www.springframework.org/schema/context 
@@ -11,7 +12,9 @@
                             http://www.springframework.org/schema/mvc 
                             http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
                             http://www.springframework.org/schema/aop 
-                            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+                            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+                            http://www.springframework.org/schema/task 
+                            http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
     <!-- 패키지 내 Controller, Service, Repository 클래스의 auto detect를 위한 mvc 설정 -->
     <context:component-scan base-package="egovframework, com.sohoki">
@@ -45,6 +48,7 @@
         </property>
     </bean>
     
+
     <!--  xss 사이트 적용 -->
     <bean id="htmlEscapingObjectMapper" class="com.sohoki.backoffice.util.HtmlEscapingObjectMapperFactory" />
 	<mvc:annotation-driven>
@@ -76,6 +80,12 @@
 	 
 	 <!-- Aspect -->
 	 <aop:aspectj-autoproxy/>
+	 
+	 
+	 
+	 <context:component-scan base-package="com.sohoki.backoffice.sym.batch" />  
+     <task:scheduler id="jobScheduler" pool-size="10" /> 
+     <task:annotation-driven scheduler="jobScheduler" />
 	 
     <!-- Annotation 을 사용하지 않는 경우에 대한 MVC 처리 설정 -->
     <!-- <mvc:annotation-driven>

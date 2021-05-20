@@ -41,11 +41,9 @@ public interface ResInfoManageMapper {
     public int deleteResManage(String  resSeq);
     //회의록 작성
 	public int updateResMeetingLog(ResInfo vo);
-	
+	// 예약 취소 및 시간 타입 원복
 	public int updateResCancel10MinLateEmpty();
 	
-	public int updateResCancel10_stepMinLateEmpty();
-
 	public int updateCancelReason(ResInfo vo);
 	//에러 일때 사용 하기 
 	public int errorResDateStep01(int resSeq);

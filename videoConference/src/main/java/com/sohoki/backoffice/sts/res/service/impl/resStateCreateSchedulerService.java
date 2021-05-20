@@ -34,17 +34,5 @@ public class resStateCreateSchedulerService {
 			   
 		}
 	}
-	//10분 단위로 입실 처리 없을때 배치 돌리기
-    public void resRaiSchedule10Minute() throws Exception{
-    	try{
-    		// 10분 단위 취소 하기 
-    		logger.debug("============================ 10 분 마다 실행");
-    		int ret = resMapper.updateResCancel10MinLateEmpty();
-    		
-    		ret = resMapper.updateResCancel10_stepMinLateEmpty();
-    	}catch(Exception e){
-    		 logger.error("resRaiSchedule10Minute failed", e);
-    	}
-    	
-	}
+	
 }

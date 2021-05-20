@@ -525,11 +525,11 @@
 		                    <tr>
 		                        <th><span class="redText">*</span>최대수용인원</th>
 		                        <td style="text-align:left">
-		                           <input type="number" name="maxCnt" size="20" maxlength="80" id="maxCnt"  style="width:30px;" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+		                           <input type="number" name="maxCnt" size="20" maxlength="80" id="maxCnt"  style="width:100px;" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
 		                        </td>
 		                        <th><span class="redText">*</span>정렬순서</th>
 		                        <td style="text-align:left">
-		                           <input type="number" name="meetingOrder" id="meetingOrder" onkeypress="only_num();"  style="width:30px;"/>	
+		                           <input type="number" name="meetingOrder" id="meetingOrder" onkeypress="only_num();"  style="width:100px;"/>	
 		                        </td>
 		                    </tr>                    
 		                    <tr>

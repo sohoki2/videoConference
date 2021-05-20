@@ -27,11 +27,13 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.org.vo.OrgInfo;
+import com.sohoki.backoffice.cus.org.vo.SwcInfo;
 import com.sohoki.backoffice.uat.uia.vo.AdminInfo;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
 import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
 import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
+import com.sohoki.backoffice.cus.org.service.SwcInfoManageService;
 import com.sohoki.backoffice.cus.org.service.jobInfoManageService;
 
 
@@ -60,6 +62,9 @@ public class EmpInfoManageController {
 		
 		@Autowired
 	    protected jobInfoManageService jobService;
+		
+		@Autowired
+	    protected SwcInfoManageService swcService;
 
 		@Autowired
 		private SmartUtil util;
@@ -125,17 +130,9 @@ public class EmpInfoManageController {
 			    	 HttpSession httpSession = request.getSession(true);
 			    	 loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
 			    }
-				/*
-			    EmpInfo user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
-				searchVO.put("empno", user.getEmpno());
-				*/
-			    
-			    
-			    
-				//페이징 처리 할 부분 정리 하기 
 				
+				//페이징 처리 할 부분 정리 하기 
 				int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
-				  
 				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 			   	PaginationInfo paginationInfo = new PaginationInfo();
 				paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
@@ -249,6 +246,47 @@ public class EmpInfoManageController {
 			return "/backoffice/popup/deptSearchList";
 		}
 		*/
-		
+		@RequestMapping(value="swcInfo.do")
+		public ModelAndView  selectSwcInfo(@ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
+								           , @ModelAttribute("SwcInfo") SwcInfo info
+										   , HttpServletRequest request
+										   , BindingResult bindingResult) throws Exception {
+			ModelAndView model = new ModelAndView("/backoffice/basicManage/swcInfo");
+					
+		  	model.addObject(Globals.STATUS , Globals.STATUS_SUCCESS);
+		  	model.addObject(Globals.STATUS_REGINFO, swcService.selectSwcInfoManageService());	
+			return model;
+		}
+		@RequestMapping(value="swcInfoUpdate.do")
+		public ModelAndView swcInfoUpdate (@ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
+										   , @RequestBody  SwcInfo vo 
+										   , HttpServletRequest request
+										   , BindingResult bindingResult) throws Exception{
+			
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+			
+			try{
+				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			    if(!isAuthenticated) {
+			    	 model.addObject(Globals.STATUS_MESSAGE , egovMessageSource.getMessage("fail.common.login"));
+			    	 model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    	 return model;
+			    }
+				
+			    int ret = swcService.updateSwcInfoManageService(vo);
+			    if (ret >0){
+					model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("sucess.common.update"));			
+				}else {
+					LOGGER.info("Error");
+					throw new Exception();
+				}
+			}catch (Exception e){
+				LOGGER.error("Exception:" + e.toString());
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.update"));			
+			}
+			return model;
+		}
 		
 }

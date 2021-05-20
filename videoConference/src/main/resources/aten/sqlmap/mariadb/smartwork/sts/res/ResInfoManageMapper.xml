@@ -515,25 +515,24 @@
 								                              CANCEL_CODE = 'CANCEL_CODE_3',
 								                              CANCEL_REASON = '10분 이후 입실 없음'
 		WHERE RES_SEQ IN  (
-			            SELECT b.RES_SEQ 
-						FROM tb_swctime a, tb_swcreservation b
-						WHERE a.RES_SEQ = b.RES_SEQ
+			               SELECT b.RES_SEQ 
+						   FROM tb_swctime a, tb_swcreservation b
+						   WHERE a.RES_SEQ = b.RES_SEQ
+						         AND a.SWC_RESDAY  =  DATE_FORMAT(now(), '%Y%m%d')
+						         AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(now(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( now(), '%H%i')
+						         AND (DATE_FORMAT( ifnull( b.IN_TIME, now()) , '%H%i') -b.RES_STARTTIME ) > 10 
+		                    );
+		 UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL ='N'
+		 WHERE RES_SEQ in (
+			              SELECT b.RES_SEQ 
+						  FROM tb_swctime a, tb_swcreservation b
+						  WHERE a.RES_SEQ = b.RES_SEQ
 						      AND a.SWC_RESDAY  =  DATE_FORMAT(now(), '%Y%m%d')
 						      AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(now(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( now(), '%H%i')
-						      AND    (DATE_FORMAT( ifnull( b.IN_TIME, now()) , '%H%i') -b.RES_STARTTIME ) > 10 
-		 )    
+						      AND (DATE_FORMAT( ifnull( b.IN_TIME, now()) , '%H%i') -b.RES_STARTTIME ) > 10 
+			              ) ; 
+		 
     </update>
-     <update id="updateResCancel10_stepMinLateEmpty">
-        UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL ='N'
-		WHERE RES_SEQ in (
-			            SELECT b.RES_SEQ 
-						FROM tb_swctime a, tb_swcreservation b
-						WHERE a.RES_SEQ = b.RES_SEQ
-						      AND a.SWC_RESDAY  =  DATE_FORMAT(now(), '%Y%m%d')
-						      AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(now(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( now(), '%H%i')
-						      AND    (DATE_FORMAT( ifnull( b.IN_TIME, now()) , '%H%i') -b.RES_STARTTIME ) > 10 
-			  )  
-     </update>
     <delete id="deleteResManage">
         DELETE FROM tb_swcreservation where RES_SEQ = #{resSeq};
         

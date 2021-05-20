@@ -82,20 +82,21 @@ public class CenterInfoManageController {
 															, BindingResult bindingResult	) throws Exception {
 		
 		
-		  ModelAndView model = new ModelAndView(); 
-		  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		  if(!isAuthenticated) {
-				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
-				model.setViewName("/backoffice/login");
-				return model;	
-		  }else {
-	    	   HttpSession httpSession = request.getSession(true);
-	    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
-		  }
-		  model.addObject(Globals.STATUS_REGINFO , searchVO);
-		  model.addObject("floorInfo", cmmnDetailService.selectCmmnDetailCombo("CNETER_FLOOR"));
-	      model.setViewName("/backoffice/basicManage/centerList");
-		  return model;	
+		
+		ModelAndView model = new ModelAndView(); 
+		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		if(!isAuthenticated) {
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+			model.setViewName("/backoffice/login");
+			return model;	
+		}else {
+	       HttpSession httpSession = request.getSession(true);
+	       loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+		}
+		model.addObject(Globals.STATUS_REGINFO , searchVO);
+		model.addObject("floorInfo", cmmnDetailService.selectCmmnDetailCombo("CNETER_FLOOR"));
+	    model.setViewName("/backoffice/basicManage/centerList");
+		return model;	
 	}
 	@RequestMapping(value="centerListAjax.do")
 	public ModelAndView  selectCenterAjaxInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO

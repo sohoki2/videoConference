@@ -153,6 +153,8 @@ public class resPageInfoManageController {
 		}
 		return model;
 	}
+	
+	
 	@RequestMapping(value="/front/ssoLogin.do")
 	public String actionSecurityLoginSSO(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
                                          , HttpServletResponse response
