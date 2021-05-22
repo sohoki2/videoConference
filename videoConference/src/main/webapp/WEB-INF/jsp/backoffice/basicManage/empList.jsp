@@ -64,7 +64,6 @@
 		 jqGridFunc.setGrid("mainGrid");
 	 });
      var jqGridFunc  = {
-    		
     		setGrid : function(gridOption){
     			 var grid = $('#'+gridOption);
     		    //ajax 관련 내용 정리 하기 
