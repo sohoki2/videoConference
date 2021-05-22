@@ -48,12 +48,13 @@
 	       ORDER BY  PART_SEQ  ASC
     </select>
     <select id="selectFloorPartInfoManageDetail"  resultType="lmap">
-           SELECT  CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,
-				   PART_SEATRULE, PART_MINI_CSS, PART_MINI_TOP, PART_MINI_LEFT, 
-			 	   PART_USEYN, PART_ORDER,
-				   REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID
-		    FROM tb_floorpart
-		    WHERE PART_SEQ = #{partSeq}  	  
+           SELECT  a.CENTER_ID, a.FLOOR_SEQ, a.PART_MAP1, a.PART_MAP2, a.PART_CSS, a.PART_NAME,
+				   a.PART_SEATRULE, a.PART_MINI_CSS, a.PART_MINI_TOP, a.PART_MINI_LEFT, 
+			 	   a.PART_USEYN, a.PART_ORDER,
+				   a.REG_DATE, a.REG_ID, a.UPDATE_DATE, a.UPDATE_ID, b.FLOOR_NAME
+		    FROM tb_floorpart a, tb_floorinfo b
+		    WHERE PART_SEQ = #{partSeq}  
+		          AND a.FLOOR_SEQ = b.FLOOR_SEQ	  
     </select>
     <insert id="insertFloorPrartInfoManage" >
          INSERT INTO tb_floorpart(CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,

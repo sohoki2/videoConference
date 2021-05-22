@@ -826,7 +826,7 @@
 			   }, fn_ExcelUpload : function(){
 				   //엑셀 업로드 
 			   },fn_search : function(gridId){
-				 console.log("gridId:" + gridId)
+				 
 				 $("#mainGrid_"+gridId+"_t").setGridParam({
 		    	    	 datatype	: "json",
 		    	    	 postData	: JSON.stringify(  {

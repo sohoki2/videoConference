@@ -194,7 +194,6 @@ function fn_returnVal(url, params, _action_url){
 							   location.href="/backoffice/login.do";
 						   }else if (result.status == "SUCCESS"){
 			                   //관련자 보여 주기 
-			                   //returnVal = result.result;
 			                   var call_script = eval("window."+_action_url+"(result.result);");
 			                   
 						   }else {
@@ -293,6 +292,42 @@ function fn_uniDelAction(_url, _data, _action_url){
 	    return;
 	}
 }
+function fn_uniDelAction(_url, _data, _action_url, _param){
+	if (confirm("삭제 하시겠습니까?")== true){
+	    $.ajax({
+			url: _url,
+			type : "POST",
+			beforeSend:function(jxFax, settings){
+	        	jxFax.setRequestHeader('AJAX', true);
+	        },
+			data : _data,
+			success :function (data, textStatus, jqXHR){
+				 if (data.status == "SUCCESS"){
+					 // 추후 다른 framework 으로 변경 예정
+					 if (_action_url != ""){
+					    //var call_script = eval("window."+_action_url+"();"); 
+					    console.log("_action_url:" + _action_url  + ":" + _param);
+					    
+					    var call_script = eval("window."+_action_url+"(_param);");
+					 }
+					 
+				 }else if (data.status == "LOGIN FAIL"){
+					location.href="/backoffice/login.do";
+				 }else {
+					 alert(data.status);
+					 alert(data.message);
+				 }
+			},
+			error: function (jqXHR, textStatus, errorThrown){
+				alert(textStatus + ":" + errorThrown);
+			}
+		});
+	}
+	else {
+	    return;
+	}
+}
+
 function fn_uniDelParam(_url, _data, _action_funcion, _params){
 	if (confirm("삭제 하시겠습니까?")== true){
 	
@@ -330,7 +365,7 @@ function fn_uniDelParam(_url, _data, _action_funcion, _params){
 	}
 }
 
-//common util
+
 var CommonJsUtil = {
 		isNumeric : function(val){
 			if(/[^0-9]/.test(val)){

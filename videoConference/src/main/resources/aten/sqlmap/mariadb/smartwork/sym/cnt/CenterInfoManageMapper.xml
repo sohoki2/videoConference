@@ -105,7 +105,8 @@
 	                                 , ADMIN_APPROVAL_YN  = 'Y' 
 	      WHERE CENTER_ID = #{centerId}  
 	      
-	      <if test="floorlist != null">
+	      <if test="floorInfo != null">
+	       ;
 	       DELETE FROM  tb_floorinfo 
 	       WHERE FLOOR_SEQ in (
 			     SELECT  FLOOR_SEQ 

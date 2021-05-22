@@ -173,16 +173,7 @@ public class CenterInfoManageController {
 					model.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
 					return model;	
 		    }	
-			// 센터 값이 안들오 오면 에러 보내기
-			Map<String, Object> search = new HashMap<String,Object>();
-			search.put("centerId", searchVO.getCenterId());
-			search.put("firstIndex", "0");
-			search.put("recordCountPerPage", "100");
-			List<Map<String, Object>> floorList = floorService.selectFloorInfoManageListByPagination(search);
-			int totCnt = floorList.size() > 0 ?  Integer.valueOf( floorList.get(0).get("total_record_count").toString()) :0;
 			
-			model.addObject(Globals.JSON_RETURN_RESULTLISR, floorList);
-			model.addObject(Globals.PAGE_TOTALCNT, totCnt);
 			Map<String, Object> centerInfo = centerInfoManageService.selectCenterInfoManageDetail(searchVO.getCenterId());
 			model.addObject(Globals.STATUS_REGINFO, centerInfo);
 			
@@ -191,10 +182,55 @@ public class CenterInfoManageController {
 			params.put("startCode", centerInfo.get("start_floor"));
 			params.put("endCode", centerInfo.get("end_floor"));
 			model.addObject("floorlistInfo", cmmnDetailService.selectCmmnDetailComboEtc(params));
-			model.addObject("floorPart", cmmnDetailService.selectCmmnDetailCombo("FLOOR_PART"));
-			model.addObject("floorListSeq", floorService.selectFloorInfoManageCombo(searchVO.getCenterId()));
-			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			//층수 리스트 
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			
+			model.addObject("floorListSeq", floorService.selectFloorInfoManageCombo(searchVO.getCenterId()));
+			model.addObject("floorPart", cmmnDetailService.selectCmmnDetailCombo("FLOOR_PART"));
+			model.addObject("payGubun", cmmnDetailService.selectCmmnDetailCombo("PAY_CLASSIFICATION"));
+			model.addObject("seatGubun", cmmnDetailService.selectCmmnDetailCombo("SEAT_GUBUN"));
+			model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailCombo("SWC_GUBUN"));
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("selectCenterViewInfo:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg")); 
+		}
+		return model;
+	}
+	@RequestMapping (value="centerViewAjax.do")
+	public ModelAndView selectCenterViewInfoAjax  (@ModelAttribute("loginVO") AdminLoginVO loginVO
+									               , @RequestBody Map<String,Object>  searchVO
+									               , BindingResult result) throws Exception{
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			if(!isAuthenticated) {
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+					model.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
+					return model;	
+		    }	
+			// 센터 값이 안들오 오면 에러 보내기
+			 
+			PaginationInfo paginationInfo = new PaginationInfo();
+		    paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
+		    paginationInfo.setRecordCountPerPage(100);
+		    paginationInfo.setPageSize(propertiesService.getInt("pageSize"));
+			
+			Map<String, Object> search = new HashMap<String,Object>();
+			search.put("centerId",  searchVO.get("centerId"));
+			search.put("firstIndex", "0");
+			search.put("recordCountPerPage", "100");
+			List<Map<String, Object>> floorList = floorService.selectFloorInfoManageListByPagination(search);
+			int totCnt = floorList.size() > 0 ?  Integer.valueOf( floorList.get(0).get("total_record_count").toString()) :0;
+			model.addObject(Globals.JSON_RETURN_RESULTLISR, floorList);
+			model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+			paginationInfo.setTotalRecordCount(totCnt);
+		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			
 		}catch(Exception e) {
 			LOGGER.error("selectCenterViewInfo:" + e.toString());

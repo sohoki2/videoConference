@@ -32,15 +32,16 @@
 	})();
 	</script>
     <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/backoffice_common.js"></script>
     <script src="/js/popup.js"></script>
     
     
-   <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
-   <link rel="stylesheet" type="text/css" href="/resources/jqgrid/src/css/ui.jqgrid.css">
-   <link rel="stylesheet" type="text/css" href="/css/toggle.css">
-   <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
-   <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
-   <style type="text/css">
+    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="/resources/jqgrid/src/css/ui.jqgrid.css">
+    <link rel="stylesheet" type="text/css" href="/css/toggle.css">
+    <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
+    <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <style type="text/css">
    
      .ui-jqgrid .ui-jqgrid-htable th div{
 		outline-style: none;
@@ -390,11 +391,7 @@
 	     }, fn_adminChoic : function (empId){
 	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "[관리자 선택]" : "";
 	    	 $("#sp_empView").html(empTxt);
-	     }, fn_floorSearch : function (){
-			  var _url = "/backoffice/basicManage/floorListAjax.do";
-			  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
-		      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
-		 } 
+	     }
     }
     
     
@@ -430,7 +427,7 @@
 		                <tr class="tableM">
 		                	<th>지점</th>
 		                	<td  style="text-align:left;padding-left: 20px;">
-		                	    <select name="searchCenter"  id="searchCenter" onChange="jqGridFunc.fn_floorSearch()">
+		                	    <select name="searchCenter"  id="searchCenter" onChange="backoffice_common.fn_floorSearch()">
 			                        <option value="">지점 선택</option>
 			                         <c:forEach items="${centerInfo}" var="centerInfo">
 			                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>

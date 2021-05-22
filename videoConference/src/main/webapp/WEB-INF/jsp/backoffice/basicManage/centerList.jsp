@@ -100,12 +100,12 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "380px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert(error); 
     		        }, onPaging: function(pgButton){
@@ -179,13 +179,11 @@
 	    	   $("#mainGrid").setGridParam({
 	    	    	 datatype	: "json",
 	    	    	 postData	: JSON.stringify(  {
-	          			"pageIndex": 1,
+	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
-	    	    	 loadComplete	: function(data) {
-	    	    		 console.log(data);
-	    	    	 }
+	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
 	    	     }).trigger("reloadGrid");
  
 	        }, delRow : function (center_id){
@@ -194,6 +192,8 @@
         		   $("#searchKeyword").val("")
         		   fn_uniDelAction("/backoffice/basicManage/centerDelete.do",params, "jqGridFunc.fn_search");
 		        }
+            },clearGrid : function() {
+                $("#mainGrid").clearGridData();
             },fn_floorChange:function(floorinfo){
         	 //층수로 input 생성 
 	        	 if ($("#startFloor").val() != "" && $("#endFloor").val() != ""){
@@ -202,7 +202,6 @@
 	        	 }
             },fn_CenterInfo : function (mode, centerId){
         	    $("#btn_message").trigger("click");
-        	    
         	    $("#mode").val(mode);
         	    if (mode == "Ins"){
         	    	$('input:text[name^=center]').val("");
@@ -248,21 +247,16 @@
       						    }    		
       		       );
       		  }
-           },clearGrid : function() {
-               $("#mainGrid").clearGridData();
            },fn_CheckForm  : function (){
         	  if (any_empt_line_id("centerNm", "사무소명을 입력해주세요.") == false) return;		  
      		  if (any_empt_line_id("centerAddr1", "주소를 입력해주세요.") == false) return;
      		  if (any_empt_line_id("centerTel", "사무소연락처를 입력해주세요.") == false) return;
-     		  
-     		   
      		  
      		  var commentTxt = ($("#mode").val() == "Ins") ? "등록 하시겠습니까?":"저장 하시겠습니까?";
      		
      		  if (confirm(commentTxt)== true){
      			  
      			  var floorInfo = ckeckboxValue("체크된 층수가 없습니다.", "floorInfos");
-     			  
      			  var sHTML3 = oEditors.getById["ir3"].getIR();
      			  $("#centerInfo").val(sHTML3); 
      			  //체크 박스 체그 값 알아오기 
@@ -281,7 +275,6 @@
      			  formData.append('endFloor' , $("#endFloor").val());
      			  formData.append('floorInfo' , floorInfo);
      			  formData.append('centerUseYn' , fn_emptyReplace($("#centerUseYn").val(),"N"));
-     			  
      		      uniAjaxMutipart("/backoffice/basicManage/centerUpdate.do", formData, 
      						function(result) {
      						       //결과값 추후 확인 하기 	
@@ -327,7 +320,7 @@
             </div>
 
             <div class="Swrap Asearch">
-                <div class="Atitle" id="div_totalInfo"></div>
+                <div class="Atitle">총 지점 <span id="sp_totcnt" /></div>
                 <section class="Bclear">
                 	<table class="pop_table searchThStyle">
 		                <tr class="tableM">

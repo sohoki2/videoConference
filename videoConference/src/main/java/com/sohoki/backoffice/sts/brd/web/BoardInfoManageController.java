@@ -91,7 +91,7 @@ public class BoardInfoManageController {
 			      }
 			      
 				  //공지사항의 경우, 공지기한이 지난 게시물은 board_notice_useyn을 N으로 변경
-				  boardInfoService.updateBoardNoticeUseYn();
+				  //boardInfoService.updateBoardNoticeUseYn();
 				  model.addObject(Globals.STATUS_REGINFO, searchVO);
 			}catch (Exception e){
 				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);

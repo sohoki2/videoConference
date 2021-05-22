@@ -76,9 +76,12 @@
                 <choose>
 		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
 		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
-		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID)
+		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
+		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+		                                        )
 						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
-						       NOW(), NOW(), #{params.userId}, #{params.userId}
+						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
@@ -94,10 +97,13 @@
 						)TA;
 		           </when>
 		           <otherwise>
-		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER
-		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID)
+		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
+		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
+		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+		                                        )
 						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ, TA.RN, 'Y', 0,0 , TA.RNUM,
-						       NOW(), NOW(), #{params.userId}, #{params.userId}
+						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT(a.FLOOR_NAME, '_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
@@ -124,13 +130,13 @@
 		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
 		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
 		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
-		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, ROOM_TYPE, MAIL_SENDCHECK, SMS_SENDCHECK,
-		                                            PAY_CLASSIFICATION, MEETING_CONFIRMGUBUN
+		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, MAIL_SENDCHECK, SMS_SENDCHECK,
+		                                            ROOM_TYPE, MEETING_CONFIRMGUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                            )
 						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
 						       NOW(), NOW(), #{params.userId}, #{params.userId},
-						       'Y','Y',0, 'SWC_GUBUN_1', 'N','N',
-						       'PAY_CLASSIFICATION_2', 'S'
+						       'Y','Y',0, 'N','N',
+						       #{params.roomType}, #{params.meetingConfirmgubun}, #{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(''M_', a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
@@ -148,13 +154,13 @@
 		           <otherwise>
 		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
 		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
-		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, ROOM_TYPE, MAIL_SENDCHECK, SMS_SENDCHECK,
-		                                            PAY_CLASSIFICATION, MEETING_CONFIRMGUBUN
+		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, MAIL_SENDCHECK, SMS_SENDCHECK,
+		                                            ROOM_TYPE, MEETING_CONFIRMGUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                            )
 						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
 						       NOW(), NOW(), #{params.userId}, #{params.userId},
-						       'Y','Y',0, 'SWC_GUBUN_1', 'N','N',
-						       'PAY_CLASSIFICATION_2', 'S'
+						       'Y','Y',0, 'N','N',
+						       #{params.roomType}, #{params.meetingConfirmgubun}, #{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT('M_',a.FLOOR_NAME, '_',LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM

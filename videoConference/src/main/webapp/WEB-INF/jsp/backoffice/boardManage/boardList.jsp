@@ -42,8 +42,8 @@
                         <span>></span>커뮤니티관리<span>></span>
                         <strong>
                           <c:choose>
-			                <c:when test="${searchVO.boardGubun eq 'NOT'}">			                
-                                                 공지사항
+			                <c:when test="${searchVO.boardGubun eq 'NOT'}">
+			                                   공지사항
                             </c:when>
                             <c:when test="${searchVO.boardGubun eq 'FAQ'}">			                
                             FAQ
@@ -58,41 +58,38 @@
             </div>
 
             <div class="Swrap Asearch">
-            <div class="Atitle">총 <span>${totalCnt}</span>건의 
-            <c:choose>
-				<c:when test="${searchVO.boardGubun eq 'NOT'}">			                
-				공지사항이
-				</c:when>
-				<c:when test="${searchVO.boardGubun eq 'FAQ'}">			                
-				FAQ가 
-				</c:when>
-				<c:otherwise>
-				Q&A가 
-				</c:otherwise>
-			</c:choose>
-				있습니다.
+            <div class="Atitle">총 <span id="sp_totcnt"></span>건의 
+	            <c:choose>
+					<c:when test="${searchVO.boardGubun eq 'NOT'}">			                
+					공지사항이
+					</c:when>
+					<c:when test="${searchVO.boardGubun eq 'FAQ'}">			                
+					FAQ가 
+					</c:when>
+					<c:otherwise>
+					Q&A가 
+					</c:otherwise>
+				</c:choose>있습니다.
 				</div>
                 <section class="Bclear">
                 <table class="pop_table searchThStyle">
                    
                    <tr>
-                   <th>
-                   		검색어
-                   </th>
-                   <td>
-                   	<select name="searchCondition"  id="searchCondition">
-                   		<option value="0">전체</option>
-								<option value="1" <c:if test="${searchVO.searchCondition == '1' }"> selected="selected" </c:if>>제목</option>
-								<option value="2" <c:if test="${searchVO.searchCondition == '2' }"> selected="selected" </c:if>>내용</option>
-						</select>	
-						<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}" class="margin-left10">
-						<a href="javascript:search_form();" ><span class="lightgrayBtn">조회</span></a>
-					</td>
-					<c:if test="${regist.boardGubun ne 'QNA'}" >
-                    <td class="text-right">
-                        <a href="javascript:view_Board('Ins','0')"><span class="blueBtn">등록</span></a>
-                      </td>
-                     </c:if>
+	                   <th>검색어</th>
+	                   <td>
+	                   	<select name="searchCondition"  id="searchCondition">
+	                   		        <option value="0">전체</option>
+									<option value="1">제목</option>
+									<option value="2">내용</option>
+							</select>	
+							<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  class="margin-left10">
+							<a href="javascript:search_form();" ><span class="lightgrayBtn">조회</span></a>
+						</td>
+						<c:if test="${regist.boardGubun ne 'QNA'}" >
+	                    <td class="text-right">
+	                        <a href="javascript:view_Board('Ins','0')"><span class="blueBtn">등록</span></a>
+	                    </td>
+	                    </c:if>
                     </tr>
                      </section>
                  </table>

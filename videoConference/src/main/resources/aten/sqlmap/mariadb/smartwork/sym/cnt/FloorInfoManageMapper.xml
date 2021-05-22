@@ -45,8 +45,15 @@
            SELECT  a.FLOOR_SEQ, a.CENTER_ID, a.FLOOR_INFO, a.FLOOR_MAP, a.FLOOR_MAP1, a.FLOOR_NAME,
 				   a.SEAT_CNT, a.MEET_CNT,a.FLOOR_USEYN, a.FLOOR_PART, b.FLOOR_INFO FLOOR_INFO_CNT,
 				   a.REG_DATE, a.REG_ID, a.UPDATE_DATE,UPDATE_ID, c.CODE_DC
-		    FROM tb_floorinfo a, tb_centerinfo b, lettccmmndetailcode c
-		    WHERE FLOOR_SEQ = #{floorSeq} 		
+		   FROM tb_floorinfo a, tb_centerinfo b, lettccmmndetailcode c
+		   WHERE FLOOR_SEQ = #{floorSeq} 		
+		          AND a.CENTER_ID = b.CENTER_ID  
+		          AND a.FLOOR_INFO = c.CODE
+    </select>
+    <select id="selectFloorCombo"  resultType="lmap">
+           SELECT  a.FLOOR_SEQ,a.FLOOR_NAME,
+		   FROM tb_floorinfo a, tb_centerinfo b, lettccmmndetailcode c
+		   WHERE FLOOR_SEQ = #{floorSeq} 		
 		          AND a.CENTER_ID = b.CENTER_ID  
 		          AND a.FLOOR_INFO = c.CODE
     </select>
