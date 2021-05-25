@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.cus.com.mapper.CompanyInfoManageMapper">
+
+    <select id="selectCompanyInfoManageListByPagination"  resultType="lmap">
+		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+	        TB.* FROM (
+					    SELECT a.COM_CODE, a.COM_NUMBER, a.COM_NAME, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME,
+						       CASE  WHEN  length(COM_LOGO) > 0 THEN 
+				  	               COM_LOGO
+							   ELSE 
+						          'no_image.gif'
+						       END COM_LOGO, 
+						       fn_DetailCodeNm(a.COM_GUBUN) COM_GUBUN_Txt,
+						       COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE,   	
+						       DATE_FORMAT(a.COM_UPDATE,'%Y-%m-%d %H:%i:%s') COM_UPDATE,
+						       a.COM_UPDATEID, b.CODE_NM,   c.CENTER_NM, d.FLOOR_NAME, a.TENN_USEYN,
+						       CASE a.TENN_USEYN WHEN 'Y' THEN 
+						              (SELECT ifnull(SUM(TENN_REC_NOW_CNT),0) FROM tb_compay_tennant e
+                                       WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE)
+						            ELSE 
+						               '사용안함'
+						       END TENN_INFO, a.COM_PLAY_FLOOR, FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
+						       
+					    FROM  tb_companyinfo a, lettccmmndetailcode b, tb_centerinfo c, tb_floorinfo d
+					    WHERE a.COM_STATE = b.CODE       
+					          AND a.CENTER_ID = c.CENTER_ID
+					          AND a.FLOOR_SEQ = d.FLOOR_SEQ
+					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+							    AND (a.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  OR a.COM_CEO_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
+							  </if>		
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+							    AND a.CENTER_ID = #{params.searchCenter}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
+							  </if>
+					    ORDER BY a.COM_CODE  DESC
+	        ) TB  
+	         ORDER BY TB.COM_CODE  DESC
+	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+    </select>
+    <select id="selectCompanyInfoManageCombo" resultType="lmap">
+	       SELECT  a.COM_CODE , a.COM_NAME 
+	       FROM tb_companyinfo a
+	       WHERE a.COM_STATE =  #{com_state}
+	       ORDER BY  a.COM_NAME ASC
+    </select>
+    <select id="selectCompanyInfoManageDetail"  resultType="lmap">
+           SELECT  COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
+				   COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, COM_LOGO,
+				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR
+		   FROM tb_companyinfo a
+		   WHERE COM_CODE = #{comCode}
+    </select>
+    <insert id="insertCompanyInfoManage" >
+         
+         INSERT INTO tb_companyinfo(COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
+								    COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, 
+								    COM_HOMEPAGE, COM_STATE, COM_LOGO, CENTER_ID, FLOOR_SEQ,
+								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN, COM_PLAY_FLOOR)
+         VALUES (#{comCode}, #{comNumber,jdbcType=VARCHAR}, #{comName}, #{comGubun,jdbcType=VARCHAR}, #{comBuscondition,jdbcType=VARCHAR},  #{comItem,jdbcType=VARCHAR},  #{comCeoName,jdbcType=VARCHAR}, 
+                 #{comTel,jdbcType=VARCHAR}, #{comFax,jdbcType=VARCHAR},  #{comZipcode,jdbcType=VARCHAR}, #{comAddr1,jdbcType=VARCHAR}, #{comAddr2,jdbcType=VARCHAR},
+                 #{comHomepage,jdbcType=VARCHAR}, #{comState,jdbcType=VARCHAR},  #{comLogo,jdbcType=VARCHAR},  #{centerId,jdbcType=VARCHAR},  #{floorSeq,jdbcType=VARCHAR}, 
+                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, 
+                 #{tennUseyn,jdbcType=VARCHAR} , #{comPlayFloor,jdbcType=VARCHAR})
+                
+    </insert>
+    <update id="updateCompanyInfoManage" >
+            
+	       UPDATE  tb_companyinfo SET COM_NAME = #{comName} 
+	                                , COM_NUMBER = #{comNumber,jdbcType=VARCHAR} 
+	                                , COM_GUBUN = #{comGubun,jdbcType=VARCHAR}
+	                                , COM_BUSCONDITION = #{comBuscondition,jdbcType=VARCHAR}
+	                                , COM_ITEM = #{comItem,jdbcType=VARCHAR}
+	                                , COM_CEO_NAME = #{comCeoName,jdbcType=VARCHAR} 
+	                                , COM_TEL = #{comTel,jdbcType=VARCHAR} 
+	                                , COM_FAX = #{comFax,jdbcType=VARCHAR} 
+	                                , COM_ZIPCODE = #{comZipcode,jdbcType=VARCHAR} 
+	                                , COM_ADDR1 = #{comAddr1,jdbcType=VARCHAR} 
+	                                , COM_ADDR2 = #{comAddr2,jdbcType=VARCHAR} 
+	                                , COM_HOMEPAGE = #{comHomepage,jdbcType=VARCHAR} 
+	                                , COM_STATE = #{comState,jdbcType=VARCHAR} 
+	                                , TENN_USEYN = #{tennUseyn,jdbcType=VARCHAR} 
+	                                <if test="comLogo != '' ">                                    
+	                                 , COM_LOGO = #{comLogo,jdbcType=VARCHAR}
+	                                </if>
+	                                , COM_UPDATE = NOW()
+	                                , COM_UPDATEID = #{userId,jdbcType=VARCHAR}
+	                                , COM_MEMO =  #{comMemo, jdbcType=VARCHAR}
+	                                , CENTER_ID = #{centerId, jdbcType=VARCHAR}
+	                                <if test="floorSeq != '' ">  
+	                                , FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR}
+	                                </if>
+	                                <if test="comPlayFloor != '' ">  
+	                                , COM_PLAY_FLOOR = #{comPlayFloor, jdbcType=VARCHAR}
+	                                </if>
+	      WHERE COM_CODE = #{comCode}           
+    </update> 
+</mapper>

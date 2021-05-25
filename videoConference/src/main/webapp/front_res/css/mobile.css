@@ -1,0 +1,1145 @@
+﻿
+
+
+
+
+
+
+
+
+/*header*/
+
+.log_b {width: 90%;padding: 25px 20px;}
+.log_b h1 {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.log_b p {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.log_b span {
+    font-size: 1.3rem;
+}
+header {
+    height: 50px;
+    padding: 0;
+}
+
+    header h1 {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px 0;
+        box-sizing: border-box;
+    }
+
+        header h1 img {
+            width: 120px;
+        }
+
+.menu {
+    display: none;
+}
+
+header .userInfo {
+    display: none;
+}
+
+.user_name .userInfo {
+    display: block !important;
+}
+
+
+
+
+    #allFloors button {
+        float: left;
+        padding: 7px 0;
+        font-size: 1.4rem;
+        font-weight: 500;
+        width: 70px;
+    }
+
+       
+
+.footer .contents {
+    position: unset;
+    width: 100%;
+}
+
+.rightBtn {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: unset;
+}
+
+.grayBtn, .blueBtn, .seatReser {
+    float: left;
+    width: 50%;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.3rem;
+    border-radius: 0 !important;
+}
+
+.map {
+    width: 1148px;
+    height: 970px;
+    background-size: 100% !important;
+}
+
+.mapArea {
+    width: 100%;
+    margin: 9px 0 0 0;
+    height: calc(100vh - 295px);
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.mapBox {
+    box-sizing: border-box;
+    width: 100%;
+    overflow: auto;
+    height: calc(100vh - 305px );
+    display: block;
+}
+
+.contents {
+    width: 97%;
+    margin: 0 auto;
+    position: relative;
+}
+
+.seatInfo {
+    font-size: 12px;
+    box-shadow: 0 -2px 5px rgb(207 207 207 / 32%);
+}
+
+.infoContents {
+    position: relative;
+    margin: 52px 0 0 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #585858;
+}
+
+.usingSeat, .posSeat {
+    margin-left: 5px !important;
+    background-size: 13px;
+    padding-left: 16px !important;
+}
+
+.needpopup-overflow .needpopup_wrapper {
+    padding: 2%
+}
+
+.conven {
+    width: 100%;
+    overflow-x: scroll;
+    padding-bottom: 5px
+}
+
+.menuClose {
+    right: 3%;
+    font-size: 3.5rem;
+}
+/*mypage*/
+.loginB {
+    padding: 0 5%;
+}
+
+.log_footer {
+    bottom: 0;
+}
+
+
+.seatInfo span {
+    vertical-align: middle;
+    font-size: 1.7rem;
+}
+
+.selSeat {
+    height: 55px;
+    margin-bottom: 50px;
+}
+
+.searchMeeting {
+    left: 5%;
+    top: 75px;
+}
+
+.cd-stretchy-nav {
+    top: 140px
+}
+
+.meeting_reserDate .reserDate {
+    padding: 6px 0 6px 57px !important;
+    float: none;
+}
+
+.reserDate {
+    background: url("../img/dateImg.png")left center no-repeat;
+}
+
+.date {
+    width: 100px;
+    font-size: 1.5rem;
+}
+
+.meeting_reserDate .reserDate .date {
+    margin-right: 10px !important;
+    font-size: 1.5rem;
+    width: 104px;
+    padding-right: 5px
+}
+
+.search_time_box {
+    padding: 11px 0 !important;
+    margin-left: 8px
+}
+
+.reserTime {
+    padding: 0 0 10px
+}
+
+    .reserTime select {
+        width: 65px;
+        margin-right: 3px;
+        font-size: 1.5rem;
+    }
+
+.menu_box {
+    padding: 15px;
+    font-size: 1.3rem;
+}
+
+.meetingSelect {
+    bottom: 0
+}
+
+.floorBtn {
+    top: 75px
+}
+
+.meeting_reserDate {
+    min-height: 500px
+}
+
+.reserDate {
+    padding: 11px 0 11px 54px;
+}
+
+.link_page_n a {
+    padding: 3px
+}
+
+.reser_b_txt {
+    font-size: 1.6rem;
+}
+
+.notice table td {
+    font-size: 1.3rem;
+}
+
+.bbs_tit h2 {
+    font-size: 1.6rem;
+    float: left;
+}
+
+.search {
+    position: relative;
+}
+
+.leftMenu span {
+    width: 20px;
+    height: 16px;
+    background: url("../img/menuIcon.png")no-repeat;
+    background-size: 100%;
+}
+
+.leftMenu {
+    padding: 15px 0;
+    left: 0;
+    width: auto;
+    top: 0;
+}
+
+.searchBox {
+    font-size: 1.4rem;
+    width: 100%;
+    height: 35px;
+    margin-top: 0;
+    position: absolute;
+    top: 0;
+    z-index: 9999;
+}
+
+.inputSearch {
+    font-size: 1.4rem;
+    width: 100%;
+    padding: 6px 10px;
+    height: 100%;
+}
+
+
+.searchIcon {
+    position: absolute;
+    right: 7px;
+    top: 0;
+    width: 25px;
+    text-align: right;
+    padding: 4px 4px;
+    box-sizing: border-box;
+}
+
+.searchMeeting {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0px 2px 4px 2px #eaeaea;
+    border: 1px solid #eee;
+    font-size: 0;
+    background: #fff url("../img/meeting.png")center no-repeat;
+}
+
+.floorBtn span {
+    border-radius: 50%;
+    box-shadow: 0px 2px 4px 2px #eaeaea;
+    border: 1px solid #eee;
+}
+
+.cd-stretchy-nav.nav-is-visible .stretchy-nav-bg {
+    box-shadow: 0px 2px 4px 2px #eaeaea
+}
+
+.cd-stretchy-nav .stretchy-nav-bg {
+    /* this is the stretching navigation background */
+    border-radius: 30px;
+    box-shadow: 0px 2px 4px 2px #eaeaea;
+    -webkit-transition: height 0.2s, box-shadow 0.2s;
+    -moz-transition: height 0.2s, box-shadow 0.2s;
+}
+
+.sel_box {
+    height: 330px;
+    overflow-y: scroll;
+    width: 100%;
+    margin: auto;
+    padding: 0 0 45px 0;
+}
+
+.sel_inner_box {
+    min-height: 400px
+}
+
+.leftReser {
+    width: 100%
+}
+
+.feature_txt .date {
+    margin-right: 10px;
+    padding-right: 25px
+}
+
+.feature_sel {
+    padding-left: 20px
+}
+
+.feature_txt {
+    margin-left: 5px
+}
+
+.feature {
+    padding-left: 20px
+}
+
+
+/*20200710*/
+.ui-widget.ui-widget-content {
+    height: auto;
+    overflow-y: scroll;
+    width: 95% !important;
+    left: 11px !important;
+}
+
+.meeting_member input[type="text"] {
+    margin: 0 3px;
+    width: 30%
+}
+
+.meeting_member select {
+    padding-right: 3px;
+    width: 30%
+}
+
+.meeting_member {
+    top: 5% !important;
+}
+
+.meeting_member_sel {
+    overflow-y: scroll;
+    height: auto
+}
+
+.mem_search_btn {
+    padding: 3px 11px !important;
+    border-radius: 13px !important;
+}
+
+.mem_menu_box {
+    padding: 5px 15px !important;
+}
+
+    .mem_menu_box .reserDate {
+        padding: 6px 0 3px 54px !important;
+    }
+
+.menuBtn {
+    margin-top: 13px !important;
+}
+
+.pop_add_user_box {
+    overflow-x: scroll;
+}
+
+.pop_add_user {
+    min-width: 1000px;
+}
+
+
+.wrap_m {
+    width: 90%;
+    margin: 0 auto;
+}
+
+    .wrap_m .float_left {
+        float: none;
+        margin-top: 10px;
+    }
+
+    .wrap_m .float_right {
+        float: none;
+    }
+
+/*meeting*/
+.meeting {
+    margin-top: 20px;
+}
+
+    .meeting .rightBox {
+        width: 100%;
+        height: 840px;
+        border: 1px solid #cccccc;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+/*.schedule{position: relative;padding-top: 245px;}*/
+.schedule {
+    position: relative;
+}
+
+.meet_info {
+    height: 50px;
+    color: white;
+    border-radius: 3px;
+    text-align: left;
+    box-sizing: border-box;
+    padding: 5px 0;
+    cursor: pointer;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+    .meet_info.before {
+        background-color: #bababa;
+    }
+
+    .meet_info.now {
+        background-color: #358cfc;
+    }
+
+    .meet_info.after {
+        background-color: #9ac1f3;
+    }
+
+    .meet_info p {
+        color: white;
+        width: auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .meet_info p:last-child {
+            font-size: 1.2rem;
+        }
+
+#result_list tr {
+    border-bottom: 1px solid #dedede;
+    transform: none !important;
+    height: 94px;
+}
+
+tr:last-child {
+    border-bottom: 0;
+}
+
+.tb_wrap {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 66px;
+}
+
+.tb_box {
+    overflow-x: hidden;
+    max-width: 3000px;
+    width: 100%;
+    overflow-x: scroll;
+    border-bottom: 1px solid #dedede;
+    max-height: 755px;
+    -ms-overflow-style: none;
+}
+
+.tb {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    width: 3000px;
+}
+
+.cell1 {
+    width: 66px;
+    font-weight: 500;
+    font-size: 1.5rem;
+    padding: 0;
+}
+
+.cell2 {
+    width: 55px !important;
+    height: 105px;
+    padding: 0 1px;
+    box-sizing: border-box;
+}
+
+.fixed_top {
+    display: inline-table;
+    position: absolute;
+    top: 0;
+    height: 65px;
+    width: 3000px;
+}
+
+    .fixed_top th {
+        border-bottom: 1px solid #dedede;
+        font-size: 1.4rem;
+        font-weight: 500;
+        height: 65px;
+    }
+
+        .fixed_top th.cell1 {
+            width: 70px !important;
+            display: block;
+            line-height: 65px;
+            font-size: 1.3rem;
+        }
+
+.time_Line {
+    width: 100%;
+    border: 1px solid #f48781;
+    position: absolute;
+    top: 505px;
+    z-index: 9999;
+}
+
+    .time_Line::before {
+        content: "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
+        color: #f48781;
+        position: absolute;
+        font-size: 1.5rem;
+        left: -2px;
+        top: -11px;
+    }
+
+.fixed_col {
+    box-shadow: 1px 0 3px 0px #e4e4e4;
+    position: relative;
+    background: white;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+.cross {
+    background-color: #fec143;
+    color: white;
+}
+
+.roomCon {
+    display: none;
+}
+
+.rightBox {
+    display: none;
+}
+
+.dateCon {
+    position: relative;
+    width: 100%;
+}
+
+.tb tbody tr {
+    transform: none !important;
+}
+
+.tb tbody td {
+    border-bottom: 1px solid #eeeeee;
+    box-sizing: border-box;
+    padding: 5px 1px;
+}
+
+
+.tb tbody tr:nth-child(1) th {
+    color: #ff9f60;
+}
+
+.tb tbody tr:nth-child(2) th {
+    color: #8bb0f3;
+}
+
+.tb tbody tr:nth-child(3) th {
+    color: #f7c52f;
+}
+
+.tb tbody tr:nth-child(4) th {
+    color: #fba4a4;
+}
+
+.tb tbody tr:nth-child(5) th {
+    color: #b6d69f;
+}
+
+.tb tbody tr:nth-child(6) th {
+    color: #77e6bb;
+}
+
+.tb tbody tr:nth-child(7) th {
+    color: #a7d0ff;
+}
+
+.tb tbody tr:nth-child(8) th {
+    color: #e0b0ec;
+}
+
+.dateCon .date_input {
+    position: relative;
+}
+
+    .dateCon .date_input input {
+        display: none;
+    }
+
+span.date_icon {
+    background: url(../img/dateIcon.png) no-repeat;
+    width: 19px;
+    height: 19px;
+    display: block;
+    position: absolute;
+    right: 5%;
+    top: 8px;
+}
+
+.dateCon .ui-datepicker-inline {
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 3px !important;
+    height: auto !important;
+    -ms-overflow-style: none;
+}
+
+.dateCon a.ui-state-default {
+    width: auto;
+    height: 30px;
+    line-height: 21px;
+    box-sizing: border-box;
+    font-size: 1.2rem;
+    text-align: center !important;
+}
+
+.dateCon table.ui-datepicker-calendar {
+    margin: 0;
+}
+
+.wrap_m .ui-datepicker-calendar span {
+    font-size: 1.2rem;
+}
+
+.leftReser_con .password {
+    border-top: 2px solid #797979;
+}
+
+    .leftReser_con .password ul li {
+        padding: 15px 10px;
+        box-sizing: border-box;
+        border-bottom: 1px dashed #eeeeee;
+    }
+
+        .leftReser_con .password ul li h5 {
+            display: block;
+            min-width: 23%;
+            border: 0;
+            outline: none;
+            vertical-align: middle;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+
+        .leftReser_con .password ul li input {
+            display: inline-block;
+            width: 100%;
+            border: 1px solid #eaeaea;
+            font-size: 1.6rem;
+            padding: 5px 0 5px 3%;
+            box-sizing: border-box;
+            color: #999998;
+            outline: none;
+            vertical-align: middle;
+            border-radius: 4px;
+        }
+
+.btnBox {
+    margin: 15px 0 0 0;
+}
+
+    .btnBox .btn_check {
+        border-radius: 4px;
+        background-color: #1baec5;
+        box-sizing: border-box;
+        padding: 5px 15px;
+        color: white;
+        border: none;
+    }
+
+.sub_popup .popuptext {
+    padding: 10px 0 20px 0;
+    line-height: 35px;
+    font-size: 2.0rem;
+}
+
+.myC {
+    margin: auto;
+}
+
+.my_reser_box {
+    float: none;
+    width: 100%;
+    background: #003759;
+    background-size: cover;
+    color: #fff;
+}
+
+.my_reser_b {
+    width: 100%;
+    float: none;
+    background: #fff;
+    margin-top: 10px
+}
+
+.user_logout {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.login_reser_box .reser_b_tit {
+    font-size: 1.4rem;
+    color: black;
+    position: absolute;
+    left: 0;
+    top: -25px;
+}
+
+.my_tit {
+    font-size: 16px;
+}
+
+.user_state {
+    margin: 20px auto 0;
+    width: 62%;
+}
+
+    .user_state li a {
+        padding: 6px 0;
+        font-size: 1.4rem;
+    }
+
+.reser_box {
+    padding: 21px 0;
+}
+
+.state_logout {
+    margin-bottom: 20px
+}
+
+.reser_box_txt {
+    display: none
+}
+
+.reser_iconGo {
+    display: block;
+}
+
+.reser_icon01 {
+    background: url("../img/mypage01.png")left center no-repeat;
+    background-size: 35px;
+}
+
+.reser_icon02 {
+    background: url("../img/mypage02.png")30px center no-repeat;
+}
+
+.reser_icon03 {
+    background: url("../img/mypage03.png")30px center no-repeat;
+}
+
+.reser_icon04 {
+    background: url("../img/mypage04.png")left center no-repeat;
+    background-size: 35px;
+}
+
+.reser_iconGo {
+    background: url("../img/reser_iconGo.png")97% center no-repeat;
+    padding-bottom: 0 !important;
+    background-size: 8px;
+}
+
+.login_reser_b {
+    margin-top: 10px;
+}
+
+.login_reser_box {
+    padding: 1rem 1rem;
+    margin-top: 45px;
+}
+
+    .login_reser_box input {
+        color: #676767;
+        width: 100%;
+        vertical-align: middle;
+        font-size: 1.4rem;
+    }
+
+.wrap_m #schedule #timetable-container {
+    margin-top: 60px !important;
+}
+
+.wrap_m #schedule .timetable_top_left p {
+    font-size: 1.5rem !important;
+}
+
+.wrap_m #allFloors {
+    position: absolute;
+    left: 0;
+    top: 50px;
+}
+
+.menu_tit {
+    font-size: 1.4rem;
+}
+
+.bbs_tit {
+    padding: 15px 25px;
+}
+
+#mySidenav .state .logout {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #8c8c8c;
+    text-align: center;
+}
+
+    #mySidenav .state .logout a {
+        color: white;
+        line-height: 40px;
+        font-weight: 400;
+        margin: 0;
+        padding: 0;
+    }
+
+.full-size {
+    width: 90%;
+    padding-top: 20vh;
+}
+
+    .full-size h1 {
+        font-size: 18px;
+    }
+
+    .full-size p {
+        font-size: 15px;
+    }
+
+#allFloors {
+    overflow: hidden;
+    overflow-x: scroll;
+    margin-left: 0;
+}
+
+.whiteBack {
+    background-color: white;
+    box-shadow: 0 0 6px 1px rgb(207 207 207 / 32%);
+    box-sizing: border-box;
+}
+
+.infoSeat {
+    margin: 51px 0 0 0;
+    font-size: 1.2rem;
+}
+
+.unuse {
+    font-size: 1.4rem;
+}
+
+.sel_txt {
+    background-size: 40px;
+    font-size: 1.3rem;
+    padding-left: 50px;
+    height: 55px;
+    margin-left: 10px;
+}
+
+.mapbottom {
+    padding-bottom: 110px;
+}
+
+.userBox {
+    width: 90% !important;
+}
+
+.closebtn {
+    font-size: 2.6rem !important;
+}
+
+a.closebtn {
+    font-size: 2.6rem !important;
+    padding-right: 0 !important;
+    right: 20px !important;
+}
+
+.user_name {
+    font-size: 1.5rem;
+}
+
+.gnb {
+    width: 90%;
+    padding-top: 0;
+}
+
+    .gnb a {
+        font-size: 1.5rem;
+        color: #333333;
+    }
+
+
+.userBox {
+    position: relative;
+    width: 100% !important;
+    padding-top: 30px;
+}
+
+.gnb {
+    width: 100%;
+    position: relative;
+}
+
+.seat_name {
+    font-size: 1.6rem;
+    margin-top: 5px;
+}
+
+.state {
+    margin: 15px auto 0;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+}
+
+    .state li {
+        float: left;
+        width: 48% !important;
+        padding: 6px 2px;
+    }
+
+        .state li a.active {
+            font-weight: 500;
+            margin-top: -1.5px;
+        }
+
+p.logout {
+    background: #b7b7b7;
+    text-align: center;
+    border-radius: 4px;
+    position: absolute;
+    top: 105px;
+    left: 0;
+    width: 100%;
+}
+
+a.user_logout {
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 400;
+    padding: 7px 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidenav {
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.menuHeader {
+    padding: 13px 0;
+}
+
+
+
+.userInfo div span {
+    font-size: 3.5rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.userInfo p {
+    display: inline-block;
+    font-size: 1.4rem;
+}
+
+.userInfo div span > span {
+    color: #f39800;
+}
+
+.user_name {
+    position: absolute;
+    left: 0;
+    top: 50px;
+    padding-left: 75px;
+}
+
+.userInfo {
+    position: relative;
+    width: 100%;
+    margin-top: 70px;
+    padding-left: 0;
+    border-top: 1px dashed #eeeeee;
+    padding-top: 20px;
+}
+
+.flooreArea {
+    width: 530px;
+}
+.scroll {width: 100%; position: relative;}
+.scroll > div{overflow-x: scroll;}
+.day_T{width: 755px;border-top:2px solid #4a4a4a;font-size: 1.2rem;overflow-x: scroll;}
+.day_T thead tr{background-color:#f4f4f4;}
+.day_T thead tr th, .day_T thead tr td{padding: 10px 0;box-sizing:border-box;text-align: center;border-bottom: 1px solid #f4f4f4;height: auto;}
+.day_T tbody tr th, .day_T tbody tr td{box-sizing: border-box;border-bottom:1px solid #f4f4f4;}
+.day_T tbody tr th{padding: 15px 0;text-align: center;border-left: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;background: white;}
+.day_T tbody tr td {width: 30px;border-left:1px solid #f4f4f4;height: 45px;}
+.day_T tbody tr td:last-child {border-right: 1px solid #f4f4f4;}
+.fixed_th {position: absolute;background: #f4f4f4;left: 0;z-index: 999;height: 45px;top: auto;border-right: 0px none black;border-top-width: 3px; width: 95px !important;}
+.dateIcon {
+    position: absolute;
+    right: 7px;
+    top: 5px;
+    width: 25px;
+    text-align: right;
+    padding: 4px 4px;
+    box-sizing: border-box;
+}
+.list_T{margin-top: 45px;}
+.list_T button{cursor: pointer; font-size: 1.2rem; height: 33px;  width: 65px;}
+.meet{padding: 10px;box-sizing: border-box;margin-top: 10px;}
+.whiteBack h5{font-size: 1.2rem;margin-bottom: 10px;word-break: keep-all;line-height: 16px;}
+.calendar {
+    grid-auto-rows: 100px;
+}
+
+.booking li {
+    font-size: 1.0rem;
+}
+
+.day {
+    padding: 5px;
+}
+.calendar_con .infoContents, .calendar_con .list_T{margin-top: 10px;margin-bottom: 10px;}
+.calendar_con .infoContents {
+    margin-top: 17px;
+}
+.mybooking {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.my_T {
+    font-size: 1.2rem;
+    word-break: keep-all;
+}
+
+.my_T th {
+    width: auto;
+    padding: 0 15px;
+}
+.needpopup{top: 4% !important;}
+.pop_tit {
+    font-size: 1.6rem;
+}
+
+.form {
+    margin-top: 15px;
+    padding-top: 15px;
+    font-size: 1.3rem;
+}
+
+.form li select {
+    font-size: 1.3rem;
+    padding: 10px 5px;
+}
+
+.form li span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.startTime, .endtime {
+    width: 46% !important;
+}
+
+.form li input[type="text"] {
+    padding: 10px 9px;
+    font-size: 1.3rem;
+}
+
+.form li {
+    padding-top: 15px;
+    margin-bottom: 15px;
+}
+
+.footerBtn button {
+    border-radius: 4px !important;
+    padding: 0;
+    height: 40px;
+    line-height: 40px;
+}
+.sel_list .sel_list_txt{padding-left:0;}
+input[type="checkbox"] + label{margin-left:0;}
+.sle_tit{font-size:1.5rem}

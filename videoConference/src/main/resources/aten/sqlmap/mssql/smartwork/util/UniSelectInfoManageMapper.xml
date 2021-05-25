@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.util.mapper.UniSelectInfoManageMapper">
+    <select  id="selectMaxValue" resultType="java.lang.String">
+        { call SP_MAXVALUE( #{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
+                            #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string})
+        }
+    </select>
+    <!--  신규 공용 컬럼 -->
+    <update id="updateUniStatement" statementType="CALLABLE">
+        { call SP_UNIUPDATE(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
+                            #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
+                            #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                           )
+        }
+    </update>
+    <delete id="deleteUniStatement"  statementType="CALLABLE">
+       { call SP_UNIDEL(#{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
+                        #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string} 
+                        )
+       }
+    </delete>
+    <select id="selectIdDoubleCheck" resultType="java.lang.Integer">
+        { call SP_UNICHECK(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
+                           #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
+                           #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                           )
+        }
+    </select>
+    <select id="selectFieldStatement" resultType="lmap">
+        { call SP_UNISELECT(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
+                           #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
+                           #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                           )
+        }
+    </select>
+   
+</mapper>

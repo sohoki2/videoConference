@@ -128,7 +128,7 @@
             </div>
             <div class="Swrap tableArea">
                <!--  리스트 보여 주기  -->
-               <table id="mainGrid"></table>
+               <table id="boardGrid"></table>
                <div id="pager" class="scroll" style="text-align:center;"></div>     
                <br />
                 
@@ -142,91 +142,92 @@
 </form:form>    
 </div>
 <script type="text/javascript">
-	grid.jqGrid({
-		url : '/backoffice/basicManage/centerViewAjax.do' ,
-	    mtype :  'POST',
-	    datatype :'json',
-	    pager: $('#pager'),  
-	    ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
-	    ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
-	    ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
-	   
-	    postData :  JSON.stringify( postData ),
-	    jsonReader : {
-	            root : 'resultlist',
-	            "page":"paginationInfo.currentPageNo",
-	            "total":"paginationInfo.totalPageCount",
-	            "records":"paginationInfo.totalRecordCount",
-	            repeatitems:false
-	       },
-	    colModel :  [
-		        	{ label: 'floor_seq', key: true, name:'floor_seq',       index:'floor_seq',      align:'center', hidden:true},
-	            	{ label: '도면이미지', name:'floor_map',       index:'floor_map',      align:'center', width:'10%', 
-		        	  formatter: jqGridFunc.imageFomatter},
-		                { label: '층수', name:'floor_info_txt',   index:'floor_info_txt',      align:'center', width:'10%'},
-		                { label: '층이름', name:'floor_name',      index:'floor_name',      align:'center', width:'10%'},
-		                { label: '좌석 현황', name:'seat_cnt',      index:'seat_cnt',      align:'center', width:'10%'},
-	                { label: '회의실 현황', name:'meet_cnt',      index:'meet_cnt',      align:'center', width:'10%' },
-	                { label: '사용 유무', name:'floor_useyn',    index:'floor_useyn',      align:'center', width:'10%' },
-	                { label: 'floor_part', name:'floor_part',       index:'floor_part',      align:'center', hidden:true},
-	                { label: '구역사용', name:'floor_part',      index:'floor_part',      align:'center', width:'10%', 
-	                  formatter: jqGridFunc.partInfo	},
-	                { label: '최종 수정자', name:'user_updateid', index:'user_updateid',     align:'center', width:'10%'},
-	                { label: '최종 수정 일자', name:'user_update', index:'com_update', align:'center', width:'12%', 
-	                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
-	                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
-	          
-		                
-	         ],  //상단면 
-	    rowNum : 10,  //레코드 수
-	    rowList : [10,20,30,40,50,100],  // 페이징 수
-	    pager : pager,
-	    refresh : true,
-	    rownumbers : true, // 리스트 순번
-	    viewrecord : true,    // 하단 레코드 수 표기 유무
-	    //loadonce : true,     // true 데이터 한번만 받아옴 
-	    loadui : "enable",
-	    loadtext:'데이터를 가져오는 중...',
-	    emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-	    height : "100%",
-	    autowidth:true,
-	    shrinkToFit : true,
-	    refresh : true,
-	    subGrid: true,
-	    subGridRowExpanded: showChildGrid, 
-	    subGridBeforeExpand : function (pID, id){
-	    	alert("pID:" + pID + ":" + id);
-	    },
-	    isHasSubGrid : function (rowId) {
-	        
-	    	var cell = grid.jqGrid('getCell', rowId, "floor_part");
-			console.log(cell);
-			if( cell === "FLOOR_PART_2") {
-				return false;
-			}
-			return true;
-		},subGridOptions : {
-			plusicon: "ui-icon-triangle-1-e",
-			minusicon: "ui-icon-triangle-1-s",
-			openicon: "ui-icon-arrowreturn-1-e"
-		},loadComplete : function (data){
-	    	//$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
-	    },loadError:function(xhr, status, error) {
-	        alert("error:" + error); 
-	    },onSelectRow: function(rowId){
-	        if(rowId != null) { 
-	           //멀트 체크 할떄 특정 값이면 다른 값에 대한 색 변경 	
-	        }// 체크 할떄
-	    },ondblClickRow : function(rowid, iRow, iCol, e){
-	    	grid.jqGrid('editRow', rowid, {keys: true});
-	    },onCellSelect : function (rowid, index, contents, action){
-	    	var cm = $(this).jqGrid('getGridParam', 'colModel');
-	        if (cm[index].name=='floor_map' || cm[index].name=='floor_info_txt' || cm[index].name=='floor_name'){
-	        	floorService.fn_floorInfo("Edt", $(this).jqGrid('getCell', rowid, 'floor_seq'));
+     var postData = {"pageIndex": "1", "boardGubun" : $("#boardGubun").val()};
+     $('#"boardGrid"').jqGrid({
+			url : '/backoffice/basicManage/centerViewAjax.do' ,
+		    mtype :  'POST',
+		    datatype :'json',
+		    pager: $('#pager'),  
+		    ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
+		    ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
+		    ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
+		   
+		    postData :  JSON.stringify( postData ),
+		    jsonReader : {
+		            root : 'resultlist',
+		            "page":"paginationInfo.currentPageNo",
+		            "total":"paginationInfo.totalPageCount",
+		            "records":"paginationInfo.totalRecordCount",
+		            repeatitems:false
+		    },
+		    colModel :  [
+			        	{ label: 'floor_seq', key: true, name:'floor_seq',       index:'floor_seq',      align:'center', hidden:true},
+		            	{ label: '도면이미지', name:'floor_map',       index:'floor_map',      align:'center', width:'10%', 
+			        	  formatter: jqGridFunc.imageFomatter},
+			            { label: '층수', name:'floor_info_txt',   index:'floor_info_txt',      align:'center', width:'10%'},
+			            { label: '층이름', name:'floor_name',      index:'floor_name',      align:'center', width:'10%'},
+			            { label: '좌석 현황', name:'seat_cnt',      index:'seat_cnt',      align:'center', width:'10%'},
+		                { label: '회의실 현황', name:'meet_cnt',      index:'meet_cnt',      align:'center', width:'10%' },
+		                { label: '사용 유무', name:'floor_useyn',    index:'floor_useyn',      align:'center', width:'10%' },
+		                { label: 'floor_part', name:'floor_part',       index:'floor_part',      align:'center', hidden:true},
+		                { label: '구역사용', name:'floor_part',      index:'floor_part',      align:'center', width:'10%', 
+		                  formatter: jqGridFunc.partInfo	},
+		                { label: '최종 수정자', name:'user_updateid', index:'user_updateid',     align:'center', width:'10%'},
+		                { label: '최종 수정 일자', name:'user_update', index:'com_update', align:'center', width:'12%', 
+		                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
+		                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
+		          
+			                
+		         ],  //상단면 
+		    rowNum : 10,  //레코드 수
+		    rowList : [10,20,30,40,50,100],  // 페이징 수
+		    pager : pager,
+		    refresh : true,
+		    rownumbers : true, // 리스트 순번
+		    viewrecord : true,    // 하단 레코드 수 표기 유무
+		    //loadonce : true,     // true 데이터 한번만 받아옴 
+		    loadui : "enable",
+		    loadtext:'데이터를 가져오는 중...',
+		    emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
+		    height : "100%",
+		    autowidth:true,
+		    shrinkToFit : true,
+		    refresh : true,
+		    subGrid: true,
+		    subGridRowExpanded: showChildGrid, 
+		    subGridBeforeExpand : function (pID, id){
+		    	alert("pID:" + pID + ":" + id);
+		    },
+		    isHasSubGrid : function (rowId) {
+		        
+		    	var cell = grid.jqGrid('getCell', rowId, "floor_part");
+				console.log(cell);
+				if( cell === "FLOOR_PART_2") {
+					return false;
+				}
+				return true;
+			},subGridOptions : {
+				plusicon: "ui-icon-triangle-1-e",
+				minusicon: "ui-icon-triangle-1-s",
+				openicon: "ui-icon-arrowreturn-1-e"
+			},loadComplete : function (data){
+		    	//$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
+		    },loadError:function(xhr, status, error) {
+		        alert("error:" + error); 
+		    },onSelectRow: function(rowId){
+		        if(rowId != null) { 
+		           //멀트 체크 할떄 특정 값이면 다른 값에 대한 색 변경 	
+		        }// 체크 할떄
+		    },ondblClickRow : function(rowid, iRow, iCol, e){
+		    	grid.jqGrid('editRow', rowid, {keys: true});
+		    },onCellSelect : function (rowid, index, contents, action){
+		    	var cm = $(this).jqGrid('getGridParam', 'colModel');
+		        if (cm[index].name=='floor_map' || cm[index].name=='floor_info_txt' || cm[index].name=='floor_name'){
+		        	floorService.fn_floorInfo("Edt", $(this).jqGrid('getCell', rowid, 'floor_seq'));
+			    }
+		        
 		    }
-	        
-	    }
-	});
+		});
 
 </script>
 <script type="text/javascript">

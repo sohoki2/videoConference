@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.cus.org.mapper.EmpInfoManageMapper">
+    <select id="selectEmpInfoList" resultType="lmap">
+        SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TA.* FROM 
+                     ( 
+			    	 SELECT	TB.EMPID, TB.EMPNO, TB.EMPNAME, TB.DEPTNAME, TB.DEPTCODE, TB.EMPGRAD, TB.EMPGRADCODE, TB.EMPJIKW, TB.EMPJIKWCODE,
+                            TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN
+					  FROM		(SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE, a.EMPJIKW, a.EMPJIKWCODE,
+                                        a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN
+						         FROM   tb_empInfo a 
+								 WHERE  AUTHOR_CODE != 'ROLE_USER'
+					                   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+										  <choose>
+										    <when test="params.searchCondition == 'empname'">
+											    <![CDATA[
+											      AND ( a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											            OR a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											           )
+											     ]]> 
+											</when>							
+											<otherwise>
+											      AND a.DEPTNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											</otherwise>
+									      </choose>
+									  </if>	
+									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchAvayaCheck)">
+									      AND a.AVAYA_USERID is null  and a.EMPMAIL is not null
+									  </if> 	 
+									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchJobpst)">
+									      AND a.DEPTCODE= #{params.searchJobpst}
+									  </if>
+									  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSwcEmpNo)">
+									      AND a.EMPID IN  (SELECT ADMIN_ID FROM tb_admin WHERE ADMIN_LEVEL = 'ROLE_ANONYMOUS')
+									  </if>      
+                                 )TB
+		)TA
+		ORDER BY TA.EMPNAME  ASC   
+		<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.mode)">
+		  <if test="params.mode == 'list'">
+           LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  	
+          </if>
+        </if>
+    </select>
+    
+    <select id="selectMeetinngUserList" resultType="EmpInfoVO">
+         SELECT EMPNO, EMPNAME, DEPTNAME, DEPTCODE , EMPMAIL
+         FROM tb_empInfo 
+         WHERE 1=1  AND EMPNO IN
+               <foreach collection="list" item="item" open="(" close=")" separator=",">
+                  #{item}
+               </foreach>
+    </select>
+    <select id="selectEmpInfoDetail" resultType="EmpInfoVO">
+	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN
+	       		 , a.EMPMAIL, a.DEPTCODE 
+	   	  FROM 	tb_empInfo a 
+	   	 WHERE 1=1 AND a.EMPID = #{empid}
+    </select>
+    <select id="selectEmpInfoDetailNo" resultType="EmpInfoVO">
+	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN, 
+	       		 a.EMPMAIL , a.DEPTCODE 
+	   	  FROM 	tb_empInfo a 
+	   	 WHERE 1=1 AND a.EMPNO = #{empno}
+    </select>
+    
+    <insert id="insertEmpInfo" >
+  
+          <selectKey resultType="int"  keyProperty="cnt" order="BEFORE">
+                SELECT IFNULL(COUNT(EMPNO),0)  as cnt
+                FROM tb_empInfo 
+                WHERE EMPNO = #{empno}
+          </selectKey>
+          <choose>
+                <when test="cnt > 0">
+                        UPDATE tb_empInfo SET EMPID = #{empid}, 
+                                              EMPNAME = #{empname},
+                                              DEPTNAME = #{deptname},
+                                              DEPTCODE = #{deptcode},
+                                              EMPGRAD = #{empgrad},
+                                              EMPGRADCODE = #{empgradcode},
+                                              EMPJIKW = #{empjikw},
+                                              EMPJIKWCODE = #{empjikwcode},
+                                              EMPHANDPHONE = #{emphandphone},
+                                              EMPTELPHONE  = #{emptelphone},
+                                              EMPMAIL = #{empmail},
+                                              UPDATE_DATE =  NOW()
+                     WHERE EMPNO = #{empno}
+                </when>
+                <otherwise>
+                        INSERT INTO tb_empInfo(EMPID, EMPNO, EMPNAME, DEPTNAME, DEPTCODE, EMPGRAD, EMPGRADCODE,
+                                                           EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE) 
+                        VALUES(#{empid}, #{empno}, #{empname}, #{deptname}, #{deptcode}, #{empgrad}, #{empgradcode},
+                                   #{empjikw}, #{empjikwcode}, #{emphandphone}, #{emptelphone}, #{empmail} , NOW()
+                                   )
+                </otherwise>
+         </choose>
+    </insert>
+    <update id="updateAvayaUserUpdate">
+         UPDATE tb_empInfo SET AVAYA_USERID =#{avayaUserid}
+         WHERE EMPNO = #{noEmp}
+    </update>
+    
+    <delete id="deleteEaiEmpTmp">
+       DELETE FROM tb_empInfo_tmp
+    </delete>
+</mapper>

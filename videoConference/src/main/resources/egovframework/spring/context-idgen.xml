@@ -107,7 +107,7 @@
    <!-- 입주사 정보 정보 ID Generation  Strategy Config -->
    <bean name="companyStrategy"
         class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
-        <property name="prefix" value="T_" />
+        <property name="prefix" value="C_" />
         <property name="cipers" value="8" />
         <property name="fillChar" value="0" />
    </bean>

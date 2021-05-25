@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.space.mapper.DeviceInfoManageMapper">
+
+   <select id="selectDevicePageInfoManageListByPagination" resultType="lmap">
+		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+			TB.* FROM (
+				SELECT 
+						A.DEVICE_ID, A.DEVICE_NM, A.DEVICE_IP, A.DEVICE_MAC, A.DEVICE_URL,
+						A.DEVICE_OS, A.DEVICE_STARTTIME, A.DEVICE_ENDTIME, A.DEVICE_REMARK, A.DEVICE_ENDCONNTIME,
+						B.CENTER_NM, FN_MEETINGNM(A.MEETING_ID) as MEETING_NAME,
+						<![CDATA[ 
+							CASE 
+								WHEN DATE_ADD(A.DEVICE_ENDCONNTIME, INTERVAL + 3 MINUTE) >= now() THEN 'ON'
+								ELSE 'OFF'
+							END AS net_status,
+					  ]]>
+					  A.DEVICE_STATUS, A.USE_YN, 
+					  DATE_FORMAT(A.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, 
+					  C.FLOOR_NAME, A.UPDATE_ID
+				FROM tb_deviceinfo A, tb_centerinfo B, tb_floorinfo C
+				WHERE A.CENTER_ID = B.CENTER_ID
+				      AND A.FLOOR_SEQ = C.FLOOR_SEQ
+				<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+					<choose>
+						<when test="params.searchKeyword == 'deviceNm'">
+							AND A.DEVICE_NM LIKE CONCAT('%',#{params.searchKeyword},'%')
+						</when>
+						<when test="params.searchKeyword == 'deviceId'">
+							AND A.DEVICE_ID = #{params.searchKeyword}
+						</when>
+						<otherwise>
+							AND A.DEVICE_NM LIKE CONCAT('%',#{params.searchKeyword},'%')
+						</otherwise>
+					</choose>
+				</if>
+				ORDER BY A.DEVICE_ID DESC
+			)TB
+		ORDER BY TB.DEVICE_ID DESC 
+		LIMIT ${params.firstIndex},   ${params.recordCountPerPage}  	
+	</select>
+	<select id="selectDevicePageInfoManageDetail"  resultType="lmap">
+		SELECT  A.DEVICE_ID, A.DEVICE_NM, A.DEVICE_IP, A.DEVICE_MAC, A.DEVICE_URL,
+				A.DEVICE_OS, A.DEVICE_STARTTIME, A.DEVICE_ENDTIME, A.DEVICE_REMARK, A.DEVICE_ENDCONNTIME,
+				A.DEVICE_STATUS, A.USE_YN, 
+				A.REG_ID, A.REG_DATE, A.UPDATE_ID, A.UPDATE_DATE,
+				A.CENTER_ID, A.MEETING_ID, A.FLOOR_SEQ, A.PART_SEQ
+     	FROM tb_deviceinfo A
+     	WHERE A.DEVICE_ID = #{deviceId}
+   	</select>		
+		
+	<select id="selectDeviceExist" resultType="java.lang.Integer">
+       SELECT IFNULL(COUNT(*),0)   
+       FROM tb_deviceinfo A
+       WHERE A.DEVICE_ID = #{deviceId} 
+   	</select>
+    <select id="selectDeviceInfo"  		resultType ="lmap">
+       SELECT a. DEVICE_STARTTIME, a.DEVICE_ENDTIME,
+                      CASE WHEN (c.RES_SEQ > 0) THEN 
+                             (SELECT CASE  WHEN LENGTH(IN_TIME) > 0 THEN '1' ELSE '2' END   FROM tb_swcreservation d WHERE c.RES_SEQ = d.RES_SEQ)
+                      ELSE
+                           '0'
+                      END status  , 
+                      
+                      a.MEETING_ID
+       FROM tb_deviceinfo a, tb_swc_room b, tb_swctime c
+       WHERE a.MEETING_ID = b.MEETING_ID
+             AND b.MEETING_ID = c.MEETING_ID
+             AND c.SWC_RESDAY  =  DATE_FORMAT(now(), '%Y%m%d')
+             AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(now(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( now(), '%H%i')
+             AND a.DEVICE_ID = #{deviceId} 
+    </select>		
+	<insert id="insertDevicePageInfoManage">
+		INSERT INTO tb_deviceinfo
+		(
+			DEVICE_ID, DEVICE_NM, DEVICE_IP, DEVICE_MAC, DEVICE_URL,
+			DEVICE_OS, DEVICE_STARTTIME, DEVICE_ENDTIME, DEVICE_REMARK,
+			DEVICE_STATUS, USE_YN, REG_ID, REG_DATE, UPDATE_ID, UPDATE_DATE, 
+			MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ
+		)
+		VALUES 
+		(
+			#{deviceId}, #{deviceNm, jdbcType=VARCHAR}, #{deviceIp, jdbcType=VARCHAR}, #{deviceMac, jdbcType=VARCHAR}, #{deviceUrl, jdbcType=VARCHAR},
+			#{deviceOs, jdbcType=VARCHAR}, #{deviceStartTime, jdbcType=VARCHAR}, #{deviceEndTime, jdbcType=VARCHAR}, #{deviceRemark, jdbcType=VARCHAR},
+			#{deviceStatus, jdbcType=VARCHAR}, #{useYn, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, now(), #{userId, jdbcType=VARCHAR},now(), 
+			#{meetingId}, #{centerId}, #{floorSeq, jdbcType=VARCHAR},#{partSeq, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateDevicePageInfoManage">
+		UPDATE tb_deviceinfo SET  DEVICE_NM = #{deviceNm, jdbcType=VARCHAR}, 
+								  DEVICE_REMARK = #{deviceRemark, jdbcType=VARCHAR},
+								  DEVICE_STARTTIME = #{deviceStartTime, jdbcType=VARCHAR},
+								  DEVICE_ENDTIME = #{deviceEndTime, jdbcType=VARCHAR},
+								  DEVICE_OS = #{deviceOs, jdbcType=VARCHAR},
+								  USE_YN = #{useYn, jdbcType=VARCHAR}, 
+								  UPDATE_DATE = now(), 
+								  UPDATE_ID = #{userId, jdbcType=VARCHAR},
+								  CENTER_ID = #{centerId, jdbcType=VARCHAR},
+								  FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR},
+								  PART_SEQ = #{partSeq, jdbcType=VARCHAR},
+								  MEETING_ID = #{meetingId, jdbcType=VARCHAR}
+		WHERE DEVICE_ID = #{deviceId} 
+	</update>
+	
+	<update id="updateDeviceIpMac">
+	      UPDATE tb_deviceinfo SET DEVICE_IP = #{deviceIp, jdbcType=VARCHAR},
+								   DEVICE_MAC = #{deviceMac, jdbcType=VARCHAR}
+	      WHERE DEVICE_ID = #{deviceId}                      
+   </update>
+   
+   <delete id="deleteDevieManage">
+       DELETE FROM tb_deviceinfo
+       WHERE DEVICE_ID = #{deviceId}    
+   </delete>
+</mapper>

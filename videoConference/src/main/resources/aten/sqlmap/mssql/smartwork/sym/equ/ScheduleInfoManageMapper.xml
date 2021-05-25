@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.equ.mapper.ScheduleInfoManageMapper">
+
+    <select id="selectScheduleManageListByPagination" resultType="ScheduleInfoVO">     	      
+		 	SELECT * FROM ( SELECT 	rownum RNUM
+                      							, TB.* 
+					                  FROM ( SELECT a.SCH_SEQ, a.SCH_RESULT, a.SCH_RESULTMESSAGE, a.SCH_RESULTREGDATE            
+													FROM 	TB_SCHEDULECHECK a
+					                           ORDER BY 	a.SCH_SEQ  DESC
+			               	        	     ) TB 
+			               	        	     WHERE		1=1
+											 <if test="searchKeyword != ''">
+										        	<choose>
+														<when test="searchCondition == schResult">
+														<![CDATA[    
+															and SCH_RESULT LIKE '%'||  #{searchKeyword} || '%'
+														 ]]>
+														</when>
+														<when test="searchCondition == 1">
+														<![CDATA[    
+															and SCH_RESULTMESSAGE LIKE '%'|| #{searchKeyword} || '%'
+														 ]]>
+														</when>
+														<otherwise>
+														<![CDATA[    
+															and COMPANY LIKE '%'||  #{searchKeyword} || '%'
+														 ]]>
+														</otherwise>
+													</choose>
+										        	
+											</if>		        
+													
+									)
+							WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	
+   </select>
+      
+   <select id="selectScheduleManageDetail" resultType="ScheduleInfoVO">
+		SELECT	a.SCH_SEQ, a.SCH_RESULT, a.SCH_RESULTMESSAGE, a.SCH_RESULTREGDATE 
+		FROM 	TB_SCHEDULECHECK a
+		WHERE 	a.SCH_SEQ = #{schSeq}
+    
+   </select>
+  
+   <select id="selectScheduleManageListTotCnt_S" resultType="java.lang.Integer">
+        SELECT  NVL(count(*),0)      
+	    FROM 	TB_SCHEDULECHECK a
+	    WHERE 	1=1
+	      <if test="searchKeyword != ''">
+		        	<choose>
+						<when test="searchCondition == schResult">
+						<![CDATA[    
+							and SCH_RESULT LIKE '%'||  #{searchKeyword} || '%'
+						 ]]>
+						</when>
+						<when test="searchCondition == 1">
+						<![CDATA[    
+							and SCH_RESULTMESSAGE LIKE '%'|| #{searchKeyword} || '%'
+						 ]]>
+						</when>
+						<otherwise>
+						<![CDATA[    
+							and COMPANY LIKE '%'||  #{searchKeyword} || '%'
+						 ]]>
+						</otherwise>
+					</choose>
+		        	
+			</if>				    	     
+   </select>
+   
+   
+   <insert id="insertScheduleManage">
+	    INSERT INTO TB_SCHEDULECHECK( SCH_SEQ, SCH_RESULT, SCH_RESULTMESSAGE)
+      	VALUES (	HOLY_SEQ.nextval , #{schResult,jdbcType=VARCHAR} , #{schResultmessage ,jdbcType=VARCHAR})
+   </insert>
+   
+   <delete id="deleteScheduleManage">
+      delete from TB_SCHEDULECHECK
+      where SCH_SEQ = #{schSeq}   
+   </delete>
+
+</mapper>

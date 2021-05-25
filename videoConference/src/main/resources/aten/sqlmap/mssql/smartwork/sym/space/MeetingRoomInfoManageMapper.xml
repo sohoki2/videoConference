@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper">
+    <!-- selectSeatManageListByPagination --> 
+    <select id="selectMeetingRoomManageListByPagination" resultType="lmap">     	      
+		 	SELECT TA.* FROM 
+				 	      ( SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* 
+							FROM (    
+							           SELECT a.MEETING_ID, a.MEETING_NAME, a.MEETING_USEYN, a.FLOOR_SEQ, a.PART_SEQ
+		              						 , b.CENTER_NM, c.FLOOR_NAME, a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID
+		                                     , fn_DetailCodeNm(a.ROOM_TYPE) AS ROOM_TYPE_TXT
+						                     , DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE
+						                     , a.UPDATE_ID, a.MAX_CNT, a.MEETING_IMG1, a.MEETING_IMG2, a.AVAYA_CONFI_ID, a.AVAYA_USERID
+		                                     , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
+		                                     , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
+		                                     , a.MEETING_VIEW , a.MEETING_ORDER
+		                                     , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.MEETING_MAINVIEW
+											 , CASE WHEN LENGTH(a.MEETING_ADMINID) >5 THEN 
+											     FN_ATTENTLIST(SUBSTR(a.MEETING_ADMINID, 2))
+											   ELSE
+											    ''
+											   END AS SEAT_ADMINI_TXT, a.MEETING_TOP, a.MEETING_LEFT
+											 , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION
+											 , fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST		
+				                       FROM tb_meeting_room a ,tb_centerinfo b, tb_floorinfo c
+				                       WHERE a.CENTER_ID = b.CENTER_ID 
+				                             AND a.FLOOR_SEQ = c.FLOOR_SEQ
+				                             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">	
+									        	AND ( a.MEETING_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') OR c.CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%'))
+									         </if>	
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchAdminid)">	  
+											    AND a.MEETING_ADMINID = #{params.searchAdminid}
+											 </if>
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+												<![CDATA[    
+											    AND a.CENTER_ID = #{params.searchCenter}
+											    ]]>
+											 </if>
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+												<![CDATA[    
+											    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
+											    ]]>
+											 </if>
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchPartSeq)">
+												<![CDATA[    
+											    AND a.PART_SEQ = #{params.searchPartSeq}
+											    ]]>
+											 </if>	
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomType)">
+											    AND a.ROOM_TYPE = #{params.searchRoomType}
+											 </if>	
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomView)">
+											    AND a.MEETING_VIEW = #{params.searchRoomView}
+											 </if>	
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notSearchSeq)">
+											    <![CDATA[  
+											    AND a.MEETING_ID != #{params.notSearchSeq}
+											    ]]>
+											 </if>
+											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchMeetingUseyn)">
+											    AND a.MEETING_USEYN = #{params.searchMeetingUseyn}
+											 </if>
+							        	ORDER BY a.MEETING_ORDER ASC,  a.MEETING_ID  DESC 
+							) TB 
+			) TA
+			ORDER BY TA.MEETING_ORDER ASC,  TA.MEETING_ID  DESC 
+			LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  	    		 	    
+   </select>
+   <!-- selectSeatEmptyManageList 추후 프론트로 이동 -->
+   <select id="selectMeetingRoomEmptyManageList" resultType="lmap">
+		SELECT 	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
+		        a.MEETING_ID, a.MEETING_NAME, a.MEETINGROOM_REMARK, a.CENTER_ID, a.MEETING_USEYN,
+		        b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID,
+		        fn_DetailCodeNm(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ifnull(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, ifnull(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN
+		FROM 	tb_meeting_room a , tb_centerinfo b, tb_floorinfo c
+		WHERE a.CENTER_ID = b.CENTER_ID 
+		      AND a.FLOOR_SEQ = c.FLOOR_SEQ
+		      AND a.MEETING_USEYN = 'Y'
+		   <choose>
+			 <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenterId)">
+			    AND a.CENTER_ID = #{params.searchCenterId}	
+		     </when>
+			  <when test="@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenterId)">
+			    AND a.CENTER_ID =  ( SELECT X.CENTER_ID FROM ( SELECT CENTER_ID FROM tb_centerinfo order by CENTER_ID ASC ) X  ORDER BY X.CENTER_ID ASC  LIMIT 1 ) 
+		     </when>
+		   </choose>
+		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorseq)">
+		        AND a.FLOOR_SEQ = #{params.searchFloorseq} 
+		   </if>
+		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchView)">
+		        AND MEETING_VIEW = #{params.searchView} 
+		   </if>  
+		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomType)">
+		        AND ROOM_TYPE = #{params.searchRoomType} 
+		   </if>
+		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchMainview)">
+		        AND MEETING_MAINVIEW = #{params.searchMainview} 
+		   </if>
+		ORDER BY MEETING_ORDER ASC , MEETING_NAME ASC, MEETING_ID ASC
+		<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.mode)">
+		LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  
+		</if> 
+   </select>
+   <!-- selectSeatEmptyIntervalStatus -->
+   <select id="selectMeetingRoomEmptyIntervalStatus" resultType="lmap">
+   <![CDATA[
+		SELECT 	X.MEETING_ID
+				, X.MEETING_NAME
+		        , CASE WHEN (chCount <= realCnt AND resCnt =0) THEN 'O'
+		               ELSE 'F'
+		          END seatDayCheck
+		        , SEAT_CHECK(#{noEmp}, x.MEETING_ID) AS seatCheck
+		FROM (
+				SELECT 	a.MEETING_ID , a.AVAYA_CONFI_ID
+						        , a.MEETING_NAME
+						        , (		SELECT		ifnull(COUNT(*),0) 
+					        			FROM 		tb_swctime c 
+					       				WHERE a.MEETING_ID = c.MEETING_ID 
+						            	      AND c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
+						            	      AND c.SWC_TIME < 1800)
+					       			AS realCnt
+						        ,	(	SELECT 	ifnull(COUNT(*),0) 
+						        		FROM 		tb_swctime c 
+						          		WHERE a.MEETING_ID = c.MEETING_ID 
+						            	      AND c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
+						            	      AND c.RES_SEQ != 0 
+						            	      AND c.SWC_TIME < 1800)
+					       			AS resCnt
+						        , (((STR_TO_DATE(#{seatEndDay},'%Y%m%d') - STR_TO_DATE(#{seatStartDay},'%Y%m%d')) +1) * 18) AS chCount 
+				FROM tb_meeting_room a , tb_centerinfo b
+				WHERE  a.CENTER_ID = b.CENTER_ID
+				     AND a.ROOM_TYPE = #{roomType}
+				     AND a.CENTER_ID = #{centerId}
+					) X
+		ORDER BY X.MEETING_NAME ASC
+    ]]>
+   </select>
+   <!-- selectSeatManageCombo -->
+   <select id="selectMeetingRoomManageCombo" resultType="lmap">
+	      SELECT MEETING_ID, MEETING_NAME
+	      FROM  tb_meeting_room
+	      WHERE MEETING_USEYN ='Y'
+	            <if test="searchCenterId != ''">
+	             AND CENTER_ID = #{searchCenterId}
+	            </if>
+	      ORDER by MEETING_NAME asc
+   </select>
+   <!-- selectConferenceList -->
+   <select id="selectConferenceList" parameterType="java.util.List" resultType="lmap">
+	      SELECT a.MEETING_ID, a.MEETING_NAME, b.CENTER_NM
+	      FROM tb_meeting_room a,  tb_centerinfo b    
+		  WHERE a.CENTER_ID = b.CENTER_ID
+		        AND MEETING_ID IN 
+		        <foreach collection="list" item="item" open="(" close=")" separator=",">
+		           #{item}
+		        </foreach>
+   </select>
+   <!-- selectSeatManageView -->
+   <select id="selectMeetingRoomDetailInfoManage" resultType="lmap">
+	     SELECT	a.MEETING_ID , a.CENTER_ID, a.PART_SEQ, a.FLOOR_SEQ, b.CENTER_NM, a.MEETING_NAME, a.AVAYA_CONFI_ID
+				, a.MEETINGROOM_REMARK, a.MAX_CNT, a.ROOM_TYPE, a.MEETING_USEYN, a.MEETING_MAINVIEW
+				, a.AVAYA_CONFI_ID, a.AVAYA_ROOMCODE   
+				, a.MEETING_IMG1, a.MEETING_IMG2
+				, a.AVAYA_CONFI_ID, a.AVAYA_USERID
+                , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
+                , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
+                , fn_DetailCodeNm(a.ROOM_TYPE) AS roomTypeTxt
+                , a.MEETING_VIEW, a.MEETING_ORDER, a.MEETING_EQUPGUBUN
+                , a.MEETING_CONFIRMGUBUN , a.MEETING_ADMINID
+                , CASE WHEN LENGTH(a.MEETING_ADMINID) >5 THEN 
+				     FN_ATTENTLIST(SUBSTR(a.MEETING_ADMINID, 2))
+				  ELSE
+				    ''
+				  END AS seat_admini_Txt
+                , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.RES_MESSAGE_MAIL, a.RES_MESSAGE_SMS, a.CAN_MESSAGE_MAIL, a.CAN_MESSAGE_SMS
+                , a.PAY_CLASSIFICATION, a.PAY_GUBUN, a.PAY_COST
+				, CASE a.MAIL_SENDCHECK WHEN 'Y' THEN  fn_MessageTitle( a.RES_MESSAGE_MAIL )
+					   ELSE '메세지 없음' 
+				    END resMessageMailTxt
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageContent( a.RES_MESSAGE_MAIL )
+					  ELSE '메세지 없음' 
+				    END resMessageMailContextTxt
+				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.RES_MESSAGE_SMS )
+					  ELSE '메세지 없음' 
+					END resMessageSmsTxt
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.CAN_MESSAGE_MAIL )
+					  ELSE '메세지 없음' 
+					 END canMessageMailTxt
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageContent( a.CAN_MESSAGE_MAIL )
+					  ELSE '메세지 없음' 
+				  END resMessageMailContextTxt
+				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.CAN_MESSAGE_SMS )
+					  ELSE '메세지 없음' 
+				   END canMessageSmsTxt
+	     FROM  tb_meeting_room a,  tb_centerinfo b    
+	     WHERE MEETING_ID = #{meetingId}
+	           AND a.CENTER_ID = b.CENTER_ID
+   </select>
+   
+   <select id="selectMeetingRoomId" resultType="lmap">     	      
+	    SELECT 	b.* 
+		FROM 	(
+							SELECT 	DISTINCT(a.ROOM_ID) as roomId
+										, ( SELECT 	CODE_NM 
+											FROM 	lettccmmndetailcode 
+											WHERE 	CODE=a.ROOM_ID
+										  ) as roomNm 
+							FROM tb_meeting_room a
+							WHERE a.ROOM_TYPE=#{roomType} 
+							      AND a.CENTER_ID=#{centerId}
+							
+			      		)b
+		ORDER BY roomNm
+   </select>
+   <!-- selectRoomSeat -->
+   <select id="selectRoomSeat" resultType="lmap">     	      
+			SELECT 	MEETING_ID
+					, MEETING_NAME
+			        , room_id
+			        , center_id
+			        , room_type 
+			        , max_cnt
+			FROM tb_meeting_room 	
+			<![CDATA[  
+			WHERE room_id=#{roomId}
+			      AND center_id=#{centerId}
+			      AND room_type=#{roomType}
+			      AND MEETING_USEYN='Y'
+			]]>
+   </select>  
+   <insert id="insertMeetingRoomManage">
+          <selectKey resultType="String"  keyProperty="meetingId" order="BEFORE">
+            select FN_MEETINGID(#{floorSeq})
+          </selectKey>
+         
+	      INSERT INTO tb_meeting_room(MEETING_ID, MEETING_NAME,  CENTER_ID, FLOOR_SEQ, PART_SEQ, ROOM_TYPE, MAX_CNT, MEETING_USEYN, MEETING_EQUPGUBUN,
+	                                  REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID, AVAYA_CONFI_ID, 
+	                                  MEETING_IMG1, MEETING_IMG2, 
+	                                  MEETINGROOM_REMARK, MEETING_CONFIRMGUBUN, MEETING_ADMINID,
+	                                  AVAYA_USERID, TERMINAL_ID, END_NAME, TERMINAL_NUMBER, TERMINAL_TEL,
+	                                  USER_FIRST_NM, USER_LAST_NM, USER_EMAIL, MEETING_VIEW, MEETING_ORDER, 
+	                                  MAIL_SENDCHECK, SMS_SENDCHECK, MEETING_MAINVIEW,
+	                                  RES_MESSAGE_MAIL, RES_MESSAGE_SMS, CAN_MESSAGE_MAIL, CAN_MESSAGE_SMS,
+	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+	                               )
+	      VALUES (#{meetingId}, #{meetingName}, #{centerId}, #{floorSeq}, #{partSeq}, #{roomType}, #{maxCnt}, #{meetingUseyn}, #{meetingEqupgubun,jdbcType=VARCHAR }
+			      , NOW(), #{userId, jdbcType=VARCHAR}, NOW(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
+			      , #{meetingImg1, jdbcType=VARCHAR}, #{meetingImg2, jdbcType=VARCHAR}
+			      , #{meetingroomRemark, jdbcType=VARCHAR}, #{meetingConfirmgubun, jdbcType=VARCHAR}, #{meetingAdminid, jdbcType=VARCHAR}
+			      , #{avayaUserid, jdbcType=VARCHAR}, #{terminalId, jdbcType=VARCHAR}, #{endName, jdbcType=VARCHAR}, #{terminalNumber, jdbcType=VARCHAR} , #{terminalTel, jdbcType=VARCHAR}
+			      , #{userFirstNm, jdbcType=VARCHAR}, #{userLastNm, jdbcType=VARCHAR} , #{userEmail, jdbcType=VARCHAR}, #{meetingView, jdbcType=VARCHAR}, #{meetingOrder, jdbcType=VARCHAR}
+			      , #{mailSendcheck, jdbcType=VARCHAR}, #{smsSendcheck, jdbcType=VARCHAR}, #{meetingMainview, jdbcType=VARCHAR}
+			      , #{resMessageMail, jdbcType=VARCHAR}, #{resMessageSms, jdbcType=VARCHAR}, #{canMessageMail, jdbcType=VARCHAR}, #{canMessageSms, jdbcType=VARCHAR}
+	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}
+	      );
+	      UPDATE tb_floorinfo SET MEET_CNT = MEET_CNT + 1
+		  WHERE FLOOR_SEQ = #{floorSeq};
+   </insert>
+   <!-- updateSeatAdminManage -->
+   <update id="updateMeetingRoomAdminManage">
+          UPDATE tb_meeting_room SET MEETING_ADMINID = #{meetingAdminid, jdbcType=VARCHAR}
+          WHERE MEETING_ID = #{meetingId}
+   </update>
+   
+   <!-- updateSeatSync -->
+   <update id="updateMeetingRoomSync">
+         UPDATE tb_meeting_room set TERMINAL_ID  = #{terminalId, jdbcType=VARCHAR}
+                                    , TERMINAL_NUMBER  = #{terminalNumber, jdbcType=VARCHAR}   
+         WHERE AVAYA_USERID  = #{avayaUserid}
+   </update>
+   <update id="updateMeetingRoomManage">
+	      UPDATE tb_meeting_room SET MEETING_NAME = #{meetingName}
+		                             , CENTER_ID = #{centerId}
+		                             , FLOOR_SEQ = #{floorSeq}
+		                             , PART_SEQ = #{partSeq}
+		                             , MEETING_USEYN = #{meetingUseyn, jdbcType=VARCHAR }
+									 , ROOM_TYPE = #{roomType,jdbcType=VARCHAR}
+									 , MAX_CNT = #{maxCnt, jdbcType=VARCHAR}
+									 , MEETING_EQUPGUBUN = #{meetingEqupgubun, jdbcType=VARCHAR }
+									 , UPDATE_DATE = NOW()
+									 , UPDATE_ID =  #{userId, jdbcType=VARCHAR}
+									 , AVAYA_CONFI_ID = #{avayaConfiId, jdbcType=VARCHAR}
+									 <if test="meetingImg1 != ''">
+									 ,MEETING_IMG1 = #{meetingImg1}
+									 </if>
+									 <if test="meetingImg2 != ''">
+									 ,MEETING_IMG2 = #{meetingImg2}
+									 </if>
+									 , MEETINGROOM_REMARK =  #{meetingroomRemark, jdbcType=VARCHAR}
+									 , MEETING_CONFIRMGUBUN  = #{meetingConfirmgubun, jdbcType=VARCHAR}
+									  <if test="meetingAdminid != ''">
+									 , MEETING_ADMINID = #{meetingAdminid, jdbcType=VARCHAR}
+	                                  </if>
+	                                 , AVAYA_USERID  = #{avayaUserid, jdbcType=VARCHAR}
+									 , TERMINAL_ID  = #{terminalId, jdbcType=VARCHAR}
+									 , END_NAME   = #{endName, jdbcType=VARCHAR}
+									 , TERMINAL_NUMBER  = #{terminalNumber, jdbcType=VARCHAR}
+									 , TERMINAL_TEL  = #{terminalTel, jdbcType=VARCHAR}
+		                             , USER_FIRST_NM  = #{userFirstNm, jdbcType=VARCHAR}
+		                             , USER_LAST_NM  = #{userLastNm, jdbcType=VARCHAR}
+		                             , USER_EMAIL  = #{userEmail, jdbcType=VARCHAR}
+									 , MEETING_VIEW  = #{meetingView, jdbcType=VARCHAR}
+									 , MEETING_ORDER  = #{meetingOrder, jdbcType=VARCHAR}
+									 , RES_MESSAGE_MAIL = #{resMessageMail, jdbcType=VARCHAR}
+									 , RES_MESSAGE_SMS = #{resMessageSms, jdbcType=VARCHAR}
+									 , CAN_MESSAGE_MAIL = #{canMessageMail, jdbcType=VARCHAR}
+									 , CAN_MESSAGE_SMS = #{canMessageSms, jdbcType=VARCHAR}
+									 , MAIL_SENDCHECK = #{mailSendcheck, jdbcType=VARCHAR}
+									 , SMS_SENDCHECK  = #{smsSendcheck, jdbcType=VARCHAR}
+									 , MEETING_MAINVIEW  = #{meetingMainview, jdbcType=VARCHAR}
+									 , PAY_CLASSIFICATION  = #{payClassification, jdbcType=VARCHAR}
+									 , PAY_GUBUN  = #{payGubun, jdbcType=VARCHAR}
+									 , PAY_COST  = #{payCost, jdbcType=VARCHAR}
+	      WHERE MEETING_ID = #{meetingId}
+   </update>
+   <delete id="deleteMeetingRoomManage">
+         DELETE FROM tb_meeting_room WHERE MEETING_ID IN
+         <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
+            #{item}
+         </foreach>
+         ;
+         UPDATE tb_floorinfo  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+						          FROM tb_meeting_room
+						          WHERE MEETING_ID IN 
+						          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
+							            #{item}
+							      </foreach>
+						          GROUP  by FLOOR_SEQ) b
+						  
+        SET MEET_CNT = MEET_CNT - b.CNT
+        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+   </delete>
+</mapper>
