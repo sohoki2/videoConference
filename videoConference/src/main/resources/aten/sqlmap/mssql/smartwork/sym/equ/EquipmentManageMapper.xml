@@ -21,7 +21,7 @@
 				                                   ''
 				                                END  AS EQUP_OTDATE 
 				                                , fn_DetailCodeNm(a.EQUIP_STATE) EQUIP_STATE_TXT
-										FROM 	tb_equipmentinfo a
+										FROM 	TB_EQUIPMENTINFO a
 										WHERE 1=1 
 											<if test="searchKeyword != ''">
 									        	<choose>
@@ -98,7 +98,7 @@
 				        , a.EQUP_INDATE 
 				        , d.CENTER_NM 
 				        , a.EQUIP_SERIAL
-		FROM 		tb_equipmentinfo a, tb_centerinfo d
+		FROM 		TB_EQUIPMENTINFO a, TB_CENTERINFO d
 		WHERE 		EQUP_CODE = #{equpCode}
 		AND 			a.CENTER_ID = d.CENTER_ID
    </select>
@@ -109,7 +109,7 @@
 			        , a.EQUIP_STATE
 			        , a.EQUIP_SERIAL
                     , fn_DetailCodeNm(a.EQUIP_STATE) EQUIP_STATE_TXT
-        FROM tb_equipmentinfo a
+        FROM TB_EQUIPMENTINFO a
         WHERE a.EQUP_CODE IN 
                  <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
                                   #{equpList}                           
@@ -117,7 +117,7 @@
    </select>
    <select id="selectResEquipCnt" resultType="java.lang.Integer">
         SELECT IFNULL(COUNT(*), 0)
-        FROM tb_equipmentinfo a
+        FROM TB_EQUIPMENTINFO a
            WHERE a.EQUP_CODE IN 
 		               <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
 		                                  #{equpList}                           
@@ -125,7 +125,7 @@
                        AND EQUIP_STATE != #{equipState}
    </select>
    <insert id="insertEqupManage">
-	      INSERT INTO tb_equipmentinfo( EQUP_CODE
+	      INSERT INTO TB_EQUIPMENTINFO( EQUP_CODE
      														,EQUIPMENT_ID
      														,EQUIPMENT_NAME
      														, CENTER_ID
@@ -148,7 +148,7 @@
       				)
    </insert>
    <update id="updateEqupManage_State">
-             UPDATE tb_equipmentinfo SET EQUIP_STATE = #{equipState}
+             UPDATE TB_EQUIPMENTINFO SET EQUIP_STATE = #{equipState}
                                                          , SWC_SEQ = #{swcSeq}
                                                          , USER_ID = #{userId}
                                                          <if test="equpIndate !=  '' ">
@@ -162,11 +162,11 @@
                                                          </if>
               WHERE EQUP_CODE IN
               <foreach collection="equpList" item="equpList" open="(" close=")" separator=",">
-               #{equpList}                           
-               </foreach>             
+              #{equpList}                           
+              </foreach>             
    </update>
    <update id="updateEqupManage">
-		      UPDATE tb_equipmentinfo SET EQUIPMENT_NAME = #{equipmentName}
+		      UPDATE TB_EQUIPMENTINFO SET EQUIPMENT_NAME = #{equipmentName}
 		                             ,  EQUIPMENT_ID = #{equipmentId,jdbcType=VARCHAR }
 		                             ,  CENTER_ID = #{centerId}
 		                             ,  COMPANY = #{company, jdbcType=VARCHAR }
@@ -175,7 +175,7 @@
 		      WHERE EQUP_CODE = #{equpCode}
    </update>
    <delete id="deleteEqupManage">
-		      DELETE FROM tb_equipmentinfo
+		      DELETE FROM TB_EQUIPMENTINFO
 		      WHERE EQUP_CODE = #{equpCode}   
    </delete>
 

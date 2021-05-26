@@ -26,7 +26,7 @@
 			     , ADMIN_TEL AS adminTel			     
 			     , AUTHOR_CODE  AS authorCode
 			     , DATE_FORMAT(UPDATE_PASSWORD,'%Y%m%d') as updatePassword
-			  FROM tb_admin
+			  FROM TB_ADMIN
 			 WHERE ADMIN_ID = #{adminId}
 			   AND ADMIN_PASSWORD = #{adminPassword}
 			   AND LOCK_YN = 'N'

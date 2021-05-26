@@ -10,7 +10,7 @@
 							   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
 							   DATE_FORMAT(b.USER_UPDATE,'%Y-%m-%d %H:%i:%s') USER_UPDATE, 
 							   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME        
-					    FROM  tb_companyinfo a, tb_userinfo b, lettccmmndetailcode c, tb_centerinfo d, tb_floorinfo e
+					    FROM  TB_COMPANYINFO a, TB_USERINFO b, LETTCCMMNDETAILCODE c, TB_CENTERINFO d, TB_FLOORINFO e
 					    WHERE a.COM_CODE = b.COM_CODE 
 					          AND b.USER_STATE = c.CODE    
 					          AND a.CENTER_ID = d.CENTER_ID
@@ -47,7 +47,7 @@
     </select>
     <select id="selectUserInfoManageCombo" resultType="lmap">
 	       SELECT a.EMP_NO , a.EMP_NAME 
-	       FROM tb_userinfo a
+	       FROM TB_USERINFO a
 	       WHERE a.COM_CODE =  #{comCode}
 	       ORDER BY a.EMP_NO ASC
     </select>
@@ -55,18 +55,18 @@
            SELECT USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
 			      USER_TEL, USER_STATE, USER_CELLPHONE, 
 			      USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, AUTHOR_CODE
-		    FROM tb_userinfo a
+		    FROM TB_USERINFO a
 		    WHERE USER_NO = #{userNo}
     </select>
     <insert id="insertUserInfoManage" >
-         INSERT INTO tb_userinfo(USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
+         INSERT INTO TB_USERINFO(USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
 							     USER_TEL, USER_STATE, USER_CELLPHONE, 
 							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userName}, #{userNo}, #{comCode}, #{userRank,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR},  #{userEmail,jdbcType=VARCHAR},  
                  #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},
                  NOW(), #{updateId,jdbcType=VARCHAR},  NOW(), #{updateId,jdbcType=VARCHAR});
                  
-         INSERT INTO tb_empInfo (EMPID, EMPNO, EMPNAME, COM_CODE,  EMPJIKW, EMPGRAD, EMPHANDPHONE, EMPTELPHONE, EMPMAIL,  AUTHOR_CODE, 
+         INSERT INTO TB_EMPINFO (EMPID, EMPNO, EMPNAME, COM_CODE,  EMPJIKW, EMPGRAD, EMPHANDPHONE, EMPTELPHONE, EMPMAIL,  AUTHOR_CODE, 
                                  EMP_STATE, UPDATE_DATE)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userNo}, #{userName},  #{comCode}, #{userPosition,jdbcType=VARCHAR}, #{userRank,jdbcType=VARCHAR},   
                  #{userCellphone,jdbcType=VARCHAR},  #{userTel,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, 'ROLE_USER', 
@@ -74,7 +74,7 @@
                 
     </insert>
     <update id="updateUserInfoManage" >
-        UPDATE  tb_userinfo SET USER_ID = #{userId,jdbcType=VARCHAR} 
+        UPDATE  TB_USERINFO SET USER_ID = #{userId,jdbcType=VARCHAR} 
                                 , USER_NAME = #{userName} 
                                 , COM_CODE = #{comCode}
                                 , USER_RANK = #{userRank,jdbcType=VARCHAR}
@@ -87,7 +87,7 @@
                                 , USER_UPDATEID = #{updateId,jdbcType=VARCHAR}
 	    WHERE USER_NO = #{userNo} ;
 	    
-	    UPDATE tb_empInfo SET  EMPID = #{userId,jdbcType=VARCHAR} 
+	    UPDATE TB_EMPINFO SET  EMPID = #{userId,jdbcType=VARCHAR} 
                                 , EMPNAME = #{userName} 
                                 , COM_CODE = #{comCode}
                                 , EMPGRAD = #{userRank,jdbcType=VARCHAR}
@@ -103,12 +103,12 @@
     <delete id="deleteUserInfoManage">
         <choose>
             <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(comCode)">
-                DELETE FROM tb_userinfo WHERE COM_CODE = #{comCode} ;
-                DELETE FROM tb_empInfo WHERE COM_CODE = #{comCode} ;
+                DELETE FROM TB_USERINFO WHERE COM_CODE = #{comCode} ;
+                DELETE FROM TB_EMPINFO WHERE COM_CODE = #{comCode} ;
             </when>
             <otherwise>
-                DELETE FROM tb_userinfo WHERE USER_NO = #{userNo} ;
-                DELETE FROM tb_empInfo WHERE EMPNO = #{userNo} ;
+                DELETE FROM TB_USERINFO WHERE USER_NO = #{userNo} ;
+                DELETE FROM TB_EMPINFO WHERE EMPNO = #{userNo} ;
             </otherwise>
         </choose>
        

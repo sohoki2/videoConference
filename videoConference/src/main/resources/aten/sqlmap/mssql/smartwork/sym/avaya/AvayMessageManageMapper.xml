@@ -9,7 +9,7 @@
 		 	SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* FROM (
 				    SELECT  REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
 		                        REQ_REGDATE		        
-				    FROM    tb_avayasendmessage
+				    FROM    TB_AVAYASENDMESSAGE
 				    WHERE 1=1		        
 				        <if test="searchKeyword != ''">
 				             AND DATE_FORMAT(REQ_REGDATE, '%Y%m%d) BETWEEN  #{searchStrDay} AND #{searchEndDay} 

@@ -17,8 +17,8 @@
     <!-- datasource 설정 스마트워크센터) -->
     <alias name="dataSource-mariadb" alias="dataSource" />
     <bean id="dataSource-mariadb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="${Globals.maria.DriverClassName}"/>
-        <property name="url" value="${Globals.maria.Url}" />
+        <property name="driverClassName" value="${Globals.mssql.DriverClassName}"/>
+        <property name="url" value="${Globals.mssql.Url}" />
         <property name="username" value="${Globals.UserName}"/>
         <property name="password" value="${Globals.Password}"/>
         <property name="validationQuery" value="select 1"/>

@@ -22,7 +22,7 @@
 											   END AS SEAT_ADMINI_TXT, a.MEETING_TOP, a.MEETING_LEFT
 											 , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION
 											 , fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST		
-				                       FROM tb_meeting_room a ,tb_centerinfo b, tb_floorinfo c
+				                       FROM TB_MEETING_ROOM a ,TB_CENTERINFO b, TB_FLOORINFO c
 				                       WHERE a.CENTER_ID = b.CENTER_ID 
 				                             AND a.FLOOR_SEQ = c.FLOOR_SEQ
 				                             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">	
@@ -72,7 +72,7 @@
 		        a.MEETING_ID, a.MEETING_NAME, a.MEETINGROOM_REMARK, a.CENTER_ID, a.MEETING_USEYN,
 		        b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID,
 		        fn_DetailCodeNm(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ifnull(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, ifnull(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN
-		FROM 	tb_meeting_room a , tb_centerinfo b, tb_floorinfo c
+		FROM 	TB_MEETING_ROOM a , TB_CENTERINFO b, TB_FLOORINFO c
 		WHERE a.CENTER_ID = b.CENTER_ID 
 		      AND a.FLOOR_SEQ = c.FLOOR_SEQ
 		      AND a.MEETING_USEYN = 'Y'
@@ -127,7 +127,7 @@
 						            	      AND c.SWC_TIME < 1800)
 					       			AS resCnt
 						        , (((STR_TO_DATE(#{seatEndDay},'%Y%m%d') - STR_TO_DATE(#{seatStartDay},'%Y%m%d')) +1) * 18) AS chCount 
-				FROM tb_meeting_room a , tb_centerinfo b
+				FROM TB_MEETING_ROOM a , TB_CENTERINFO b
 				WHERE  a.CENTER_ID = b.CENTER_ID
 				     AND a.ROOM_TYPE = #{roomType}
 				     AND a.CENTER_ID = #{centerId}
@@ -138,7 +138,7 @@
    <!-- selectSeatManageCombo -->
    <select id="selectMeetingRoomManageCombo" resultType="lmap">
 	      SELECT MEETING_ID, MEETING_NAME
-	      FROM  tb_meeting_room
+	      FROM  TB_MEETING_ROOM
 	      WHERE MEETING_USEYN ='Y'
 	            <if test="searchCenterId != ''">
 	             AND CENTER_ID = #{searchCenterId}
@@ -148,7 +148,7 @@
    <!-- selectConferenceList -->
    <select id="selectConferenceList" parameterType="java.util.List" resultType="lmap">
 	      SELECT a.MEETING_ID, a.MEETING_NAME, b.CENTER_NM
-	      FROM tb_meeting_room a,  tb_centerinfo b    
+	      FROM TB_MEETING_ROOM a,  TB_CENTERINFO b    
 		  WHERE a.CENTER_ID = b.CENTER_ID
 		        AND MEETING_ID IN 
 		        <foreach collection="list" item="item" open="(" close=")" separator=",">
@@ -192,7 +192,7 @@
 				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.CAN_MESSAGE_SMS )
 					  ELSE '메세지 없음' 
 				   END canMessageSmsTxt
-	     FROM  tb_meeting_room a,  tb_centerinfo b    
+	     FROM  TB_MEETING_ROOM a,  TB_CENTERINFO b    
 	     WHERE MEETING_ID = #{meetingId}
 	           AND a.CENTER_ID = b.CENTER_ID
    </select>
@@ -205,7 +205,7 @@
 											FROM 	lettccmmndetailcode 
 											WHERE 	CODE=a.ROOM_ID
 										  ) as roomNm 
-							FROM tb_meeting_room a
+							FROM TB_MEETING_ROOM a
 							WHERE a.ROOM_TYPE=#{roomType} 
 							      AND a.CENTER_ID=#{centerId}
 							
@@ -220,7 +220,7 @@
 			        , center_id
 			        , room_type 
 			        , max_cnt
-			FROM tb_meeting_room 	
+			FROM TB_MEETING_ROOM 	
 			<![CDATA[  
 			WHERE room_id=#{roomId}
 			      AND center_id=#{centerId}
@@ -233,7 +233,7 @@
             select FN_MEETINGID(#{floorSeq})
           </selectKey>
          
-	      INSERT INTO tb_meeting_room(MEETING_ID, MEETING_NAME,  CENTER_ID, FLOOR_SEQ, PART_SEQ, ROOM_TYPE, MAX_CNT, MEETING_USEYN, MEETING_EQUPGUBUN,
+	      INSERT INTO TB_MEETING_ROOM(MEETING_ID, MEETING_NAME,  CENTER_ID, FLOOR_SEQ, PART_SEQ, ROOM_TYPE, MAX_CNT, MEETING_USEYN, MEETING_EQUPGUBUN,
 	                                  REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID, AVAYA_CONFI_ID, 
 	                                  MEETING_IMG1, MEETING_IMG2, 
 	                                  MEETINGROOM_REMARK, MEETING_CONFIRMGUBUN, MEETING_ADMINID,
@@ -253,23 +253,23 @@
 			      , #{resMessageMail, jdbcType=VARCHAR}, #{resMessageSms, jdbcType=VARCHAR}, #{canMessageMail, jdbcType=VARCHAR}, #{canMessageSms, jdbcType=VARCHAR}
 	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}
 	      );
-	      UPDATE tb_floorinfo SET MEET_CNT = MEET_CNT + 1
+	      UPDATE TB_FLOORINFO SET MEET_CNT = MEET_CNT + 1
 		  WHERE FLOOR_SEQ = #{floorSeq};
    </insert>
    <!-- updateSeatAdminManage -->
    <update id="updateMeetingRoomAdminManage">
-          UPDATE tb_meeting_room SET MEETING_ADMINID = #{meetingAdminid, jdbcType=VARCHAR}
+          UPDATE TB_MEETING_ROOM SET MEETING_ADMINID = #{meetingAdminid, jdbcType=VARCHAR}
           WHERE MEETING_ID = #{meetingId}
    </update>
    
    <!-- updateSeatSync -->
    <update id="updateMeetingRoomSync">
-         UPDATE tb_meeting_room set TERMINAL_ID  = #{terminalId, jdbcType=VARCHAR}
+         UPDATE TB_MEETING_ROOM set TERMINAL_ID  = #{terminalId, jdbcType=VARCHAR}
                                     , TERMINAL_NUMBER  = #{terminalNumber, jdbcType=VARCHAR}   
          WHERE AVAYA_USERID  = #{avayaUserid}
    </update>
    <update id="updateMeetingRoomManage">
-	      UPDATE tb_meeting_room SET MEETING_NAME = #{meetingName}
+	      UPDATE TB_MEETING_ROOM SET MEETING_NAME = #{meetingName}
 		                             , CENTER_ID = #{centerId}
 		                             , FLOOR_SEQ = #{floorSeq}
 		                             , PART_SEQ = #{partSeq}
@@ -314,12 +314,12 @@
 	      WHERE MEETING_ID = #{meetingId}
    </update>
    <delete id="deleteMeetingRoomManage">
-         DELETE FROM tb_meeting_room WHERE MEETING_ID IN
+         DELETE FROM TB_MEETING_ROOM WHERE MEETING_ID IN
          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
             #{item}
          </foreach>
          ;
-         UPDATE tb_floorinfo  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+         UPDATE TB_FLOORINFO  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
 						          FROM tb_meeting_room
 						          WHERE MEETING_ID IN 
 						          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">

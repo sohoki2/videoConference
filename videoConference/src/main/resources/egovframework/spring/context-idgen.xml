@@ -87,9 +87,9 @@
         <property name="tableName"  value="AGENT_CODE"/>
    </bean>
    <!-- DID 정보 ID Generation  Strategy Config -->
-   <bean name="agntStrategy"
+   <bean name="agntStrategy"  
         class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
-        <property name="prefix" value="Agnt_" />
+        <property name="prefix" value="DEVI_" />
         <property name="cipers" value="10" />
         <property name="fillChar" value="0" />
    </bean>

@@ -19,7 +19,7 @@
 						       ADMIN_APPROVAL_YN   ,	        
 						       DATE_FORMAT(a.CENTER_UPDATE_DATE,'%Y-%m-%d %H:%i:%s') CENTER_UPDATE_DATE,
 						       CENTER_UPDATE_USER_ID	        
-					    FROM  tb_centerinfo a
+					    FROM  TB_CENTERINFO a
 					    WHERE 1=1        
 					        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							  AND (    CENTER_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  OR CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%')  )
@@ -31,7 +31,7 @@
      </select>
     <select id="selectCenterInfoManageCombo" resultType="CenterInfo">
 	       SELECT  CENTER_ID , CENTER_NM 
-	       FROM tb_centerinfo
+	       FROM TB_CENTERINFO
 	       WHERE CENTER_USE_YN = 'Y'
 	       ORDER BY  CENTER_NM  ASC
     </select>
@@ -42,7 +42,7 @@
 				   REST_INFO, MEETINGROOM_INFO, CENTER_INFO,
 				   SUBSTR(CENTER_ZIPCODE,0,3) AS center_zipcode1, SUBSTR(CENTER_ZIPCODE,4,6) AS center_zipcode2 ,     
 				   ADMIN_APPROVAL_YN, FLOOR_INFO, START_FLOOR, END_FLOOR
-		    FROM tb_centerinfo
+		    FROM TB_CENTERINFO
 		    WHERE CENTER_ID = #{centerId}		  
     </select>
     
@@ -53,7 +53,7 @@
             SELECT FN_CENTERID()
          </selectKey>
         <![CDATA[
-             INSERT INTO tb_centerinfo (CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1, CENTER_ADDR2, CENTER_TEL,CENTER_FAX, 
+             INSERT INTO TB_CENTERINFO (CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1, CENTER_ADDR2, CENTER_TEL,CENTER_FAX, 
                                  CENTER_USER_ID, CENTER_REGDATE, CENTER_UPDATE_USER_ID, CENTER_UPDATE_DATE, CENTER_IMG, CENTER_URL, 
                                  CENTER_SEAT_IMG, CENTER_USE_YN, REST_INFO, MEETINGROOM_INFO, CENTER_INFO, ADMIN_APPROVAL_YN, 
                                  FLOOR_INFO, START_FLOOR, END_FLOOR
@@ -65,10 +65,10 @@
              );
          ]]>
           <if test="floorlist != null">
-          INSERT INTO tb_floorinfo (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
+          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
           SELECT #{centerId}, CODE, CODE_NM, NOW(), #{centerUserId,jdbcType=VARCHAR}, NOW(), #{centerUserId,jdbcType=VARCHAR}
-          FROM lettccmmndetailcode
+          FROM LETTCCMMNDETAILCODE
           WHERE CODE = 'CNETER_FLOOR'
                 AND CODE_DC IN  
                 <foreach collection="floorlist" item="item" index="index" open="(" separator="," close=")">
@@ -80,7 +80,7 @@
                 
      </insert>
      <update id="updateCenterInfoManage" >
-	       UPDATE  tb_centerinfo SET CENTER_NM = #{centerNm} ,
+	       UPDATE  TB_CENTERINFO SET CENTER_NM = #{centerNm} ,
 	                                 CENTER_ZIPCODE = #{centerZipCode,jdbcType=VARCHAR} ,
 	                                 CENTER_ADDR1 = #{centerAddr1},
 	                                 CENTER_ADDR2 = #{centerAddr2},
@@ -107,10 +107,10 @@
 	      
 	      <if test="floorInfo != null">
 	       ;
-	       DELETE FROM  tb_floorinfo 
+	       DELETE FROM  TB_FLOORINFO 
 	       WHERE FLOOR_SEQ in (
 			     SELECT  FLOOR_SEQ 
-				 FROM tb_floorinfo 
+				 FROM TB_FLOORINFO 
 				 WHERE CENTER_ID =#{centerId}
 					    AND FLOOR_INFO NOT IN ( SELECT  CODE
 										        FROM lettccmmndetailcode
@@ -125,10 +125,10 @@
 										 )
 	      ) ;
 	      
-          INSERT INTO tb_floorinfo (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
+          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
           SELECT #{centerId} , CODE, CODE_NM, NOW(), #{centerUserId,jdbcType=VARCHAR}, NOW(), #{centerUserId,jdbcType=VARCHAR}
-          FROM lettccmmndetailcode
+          FROM LETTCCMMNDETAILCODE
           WHERE CODE_ID = 'CNETER_FLOOR'
                 AND CODE_DC IN  ( SELECT  SUBSTRING_INDEX(SUBSTRING_INDEX(tb_centerinfo.FLOOR_INFO, ',', tb_numbers.n), ',', -1) name
 								  FROM tb_numbers INNER JOIN tb_centerinfo 
@@ -136,15 +136,15 @@
 										  -CHAR_LENGTH(REPLACE(tb_centerinfo.FLOOR_INFO, ',', ''))>=tb_numbers.n-1
 								  WHERE  center_id =#{centerId}  
                 )
-          AND CODE NOT IN ( select FLOOR_INFO from tb_floorinfo where center_id = #{centerId}) ;
+          AND CODE NOT IN ( select FLOOR_INFO FROM TB_FLOORINFO WHERE center_id = #{centerId}) ;
           </if>         
      </update>
      <update id="updateCenterFloorInfoManage" >
-          UPDATE  tb_centerinfo SET FLOOR_INFO = #{floorInfo, jdbcType=VARCHAR}
+          UPDATE  TB_CENTERINFO SET FLOOR_INFO = #{floorInfo, jdbcType=VARCHAR}
           WHERE CENTER_ID = #{centerId}   
      </update>
      <delete id="deleteCenterInfoManage">
-	       DELETE FROM tb_centerinfo
+	       DELETE FROM TB_CENTERINFO
 	       WHERE CENTER_ID = #{centerId}
      </delete>
 </mapper>

@@ -15,7 +15,7 @@
 						       DATE_FORMAT(c.UPDATE_DATE,'%Y-%m-%d %H:%i:%s') UPDATE_DATE,
 				               c.PART_SEATRULE, c.PART_MINI_CSS, c.PART_MINI_TOP, c.PART_MINI_LEFT, 
 			 	               c.PART_USEYN, c.PART_ORDER, c.PART_CSS
-					    FROM  tb_centerinfo a, tb_floorinfo b, tb_floorpart c
+					    FROM  TB_CENTERINFO a, TB_FLOORINFO b, TB_FLOORPART c
 					    WHERE a.CENTER_ID = b.CENTER_ID       
 					          AND b.FLOOR_SEQ = c.FLOOR_SEQ
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
@@ -37,7 +37,7 @@
     </select>
     <select id="selectFloorPartInfoManageCombo" resultType="lmap">
 	       SELECT  PART_SEQ , PART_NAME 
-	       FROM tb_floorpart
+	       FROM TB_FLOORPART
 	       WHERE PART_USEYN = 'Y'
 	             <if test="centerId != '' ">  
 	             AND CENTER_ID = #{centerId}
@@ -52,12 +52,12 @@
 				   a.PART_SEATRULE, a.PART_MINI_CSS, a.PART_MINI_TOP, a.PART_MINI_LEFT, 
 			 	   a.PART_USEYN, a.PART_ORDER,
 				   a.REG_DATE, a.REG_ID, a.UPDATE_DATE, a.UPDATE_ID, b.FLOOR_NAME
-		    FROM tb_floorpart a, tb_floorinfo b
+		    FROM TB_FLOORPART a, TB_FLOORINFO b
 		    WHERE PART_SEQ = #{partSeq}  
 		          AND a.FLOOR_SEQ = b.FLOOR_SEQ	  
     </select>
     <insert id="insertFloorPrartInfoManage" >
-         INSERT INTO tb_floorpart(CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,
+         INSERT INTO TB_FLOORPART(CENTER_ID, FLOOR_SEQ, PART_MAP1, PART_MAP2, PART_CSS, PART_NAME,
 								  PART_SEATRULE, PART_MINI_CSS, PART_MINI_TOP, PART_MINI_LEFT, 
 								  PART_USEYN, PART_ORDER,
 								  REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
@@ -68,7 +68,7 @@
                 
     </insert>
     <update id="updateFloorPrartInfoManage" >
-         UPDATE  tb_floorpart SET CENTER_ID = #{centerId} 
+         UPDATE  TB_FLOORPART SET CENTER_ID = #{centerId} 
 	                              , FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR} 
 	                              , PART_CSS = #{partCss,jdbcType=VARCHAR}
 	                              , PART_NAME = #{partName,jdbcType=VARCHAR}

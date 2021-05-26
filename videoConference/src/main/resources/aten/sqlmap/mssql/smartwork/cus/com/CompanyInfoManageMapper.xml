@@ -22,7 +22,7 @@
 						               '사용안함'
 						       END TENN_INFO, a.COM_PLAY_FLOOR, FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
 						       
-					    FROM  tb_companyinfo a, lettccmmndetailcode b, tb_centerinfo c, tb_floorinfo d
+					    FROM  TB_COMPANYINFO a, LETTCCMMNDETAILCODE b, TB_CENTERINFO c, TB_FLOORINFO d
 					    WHERE a.COM_STATE = b.CODE       
 					          AND a.CENTER_ID = c.CENTER_ID
 					          AND a.FLOOR_SEQ = d.FLOOR_SEQ
@@ -42,7 +42,7 @@
     </select>
     <select id="selectCompanyInfoManageCombo" resultType="lmap">
 	       SELECT  a.COM_CODE , a.COM_NAME 
-	       FROM tb_companyinfo a
+	       FROM TB_COMPANYINFO a
 	       WHERE a.COM_STATE =  #{com_state}
 	       ORDER BY  a.COM_NAME ASC
     </select>
@@ -50,12 +50,12 @@
            SELECT  COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 				   COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, COM_LOGO,
 				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR
-		   FROM tb_companyinfo a
+		   FROM TB_COMPANYINFO a
 		   WHERE COM_CODE = #{comCode}
     </select>
     <insert id="insertCompanyInfoManage" >
          
-         INSERT INTO tb_companyinfo(COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
+         INSERT INTO TB_COMPANYINFO(COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 								    COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, 
 								    COM_HOMEPAGE, COM_STATE, COM_LOGO, CENTER_ID, FLOOR_SEQ,
 								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN, COM_PLAY_FLOOR)
@@ -68,7 +68,7 @@
     </insert>
     <update id="updateCompanyInfoManage" >
             
-	       UPDATE  tb_companyinfo SET COM_NAME = #{comName} 
+	       UPDATE  TB_COMPANYINFO SET COM_NAME = #{comName} 
 	                                , COM_NUMBER = #{comNumber,jdbcType=VARCHAR} 
 	                                , COM_GUBUN = #{comGubun,jdbcType=VARCHAR}
 	                                , COM_BUSCONDITION = #{comBuscondition,jdbcType=VARCHAR}

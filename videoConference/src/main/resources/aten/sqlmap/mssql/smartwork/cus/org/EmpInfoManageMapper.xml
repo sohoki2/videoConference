@@ -8,7 +8,7 @@
                             TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN
 					  FROM		(SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE, a.EMPJIKW, a.EMPJIKWCODE,
                                         a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN
-						         FROM   tb_empInfo a 
+						         FROM   TB_EMPINFO a 
 								 WHERE  AUTHOR_CODE != 'ROLE_USER'
 					                   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 										  <choose>
@@ -45,7 +45,7 @@
     
     <select id="selectMeetinngUserList" resultType="EmpInfoVO">
          SELECT EMPNO, EMPNAME, DEPTNAME, DEPTCODE , EMPMAIL
-         FROM tb_empInfo 
+         FROM TB_EMPINFO 
          WHERE 1=1  AND EMPNO IN
                <foreach collection="list" item="item" open="(" close=")" separator=",">
                   #{item}
@@ -54,13 +54,13 @@
     <select id="selectEmpInfoDetail" resultType="EmpInfoVO">
 	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN
 	       		 , a.EMPMAIL, a.DEPTCODE 
-	   	  FROM 	tb_empInfo a 
+	   	  FROM 	TB_EMPINFO a 
 	   	 WHERE 1=1 AND a.EMPID = #{empid}
     </select>
     <select id="selectEmpInfoDetailNo" resultType="EmpInfoVO">
 	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN, 
 	       		 a.EMPMAIL , a.DEPTCODE 
-	   	  FROM 	tb_empInfo a 
+	   	  FROM 	TB_EMPINFO a 
 	   	 WHERE 1=1 AND a.EMPNO = #{empno}
     </select>
     
@@ -68,12 +68,12 @@
   
           <selectKey resultType="int"  keyProperty="cnt" order="BEFORE">
                 SELECT IFNULL(COUNT(EMPNO),0)  as cnt
-                FROM tb_empInfo 
+                FROM TB_EMPINFO 
                 WHERE EMPNO = #{empno}
           </selectKey>
           <choose>
                 <when test="cnt > 0">
-                        UPDATE tb_empInfo SET EMPID = #{empid}, 
+                        UPDATE TB_EMPINFO SET EMPID = #{empid}, 
                                               EMPNAME = #{empname},
                                               DEPTNAME = #{deptname},
                                               DEPTCODE = #{deptcode},
@@ -88,7 +88,7 @@
                      WHERE EMPNO = #{empno}
                 </when>
                 <otherwise>
-                        INSERT INTO tb_empInfo(EMPID, EMPNO, EMPNAME, DEPTNAME, DEPTCODE, EMPGRAD, EMPGRADCODE,
+                        INSERT INTO TB_EMPINFO(EMPID, EMPNO, EMPNAME, DEPTNAME, DEPTCODE, EMPGRAD, EMPGRADCODE,
                                                            EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE) 
                         VALUES(#{empid}, #{empno}, #{empname}, #{deptname}, #{deptcode}, #{empgrad}, #{empgradcode},
                                    #{empjikw}, #{empjikwcode}, #{emphandphone}, #{emptelphone}, #{empmail} , NOW()
@@ -97,11 +97,11 @@
          </choose>
     </insert>
     <update id="updateAvayaUserUpdate">
-         UPDATE tb_empInfo SET AVAYA_USERID =#{avayaUserid}
+         UPDATE TB_EMPINFO SET AVAYA_USERID =#{avayaUserid}
          WHERE EMPNO = #{noEmp}
     </update>
     
     <delete id="deleteEaiEmpTmp">
-       DELETE FROM tb_empInfo_tmp
+       DELETE FROM TB_EMPINFO_TMP
     </delete>
 </mapper>

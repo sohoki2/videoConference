@@ -3,10 +3,10 @@
 <mapper namespace="com.sohoki.backoffice.cus.org.mapper.SwcInfoManageMapper">
     <select id="selectSwcInfoManageService" resultType="SwcInfo">
         SELECT SWC_INTERVAL, START_TIME, END_TIME, TENN_RETRIEVE, COM_TITLE
-        FROM tb_swcinfo
+        FROM TB_SWCINFO
     </select>
     <update id="updateSwcInfoManageService" >
-        UPDATE tb_swcinfo SET SWC_INTERVAL = #{swcInterval,jdbcType=VARCHAR}
+        UPDATE TB_SWCINFO SET SWC_INTERVAL = #{swcInterval,jdbcType=VARCHAR}
                               , START_TIME = #{startTime,jdbcType=VARCHAR}
                               , END_TIME = #{endTime,jdbcType=VARCHAR}
                               , TENN_RETRIEVE = #{tennRetrieve,jdbcType=VARCHAR}

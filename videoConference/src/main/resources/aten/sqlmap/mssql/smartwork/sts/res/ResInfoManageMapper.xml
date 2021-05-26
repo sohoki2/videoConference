@@ -404,7 +404,7 @@
 	    SELECT FN_TENNPLAYINFO(#{itemId}, #{resStarttime, jdbcType=VARCHAR}, #{resEndtime, jdbcType=VARCHAR}, #{userId})
 	</select>
     <insert id="insertResManage">
-        INSERT INTO tb_swcreservation ( ITEM_ID, ITEM_GUBUN, CENTER_ID, RES_GUBUN, USER_ID, USER_TYPE,  
+        INSERT INTO TB_SWCRESERVATION ( ITEM_ID, ITEM_GUBUN, CENTER_ID, RES_GUBUN, USER_ID, USER_TYPE,  
                                         RES_STARTDAY, RES_ENDDAY, RES_STARTTIME, RES_ENDTIME, REG_DATE, 
                                         RESERV_PROCESS_GUBUN, RESERVATION_REASON, RES_REMARK, PROXY_YN, PROXY_USER_ID, 
                                         UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
@@ -424,11 +424,11 @@
 			    )
          <selectKey resultType="String" keyProperty="resSeq" order="AFTER">
 		   SELECT CAST(MAX(RES_SEQ) as CHAR(10))
-		   FROM tb_swcreservation
+		   FROM TB_SWCRESERVATION
 		 </selectKey>
     </insert>
     <update id="updateResManageChange">
-        UPDATE tb_swcreservation SET   RESERV_PROCESS_GUBUN = #{reservProcessGubun},
+        UPDATE TB_SWCRESERVATION SET   RESERV_PROCESS_GUBUN = #{reservProcessGubun},
                                        UPDATE_DATE = NOW()
                                        <if test="resAttendlist != '' ">
                                        , RES_ATTENDLIST =  #{resAttendlist, jdbcType=VARCHAR}
@@ -474,14 +474,14 @@
     </update>
    
     <update id="updateResManageChangeAvaya">
-        UPDATE tb_swcreservation SET  RES_SEND_RESULT =  #{resSendResult, jdbcType=VARCHAR}
+        UPDATE TB_SWCRESERVATION SET  RES_SEND_RESULT =  #{resSendResult, jdbcType=VARCHAR}
                                       , RES_SEND_RESULT_TXT =  #{resSendResultTxt, jdbcType=VARCHAR}
                                       , CONFERENCE_ID = #{conferenceId, jdbcType=VARCHAR}
                                       , CON_NUMBER = #{conNumber, jdbcType=VARCHAR}
         WHERE RES_SEQ = #{resSeq}                                      
     </update>
     <update id="updateResEquipChnageManage">
-        UPDATE tb_swcreservation SET RES_EQUPCHECK =  #{resEqupcheck, jdbcType=VARCHAR}
+        UPDATE TB_SWCRESERVATION SET RES_EQUPCHECK =  #{resEqupcheck, jdbcType=VARCHAR}
                                     <if test="resEqupinfo != ''">
                                     , RES_EQUPINFO =  #{resEqupinfo, jdbcType=VARCHAR}
                                     </if>
@@ -490,7 +490,7 @@
     
     
    <update id="updateResManageDateChange">
-        UPDATE tb_swcreservation SET   res_reply_date = NOW()
+        UPDATE TB_SWCRESERVATION SET   res_reply_date = NOW()
         WHERE RES_SEQ = #{resSeq}
     </update>
     
@@ -501,7 +501,7 @@
     </update>
     <!--  회의 내용 정리 -->
     <update id="updateResMeetingLog">
-       UPDATE tb_swcreservation SET MEETINGLOG = #{meetinglog, jdbcType=VARCHAR}
+       UPDATE TB_SWCRESERVATION SET MEETINGLOG = #{meetinglog, jdbcType=VARCHAR}
                                    <if test="resFile1 != '' ">
                                    , RES_FILE1 = #{resFile1}
                                    </if>
@@ -534,16 +534,16 @@
 		 
     </update>
     <delete id="deleteResManage">
-        DELETE FROM tb_swcreservation where RES_SEQ = #{resSeq};
+        DELETE FROM TB_SWCRESERVATION where RES_SEQ = #{resSeq};
         
-        UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL ='N' 
+        UPDATE TB_SWCTIME SET RES_SEQ = 0, APPRIVAL ='N' 
         WHERE RES_SEQ = #{resSeq};
     </delete>
     
     <!-- 취소 사유가 1시간 이전이면 테넌트 회수 하기  -->
     <update id="updateCancelReason">
 	<![CDATA[
-		UPDATE tb_swcreservation  SET CANCEL_REASON=#{cancelReason, jdbcType=VARCHAR}
+		UPDATE TB_SWCRESERVATION  SET CANCEL_REASON=#{cancelReason, jdbcType=VARCHAR}
 		   			                  , UPDATE_ID = #{updateId,jdbcType=VARCHAR}
 		   			                  , UPDATE_DATE = NOW()
 		WHERE RES_SEQ = #{resSeq}
@@ -551,19 +551,18 @@
 	</update>
 	
 	<update id="errorResDateStep01" >
-	    UPDATE tb_swctime SET RES_SEQ = 0 WHERE RES_SEQ = #{resSeq};	    
+	    UPDATE TB_SWCTIME SET RES_SEQ = 0 WHERE RES_SEQ = #{resSeq};	    
 	</update>
 	<update id="errorResDateStep02" >
-	    UPDATE tb_swcreservation SET RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_8' WHERE RES_SEQ = #{resSeq}	    
+	    UPDATE TB_SWCRESERVATION SET RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_8' WHERE RES_SEQ = #{resSeq}	    
 	</update>
 	<update id="resStateChagenCheck" >
 	    <choose>
 	        <when test="resState == 'IN' ">
-	              UPDATE tb_swcreservation SET IN_TIME = now()    WHERE RES_SEQ = #{resSeq}	 
+	              UPDATE TB_SWCRESERVATION SET IN_TIME = now()    WHERE RES_SEQ = #{resSeq}	 
 	        </when>
 	         <otherwise>
-	              UPDATE tb_swcreservation SET OT_TIME = now()    WHERE RES_SEQ = #{resSeq}	 
-	         
+	              UPDATE TB_SWCRESERVATION SET OT_TIME = now()    WHERE RES_SEQ = #{resSeq}	
 	         </otherwise>
 	    </choose>
 	</update>

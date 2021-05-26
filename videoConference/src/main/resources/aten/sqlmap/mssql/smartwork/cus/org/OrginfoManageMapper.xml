@@ -4,7 +4,7 @@
 
     <select id="selectOrgInfoCombo"  resultType="orgInfo">
       SELECT DEPTCODE, DEPTNAME
-      FROM tb_orginfo 
+      FROM TB_ORGINFO 
       WHERE 1=1 and USE_YN ='Y'
       ORDER BY DEPTCODE ASC
     </select>
@@ -12,17 +12,18 @@
     
     <select id="selectOrgInfoComboSearch"  resultType="orgInfo">
       SELECT DEPTCODE, DEPTNAME
-      FROM tb_orginfo WHERE USE_YN ='Y' and   AND a.DEPTNAME LIKE CONCAT('%',#{searchKeyword},'%')   
+      FROM TB_ORGINFO 
+      WHERE USE_YN ='Y' and   AND a.DEPTNAME LIKE CONCAT('%',#{searchKeyword},'%')   
       ORDER BY  DEPTCODE ASC
     </select>
     
     <insert id="insertOrgInfo">
-         INSERT INTO tb_orginfo (DEPTCODE, DEPTNAME)
+         INSERT INTO TB_ORGINFO (DEPTCODE, DEPTNAME)
 		 SELECT DEPTCODE, DEPTNAME FROM tb_empInfo
 		 GROUP BY  DEPTCODE, DEPTNAME 
     </insert>
     <delete id="deleteEaiOrgTmp">
-        DELETE FROM tb_orginfo 
+        DELETE FROM TB_ORGINFO 
     </delete>
     
 

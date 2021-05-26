@@ -4,7 +4,7 @@
 
     <select id="selectJobInfoCombo"  resultType="jobInfo">
       SELECT EMPJIKW, EMPJIKWCODE
-      FROM tb_jobinfo 
+      FROM TB_JOBINFO 
       WHERE 1=1
       ORDER BY cast (SORT_ORDE  as int) ASC
     </select>
@@ -12,16 +12,16 @@
     
     <select id="selectJobInfoComboSearch"  resultType="jobInfo">
       SELECT EMPJIKW, EMPJIKWCODE
-      FROM tb_jobinfo 
+      FROM TB_JOBINFO 
       WHERE 1=1 AND  EMPJIKWCODE LIKE CONCAT('%',#{searchKeyword},'%')
       ORDER BY SORT_ORDE ASC 
     </select>
     <insert id="insertJobInfo">
-         INSERT INTO tb_jobinfo (EMPJIKW, EMPJIKWCODE, SORT_ORDE)
+         INSERT INTO TB_JOBINFO (EMPJIKW, EMPJIKWCODE, SORT_ORDE)
 		 VALUES(#{empjikw},#{empjikwcode}, #{sortOrde})
     </insert>
     <delete id="deleteJobInfo">
-         DELETE FROM tb_jobinfo
+         DELETE FROM TB_JOBINFO
     </delete>
     
 </mapper>

@@ -10,7 +10,7 @@
 							   a.UPDATE_ID, DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, b.CENTER_NM, c.FLOOR_NAME,
 							   d.CODE_NM , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION,
 							   fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN
-					    FROM  tb_seatinfo a, tb_centerinfo b, tb_floorinfo c, lettccmmndetailcode d
+					    FROM  TB_SEATINFO a, TB_CENTERINFO b, TB_FLOORINFO c, LETTCCMMNDETAILCODE d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
 					          AND a.SEAT_GUBUN = d.CODE
@@ -46,14 +46,14 @@
 				   ELSE 
 				    
 				   END EMPNAME
-		    FROM tb_seatinfo a
+		    FROM TB_SEATINFO a
 		    WHERE SEAT_ID = #{seatId}
     </select>
     <insert id="insertOfficeSeatInfoManage" >
          <selectKey resultType="String"  keyProperty="seatId" order="BEFORE">
             select FN_SEATID(#{floorSeq})
          </selectKey>
-         INSERT INTO tb_seatinfo(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
+         INSERT INTO TB_SEATINFO(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
 								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
 								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, 
@@ -75,7 +75,7 @@
            <when test='params.viewMode == "S"'>
                 <choose>
 		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
-		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
+		                INSERT INTO TB_SEATINFO(SEAT_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
 		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
 		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                        )
@@ -97,7 +97,7 @@
 						)TA;
 		           </when>
 		           <otherwise>
-		                INSERT INTO tb_seatinfo(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
+		                INSERT INTO TB_SEATINFO(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
 		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
 		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                        )
@@ -120,7 +120,7 @@
 		
 		           </otherwise>
 		        </choose>
-		        UPDATE tb_floorinfo SET SEAT_CNT = (SELECT IFNULL(count(*),0) 
+		        UPDATE TB_FLOORINFO SET SEAT_CNT = (SELECT IFNULL(count(*),0) 
 						                            FROM tb_seatinfo 
 						                            WHERE FLOOR_SEQ = #{params.floorSeq} )
 				WHERE FLOOR_SEQ = #{params.floorSeq};
@@ -128,7 +128,7 @@
            <when test='params.viewMode == "M"'>
                  <choose>
 		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
-		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
+		                INSERT INTO TB_MEETING_ROOM(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
 		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
 		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, MAIL_SENDCHECK, SMS_SENDCHECK,
 		                                            ROOM_TYPE, MEETING_CONFIRMGUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
@@ -185,7 +185,7 @@
         </choose>
     </insert>
     <update id="updateOfficeSeatInfoManage" >
-        UPDATE tb_seatinfo SET CENTER_ID = #{centerId} 
+        UPDATE TB_SEATINFO SET CENTER_ID = #{centerId} 
 	                              , FLOOR_SEQ = #{floorSeq,jdbcType=VARCHAR} 
 	                              , PART_SEQ = #{partSeq,jdbcType=VARCHAR} 
 	                              , SEAT_NAME = #{seatName}
@@ -208,7 +208,7 @@
 	    WHERE SEAT_ID = #{seatId}           
     </update>
     <update id="updateOfficeSeatQrInfoManage" >
-        UPDATE tb_seatinfo SET  SEAT_QR_CODE = #{seatQrCode,jdbcType=VARCHAR} 
+        UPDATE TB_SEATINFO SET  SEAT_QR_CODE = #{seatQrCode,jdbcType=VARCHAR} 
 	                            , SEAT_QR_CODE_PATH = #{seatQrCodePath,jdbcType=VARCHAR} 
 	                            , SEAT_QR_CODE_FULL_PATH = #{seatQrCodeFullPath,jdbcType=VARCHAR} 
 	                            , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
@@ -220,7 +220,7 @@
         <choose>
             <when test='type == "S"'>
                 <foreach collection="list" item="item" separator=";">
-			        UPDATE tb_seatinfo SET SEAT_TOP = #{item.seatTop,jdbcType=VARCHAR}
+			        UPDATE TB_SEATINFO SET SEAT_TOP = #{item.seatTop,jdbcType=VARCHAR}
 				                           , SEAT_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
 				                           , UPDATE_DATE = NOW()
 				                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
@@ -229,7 +229,7 @@
             </when>
             <otherwise>
                 <foreach collection="list" item="item" separator=";">
-		            UPDATE tb_meeting_room SET MEETING_TOP = #{item.seatTop,jdbcType=VARCHAR}
+		            UPDATE TB_MEETING_ROOM SET MEETING_TOP = #{item.seatTop,jdbcType=VARCHAR}
 					                           , MEETING_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
 					                           , UPDATE_DATE = NOW()
 					                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
@@ -240,12 +240,12 @@
            
     </update> 
     <delete id="deleteOfficeSeatQrInfoManage">
-        DELETE FROM tb_seatinfo WHERE SEAT_ID IN
+        DELETE FROM TB_SEATINFO WHERE SEAT_ID IN
         <foreach collection="seatList" item="item"  open="(" separator="," close=")">
             #{item}
         </foreach>
         ;
-        UPDATE tb_floorinfo  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+        UPDATE TB_FLOORINFO  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
 						          FROM tb_seatinfo
 						          WHERE SEAT_ID IN 
 						          <foreach collection="seatList" item="item"  open="(" separator="," close=")">

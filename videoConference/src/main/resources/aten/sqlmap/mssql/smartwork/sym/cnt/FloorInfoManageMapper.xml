@@ -17,7 +17,7 @@
 						       SEAT_CNT, MEET_CNT, FLOOR_USEYN, FLOOR_PART,      	
 						       DATE_FORMAT(b.UPDATE_DATE,'%Y-%m-%d %H:%i:%s') UPDATE_DATE,
 						       b.UPDATE_ID	        
-					    FROM  tb_centerinfo a, tb_floorinfo b
+					    FROM  TB_CENTERINFO a, TB_FLOORINFO b
 					    WHERE a.CENTER_ID = b.CENTER_ID       
 					         <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							    AND (    b.FLOOR_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  OR a.CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%')  )
@@ -35,7 +35,7 @@
      </select>
     <select id="selectFloorInfoManageCombo" resultType="lmap">
 	       SELECT  a.FLOOR_SEQ , a.FLOOR_NAME 
-	       FROM tb_floorinfo a, lettccmmndetailcode b
+	       FROM TB_FLOORINFO a, LETTCCMMNDETAILCODE b
 	       WHERE a.FLOOR_USEYN = 'Y'
 	             AND b.CODE = a.FLOOR_INFO
 	             AND a.CENTER_ID = #{centerId}
@@ -45,20 +45,20 @@
            SELECT  a.FLOOR_SEQ, a.CENTER_ID, a.FLOOR_INFO, a.FLOOR_MAP, a.FLOOR_MAP1, a.FLOOR_NAME,
 				   a.SEAT_CNT, a.MEET_CNT,a.FLOOR_USEYN, a.FLOOR_PART, b.FLOOR_INFO FLOOR_INFO_CNT,
 				   a.REG_DATE, a.REG_ID, a.UPDATE_DATE,UPDATE_ID, c.CODE_DC
-		   FROM tb_floorinfo a, tb_centerinfo b, lettccmmndetailcode c
+		   FROM TB_FLOORINFO a, TB_CENTERINFO b, LETTCCMMNDETAILCODE c
 		   WHERE FLOOR_SEQ = #{floorSeq} 		
 		          AND a.CENTER_ID = b.CENTER_ID  
 		          AND a.FLOOR_INFO = c.CODE
     </select>
     <select id="selectFloorCombo"  resultType="lmap">
            SELECT  a.FLOOR_SEQ,a.FLOOR_NAME,
-		   FROM tb_floorinfo a, tb_centerinfo b, lettccmmndetailcode c
+		   FROM TB_FLOORINFO a, TB_CENTERINFO b, LETTCCMMNDETAILCODE c
 		   WHERE FLOOR_SEQ = #{floorSeq} 		
 		          AND a.CENTER_ID = b.CENTER_ID  
 		          AND a.FLOOR_INFO = c.CODE
     </select>
     <insert id="insertFloorInfoManage" >
-         INSERT INTO tb_floorinfo(CENTER_ID, FLOOR_INFO, FLOOR_MAP, FLOOR_MAP1, FLOOR_NAME,
+         INSERT INTO TB_FLOORINFO(CENTER_ID, FLOOR_INFO, FLOOR_MAP, FLOOR_MAP1, FLOOR_NAME,
 								  SEAT_CNT, MEET_CNT,FLOOR_USEYN, FLOOR_PART,
 								  REG_DATE, REG_ID, UPDATE_DATE,UPDATE_ID)
          VALUES (#{centerId}, #{floorInfo}, #{floorMap,jdbcType=VARCHAR}, #{floorMap1,jdbcType=VARCHAR}, #{floorName,jdbcType=VARCHAR}, 
@@ -68,7 +68,7 @@
     </insert>
     <update id="updateFloorInfoManage" >
             
-	       UPDATE  tb_floorinfo SET CENTER_ID = #{centerId} 
+	       UPDATE  TB_FLOORINFO SET CENTER_ID = #{centerId} 
 	                                , FLOOR_INFO = #{floorInfo,jdbcType=VARCHAR} 
 	                                , FLOOR_NAME = #{floorName,jdbcType=VARCHAR}
 	                                , FLOOR_USEYN = #{floorUseyn,jdbcType=VARCHAR}
