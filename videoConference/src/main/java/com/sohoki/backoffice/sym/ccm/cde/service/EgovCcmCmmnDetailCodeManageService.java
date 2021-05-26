@@ -47,20 +47,12 @@ public interface EgovCcmCmmnDetailCodeManageService {
 	
 	List<?> selectCmmnDetailCodeList(String codeId) throws Exception;
 
-    /**
-	 * 공통상세코드 총 갯수를 조회한다.
-     * @param searchVO
-     * @return int(공통상세코드 총 갯수)
-     */
-    int selectCmmnDetailCodeListTotCnt(String codeId) throws Exception;
-
 	/**
 	 * 공통상세코드를 수정한다.
 	 * @param cmmnDetailCode
 	 * @throws Exception
 	 */
     int updateCmmnDetailCode(CmmnDetailCode cmmnDetailCode) throws Exception;
-    int selectCmmnDetailCodeIdCheck (String code) throws Exception;
-
+    
 	Object selectCmmnDetailResTypeCombo(CmmnDetailCodeVO vo) throws Exception;
 }

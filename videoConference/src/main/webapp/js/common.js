@@ -108,8 +108,9 @@ function yesterDayConfirm(res_day, alert_message){
 }
 // 값 비교 후 경고 문구 보내기
 function fnIntervalCheck(stratVal, endVal, alertMessge){
-	if (stratVal > endVal){
+    if (parseInt(stratVal) > parseInt(endVal)){
 		alert(alertMessge);
+		
 		return false;
 	}
 	return true;
@@ -118,8 +119,16 @@ function fnIntervalCheck(stratVal, endVal, alertMessge){
 function fnCreatCheckbox(_returnObject, _startVal, _endVal, _checkVal, _checkboxNm, _checkTxt){
 	var checked = "";
 	$("#"+_returnObject).empty();
-	for (var i = _startVal; i <= _endVal; i ++ ){
+	var count = 0;
+	var object_height = 1;
+	for (var i = parseInt(_startVal); i <= parseInt(_endVal); i ++ ){
 		checked = _checkVal.includes(i) ? "checked" : "";
+		count += 1;
+		console.log(count%5);
+		if (count%6 === 0){
+		   object_height += 1;
+		   $("#"+_returnObject).append("<br/>").css('height',(object_height * 60));
+		}
 		$("#"+_returnObject).append("&nbsp;<input type='checkbox' name='"+_checkboxNm+"'  value='"+i+"' "+checked+">" + i+ _checkTxt);
 	}
 }

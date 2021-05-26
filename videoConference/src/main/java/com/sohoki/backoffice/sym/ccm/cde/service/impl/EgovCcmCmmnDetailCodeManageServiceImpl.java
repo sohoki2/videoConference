@@ -8,6 +8,7 @@ import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sohoki.backoffice.sym.ccm.cde.vo.CmmnDetailCode;
@@ -18,7 +19,8 @@ import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageServ
 public class EgovCcmCmmnDetailCodeManageServiceImpl extends EgovAbstractServiceImpl implements EgovCcmCmmnDetailCodeManageService {
 
 	
-	@Resource(name="CmmnDetailCodeManageMapper")
+	
+	@Autowired
     private EgovCmmnDetailCodeManageMapper CmmnDetailCodeManageMapper;
 	/**
 	 * 공통상세코드를 삭제한다.
@@ -39,13 +41,6 @@ public class EgovCcmCmmnDetailCodeManageServiceImpl extends EgovAbstractServiceI
 	@Override
 	public List<?> selectCmmnDetailCodeList(String codeId) throws Exception {
         return CmmnDetailCodeManageMapper.selectCmmnDetailCodeListByPagination(codeId);
-	}
-	/**
-	 * 공통상세코드 총 갯수를 조회한다.
-	 */
-	@Override
-	public int selectCmmnDetailCodeListTotCnt(String codeId) throws Exception {
-        return CmmnDetailCodeManageMapper.selectCmmnDetailCodeListTotCnt(codeId);
 	}
 	
 	@Override
@@ -69,12 +64,7 @@ public class EgovCcmCmmnDetailCodeManageServiceImpl extends EgovAbstractServiceI
 		return ret;
 	}
 
-	@Override
-	public int selectCmmnDetailCodeIdCheck(String code) throws Exception {
-		// TODO Auto-generated method stub
-		return CmmnDetailCodeManageMapper.selectCmmnDetailCodeIdCheck(code);
-	}
-
+	
 	@Override
 	public CmmnDetailCode selectCmmnDetail(String code) throws Exception {
 		// TODO Auto-generated method stub

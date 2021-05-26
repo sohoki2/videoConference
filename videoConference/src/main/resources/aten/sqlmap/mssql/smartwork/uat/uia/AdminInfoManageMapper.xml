@@ -4,13 +4,14 @@
 
    <select id="selectAdminUserManageListByPagination" resultType="lmap">     	      
 		 	SELECT * FROM ( 
-		 	SELECT TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT 
+		 	SELECT  Row_Number() OVER (ORDER BY REG_DATE DESC) AS RNUM, 
+		 	        TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT , ROW_NUMBER() RNUM
 		 	FROM (
 				    SELECT
 							      a.ADMIN_ID, a.ADMIN_NAME, a.ADMIN_TEL,
 		                          a.ADMIN_EMAIL, a.DEPT_ID, a.DEPT_NAME,
-								  a.ADMIN_PASSWORD, a.LOCK_YN, a.USE_YN,		
-		                          DATE_FORMAT (a.REG_DATE, '%Y-%m-%d') REG_DATE,
+								  a.ADMIN_PASSWORD, a.LOCK_YN, a.USE_YN,	
+								  CONVERT(varchar(10), a.REG_DATE, 120) REG_DATE,
 					              c.AUTHOR_NM 		                 
 				    FROM   tb_admin a , lettnauthorinfo c
 					WHERE a.AUTHOR_CODE = c.AUTHOR_CODE
@@ -40,11 +41,11 @@
 						  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.useYn)">	        
 						         AND a.USE_YN = #{params.useYn}
 						  </if>		     
-				     ORDER BY a.REG_DATE  DESC
+				         
 	            ) TB 
 	        ) TA 
+	        WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      
 	        ORDER BY TA.REG_DATE  DESC
-	        LIMIT   ${params.firstIndex},  ${params.recordCountPerPage}  	
    </select>
       
    <select id="selectAdminUserManageDetail" resultType="lmap">

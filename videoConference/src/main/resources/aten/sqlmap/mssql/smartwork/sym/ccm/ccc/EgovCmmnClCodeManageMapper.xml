@@ -4,6 +4,7 @@
 
 	<select id="selectCmmnClCodeListByPagination" resultType="CmmnClCodeVO">
 		SELECT
+		    Row_Number() OVER (ORDER BY R.CL_CODE DESC) AS RNUM, 
 			SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
 		    R.*
 		FROM
@@ -23,16 +24,14 @@
 					</choose>
 				</if>
 			</where>
-			ORDER BY CL_CODE ASC
 		) R
-		limit #{firstIndex}, #{recordCountPerPage}
+		WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}    
 		ORDER BY RNUM ASC
 	</select>
 	
 	<select id="selectCmmnClCodeListTotCnt" resultType="java.lang.Integer">
-	      SELECT 
-					ifnull(count(*),0)
-				FROM lettccmmncode
+	      SELECT ISNULL(count(*),0)
+		  FROM lettccmmncode
 				<where>
 					<if test="searchKeyword != ''">
 						<choose>
@@ -48,9 +47,8 @@
 	</select>	
 	
 	<select id="selectCmmnClCodeList" resultType="CmmnClCode">
-		SELECT 
-			CL_CODE, CL_CODE_NM, USE_AT
-		FROM lettccmmncode
+		SELECT CL_CODE, CL_CODE_NM, USE_AT
+		FROM LETTCCMMNCODE
 		WHERE USE_AT = 'Y'
 	</select>
 	
@@ -61,26 +59,26 @@
 	<select id="selectCmmnClCodeDetail" resultType="CmmnClCode">
 		SELECT
 			CL_CODE, CL_CODE_NM, USE_AT, CL_CODE_DC, FRST_REGISTER_ID
-		 FROM lettccmmncode
+		 FROM LETTCCMMNCODE
 		WHERE CL_CODE = #{value}
 	</select>
 	
 	<insert id="insertCmmnClCode">
 	   <![CDATA[
-	   INSERT  INTO  lettccmmncode
+	   INSERT  INTO  LETTCCMMNCODE
 		         (  CL_CODE  ,  CL_CODE_NM ,  CL_CODE_DC ,  USE_AT ,  FRST_REGIST_PNTTM ,  FRST_REGISTER_ID  ) 
 		    VALUES  
 		         ( 
-		           #{clCode} ,  #{clCodeNm} ,  #{clCodeDc} ,  #{useAt} ,  now() ,  #{lastUpdusrId,jdbcType=VARCHAR}		         
+		           #{clCode} ,  #{clCodeNm} ,  #{clCodeDc} ,  #{useAt} ,  getdate() ,  #{lastUpdusrId,jdbcType=VARCHAR}		         
 		         )
 		]]>
 	</insert>
 	
 	<update id="updateCmmnClCode">
 	<![CDATA[
-		UPDATE lettccmmncode
+		UPDATE LETTCCMMNCODE
 		   SET CL_CODE_NM = #{clCodeNm}, CL_CODE_DC = #{clCodeDc}, USE_AT = #{useAt},   LAST_UPDUSR_ID = #{lastUpdusrId,jdbcType=VARCHAR}, 
-			   LAST_UPDT_PNTTM = now()
+			   LAST_UPDT_PNTTM = getdate()
 		 WHERE CL_CODE = #{clCode}
 		 ]]>
 	</update>

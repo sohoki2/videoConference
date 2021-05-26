@@ -70,9 +70,9 @@ public class EquipmentManageController {
 	
 	@RequestMapping(value="equpList.do")
 	public ModelAndView  selectEqupInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
-																			, @ModelAttribute("searchVO") EquipmentVO searchVO
-																			, HttpServletRequest request
-																			, BindingResult bindingResult	) throws Exception {
+																, @ModelAttribute("searchVO") EquipmentVO searchVO
+																, HttpServletRequest request
+																, BindingResult bindingResult	) throws Exception {
 		   
 		
 		
@@ -242,12 +242,7 @@ public class EquipmentManageController {
 		    		return model;
 		    }
 			String meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" : "sucess.common.update";
-			
-			vo.setEquipmentName( util.checkHtmlView(  vo.getEquipmentName().toString())  );
-			vo.setEquipSerial( util.checkHtmlView(  vo.getEquipSerial().toString())   );
-			vo.setCompany(util.checkHtmlView(  vo.getCompany().toString())  );
-			vo.setRemark(  util.checkHtmlView(  vo.getRemark().toString())     );
-			
+						
 			int ret  =equipService.updateEqupManage(vo) ; 
 			if (ret >0){
 				model.addObject(Globals .STATUS, Globals.STATUS_SUCCESS);

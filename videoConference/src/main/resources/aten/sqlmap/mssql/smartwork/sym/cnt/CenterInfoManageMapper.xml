@@ -4,10 +4,12 @@
 	
     <select id="selectCenterInfoManageListByPagination"  resultType="lmap">
 		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	        TB.* FROM (
-					    SELECT CENTER_ID  ,      
+		       TB.* 
+	    FROM (
+					    SELECT ROW_NUMBER() OVER (ORDER BY a.CENTER_ID DESC) AS RNUM, 
+					           CENTER_ID  ,      
 							   CENTER_NM  ,
-						       CASE  WHEN  length(CENTER_IMG) > 0 THEN 
+						       CASE  WHEN  LEN(CENTER_IMG) > 0 THEN 
 				  	               CENTER_IMG
 							   ELSE 
 						          'no_image.gif'
@@ -16,18 +18,18 @@
 				               CENTER_ADDR1,
 				               CENTER_ADDR2,
 						       CENTER_USE_YN,      	
-						       ADMIN_APPROVAL_YN   ,	        
-						       DATE_FORMAT(a.CENTER_UPDATE_DATE,'%Y-%m-%d %H:%i:%s') CENTER_UPDATE_DATE,
+						       ADMIN_APPROVAL_YN   ,	      
+						       FORMAT(a.CENTER_UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') CENTER_UPDATE_DATE,
 						       CENTER_UPDATE_USER_ID	        
 					    FROM  TB_CENTERINFO a
 					    WHERE 1=1        
 					        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							  AND (    CENTER_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  OR CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 							</if>		
-					    ORDER BY a.CENTER_ID  DESC
-	        ) TB  
-	         ORDER BY TB.CENTER_ID  DESC
-	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+					    
+	        ) TB
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+	        ORDER BY TB.CENTER_ID  DESC
      </select>
     <select id="selectCenterInfoManageCombo" resultType="CenterInfo">
 	       SELECT  CENTER_ID , CENTER_NM 
@@ -40,7 +42,7 @@
 				   CENTER_FAX, CENTER_USER_ID, CENTER_REGDATE, CENTER_UPDATE_USER_ID, 
 				   CENTER_UPDATE_DATE, CENTER_IMG, CENTER_URL, CENTER_SEAT_IMG, CENTER_USE_YN , 
 				   REST_INFO, MEETINGROOM_INFO, CENTER_INFO,
-				   SUBSTR(CENTER_ZIPCODE,0,3) AS center_zipcode1, SUBSTR(CENTER_ZIPCODE,4,6) AS center_zipcode2 ,     
+				   SUBSTRING(CENTER_ZIPCODE,0,3) AS center_zipcode1, SUBSTRING(CENTER_ZIPCODE,4,6) AS center_zipcode2 ,     
 				   ADMIN_APPROVAL_YN, FLOOR_INFO, START_FLOOR, END_FLOOR
 		    FROM TB_CENTERINFO
 		    WHERE CENTER_ID = #{centerId}		  
@@ -50,24 +52,24 @@
     
      <insert id="insertCenterInfoManage" >
          <selectKey resultType="String"  keyProperty="centerId" order="BEFORE">
-            SELECT FN_CENTERID()
+            SELECT dbo.FN_CENTERID() as centerId
          </selectKey>
-        <![CDATA[
+         <![CDATA[
              INSERT INTO TB_CENTERINFO (CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1, CENTER_ADDR2, CENTER_TEL,CENTER_FAX, 
                                  CENTER_USER_ID, CENTER_REGDATE, CENTER_UPDATE_USER_ID, CENTER_UPDATE_DATE, CENTER_IMG, CENTER_URL, 
                                  CENTER_SEAT_IMG, CENTER_USE_YN, REST_INFO, MEETINGROOM_INFO, CENTER_INFO, ADMIN_APPROVAL_YN, 
                                  FLOOR_INFO, START_FLOOR, END_FLOOR
                                  )
              VALUES (#{centerId}, #{centerNm},    #{centerZipCode,jdbcType=VARCHAR}, #{centerAddr1,jdbcType=VARCHAR}, #{centerAddr2,jdbcType=VARCHAR}, #{centerTel,jdbcType=VARCHAR},  #{centerFax,jdbcType=VARCHAR},
-             #{centerUserId,jdbcType=VARCHAR}, NOW(), #{centerUserId,jdbcType=VARCHAR}, NOW(),  #{centerImg,jdbcType=VARCHAR}, #{centerUrl ,jdbcType=VARCHAR}, 
+             #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(),  #{centerImg,jdbcType=VARCHAR}, #{centerUrl ,jdbcType=VARCHAR}, 
              #{centerSeatImg,jdbcType=VARCHAR}, 'Y', #{restInfo,jdbcType=VARCHAR}, #{meetingroomInfo,jdbcType=VARCHAR},  #{centerInfo,jdbcType=VARCHAR} , 
              #{adminApprovalYn, jdbcType=VARCHAR}, #{floorInfo, jdbcType=VARCHAR}, #{startFloor, jdbcType=VARCHAR}, #{endFloor, jdbcType=VARCHAR}
              );
-         ]]>
+          ]]>
           <if test="floorlist != null">
           INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
-          SELECT #{centerId}, CODE, CODE_NM, NOW(), #{centerUserId,jdbcType=VARCHAR}, NOW(), #{centerUserId,jdbcType=VARCHAR}
+          SELECT #{centerId}, CODE, CODE_NM, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
           FROM LETTCCMMNDETAILCODE
           WHERE CODE = 'CNETER_FLOOR'
                 AND CODE_DC IN  
@@ -87,7 +89,7 @@
 	                                 CENTER_TEL = #{centerTel,jdbcType=VARCHAR} ,
 	                                 CENTER_FAX = #{centerFax,jdbcType=VARCHAR} ,
 	                                 CENTER_UPDATE_USER_ID =#{centerUserId, jdbcType=VARCHAR} ,
-	                                 CENTER_UPDATE_DATE = NOW() ,
+	                                 CENTER_UPDATE_DATE = getdate() ,
 	                                 CENTER_URL = #{centerUrl ,jdbcType=VARCHAR} ,
 	                                 CENTER_USE_YN = #{centerUseYn,jdbcType=VARCHAR} ,
 	                                 REST_INFO = #{restInfo,jdbcType=VARCHAR} ,
@@ -127,7 +129,7 @@
 	      
           INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
-          SELECT #{centerId} , CODE, CODE_NM, NOW(), #{centerUserId,jdbcType=VARCHAR}, NOW(), #{centerUserId,jdbcType=VARCHAR}
+          SELECT #{centerId} , CODE, CODE_NM, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
           FROM LETTCCMMNDETAILCODE
           WHERE CODE_ID = 'CNETER_FLOOR'
                 AND CODE_DC IN  ( SELECT  SUBSTRING_INDEX(SUBSTRING_INDEX(tb_centerinfo.FLOOR_INFO, ',', tb_numbers.n), ',', -1) name

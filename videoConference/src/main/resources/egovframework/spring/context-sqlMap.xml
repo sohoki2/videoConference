@@ -4,7 +4,7 @@
 
 
     <bean id="dataSourceLog4j" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-        <constructor-arg ref="dataSource-mariadb" />
+        <constructor-arg ref="dataSource-${Globals.DbType}" />
         <property name="logFormatter">
             <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
                 <property name="loggingType" value="MULTI_LINE" />

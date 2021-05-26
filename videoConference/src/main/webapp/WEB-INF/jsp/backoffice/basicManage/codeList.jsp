@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="Swrap Asearch">
-                 <div class="Atitle">총 <span>${totalCnt}</span>건의 사무소정보가 있습니다.</div>
+                 <div class="Atitle">총 <span>${totalCnt}</span>건의 기초 코드가 있습니다.</div>
                     </div>
             </div>
 
@@ -60,13 +60,13 @@
                         </span>
                         <span>
                             <form:input path="codeId" id="codeId" title="코드" size="14" class="nameB"/>
-                            <a href="javascript:fn_idCheck('Basic');" class="lightgrayBtn">
+                            <a href="javascript:fn_idCheck('Basic');" class="lightgrayBtn" id="btn_idCheck">
                             <spring:message code="page.common.btn.UniCheck" />
                             </a>
                         </span>
                         <span>
                             <form:input path="codeIdNm" id="codeIdNm" class="nameB" title="코드명" size="14" />
-                            <a href="javascript:codeUpdate('Ins','0');" class="blueBtn"><spring:message code="button.create" /></a>
+                            <a href="javascript:codeUpdate('Ins','0');" id="btn_update" class="blueBtn"><spring:message code="button.create" /></a>
                         </span>
                     </div>
                     <table class="margin-top30 backTable">
@@ -78,7 +78,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${resultList }" var="codeinfo" varStatus="status">
+                        <c:forEach items="${resultlist }" var="codeinfo" varStatus="status">
                             <tr>
                                 <td><a href="javascript:fn_viewSubCodeLit('${codeinfo.codeId}')">${codeinfo.codeId }</a></td>
                                 <td><a href="javascript:fn_viewSubCodeLit('${codeinfo.codeId}')">${codeinfo.codeIdNm }</a></td>
@@ -157,30 +157,28 @@
         		if (fn_UniCheckAlert("idCheck", "codeId") == false) return;
         		$("form[name=regist]").attr("action", "/backoffice/basicManage/codeUpdate.do").submit();
         	}else if (code=="EdtD") {
-        		  $("#mode").val('Edt');
-        		  $("#codeId").val(code1) ;
-        		  apiExecute(
-        				  "POST", 
-        				  "/backoffice/basicManage/codeDetail.do",
-	       					{
-        					  codeId : $("#codeId").val()
-	       					},
-	       					null,				
-	       					function(result) {							
-	       						if (result != null) {	       
-	       							console.log("result:" +result);
-	       							
-	       							
-	       							var groupArray = result.split('/');	       							
-	       						    $("#codeIdNm").val(groupArray[0]);
-	       						    $("#sp_update").html("<a href='javascript:codeUpdate(&#39;Edt&#39;,&#39;" + $("#codeId").val() + "&#39;);' class='excel' >코드수정</a>");
-	       						}
-	       					},
-	       					function(request){
-	       						alert(request.status );	       						
-	       					},
-	       					null
-	     				); 
+        		$("#mode").val('Edt');
+        		$("#codeId").val(code1) ;
+        		var url = "/backoffice/basicManage/codeDetail.do";
+        		var param =  {"codeId" : $("#codeId").val()}
+        		uniAjaxSerial(url, param, 
+   		     			function(result) {
+   						       if (result.status == "LOGIN FAIL"){
+   								   location.href="/backoffice/login.do";
+   		  					   }else if (result.status == "SUCCESS"){
+   	                               //관련자 보여 주기 
+   	                                var obj = result.regist;
+   	                                $("#codeIdNm").val(obj.codeIdNm);
+   	                                $("#btn_idCheck").hide();
+	       						    $("#btn_update").prop("href", "javascript:codeUpdate('Edt','" + $("#codeId").val() + "')").text("코드 수정")
+	       					   }else{
+   		  						  alert(result.message); 
+   		  					   }
+   						    },
+						    function(request){
+							    alert("Error:" +request.status );	       						
+						    }    		
+   		        );
              }else if (code == "Del") {            	 
             	 $("#codeId").val(code1) ;
             	 $("form[name=regist]").attr("action", "/backoffice/basicManage/codeDelete.do").submit();
@@ -205,7 +203,6 @@
     					    alert("Error:" +request.status );	       						
     				    }    		
             	);
-            	
         	}else {
         		$("#right_V").val("");
         		$("#detailTable").html('');  
@@ -226,8 +223,7 @@
         	if ($("#"+input_id).val() != ""){
         		uniAjaxSerial(url, param, 
 	        			    function(result) {	
-        			            alert(result.status);
-								if (result != null) {	       					
+        			           if (result != null) {	       					
 									if (result.status == "SUCCESS"){
 										if (result.result = "OK"){
 											alert('<spring:message code="common.codeOk.msg" />');

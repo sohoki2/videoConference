@@ -6,7 +6,7 @@ import com.sohoki.backoffice.sym.ccm.cca.service.CmmnCode;
 import com.sohoki.backoffice.sym.ccm.cca.service.CmmnCodeVO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
-@Mapper("CmmnCodeManageMapper")
+@Mapper
 public interface EgovCmmnCodeManageMapper {
 
     public List<CmmnCodeVO> selectCmmnCodeListByPagination(CmmnCodeVO vo);
@@ -22,6 +22,5 @@ public interface EgovCmmnCodeManageMapper {
 	public int deleteCmmnCode(String codeId);
 	
 	public int selectCmmnCodeListTotCnt(CmmnCodeVO  vo);	
-	//아이디 체크 
-	public int selectIDCheck (String codeId);
+	
 }

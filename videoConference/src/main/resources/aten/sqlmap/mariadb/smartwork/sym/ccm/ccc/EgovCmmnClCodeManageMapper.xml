@@ -23,7 +23,6 @@
 					</choose>
 				</if>
 			</where>
-			ORDER BY CL_CODE ASC
 		) R
 		limit #{firstIndex}, #{recordCountPerPage}
 		ORDER BY RNUM ASC

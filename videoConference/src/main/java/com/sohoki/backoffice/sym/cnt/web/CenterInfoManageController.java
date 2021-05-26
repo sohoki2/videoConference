@@ -138,7 +138,7 @@ public class CenterInfoManageController {
 		}catch(Exception e) {
 			LOGGER.info(e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.delete"));	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
 		}
 		return model;
 	}

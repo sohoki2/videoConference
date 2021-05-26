@@ -5,19 +5,14 @@ import java.util.List;
 
 public interface EgovCcmCmmnCodeManageService {
 
+	
+	List<CmmnCodeVO> selectCmmnCodeListByPagination(CmmnCodeVO vo) throws Exception;
 	/**
 	 * 공통코드를 삭제한다.
 	 * @param cmmnCode
 	 * @throws Exception
 	 */
 	int deleteCmmnCode(String codeId) throws Exception;
-
-	/**
-	 * 공통코드를 등록한다.
-	 * @param cmmnCode
-	 * @throws Exception
-	 */
-	int insertCmmnCode(CmmnCode cmmnCode) throws Exception;
 	     
 	/**
 	 * 공통코드 상세항목을 조회한다.
@@ -35,13 +30,6 @@ public interface EgovCcmCmmnCodeManageService {
 	 */
 	List<?> selectCmmnCodeList(CmmnCodeVO searchVO) throws Exception;
 
-    /**
-	 * 공통코드 총 갯수를 조회한다.
-     * @param searchVO
-     * @return int(공통코드 총 갯수)
-     */
-    int selectCmmnCodeListTotCnt(CmmnCodeVO searchVO) throws Exception;
-
 	/**
 	 * 공통코드를 수정한다.
 	 * @param cmmnCode
@@ -49,6 +37,4 @@ public interface EgovCcmCmmnCodeManageService {
 	 */
 	int updateCmmnCode(CmmnCode cmmnCode) throws Exception;
 
-	
-	int selectIDCheck(String codeId) throws Exception;
 }

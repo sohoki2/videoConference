@@ -10,7 +10,7 @@ import com.sohoki.backoffice.sym.ccm.cde.vo.CmmnDetailCodeVO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 
-@Mapper("CmmnDetailCodeManageMapper")
+@Mapper
 public interface EgovCmmnDetailCodeManageMapper {
 
     public List<CmmnDetailCodeVO> selectCmmnDetailCodeListByPagination(String codeId);
@@ -34,10 +34,6 @@ public interface EgovCmmnDetailCodeManageMapper {
 	public int deleteCmmnDetailCode(String code);
 	
 	public int deleteCmmnDetailCodeId(String value);
-		
-	public int selectCmmnDetailCodeListTotCnt(String  codeId);
-	
-	public int selectCmmnDetailCodeIdCheck(String code);
 	
 	public List<CmmnDetailCode> selectCmmnDetailResTypeCombo (CmmnDetailCodeVO vo);
 

@@ -4,31 +4,26 @@
 
 	<select id="selectCmmnCodeListByPagination" resultType="CmmnCodeVO">
 		
-		SELECT
-			SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-			
-			R.*
+		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+			   R.*
 		FROM
 		(
-			SELECT
-				 A.CODE_ID as codeId, 
-				 A.CODE_ID_NM as codeIdNm, 
-				 A.USE_AT as useAt
+			SELECT Row_Number() OVER (ORDER BY A.CODE_ID DESC) AS RNUM, 
+				   A.CODE_ID as codeId, 
+				   A.CODE_ID_NM as codeIdNm, 
+				   A.USE_AT as useAt
 			FROM lettccmmncode A				     
 			WHERE A.USE_AT = 'Y' and A.CL_CODE = 'NHI'
 				<if test="searchKeyword != ''">
-							AND (A.CODE_ID LIKE  '%'|| #{searchKeyword} || '%'  or  A.CODE_ID_NM LIKE '%'|| #{searchKeyword} || '%')
+					AND (A.CODE_ID LIKE  '%' + #{searchKeyword} + '%'  or  A.CODE_ID_NM LIKE '%' + #{searchKeyword} + '%')
 				</if>					
-			ORDER BY A.CODE_ID ASC
 		) R
-		
-		limit #{firstIndex},#{recordCountPerPage}
+		WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}    
 		ORDER BY RNUM ASC
 	</select>
 	
 	<select id="selectCmmnCodeList" resultType="CmmnCode">
-		SELECT
-			A.CL_CODE, A.CODE_ID, A.CODE_ID_NM, A.USE_AT
+		SELECT A.CL_CODE, A.CODE_ID, A.CODE_ID_NM, A.USE_AT
 		FROM lettccmmncode A		   
 		WHERE A.CL_CODE = 'NHI' AND A.USE_AT = 'Y'
 	</select>
@@ -38,18 +33,13 @@
 		FROM lettccmmncode A		     
 		WHERE A.CODE_ID = #{value} and A.CL_CODE = 'NHI'
 	</select>
-	<select id="selectIDCheck" resultType="java.lang.Integer">
-	       SELECT ifnull(count(*),0)
-			FROM lettccmmncode A				
-			where CODE_ID = #{codeId}	
-	</select>
 	<select id="selectCmmnCodeListTotCnt" resultType="java.lang.Integer">
-	        SELECT ifnull(count(*),0)
-				FROM lettccmmncode A				     
-				WHERE A.USE_AT = 'Y' and  A.CL_CODE = 'NHI'
-					<if test="searchKeyword != ''">
-								AND (A.CODE_ID LIKE  '%'|| #{searchKeyword} || '%'  or  A.CODE_ID_NM LIKE '%'|| #{searchKeyword} || '%')
-					</if>					
+	        SELECT ISNULL(COUNT(*),0) as cnt
+			FROM lettccmmncode A				     
+			WHERE A.USE_AT = 'Y' and  A.CL_CODE = 'NHI'
+			     <if test="searchKeyword != ''">
+					AND (A.CODE_ID LIKE  '%'+ #{searchKeyword} + '%'  or  A.CODE_ID_NM LIKE '%'+ #{searchKeyword} + '%')
+				 </if>					
 	</select>
 
 	<insert id="insertCmmnCode">
@@ -59,7 +49,7 @@
 		)
 		VALUES
 		(
-			#{codeId}, #{codeIdNm}, #{codeIdDc ,jdbcType=VARCHAR}, 'Y', 'NHI', now(), #{frstRegisterId ,jdbcType=VARCHAR}
+			#{codeId}, #{codeIdNm}, #{codeIdDc ,jdbcType=VARCHAR}, 'Y', 'NHI', getdate(), #{frstRegisterId ,jdbcType=VARCHAR}
 		)
 	</insert>	
 	<update id="updateCmmnCode">
@@ -67,7 +57,7 @@
 		                                                   CODE_ID_DC = #{codeIdDc ,jdbcType=VARCHAR}, 
 		                                                   USE_AT = 'Y', 
 		                                                   LAST_UPDUSR_ID = #{lastUpdusrId ,jdbcType=VARCHAR},
-		                                                   LAST_UPDT_PNTTM = now()
+		                                                   LAST_UPDT_PNTTM = getdate()
 		 WHERE CODE_ID = #{codeId}
 	</update>	
 	<delete id="deleteCmmnCode">

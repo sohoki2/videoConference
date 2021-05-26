@@ -396,7 +396,7 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit"><spring:message code="page.center.telInfo" /> <span class="join_id_comment joinSubTxt"></span></p>
+                    <p class="pop_tit"><spring:message code="page.center.faxInfo" /> <span class="join_id_comment joinSubTxt"></span></p>
                       <input type="text" title="연락처" id="centerFax" size="30" />
                 </div>                
             </div>
