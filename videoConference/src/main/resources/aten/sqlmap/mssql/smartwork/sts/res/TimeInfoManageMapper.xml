@@ -5,14 +5,14 @@
     <select id="selectSTimeInfoBarList" resultType="lmap">
       <![CDATA[
         SELECT a.TIME_SEQ, a.SWC_TIME, 
-               CASE WHEN a.SWC_RESDAY != SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),1,8) THEN RES_SEQ
-        	               WHEN a.SWC_TIME > SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),9,4)  THEN RES_SEQ
-        	              WHEN a.RES_SEQ > 0 THEN a.RES_SEQ
+               CASE WHEN a.SWC_RESDAY != CONVERT(VARCHAR(8), GETDATE(), 112) THEN RES_SEQ
+        	        WHEN a.SWC_TIME > REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','')  THEN RES_SEQ
+        	        WHEN a.RES_SEQ > 0 THEN a.RES_SEQ
                ELSE -1
                END AS RES_SEQ,  a.APPRIVAL, a.USE_YN, a.MEETING_ID, a.SWC_RESDAY
-	    FROM tb_swctime a, tb_meeting_room b 
+	    FROM TB_SWCTIME a, TB_MEETING_ROOM b 
 	    WHERE a.SWC_RESDAY = #{params.swcResday} AND a.MEETING_ID = #{params.meetingId} 
-	          AND a.SWC_TIME between 0800 and 1830
+	          AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
 	          AND a.MEETING_ID = b.MEETING_ID
 	    ORDER BY SWC_TIME ASC
 	   ]]>
@@ -20,12 +20,13 @@
     <select id="selectSTimeInfoBarListKiosk" resultType="TimeInfoVO">
       <![CDATA[
         SELECT TIME_SEQ, SWC_TIME, 
-			        CASE  WHEN SWC_TIME > SUBSTRING(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),9,4)  THEN RES_SEQ
+			        CASE  WHEN SWC_TIME > REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','') THEN RES_SEQ
 			        ELSE -1
 			        END AS resSeq,
 			        APPRIVAL, USE_YN, SWC_SEQ, SWC_RESDAY
 	    FROM tb_swctime
-	    WHERE SWC_RESDAY = #{swcResday} AND SWC_SEQ = #{swcSeq} and SWC_TIME between 0800 and 1830
+	    WHERE SWC_RESDAY = #{swcResday} AND SWC_SEQ = #{swcSeq} 
+	          AND SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
 	    ORDER BY SWC_TIME ASC
 	   ]]>
     </select>
@@ -52,7 +53,7 @@
 					 count(TIME_SEQ)as count , 
 					 a.SWC_SEQ, b.SEAT_NAME, a.SWC_RESDAY,
 					 e.HOL_DT_YN  
-		  FROM tb_swcTime a, TB_SWC_ROOM b , TB_CENTERINFO c, TB_HOLY e
+		  FROM TB_SWCTIME a, TB_SWC_ROOM b , TB_CENTERINFO c, TB_HOLY e
 		  WHERE  a.SWC_SEQ = b.SWC_SEQ AND b.CENTER_ID = c.CENTER_ID  
 				      AND b.CENTER_ID = #{centerId} AND b.SWC_SEQ = #{swcSeq}
 					  AND a.SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay}
@@ -65,16 +66,17 @@
 	     ]]>
     </select>
     <select id="selectTimeUp" resultType="java.lang.String">
-      SELECT fn_upsTimedown(#{endTime}) as endTime
+      SELECT dbo.FN_UPSTIMEDOWN(#{endTime}) as endTime
     </select>
     
     
     
     <!--  좌석 화인  -->
     <select id="selectResPreCheckInfo" resultType="java.lang.Integer">
-          SELECT  IFNULL(COUNT(*),0)
-	      FROM tb_swctime
-	      WHERE  SWC_RESDAY = #{params.timeStartDay}  and MEETING_ID = #{params.meetingId} and swc_time between #{params.strTime} and #{params.endTime}      
+          SELECT  ISNULL(COUNT(*),0)
+	      FROM TB_SWCTIME
+	      WHERE  SWC_RESDAY = #{params.timeStartDay}  and MEETING_ID = #{params.meetingId} 
+	             AND SWC_TIME BETWEEN #{params.strTime} and #{params.endTime}      
 		         AND RES_SEQ != 0       
 		         AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
 		         <if test="params.resGubun == 'SWC_GUBUN_2' ">
@@ -102,13 +104,13 @@
     
     <!--  회의실 장기 예약 -->
     <select id="selectResPreCheckInfoL" resultType="java.lang.Integer">
-          SELECT  IFNULL(COUNT(*),0)
-	      FROM tb_swctime
+          SELECT  ISNULL(COUNT(*),0) as CNT
+	      FROM TB_SWCTIME
 	      WHERE  SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay}  
-	                 AND MEETING_ID = #{meetingId} 
-	                 AND swc_time BETWEEN #{strTime} AND #{endTime}      
-				     AND RES_SEQ != 0       
-				     AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+	             AND MEETING_ID = #{meetingId} 
+	             AND swc_time BETWEEN #{strTime} AND #{endTime}      
+				 AND RES_SEQ != 0       
+				 AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
     </select>
     
     
@@ -143,8 +145,8 @@
     <update id="updateTimeInfoL">
         UPDATE tb_swctime set RES_SEQ = #{resSeq}, APPRIVAL =#{apprival}
         WHERE SWC_SEQ = #{swcSeq} 
-                   AND SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay} 
-                   AND SWC_TIME BETWEEN #{strTime} AND #{endTime}
+              AND SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay} 
+              AND SWC_TIME BETWEEN #{strTime} AND #{endTime}
     </update>
     
     <update id="resTimeReset">

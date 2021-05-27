@@ -28,29 +28,27 @@
 							</if>		
 					    
 	        ) TB
-	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
-	        ORDER BY TB.CENTER_ID  DESC
+	     WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+	     ORDER BY TB.CENTER_ID  DESC
      </select>
     <select id="selectCenterInfoManageCombo" resultType="CenterInfo">
-	       SELECT  CENTER_ID , CENTER_NM 
-	       FROM TB_CENTERINFO
-	       WHERE CENTER_USE_YN = 'Y'
-	       ORDER BY  CENTER_NM  ASC
+         SELECT  CENTER_ID , CENTER_NM 
+         FROM TB_CENTERINFO
+         WHERE CENTER_USE_YN = 'Y'
+         ORDER BY  CENTER_NM  ASC
     </select>
     <select id="selectCenterInfoManageDetail"  resultType="lmap">
-           SELECT  CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1,  CENTER_ADDR2, CENTER_TEL,
+         SELECT  CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1,  CENTER_ADDR2, CENTER_TEL,
 				   CENTER_FAX, CENTER_USER_ID, CENTER_REGDATE, CENTER_UPDATE_USER_ID, 
 				   CENTER_UPDATE_DATE, CENTER_IMG, CENTER_URL, CENTER_SEAT_IMG, CENTER_USE_YN , 
 				   REST_INFO, MEETINGROOM_INFO, CENTER_INFO,
 				   SUBSTRING(CENTER_ZIPCODE,0,3) AS center_zipcode1, SUBSTRING(CENTER_ZIPCODE,4,6) AS center_zipcode2 ,     
 				   ADMIN_APPROVAL_YN, FLOOR_INFO, START_FLOOR, END_FLOOR
-		    FROM TB_CENTERINFO
-		    WHERE CENTER_ID = #{centerId}		  
+		 FROM TB_CENTERINFO
+		 WHERE CENTER_ID = #{centerId}		  
     </select>
     
-    
-    
-     <insert id="insertCenterInfoManage" >
+    <insert id="insertCenterInfoManage" >
          <selectKey resultType="String"  keyProperty="centerId" order="BEFORE">
             SELECT dbo.FN_CENTERID() as centerId
          </selectKey>
@@ -115,7 +113,7 @@
 				 FROM TB_FLOORINFO 
 				 WHERE CENTER_ID =#{centerId}
 					    AND FLOOR_INFO NOT IN ( SELECT  CODE
-										        FROM lettccmmndetailcode
+										        FROM LETTCCMMNDETAILCODE
 										        WHERE CODE_ID = 'CNETER_FLOOR'
 										                AND CODE_DC IN  (
 										                  select  SUBSTRING_INDEX(SUBSTRING_INDEX(tb_centerinfo.FLOOR_INFO, ',', tb_numbers.n), ',', -1) name

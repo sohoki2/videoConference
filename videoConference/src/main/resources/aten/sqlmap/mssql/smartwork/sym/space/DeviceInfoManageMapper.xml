@@ -4,19 +4,20 @@
 
    <select id="selectDevicePageInfoManageListByPagination" resultType="lmap">
 		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-			TB.* FROM (
-				SELECT 
+			   TB.* 
+		FROM (
+				SELECT  ROW_NUMBER() OVER (ORDER BY A.DEVICE_ID DESC) AS RNUM, 
 						A.DEVICE_ID, A.DEVICE_NM, A.DEVICE_IP, A.DEVICE_MAC, A.DEVICE_URL,
 						A.DEVICE_OS, A.DEVICE_STARTTIME, A.DEVICE_ENDTIME, A.DEVICE_REMARK, A.DEVICE_ENDCONNTIME,
 						B.CENTER_NM, FN_MEETINGNM(A.MEETING_ID) as MEETING_NAME,
 						<![CDATA[ 
 							CASE 
-								WHEN DATE_ADD(A.DEVICE_ENDCONNTIME, INTERVAL + 3 MINUTE) >= now() THEN 'ON'
+								WHEN DATE_ADD(A.DEVICE_ENDCONNTIME, INTERVAL + 3 MINUTE) >= GETDATE() THEN 'ON'
 								ELSE 'OFF'
 							END AS net_status,
 					  ]]>
 					  A.DEVICE_STATUS, A.USE_YN, 
-					  DATE_FORMAT(A.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, 
+					  FORMAT(UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE,
 					  C.FLOOR_NAME, A.UPDATE_ID
 				FROM TB_DEVICEINFO A, TB_CENTERINFO B, TB_FLOORINFO C
 				WHERE A.CENTER_ID = B.CENTER_ID
@@ -34,10 +35,9 @@
 						</otherwise>
 					</choose>
 				</if>
-				ORDER BY A.DEVICE_ID DESC
-			)TB
+			   )TB
+	    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
 		ORDER BY TB.DEVICE_ID DESC 
-		LIMIT ${params.firstIndex},   ${params.recordCountPerPage}  	
 	</select>
 	<select id="selectDevicePageInfoManageDetail"  resultType="lmap">
 		SELECT  A.DEVICE_ID, A.DEVICE_NM, A.DEVICE_IP, A.DEVICE_MAC, A.DEVICE_URL,
@@ -50,7 +50,7 @@
    	</select>		
 		
 	<select id="selectDeviceExist" resultType="java.lang.Integer">
-       SELECT IFNULL(COUNT(*),0)   
+       SELECT ISNULL(COUNT(*),0)   
        FROM TB_DEVICEINFO A
        WHERE A.DEVICE_ID = #{deviceId} 
    	</select>
@@ -66,8 +66,8 @@
        FROM TB_DEVICEINFO a, TB_SWC_ROOM b, TB_SWCTIME c
        WHERE a.MEETING_ID = b.MEETING_ID
              AND b.ITEM_ID = c.MEETING_ID
-             AND c.SWC_RESDAY  =  DATE_FORMAT(now(), '%Y%m%d')
-             AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(now(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( now(), '%H%i')
+             AND c.SWC_RESDAY  =  CONVERT(VARCHAR(8), GETDATE(), 112)
+             AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(GETDATE(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( GETDATE(), '%H%i')
              AND a.DEVICE_ID = #{deviceId} 
     </select>		
 	<insert id="insertDevicePageInfoManage">
@@ -82,7 +82,7 @@
 		(
 			#{deviceId}, #{deviceNm, jdbcType=VARCHAR}, #{deviceIp, jdbcType=VARCHAR}, #{deviceMac, jdbcType=VARCHAR}, #{deviceUrl, jdbcType=VARCHAR},
 			#{deviceOs, jdbcType=VARCHAR}, #{deviceStartTime, jdbcType=VARCHAR}, #{deviceEndTime, jdbcType=VARCHAR}, #{deviceRemark, jdbcType=VARCHAR},
-			#{deviceStatus, jdbcType=VARCHAR}, #{useYn, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, now(), #{userId, jdbcType=VARCHAR},now(), 
+			#{deviceStatus, jdbcType=VARCHAR}, #{useYn, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR},GETDATE(), 
 			#{meetingId}, #{centerId}, #{floorSeq, jdbcType=VARCHAR},#{partSeq, jdbcType=VARCHAR}
 		)
 	</insert>
@@ -94,7 +94,7 @@
 								  DEVICE_ENDTIME = #{deviceEndTime, jdbcType=VARCHAR},
 								  DEVICE_OS = #{deviceOs, jdbcType=VARCHAR},
 								  USE_YN = #{useYn, jdbcType=VARCHAR}, 
-								  UPDATE_DATE = now(), 
+								  UPDATE_DATE = GETDATE(), 
 								  UPDATE_ID = #{userId, jdbcType=VARCHAR},
 								  CENTER_ID = #{centerId, jdbcType=VARCHAR},
 								  FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR},

@@ -466,7 +466,8 @@
 	     oAppRef: oEditors,
 	     elPlaceHolder: "ir3",                        
 	     sSkinURI: "/js/SE/SmartEditor2Skin.html",
-	     htParams: { bUseToolbar: true,
+	     htParams: { 
+	    	 bUseToolbar: true,
 	         fOnBeforeUnload: function () { },
 	         //boolean 
 	         fOnAppLoad: function () { }

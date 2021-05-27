@@ -4,7 +4,8 @@
      <select id="selectFloorPartInfoManageListByPagination"  resultType="lmap">
 		SELECT TB.* , SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
 	    FROM (
-					    SELECT c.PART_SEQ, c.PART_NAME, b.FLOOR_SEQ, b.FLOOR_INFO, b.FLOOR_NAME,
+					    SELECT ROW_NUMBER() OVER (ORDER BY c.PART_SEQ DESC) AS RNUM, 
+					           c.PART_SEQ, c.PART_NAME, b.FLOOR_SEQ, b.FLOOR_INFO, b.FLOOR_NAME,
 					           a.CENTER_ID,  a.CENTER_NM  ,
 						       CASE  WHEN  length(PART_MAP1) > 0 THEN 
 				  	               PART_MAP1
@@ -30,10 +31,9 @@
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partUseyn)">
 							      AND c.PART_USEYN = #{params.partUseyn}
 							  </if>		
-					    ORDER BY c.PART_ORDER asc , c.PART_SEQ  DESC
 	        ) TB  
+	    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage} 
         ORDER BY TB.PART_ORDER asc ,  TB.PART_SEQ  DESC
-        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
     </select>
     <select id="selectFloorPartInfoManageCombo" resultType="lmap">
 	       SELECT  PART_SEQ , PART_NAME 
@@ -64,7 +64,7 @@
          VALUES (#{centerId}, #{floorSeq}, #{partMap1,jdbcType=VARCHAR}, #{partMap2,jdbcType=VARCHAR}, #{partCss,jdbcType=VARCHAR}, #{partName,jdbcType=VARCHAR}, 
                  #{partSeatrule,jdbcType=VARCHAR},#{partMiniCss,jdbcType=VARCHAR},  #{partMiniTop,jdbcType=VARCHAR}, #{partMiniLeft,jdbcType=VARCHAR},
                  #{partUseyn,jdbcType=VARCHAR}, #{partOrder,jdbcType=VARCHAR},
-                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR})
+                 GETDATE(), #{userId,jdbcType=VARCHAR},  GETDATE(), #{userId,jdbcType=VARCHAR})
                 
     </insert>
     <update id="updateFloorPrartInfoManage" >
@@ -84,7 +84,7 @@
                                   <if test="partMap2 !=  '' ">                     
                                     , FLOOR_MAP2 = #{partMap2,jdbcType=VARCHAR}
                                   </if>      
-	                              , UPDATE_DATE = NOW()
+	                              , UPDATE_DATE = GETDATE()
 	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	     WHERE PART_SEQ = #{partSeq}           
     </update> 

@@ -5,7 +5,8 @@
      <select id="selectFloorInfoManageListByPagination"  resultType="lmap">
 		SELECT TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
 	    FROM (
-					    SELECT b.FLOOR_SEQ, b.FLOOR_NAME, b.FLOOR_INFO, 
+					    SELECT ROW_NUMBER() OVER (ORDER BY b.FLOOR_SEQ DESC) AS RNUM, 
+					           b.FLOOR_SEQ, b.FLOOR_NAME, b.FLOOR_INFO, 
 					           a.CENTER_ID  ,      
 							   a.CENTER_NM  ,
 						       CASE  WHEN  length(FLOOR_MAP) > 0 THEN 
@@ -28,10 +29,10 @@
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorUseyn)">
 							  AND b.FLOOR_USEYN = #{params.floorUseyn}
 							 </if>
-					    ORDER BY b.FLOOR_SEQ  DESC
 	        ) TB  
+	    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
         ORDER BY TB.FLOOR_SEQ  DESC
-        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+        		 	    
      </select>
     <select id="selectFloorInfoManageCombo" resultType="lmap">
 	       SELECT  a.FLOOR_SEQ , a.FLOOR_NAME 
@@ -63,7 +64,7 @@
 								  REG_DATE, REG_ID, UPDATE_DATE,UPDATE_ID)
          VALUES (#{centerId}, #{floorInfo}, #{floorMap,jdbcType=VARCHAR}, #{floorMap1,jdbcType=VARCHAR}, #{floorName,jdbcType=VARCHAR}, 
                  0, 0, #{floorUseyn,jdbcType=VARCHAR}, #{floorPart,jdbcType=VARCHAR},
-                 NOW(), #{userId,jdbcType=VARCHAR},  NOW(), #{userId,jdbcType=VARCHAR})
+                 GETDATE(), #{userId,jdbcType=VARCHAR},  GETDATE(), #{userId,jdbcType=VARCHAR})
                 
     </insert>
     <update id="updateFloorInfoManage" >
@@ -79,7 +80,7 @@
 	                                <if test="floorMap1 !=  '' ">                     
 	                                 , FLOOR_MAP1 = #{floorMap1,jdbcType=VARCHAR}
 	                                </if>      
-	                                , UPDATE_DATE = NOW()
+	                                , UPDATE_DATE = GETDATE()
 	                                , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	      WHERE FLOOR_SEQ = #{floorSeq}           
     </update>    

@@ -4,7 +4,7 @@
 
     <select id="selectAuthorIInfoManageCombo"  resultType="AuthorInfo">
 	       SELECT  AUTHOR_CODE as authorCode, AUTHOR_NM as authorNm
-	       FROM lettnauthorinfo       
-	       ORDER BY  AUTHOR_CODE  asc
+	       FROM LETTNAUTHORINFO       
+	       ORDER BY  AUTHOR_CODE  ASC
     </select>
 </mapper>

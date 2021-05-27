@@ -4,7 +4,7 @@
 
    <select id="selectAdminUserManageListByPagination" resultType="lmap">     	      
 		 	SELECT * FROM ( 
-		 	SELECT  Row_Number() OVER (ORDER BY REG_DATE DESC) AS RNUM, 
+		 	SELECT  ROW_NUMBER() OVER (ORDER BY REG_DATE DESC) AS RNUM, 
 		 	        TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT , ROW_NUMBER() RNUM
 		 	FROM (
 				    SELECT

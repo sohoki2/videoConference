@@ -6,10 +6,10 @@
 		    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
 	               TB.* 
 	        FROM (
-					    SELECT b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
+					    SELECT ROW_NUMBER() OVER (ORDER BY b.USER_UPDATE DESC) AS RNUM, 
+					           b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
 							   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
-							   DATE_FORMAT(b.USER_UPDATE,'%Y-%m-%d %H:%i:%s') USER_UPDATE, 
-							   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME        
+							   FORMAT(b.USER_UPDATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE, 
 					    FROM  TB_COMPANYINFO a, TB_USERINFO b, LETTCCMMNDETAILCODE c, TB_CENTERINFO d, TB_FLOORINFO e
 					    WHERE a.COM_CODE = b.COM_CODE 
 					          AND b.USER_STATE = c.CODE    
@@ -40,10 +40,9 @@
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
 							      AND e.FLOOR_SEQ = #{params.searchFloorSeq}
 							  </if>
-					    ORDER BY b.USER_UPDATE  DESC
-	        ) TB  
+		    ) TB  
+		    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage} 
 	        ORDER BY TB.USER_UPDATE  DESC
-	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
     </select>
     <select id="selectUserInfoManageCombo" resultType="lmap">
 	       SELECT a.EMP_NO , a.EMP_NAME 

@@ -7,52 +7,50 @@
 		FROM   (           
 				        SELECT 	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, tb.*
 				        FROM 	(    
-						                   SELECT a.MSG_SEQ, fn_DetailCodeNm( a.MSG_GUBUN) as msg_gubuntxt, a.MSG_TITLE, a.MSG_CONTENT, 
-								                                            a.MSG_REG_ID, 
-								                                            DATE_FORMAT(a.MSG_REG_DATE,'%Y-%m-%d %H:%i:%s') MSG_REG_DATE
-                                                                            , MSG_UPDATE_ID, SUBSTRING( MSG_UPDATE_DATE, 1,10) MSG_UPDATE_DATE , USEYN
-						                          			FROM	 tb_messageinfo a  
-						                              	    WHERE 	1=1
-						                              	    <if test="searchKeyword != ''">
-										                          <choose>
-										                            <when test="searchCondition == 0">
-										                              <![CDATA[
-										                                       AND (a.MSG_TITLE LIKE CONCAT('%',#{searchKeyword},'%')   OR a.MSG_GUBUN LIKE CONCAT('%',#{searchKeyword},'%')  )
-										                             ]]>
-										                            </when>
-										                            <otherwise>
-										                              <choose>
-										                                <when test="searchCondition == 1">
-										                                  <![CDATA[
-										                                        AND a.MSG_TITLE LIKE CONCAT('%',#{searchKeyword},'%') 
-										                                    ]]>
-										                                 </when>
-										                                 <otherwise>
-										                                     <![CDATA[
-										                                        AND a.MSG_GUBUN LIKE CONCAT('%',#{searchKeyword},'%') 
-										                                      ]]>
-										                                  </otherwise>
-										                              </choose>
-										                            </otherwise>
-										                          </choose>
-										                    </if>		 	
-						                              	    ORDER BY a.MSG_SEQ desc
-						          	    )tb				                        
+				                   SELECT ROW_NUMBER() OVER (ORDER BY a.MSG_SEQ DESC) AS RNUM, 
+				                          a.MSG_SEQ, fn_DetailCodeNm( a.MSG_GUBUN) as msg_gubuntxt, a.MSG_TITLE, a.MSG_CONTENT, a.MSG_REG_ID, 
+                                          FORMAT(a.MSG_REG_DATE,'yyyy-MM-dd HH:mm:ss') MSG_REG_DATE, 
+                                          MSG_UPDATE_ID, SUBSTRING( MSG_UPDATE_DATE, 1,10) MSG_UPDATE_DATE , USEYN
+				                   FROM	 TB_MESSAGEINFO a  
+				                   WHERE 	1=1
+                              	   <if test="searchKeyword != ''">
+				                          <choose>
+				                            <when test="searchCondition == 0">
+				                              <![CDATA[
+				                                   AND (a.MSG_TITLE LIKE CONCAT('%',#{searchKeyword},'%')   OR a.MSG_GUBUN LIKE CONCAT('%',#{searchKeyword},'%')  )
+				                               ]]>
+				                            </when>
+				                            <otherwise>
+				                              <choose>
+				                                <when test="searchCondition == 1">
+				                                  <![CDATA[
+				                                        AND a.MSG_TITLE LIKE CONCAT('%',#{searchKeyword},'%') 
+				                                    ]]>
+				                                 </when>
+				                                 <otherwise>
+				                                     <![CDATA[
+				                                        AND a.MSG_GUBUN LIKE CONCAT('%',#{searchKeyword},'%') 
+				                                      ]]>
+				                                  </otherwise>
+				                              </choose>
+				                            </otherwise>
+				                          </choose>
+				                   </if>		 	
+		                        )tb				                        
 				        ) X
-		WHERE 1=1 
-		ORDER BY X.MSG_SEQ desc 
-		LIMIT  #{firstIndex}, #{recordCountPerPage}          		 	    
+		WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
+		ORDER BY X.MSG_SEQ desc 		       		 	    
    </select>
-    <select id="selectMsgCombo" resultType="MessageInfo"> 
+   <select id="selectMsgCombo" resultType="MessageInfo"> 
          SELECT MSG_SEQ , MSG_TITLE 
-         FROM tb_messageinfo 
+         FROM TB_MESSAGEINFO 
          WHERE  MSG_GUBUN LIKE CONCAT('%',#{msgGubun},'%') 
     
-    </select>   
+   </select>   
    <select id="selectMsgManageDetail" resultType="lmap">
-		     SELECT 	a.MSG_SEQ, a.MSG_GUBUN, fn_DetailCodeNm( a.MSG_GUBUN) as msgGubunTxt, a.MSG_TITLE, a.MSG_CONTENT, 
-							a.MSG_REG_ID,  a.MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE, a.UseYn
-		     FROM	tb_messageinfo a  
+		     SELECT a.MSG_SEQ, a.MSG_GUBUN, dbdo.FN_DETAILCODENM( a.MSG_GUBUN) as msgGubunTxt, a.MSG_TITLE, a.MSG_CONTENT, 
+					a.MSG_REG_ID,  a.MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE, a.UseYn
+		     FROM	TB_MESSAGEINFO a  
 		     WHERE 	a.MSG_SEQ = #{msgSeq}
    </select>
 
@@ -60,16 +58,16 @@
 	      INSERT INTO tb_messageinfo( MSG_GUBUN, MSG_TITLE, MSG_SENDTYPE,  MSG_CONTENT, 
 						                              	      MSG_REG_ID,  MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE)
 	      VALUES ( #{msgGubun}, #{msgTitle}, #{msgSendtype,jdbcType=VARCHAR }, #{msgContent,jdbcType=VARCHAR }, 
-	                      #{msgRegId ,jdbcType=VARCHAR}, NOW(), #{msgRegId ,jdbcType=VARCHAR}, NOW())
+	                      #{msgRegId ,jdbcType=VARCHAR}, getdate(), #{msgRegId ,jdbcType=VARCHAR}, getdate())
    </insert>
    <update id="updateMsgManage">
 	      UPDATE tb_messageinfo SET MSG_GUBUN = #{msgGubun}
-									                             ,  MSG_TITLE = #{msgTitle }
-									                              ,  MSG_SENDTYPE = #{msgSendtype }
-									                             ,  MSG_CONTENT = #{msgContent,jdbcType=VARCHAR }                             
-									                             ,  MSG_UPDATE_DATE = NOW()
-									                             ,  MSG_UPDATE_ID = #{msgUpdateId ,jdbcType=VARCHAR}
-									                             , USEYN = #{useYn, jdbcType=VARCHAR}
+		                            ,  MSG_TITLE = #{msgTitle }
+		                            ,  MSG_SENDTYPE = #{msgSendtype }
+		                            ,  MSG_CONTENT = #{msgContent,jdbcType=VARCHAR }                             
+		                            ,  MSG_UPDATE_DATE = getdate()
+		                            ,  MSG_UPDATE_ID = #{msgUpdateId ,jdbcType=VARCHAR}
+		                            , USEYN = #{useYn, jdbcType=VARCHAR}
 	      WHERE MSG_SEQ = #{msgSeq}
    </update>
    <delete id="deleteMsgManage">

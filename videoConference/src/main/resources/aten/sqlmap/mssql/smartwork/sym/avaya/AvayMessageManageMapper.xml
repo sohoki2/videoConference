@@ -3,65 +3,65 @@
 <mapper namespace="com.sohoki.backoffice.sym.avaya.mapper.AvayMessageManageMapper">
 	
     <select id="selectAvayaInfoManageListByPagination"  resultType="AvayaMessageInfoVO">
-		
-		 
-	SELECT TA.* FROM ( 
-		 	SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* FROM (
-				    SELECT  REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
-		                        REQ_REGDATE		        
-				    FROM    TB_AVAYASENDMESSAGE
-				    WHERE 1=1		        
-				        <if test="searchKeyword != ''">
-				             AND DATE_FORMAT(REQ_REGDATE, '%Y%m%d) BETWEEN  #{searchStrDay} AND #{searchEndDay} 
-						</if>		        		     
-		             ORDER BY REQUESTID  DESC
-	           ) TB 
-	        ) TA
-	        ORDER BY TA.REQUESTID  DESC
-	       LIMIT   #{firstIndex},   #{recordCountPerPage}  	 
-	        		 	    
+		SELECT TA.* 
+		FROM ( 
+				 	SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+				 	        ROW_NUMBER() OVER (ORDER BY TB.REQUESTID DESC) AS RNUM,  
+				 	        TB.* 
+				 	FROM (
+						    SELECT  
+						            REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
+				                    REQ_REGDATE		        
+						    FROM    TB_AVAYASENDMESSAGE
+						    WHERE 1=1		        
+						         <if test="searchKeyword != ''">
+						             AND DATE_FORMAT(REQ_REGDATE, '%Y%m%d) BETWEEN  #{searchStrDay} AND #{searchEndDay} 
+								</if>		        		     
+				          ) TB 
+			    ) TA
+		WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         
+		ORDER BY TA.REQUESTID  DESC
      </select>
     
     
      <select id="selectRequestId" resultType="java.lang.String">
-        select fn_AvayaReqID()
+        SELECT dbo.FN_AVAYAREQID() as AVAYAREQID
      </select>
     
      <select id="selectAvayaInfoManageDetail"  resultType="AvayaMessageInfoVO">
            SELECT  REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT,
-                       REQ_REGDATE
-		    FROM tb_avayasendmessage
+                   REQ_REGDATE
+		    FROM TB_AVAYASENDMESSAGE
 		    WHERE REQUESTID = #{requestid}		  
     </select>
      
     
     <select id="selectAvayaMessageManageListTotCnt_S"  resultType="java.lang.Integer">        
-       SELECT IFNULL(COUNT(*),0) 
-       FROM    tb_avayasendmessage
+       SELECT ISNULL(COUNT(*),0) 
+       FROM   TB_AVAYASENDMESSAGE
 	   WHERE 1=1		        
-		        <if test="searchKeyword != ''">
-		            AND DATE_FORMAT(REQ_REGDATE, '%Y%m%d) BETWEEN  #{searchStrDay} AND #{searchEndDay} 
-					
-				</if>	  
+		     <if test="searchKeyword != ''">
+		         AND CONVERT(varchar(8), REQ_REGDATE, 112) BETWEEN  #{searchStrDay} AND #{searchEndDay} 
+			 </if>	  
     </select>
     <insert id="insertAvayaInfoInsertManage" >
         <![CDATA[
-             INSERT INTO tb_avayasendmessage (REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT)
-             VALUES (fn_AvayaReqID(), #{reqMessage},    #{reqMessageTxt}, #{resMessage,jdbcType=VARCHAR},  #{resMessageTxt,jdbcType=VARCHAR}
+             INSERT INTO TB_AVAYASENDMESSAGE (REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT)
+             VALUES (dbo.FN_AVAYAREQID(), #{reqMessage},    #{reqMessageTxt}, #{resMessage,jdbcType=VARCHAR},  #{resMessageTxt,jdbcType=VARCHAR}
              )
          ]]>
     </insert>
     <insert id="insertAvayaInfoInsertManageList" >
        <foreach collection="list" item="item" separator=";">
         <![CDATA[
-             INSERT INTO tb_avayasendmessage (REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT)
-             VALUES (fn_AvayaReqID(), #{reqMessage},    #{reqMessageTxt}, #{resMessage,jdbcType=VARCHAR},  #{resMessageTxt,jdbcType=VARCHAR}
+             INSERT INTO TB_AVAYASENDMESSAGE (REQUESTID, REQ_MESSAGE, REQ_MESSAGE_TXT, RES_MESSAGE, RES_MESSAGE_TXT)
+             VALUES (dbo.FN_AVAYAREQID(), #{reqMessage},    #{reqMessageTxt}, #{resMessage,jdbcType=VARCHAR},  #{resMessageTxt,jdbcType=VARCHAR}
              )
          ]]>
         </foreach>
     </insert>
     <delete id="deleteAvayaInfoManage">
-       DELETE FROM tb_avayasendmessage
+       DELETE FROM TB_AVAYASENDMESSAGE
        WHERE REQUESTID = #{requestid}
     </delete>
 </mapper>
