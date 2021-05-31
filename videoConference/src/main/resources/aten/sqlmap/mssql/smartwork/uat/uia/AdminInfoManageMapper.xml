@@ -4,15 +4,14 @@
 
    <select id="selectAdminUserManageListByPagination" resultType="lmap">     	      
 		 	SELECT * FROM ( 
-		 	SELECT  ROW_NUMBER() OVER (ORDER BY REG_DATE DESC) AS RNUM, 
-		 	        TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT , ROW_NUMBER() RNUM
+		 	SELECT  ROW_NUMBER() OVER (ORDER BY TB.REG_DATE DESC) AS RNUM, 
+		 	        TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
 		 	FROM (
-				    SELECT
-							      a.ADMIN_ID, a.ADMIN_NAME, a.ADMIN_TEL,
-		                          a.ADMIN_EMAIL, a.DEPT_ID, a.DEPT_NAME,
-								  a.ADMIN_PASSWORD, a.LOCK_YN, a.USE_YN,	
-								  CONVERT(varchar(10), a.REG_DATE, 120) REG_DATE,
-					              c.AUTHOR_NM 		                 
+				    SELECT  a.ADMIN_ID, a.ADMIN_NAME, a.ADMIN_TEL,
+	                        a.ADMIN_EMAIL, a.DEPT_ID, a.DEPT_NAME,
+							a.ADMIN_PASSWORD, a.LOCK_YN, a.USE_YN,	
+							CONVERT(varchar(10), a.REG_DATE, 120) REG_DATE,
+				            c.AUTHOR_NM 		                 
 				    FROM   tb_admin a , lettnauthorinfo c
 					WHERE a.AUTHOR_CODE = c.AUTHOR_CODE
 				          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
@@ -44,13 +43,13 @@
 				         
 	            ) TB 
 	        ) TA 
-	        WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}      
 	        ORDER BY TA.REG_DATE  DESC
    </select>
       
    <select id="selectAdminUserManageDetail" resultType="lmap">
 	     SELECT ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, DEPT_ID, DEPT_NAME, ADMIN_EMAIL, ADMIN_TEL, AUTHOR_CODE, UPDATE_PASSWORD, 
-	                LOCK_YN, USE_YN, EMP_NO, REG_DATE
+	            LOCK_YN, USE_YN, EMP_NO, REG_DATE
 	     FROM tb_admin
 	     WHERE ADMIN_ID = #{adminId}
    </select>
@@ -59,27 +58,27 @@
        INSERT INTO tb_admin( ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, DEPT_ID, DEPT_NAME, ADMIN_EMAIL, 
                                        ADMIN_TEL, REG_DATE, UPDATE_PASSWORD, AUTHOR_CODE, LOCK_YN, EMP_NO)
        VALUES (	#{adminId}	, #{adminPassword} , #{adminName}, #{useYn}, #{deptId,jdbcType=VARCHAR }, #{deptName}, #{adminEmail ,jdbcType=VARCHAR},
-       #{adminTel ,jdbcType=VARCHAR}, now(), now(), #{authorCode ,jdbcType=VARCHAR}, 'N' , #{empNo ,jdbcType=VARCHAR}  );
+       #{adminTel ,jdbcType=VARCHAR}, GETDATE(), GETDATE(), #{authorCode ,jdbcType=VARCHAR}, 'N' , #{empNo ,jdbcType=VARCHAR}  );
        
        UPDATE tb_empInfo SET ADMIN_GUBUN = 'ADMIN' WHERE EMPID = #{adminId}   
    </insert>
    <update id="updateAdminUserManage">
 	   UPDATE tb_admin SET ADMIN_NAME = #{adminName}
-	                                     ,  USE_YN = #{useYn}
-	                                     ,  DEPT_ID = #{deptId, jdbcType=VARCHAR }
-	                                     ,  DEPT_NAME = #{deptName}
-	                                     ,  ADMIN_EMAIL = #{adminEmail, jdbcType=VARCHAR }
-	                                     ,  ADMIN_TEL = #{adminTel, jdbcType=VARCHAR }
-	                                     ,  AUTHOR_CODE = #{authorCode , jdbcType=VARCHAR }
-	                                     <if test="adminPassword != ''">
-	                                     <!-- , ADMIN_PASSWORD = CRYPTION_AES256.ENC_AES(#{adminPassword}) -->
-	                                     , ADMIN_PASSWORD = #{adminPassword} 
-	                                     , UPDATE_PASSWORD = now()
-	                                     , LOCK_YN ='N'
-	                                     </if> 
-	                                     <if test="empNo != ''">
-	                                     ,  EMP_NO = #{empNo, jdbcType=VARCHAR }
-	                                     </if>
+                            ,  USE_YN = #{useYn}
+                            ,  DEPT_ID = #{deptId, jdbcType=VARCHAR }
+                            ,  DEPT_NAME = #{deptName}
+                            ,  ADMIN_EMAIL = #{adminEmail, jdbcType=VARCHAR }
+                            ,  ADMIN_TEL = #{adminTel, jdbcType=VARCHAR }
+                            ,  AUTHOR_CODE = #{authorCode , jdbcType=VARCHAR }
+                            <if test="adminPassword != ''">
+                            <!-- , ADMIN_PASSWORD = CRYPTION_AES256.ENC_AES(#{adminPassword}) -->
+                            , ADMIN_PASSWORD = #{adminPassword} 
+                            , UPDATE_PASSWORD = GETDATE()
+                            , LOCK_YN ='N'
+                            </if> 
+                            <if test="empNo != ''">
+                            ,  EMP_NO = #{empNo, jdbcType=VARCHAR }
+                            </if>
 	   WHERE ADMIN_ID = #{adminId}
    </update>
    <update id="updateAdminUserLockManage">

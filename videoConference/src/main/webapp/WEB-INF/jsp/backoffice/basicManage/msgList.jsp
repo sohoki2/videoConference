@@ -18,6 +18,7 @@
     <link href="/css/page.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/needpopup.min.css" />
     <link rel="stylesheet" href="/css/needpopup.css">
+    <link rel="stylesheet" type="text/css" href="/css/toggle.css">
     
     <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
     <script>
@@ -83,6 +84,7 @@
     		 	                { label: 'msg_seq', key: true, name:'msg_seq',       index:'msg_seq',      align:'center', hidden:true},
     			                { label: '메세지구분',  name:'msg_gubuntxt',         index:'msg_gubunTxt',        align:'left',   width:'12%'},
     			                { label: '제목', name:'msg_title',       index:'msg_title',      align:'center', width:'50%'},
+    			                { label: '사용유무', name:'useyn',       index:'UseYn',      align:'center', width:'10%'},
     			                { label: '작성자', name:'msg_update_id',      index:'msg_update_id',     align:'center', width:'14%'},
     			                { label: '최종 수정 일자', name:'msg_reg_date', index:'msg_reg_date', align:'center', width:'12%', 
     			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
@@ -98,7 +100,7 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "380px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
@@ -166,17 +168,16 @@
 	       }, delRow : function (msg_seq){
         	    if(msg_seq != "") {
         		   var params = {'msgSeq':msg_seq };
-        		   fn_uniDel("/backoffice/basicManage/msgDelete.do",params, " /backoffice/basicManage/msgList.do");
+        		   fn_uniDelAction("/backoffice/basicManage/msgDelete.do",params, "jqGridFunc.fn_search");
 		        }
            },fn_MessageInfo : function (mode, msgSeq){
         	    $("#btn_message").trigger("click");
 			    $("#mode").val(mode);
 		        $("#msgSeq").val(msgSeq);
 		        if (mode == "Edt"){
-		        	$("#btnUpdate").text("수정");
-		        	
-		     	   var params = "msgSeq="+$("#msgSeq").val();
-		     	   var url = "/backoffice/basicManage/msgDetail.do?"+params;
+		           $("#btnUpdate").text("수정");
+		           var params = {"msgSeq" : msgSeq};
+		     	   var url = "/backoffice/basicManage/msgDetail.do";
 		     	   uniAjaxSerial(url, params, 
 		          			function(result) {
 		     				       if (result.status == "LOGIN FAIL"){
@@ -188,7 +189,7 @@
 		       						      $("#msgTitle").val(obj.msg_title);
 							    		   $("#msgGubun").val( obj.msg_gubun  );
 							    		   $("#msgContent").val(obj.msg_content);
-							    		   $('input:radio[name=useYn]:radio[value=' + obj.useyn + ']').prop("checked", true);	 
+							    		   toggleClick("useYn", obj.useyn);
 							    		   jqGridFunc.fn_contentView();
 		       					   }
 		     				    },
@@ -196,6 +197,9 @@
 		     					    alert("Error:" +request.status );	       						
 		     				    }    		
 		               );
+		        }else{
+		        	$('input[name^=msg]').val("");
+		        	toggleDefault("useYn");
 		        }
            },clearGrid : function() {
                $("#mainGrid").clearGridData();
@@ -210,11 +214,11 @@
 		    	 //확인 
 		    	 var url = "/backoffice/basicManage/msgUpdate.do";
 		    	 var params = { 'msgSeq' : $("#msgSeq").val(),
-		    			 'msgTitle' : $("#msgTitle").val(),
-		    			 'msgGubun' : $("#msgGubun").val(),
-		    			 'msgContent' : $("#msgContent").val(),
-		    			 'useYn' :  fn_emptyReplace($('input[name="useYn"]:checked').val(),"Y"),
-		    			 'mode' : $("#mode").val()
+				    			'msgTitle' : $("#msgTitle").val(),
+				    		    'msgGubun' : $("#msgGubun").val(),
+				    			'msgContent' : $("#msgContent").val(),
+				    			'useYn' :  fn_emptyReplace($('#useYn').val(),"Y"),
+				    			'mode' : $("#mode").val()
 		    	 }; 
 		    	 uniAjax(url, params, 
 		      			function(result) {
@@ -223,8 +227,8 @@
 		   						   location.href="/backoffice/login.do";
 		   					   }else if (result.status == "SUCCESS"){
 		   						   //총 게시물 정리 하기
-		   						   $("#btn_needPopHide").trigger("click");
-		   						   $('#mainGrid').jqGrid().trigger("reloadGrid");
+		   						   need_close();
+		   						   jqGridFunc.fn_search();
 		   					   }
 		 				    },
 		 				    function(request){
@@ -232,7 +236,18 @@
 		 					    $("#btn_needPopHide").trigger("click");
 		 				    }    		
 		           );
-		  }   
+		  },fn_search: function(){
+			  //검색 
+	    	  $("#mainGrid").setGridParam({
+	    	    	datatype	: "json",
+	    	    	postData	: JSON.stringify({
+	          			"pageIndex": $("#pager .ui-pg-input").val(),
+	          			"searchKeyword" : $("#searchKeyword").val(),
+	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
+	         		}),
+	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
+	    	  }).trigger("reloadGrid");
+		 }   
     }
   </script>
 </head>
@@ -329,8 +344,10 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">*<spring:message code="common.UseYn.title" /> <span class="join_id_comment joinSubTxt"></span></p>
-                       <input type="radio" id="centerUseYn" name="centerUseYn" value="Y"  /><label>사용</label>
-			           <input type="radio" id="centerUseYn" name="centerUseYn" value="N"  /><label>사용안함</label>
+                       <label class="switch">                                               
+	                    	<input type="checkbox" id="useYn" name="useYn" onclick="toggleValue(this)" value="Y">
+		                    <span class="slider round"></span> 
+				       </label>
                 </div>                
             </div>
         </div>
@@ -349,5 +366,24 @@
     <button id="btn_needPopHide" style="display:none" >hide</button>
     
 </div>
+
+<script type="text/javascript">
+	 function need_close(){
+     	needPopup.hide();
+     }
+	 needPopup.config.custom = {
+         'removerPlace': 'outside',
+         'closeOnOutside': false,
+         onShow: function() {
+				console.log('needPopup is shown');
+         },
+         onHide: function() {
+             console.log('needPopup is hidden');
+         }
+     };
+     needPopup.init();
+</script>
+
+
 </body>
 </html>

@@ -239,7 +239,7 @@ function tomorrow_get(){
 }
 //공백 제거
 function trim(str){
-	return str.replaceAll(/^\s\s*/, '').replaceAll(/\s\s$/,'');
+	return str.replace(/ /gi, "");
 }
 function fn_uniDel(_url, _data, _action_url){
 	if (confirm("삭제 하시겠습니까?")== true){

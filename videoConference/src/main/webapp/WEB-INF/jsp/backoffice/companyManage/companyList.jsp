@@ -31,6 +31,7 @@
 	    }
 	})();
 	</script>
+	<script type="text/javascript" src="/js/back_common.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script src="/js/popup.js"></script>
     
@@ -84,7 +85,7 @@
 		                <tr class="tableM">
 		                	<th>검색어</th>
 		                	<td>
-		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="fn_floorSearchState()">
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="backoffice_common.fn_floorSearch('','sp_floorCombo', 'searchFloorSeq')">
 								         <option value="">지점 선택</option>
 				                         <c:forEach items="${searchCenter}" var="centerList">
 				                            <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -96,7 +97,7 @@
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
-		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">테넌트등록</a>
+		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">크레딧 등록</a>
 		                		<a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a>
 		                		
 		                		<a data-popup-open="dv_seatSetting" style="display:none"  class="rightGBtn" id="btn_bpop" >좌석 세팅</a>
@@ -165,7 +166,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">* 거래처 상태<span class="join_id_comment joinSubTxt"></span></p>
-                    <form:select path="comState" id="comState" title="거래처구분" onChange="jqGridFunc.fn_comNumber();">
+                    <form:select path="comState" id="comState" title="거래처구분">
 				         <form:option value="" label="구분선택"/>
                          <form:options items="${comState}" itemValue="code" itemLabel="codeNm"/>
 					</form:select>
@@ -198,7 +199,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">지점<span class="join_id_comment joinSubTxt"></span></p>
-                    <select path="centerId" id="centerId" title="지점구분" onChange="jqGridFunc.fn_floorState();jqGridFunc.fn_floorPlayState();">
+                    <select path="centerId" id="centerId" title="지점구분" onChange="backoffice_common.fn_floorSearch('', 'sp_floor', 'floorSeq');backoffice_common.fn_floorPlayState('', 'sp_floorCheck', 'floorPlaySeq');">
 				         <option value="">지점 선택</option>
                          <c:forEach items="${searchCenter}" var="centerList">
                             <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -221,7 +222,7 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">테넌트 사용여부<span class="join_id_comment joinSubTxt"></span></p>
+                    <p class="pop_tit">크레딧 사용여부<span class="join_id_comment joinSubTxt"></span></p>
                     <label class="switch">                                               
                    	   <input type="checkbox" id="tennUseyn" onclick="toggleValue(this);" value="Y">
                        <span class="slider round"></span> 
@@ -314,7 +315,7 @@
    <div data-popup="dv_seatSetting" class="popup focusPop">
         <div class="popup_con">
             <span class="button b-close">&times;</span>
-            <div class="top"  id="dv_Title">테넌트 등록</div>
+            <div class="top"  id="dv_Title">크레딧 등록</div>
             <div class="con">
                <input type="number" name="tennRecCount" size="40" maxlength="80" id="tennRecCount"  onkeypress="only_num();" style="width:250px;"/> 
             </div>
@@ -378,7 +379,7 @@
 	    			                { label: '예약가능층수', name:'floor_nm',       index:'floor_nm',      align:'center', width:'10%'},
 	    			                { label: '대표자명', name:'com_ceo_name',       index:'com_ceo_name',      align:'center', width:'10%'},
 	    			                { label: '주소', name:'com_addr',       index:'com_addr',      align:'center', width:'20%', formatter:jqGridFunc.address },
-	    			                { label: '테턴트 여부', name:'tenn_info',       index:'tenn_info',      align:'center', width:'15%'},
+	    			                { label: '크레딧 여부', name:'tenn_info',       index:'tenn_info',      align:'center', width:'15%'},
 	    			                { label: '최종 수정자', name:'com_updateid',      index:'com_updateid',     align:'center', width:'14%'},
 	    			                { label: '최종 수정 일자', name:'com_update', index:'com_update', align:'center', width:'12%', 
 	    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
@@ -579,10 +580,8 @@
 				       						$("#comState").val(obj.com_state);
 								    		$("#comFax").val( obj.com_fax  );
 								    		$("#centerId").val( obj.center_id);
-								    		//$("#floorSeq").val( obj.floor_seq);
-								    		//sp_floorCheck
-								    		jqGridFunc.fn_floorState(obj.floor_seq);
-								    		jqGridFunc.fn_floorPlayState(obj.com_play_floor);
+								    		backoffice_common.fn_floorSearch(obj.floor_seq,'sp_floor', 'floorSeq');
+								    		backoffice_common.fn_floorPlayState(obj.com_play_floor, "sp_floorCheck", "floorPlaySeq");
 								    		toggleClick("tennUseyn", obj.tenn_useyn);
 								       }
 			     				    },
@@ -607,6 +606,7 @@
 				    if (any_empt_line_id("comName", "회사명을 입력해주세요.") == false) return;	
 				    if (any_empt_line_id("centerId", "지점을 선택해 주세요.") == false) return;
 				    if (any_empt_line_id("floorSeq", "층을 선택해 주세요.") == false) return;
+				    if (any_empt_line_id("comState", "거레 상태를 선택해 주세요.") == false) return;
 				    if (fn_CheckBoxMsg("사용할 층수를 선택 하지 않았습니다.", "floorPlaySeq") == false) return;	
 		     		var commentTxt = ($("#mode").val() == "Ins") ? "등록 하시겠습니까?":"저장 하시겠습니까?";
 		     		
@@ -671,15 +671,6 @@
 				  $("#mainGrid").attr('width', 200);
 				  $("#comCode").val(comCode);
 				  userFunc.fn_userList(comCode);
-			  }, fn_floorState : function (floorSeq){
-				  var _url = "/backoffice/basicManage/floorListAjax.do";
-			      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
-			      fn_comboListPost("sp_floor", "floorSeq",_url, _params, "", "120px", floorSeq); 
-			  }, fn_floorPlayState : function (floorPlaySeq){
-				  var _url = "/backoffice/basicManage/floorListAjax.do";
-			      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
-			      //alert(floorPlaySeq);
-			      fn_checkListPost("sp_floorCheck", "floorPlaySeq",_url, _params, floorPlaySeq, "");
 			  }, fn_tennUpdate : function (){
 				 //배열 값 정리 하기 
 				 if (confirm('저장 하시겠습니까?')){
@@ -693,7 +684,7 @@
 					 }
 					 var param =  new Object();
 			         param.data = tennArray;
-			         var url = "/backoffice/company/tennUpdate.do";
+			         var url = "/backoffice/companyManage/tennUpdate.do";
 				     uniAjax(url, param, 
 		   		       	     function(result) {
 	   						       if (result.status == "LOGIN FAIL"){
@@ -701,7 +692,8 @@
 	   		  						   location.href="/backoffice/login.do";
 	   		  					   }else if (result.status == "SUCCESS"){
 		   		  					   alert('정상적으로 등록 되었습니다.');
-		   		  					   $('#dv_seatSetting').fadeOut(100).bPopup().close();
+		   		  					   $('[data-popup="dv_seatSetting"]').fadeOut(1000).bPopup().close();
+		   		  					   jqGridFunc.fn_search();
 		   		  					   
 		   		  				   }
 	   						 },
@@ -713,6 +705,7 @@
 			  }, fn_tennPop : function (){
 				  getEquipArray("mainGrid", tenn_array);
 				  if (tenn_array.length > 0){
+					  $("#tennRecCount").val("0");
 					  $("#btn_bpop").trigger("click"); 
 				  }else {
 					  alert("체크된 값이 없습니다.");
@@ -732,7 +725,9 @@
 					   $("#sp_uniCheck").html("<a href='javascript:userFunc.fn_uniCheck()'>중복체크</a>");
 					   $('input:text[name^=user]').val("");
 			           $('select[name^=user]').val("");
-			           
+			           $("#userNo").attr('readonly', false);
+			           $('#userState').val("USER_STATE_1");
+			           $("#btnUserUpdate").text("등록");
 				   }else {
 					   $("#sp_uniCheck").text("");
 					   $("#btnUserUpdate").text("수정");
@@ -752,6 +747,7 @@
 		     		  						$("#userCellphone").val(obj.user_cellphone);
 		     		  						$("#userEmail").val(obj.user_email);
 		     		  						$("#userState").val(obj.user_state);
+		     		  						$("#comCode").val(obj.com_code);
 		     		  						$("#userNo").attr('readonly', true);
 	     		  					   }else{
 	     		  						  alert(result.message); 

@@ -3,22 +3,24 @@
 <mapper namespace="com.sohoki.backoffice.cus.com.mapper.CompanyInfoManageMapper">
 
     <select id="selectCompanyInfoManageListByPagination"  resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	        TB.* FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY COM_CODE DESC) AS RNUM, 
+		SELECT TB.* FROM (
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY COM_CODE DESC) AS RNUM, 
 					           a.COM_CODE, a.COM_NUMBER, a.COM_NAME, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME,
-						       CASE  WHEN  length(COM_LOGO) > 0 THEN 
+						       CASE  WHEN  LEN(COM_LOGO) > 0 THEN 
 				  	               COM_LOGO
 							   ELSE 
 						          'no_image.gif'
 						       END COM_LOGO, 
-						       fn_DetailCodeNm(a.COM_GUBUN) COM_GUBUN_Txt,
+						       dbo.FN_DETAILCODENM(a.COM_GUBUN) COM_GUBUN_Txt,
 						       COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, 
 						       FORMAT(a.COM_UPDATE,'yyyy-MM-dd HH:mm:ss')  COM_UPDATE,	
 						       a.COM_UPDATEID, b.CODE_NM,   c.CENTER_NM, d.FLOOR_NAME, a.TENN_USEYN,
 						       CASE a.TENN_USEYN WHEN 'Y' THEN 
-						              (SELECT ISNULL(SUM(TENN_REC_NOW_CNT),0) FROM tb_compay_tennant e
-                                       WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE)
+						              (SELECT ISNULL(SUM(TENN_REC_NOW_CNT),0) 
+						               FROM tb_compay_tennant e
+                                       WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
+                                       )
 						            ELSE 
 						               '사용안함'
 						       END TENN_INFO, a.COM_PLAY_FLOOR, dbo.FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
@@ -37,7 +39,7 @@
 							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
 							  </if>
 	        ) TB  
-	        WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}   
 	        ORDER BY TB.COM_CODE  DESC
     </select>
     <select id="selectCompanyInfoManageCombo" resultType="lmap">
@@ -62,7 +64,7 @@
          VALUES (#{comCode}, #{comNumber,jdbcType=VARCHAR}, #{comName}, #{comGubun,jdbcType=VARCHAR}, #{comBuscondition,jdbcType=VARCHAR},  #{comItem,jdbcType=VARCHAR},  #{comCeoName,jdbcType=VARCHAR}, 
                  #{comTel,jdbcType=VARCHAR}, #{comFax,jdbcType=VARCHAR},  #{comZipcode,jdbcType=VARCHAR}, #{comAddr1,jdbcType=VARCHAR}, #{comAddr2,jdbcType=VARCHAR},
                  #{comHomepage,jdbcType=VARCHAR}, #{comState,jdbcType=VARCHAR},  #{comLogo,jdbcType=VARCHAR},  #{centerId,jdbcType=VARCHAR},  #{floorSeq,jdbcType=VARCHAR}, 
-                 getdate(), #{userId,jdbcType=VARCHAR},  getdate(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, 
+                 GETDATE(), #{userId,jdbcType=VARCHAR},  GETDATE(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, 
                  #{tennUseyn,jdbcType=VARCHAR} , #{comPlayFloor,jdbcType=VARCHAR})
                 
     </insert>
@@ -85,7 +87,7 @@
 	                                <if test="comLogo != '' ">                                    
 	                                 , COM_LOGO = #{comLogo,jdbcType=VARCHAR}
 	                                </if>
-	                                , COM_UPDATE = getdate()
+	                                , COM_UPDATE = GETDATE()
 	                                , COM_UPDATEID = #{userId,jdbcType=VARCHAR}
 	                                , COM_MEMO =  #{comMemo, jdbcType=VARCHAR}
 	                                , CENTER_ID = #{centerId, jdbcType=VARCHAR}

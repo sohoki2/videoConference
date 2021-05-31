@@ -210,10 +210,12 @@
      	                                $("#adminId").val(obj.admin_id).attr('readonly', true);
 	     		  						$("#empNo").val(obj.emp_no);
 	     		  						$("#adminName").val(obj.admin_name);
-	     		  						$("#deptName").val(obj.user_rank);
+	     		  						$("#deptName").val(obj.dept_name);
+	     		  						$("#deptId").val(obj.dept_id);
+	     		  						
 	     		  						$("#adminTel").val(obj.admin_tel);
 	     		  						$("#adminEmail").val(obj.admin_email);
-	     		  						$("#adminLevel").val(obj.admin_level);
+	     		  						$("#authorCode").val(obj.author_code);
 	     		  						toggleClick("useYn", obj.use_yn);
      		  					   }else{
      		  						  alert(result.message); 
@@ -242,7 +244,7 @@
     			   }
     		   }
     		   if (any_empt_line_id("adminEmail", "이메일을 입력 하지 않았습니다.") == false) return;	 
-    		   if (any_empt_line_id("adminLevel", "관리자구분을 선택 하지 않았습니다.") == false) return;	 
+    		   if (any_empt_line_id("authorCode", "관리자구분을 선택 하지 않았습니다.") == false) return;	 
     		   	   	
     		   if (confirm("등록 하시겠습니까?")== true){
     			   var param = {"mode" : $("#mode").val(), 
@@ -255,7 +257,7 @@
     					        //"adminPassword" : SHA256(SHA256($("#adminPassword").val())) , 
     					        "adminPassword" : $("#adminPassword").val() , 
     					        "adminEmail" : $("#adminEmail").val(), 
-    					        "adminLevel" : $("#adminLevel").val(), 
+    					        "authorCode" : $("#authorCode").val(), 
     					        "useYn" : fn_emptyReplace($("#useYn").val(),"Y")	 
     			                };
     			      var url = "/backoffice/basicManage/managerUpdate.do";
@@ -328,7 +330,7 @@
 		  }, fn_empSearch : function(){
 			  //직원 조회
 			  var params = {"searchCondition" : $("#emSearchCondition").val(), "searchKeyword" : $("#emSearchKeyword").val(), "mode" : "pop" };
-			  uniAjax("/backoffice/backoffice/empListAjax.do", params, 
+			  uniAjax("/backoffice/orgManage/empListAjax.do", params, 
 		     			function(result) {
 				               if (result.status == "LOGIN FAIL"){
 						    	   alert(result.message);
@@ -368,6 +370,9 @@
 			  $("#deptId").val(deptcode);
 			  $("#adminTel").val(emptelphone); 
 			  // 보여 주기 
+			  $("#authorCode").val("ROLE_ADMIN");
+			  toggleClick("useYn", "Y");
+			  
 			  jqGridFunc.fn_empView("basic");
 		  }
     }
@@ -482,7 +487,7 @@
                         <input type="text" name="adminEmail" size="30" maxlength="20" id="adminEmail"  style="width:340px;" /></td>
                         <th><span class="redText">*</span>관리자구분</th>
                         <td style="text-align:left">
-                            <select id="adminLevel" name="adminLevel" style="width:340px">
+                            <select id="authorCode" name="authorCode" style="width:340px">
                                  <option value=""> 선택</option>
 		                         <c:forEach items="${selectState}" var="auth">
 		                            <option value="${auth.authorCode}">${auth.authorNm}</option>

@@ -3,21 +3,21 @@
 <mapper namespace="com.sohoki.backoffice.sym.space.mapper.DeviceInfoManageMapper">
 
    <select id="selectDevicePageInfoManageListByPagination" resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-			   TB.* 
+		SELECT TB.* 
 		FROM (
-				SELECT  ROW_NUMBER() OVER (ORDER BY A.DEVICE_ID DESC) AS RNUM, 
+				SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+				        ROW_NUMBER() OVER (ORDER BY A.DEVICE_ID DESC) AS RNUM, 
 						A.DEVICE_ID, A.DEVICE_NM, A.DEVICE_IP, A.DEVICE_MAC, A.DEVICE_URL,
 						A.DEVICE_OS, A.DEVICE_STARTTIME, A.DEVICE_ENDTIME, A.DEVICE_REMARK, A.DEVICE_ENDCONNTIME,
-						B.CENTER_NM, FN_MEETINGNM(A.MEETING_ID) as MEETING_NAME,
+						B.CENTER_NM, dbo.FN_MEETINGNM(A.MEETING_ID) as MEETING_NAME,
 						<![CDATA[ 
 							CASE 
-								WHEN DATE_ADD(A.DEVICE_ENDCONNTIME, INTERVAL + 3 MINUTE) >= GETDATE() THEN 'ON'
+								WHEN DATEADD(minute, 3, A.DEVICE_ENDCONNTIME) >= GETDATE() THEN 'ON'
 								ELSE 'OFF'
 							END AS net_status,
 					  ]]>
 					  A.DEVICE_STATUS, A.USE_YN, 
-					  FORMAT(UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE,
+					  FORMAT(A.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE,
 					  C.FLOOR_NAME, A.UPDATE_ID
 				FROM TB_DEVICEINFO A, TB_CENTERINFO B, TB_FLOORINFO C
 				WHERE A.CENTER_ID = B.CENTER_ID
@@ -36,7 +36,7 @@
 					</choose>
 				</if>
 			   )TB
-	    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
+	    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 		ORDER BY TB.DEVICE_ID DESC 
 	</select>
 	<select id="selectDevicePageInfoManageDetail"  resultType="lmap">
@@ -57,7 +57,7 @@
     <select id="selectDeviceInfo"  		resultType ="lmap">
        SELECT a. DEVICE_STARTTIME, a.DEVICE_ENDTIME,
                       CASE WHEN (c.RES_SEQ > 0) THEN 
-                             (SELECT CASE  WHEN LENGTH(IN_TIME) > 0 THEN '1' ELSE '2' END   FROM tb_swcreservation d WHERE c.RES_SEQ = d.RES_SEQ)
+                             (SELECT CASE  WHEN LENGTH(IN_TIME) > 0 THEN '1' ELSE '2' END   FROM TB_SWCRESERVATION d WHERE c.RES_SEQ = d.RES_SEQ)
                       ELSE
                            '0'
                       END status  , 
@@ -67,7 +67,8 @@
        WHERE a.MEETING_ID = b.MEETING_ID
              AND b.ITEM_ID = c.MEETING_ID
              AND c.SWC_RESDAY  =  CONVERT(VARCHAR(8), GETDATE(), 112)
-             AND SWC_TIME BETWEEN  DATE_FORMAT( DATE_ADD(GETDATE(), INTERVAL -29 MINUTE) , '%H%i')  AND  DATE_FORMAT( GETDATE(), '%H%i')
+             AND SWC_TIME BETWEEN  REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','')   
+                         AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
              AND a.DEVICE_ID = #{deviceId} 
     </select>		
 	<insert id="insertDevicePageInfoManage">

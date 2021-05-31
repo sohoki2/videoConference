@@ -6,22 +6,23 @@
 		 	SELECT TA.* FROM 
 				 	      ( SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* 
 							FROM (    
-							           SELECT a.MEETING_ID, a.MEETING_NAME, a.MEETING_USEYN, a.FLOOR_SEQ, a.PART_SEQ
-		              						 , b.CENTER_NM, c.FLOOR_NAME, a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID
-		                                     , fn_DetailCodeNm(a.ROOM_TYPE) AS ROOM_TYPE_TXT
-						                     , DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE
+							           SELECT ROW_NUMBER() OVER (ORDER BY a.MEETING_ID DESC) AS RNUM 
+							                 , a.MEETING_ID, a.MEETING_NAME, a.MEETING_USEYN, a.FLOOR_SEQ, a.PART_SEQ
+		              						 , b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID
+		                                     , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT
+		                                     , FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss')  UPDATE_DATE
 						                     , a.UPDATE_ID, a.MAX_CNT, a.MEETING_IMG1, a.MEETING_IMG2, a.AVAYA_CONFI_ID, a.AVAYA_USERID
 		                                     , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
 		                                     , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
 		                                     , a.MEETING_VIEW , a.MEETING_ORDER
 		                                     , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.MEETING_MAINVIEW
-											 , CASE WHEN LENGTH(a.MEETING_ADMINID) >5 THEN 
-											     FN_ATTENTLIST(SUBSTR(a.MEETING_ADMINID, 2))
+											 , CASE WHEN LEN(a.MEETING_ADMINID) >5 THEN 
+											     dbo.FN_ATTENTLIST(SUBSTRING(a.MEETING_ADMINID, 0, 2))
 											   ELSE
 											    ''
 											   END AS SEAT_ADMINI_TXT, a.MEETING_TOP, a.MEETING_LEFT
-											 , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION
-											 , fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST		
+											 , dbo.FN_DETAILCODENM(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION
+											 , dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST		
 				                       FROM TB_MEETING_ROOM a ,TB_CENTERINFO b, TB_FLOORINFO c
 				                       WHERE a.CENTER_ID = b.CENTER_ID 
 				                             AND a.FLOOR_SEQ = c.FLOOR_SEQ
@@ -60,18 +61,18 @@
 											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchMeetingUseyn)">
 											    AND a.MEETING_USEYN = #{params.searchMeetingUseyn}
 											 </if>
-							        	ORDER BY a.MEETING_ORDER ASC,  a.MEETING_ID  DESC 
 							) TB 
 			) TA
+			WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 			ORDER BY TA.MEETING_ORDER ASC,  TA.MEETING_ID  DESC 
-			LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  	    		 	    
    </select>
    <!-- selectSeatEmptyManageList 추후 프론트로 이동 -->
    <select id="selectMeetingRoomEmptyManageList" resultType="lmap">
 		SELECT 	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
 		        a.MEETING_ID, a.MEETING_NAME, a.MEETINGROOM_REMARK, a.CENTER_ID, a.MEETING_USEYN,
 		        b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID,
-		        fn_DetailCodeNm(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ifnull(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, ifnull(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN
+		        dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ISNULL(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, 
+		        ISNULL(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN
 		FROM 	TB_MEETING_ROOM a , TB_CENTERINFO b, TB_FLOORINFO c
 		WHERE a.CENTER_ID = b.CENTER_ID 
 		      AND a.FLOOR_SEQ = c.FLOOR_SEQ
@@ -81,7 +82,7 @@
 			    AND a.CENTER_ID = #{params.searchCenterId}	
 		     </when>
 			  <when test="@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenterId)">
-			    AND a.CENTER_ID =  ( SELECT X.CENTER_ID FROM ( SELECT CENTER_ID FROM tb_centerinfo order by CENTER_ID ASC ) X  ORDER BY X.CENTER_ID ASC  LIMIT 1 ) 
+			    AND a.CENTER_ID =  ( SELECT X.CENTER_ID FROM ( SELECT CENTER_ID FROM TB_CENTERINFO ORDER BY CENTER_ID ASC ) X  ORDER BY X.CENTER_ID ASC  LIMIT 1 ) 
 		     </when>
 		   </choose>
 		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorseq)">
@@ -113,15 +114,15 @@
 		FROM (
 				SELECT 	a.MEETING_ID , a.AVAYA_CONFI_ID
 						        , a.MEETING_NAME
-						        , (		SELECT		ifnull(COUNT(*),0) 
-					        			FROM 		tb_swctime c 
-					       				WHERE a.MEETING_ID = c.MEETING_ID 
+						        , (		SELECT		ISNULL(COUNT(*),0) 
+					        			FROM  TB_SWCTIME c 
+					       				WHERE a.ITEM_ID = c.MEETING_ID 
 						            	      AND c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
 						            	      AND c.SWC_TIME < 1800)
 					       			AS realCnt
-						        ,	(	SELECT 	ifnull(COUNT(*),0) 
-						        		FROM 		tb_swctime c 
-						          		WHERE a.MEETING_ID = c.MEETING_ID 
+						        ,	(	SELECT 	ISNULL(COUNT(*),0) 
+						        		FROM TB_SWCTIME c 
+						          		WHERE a.ITEM_ID = c.MEETING_ID 
 						            	      AND c.SWC_RESDAY BETWEEN #{seatStartDay} AND #{seatEndDay}
 						            	      AND c.RES_SEQ != 0 
 						            	      AND c.SWC_TIME < 1800)
@@ -164,32 +165,32 @@
 				, a.AVAYA_CONFI_ID, a.AVAYA_USERID
                 , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
                 , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
-                , fn_DetailCodeNm(a.ROOM_TYPE) AS roomTypeTxt
+                , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS roomTypeTxt
                 , a.MEETING_VIEW, a.MEETING_ORDER, a.MEETING_EQUPGUBUN
                 , a.MEETING_CONFIRMGUBUN , a.MEETING_ADMINID
-                , CASE WHEN LENGTH(a.MEETING_ADMINID) >5 THEN 
-				     FN_ATTENTLIST(SUBSTR(a.MEETING_ADMINID, 2))
+                , CASE WHEN LEN(a.MEETING_ADMINID) >5 THEN 
+				     dbo.FN_ATTENTLIST(SUBSTRING(a.MEETING_ADMINID,0, 2))
 				  ELSE
 				    ''
 				  END AS seat_admini_Txt
                 , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.RES_MESSAGE_MAIL, a.RES_MESSAGE_SMS, a.CAN_MESSAGE_MAIL, a.CAN_MESSAGE_SMS
                 , a.PAY_CLASSIFICATION, a.PAY_GUBUN, a.PAY_COST
-				, CASE a.MAIL_SENDCHECK WHEN 'Y' THEN  fn_MessageTitle( a.RES_MESSAGE_MAIL )
+				, CASE a.MAIL_SENDCHECK WHEN 'Y' THEN  dbo.FN_MESSAGETITLE( a.RES_MESSAGE_MAIL )
 					   ELSE '메세지 없음' 
 				    END resMessageMailTxt
-				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageContent( a.RES_MESSAGE_MAIL )
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGECONTENT( a.RES_MESSAGE_MAIL )
 					  ELSE '메세지 없음' 
 				    END resMessageMailContextTxt
-				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.RES_MESSAGE_SMS )
+				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( a.RES_MESSAGE_SMS )
 					  ELSE '메세지 없음' 
 					END resMessageSmsTxt
-				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.CAN_MESSAGE_MAIL )
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( a.CAN_MESSAGE_MAIL )
 					  ELSE '메세지 없음' 
 					 END canMessageMailTxt
-				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN fn_MessageContent( a.CAN_MESSAGE_MAIL )
+				  , CASE a.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGECONTENT( a.CAN_MESSAGE_MAIL )
 					  ELSE '메세지 없음' 
 				  END resMessageMailContextTxt
-				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN fn_MessageTitle( a.CAN_MESSAGE_SMS )
+				  , CASE a.SMS_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( a.CAN_MESSAGE_SMS )
 					  ELSE '메세지 없음' 
 				   END canMessageSmsTxt
 	     FROM  TB_MEETING_ROOM a,  TB_CENTERINFO b    
@@ -200,16 +201,15 @@
    <select id="selectMeetingRoomId" resultType="lmap">     	      
 	    SELECT 	b.* 
 		FROM 	(
-							SELECT 	DISTINCT(a.ROOM_ID) as roomId
-										, ( SELECT 	CODE_NM 
-											FROM 	lettccmmndetailcode 
-											WHERE 	CODE=a.ROOM_ID
-										  ) as roomNm 
-							FROM TB_MEETING_ROOM a
-							WHERE a.ROOM_TYPE=#{roomType} 
-							      AND a.CENTER_ID=#{centerId}
-							
-			      		)b
+					SELECT 	DISTINCT(a.ROOM_ID) as roomId
+								, ( SELECT 	CODE_NM 
+									FROM 	lettccmmndetailcode 
+									WHERE 	CODE=a.ROOM_ID
+								  ) as roomNm 
+					FROM TB_MEETING_ROOM a
+					WHERE a.ROOM_TYPE=#{roomType} 
+					      AND a.CENTER_ID=#{centerId}
+				 )b
 		ORDER BY roomNm
    </select>
    <!-- selectRoomSeat -->
@@ -230,7 +230,7 @@
    </select>  
    <insert id="insertMeetingRoomManage">
           <selectKey resultType="String"  keyProperty="meetingId" order="BEFORE">
-            select FN_MEETINGID(#{floorSeq})
+            select dbo.FN_MEETINGID(#{floorSeq}) as meetingId
           </selectKey>
          
 	      INSERT INTO TB_MEETING_ROOM(MEETING_ID, MEETING_NAME,  CENTER_ID, FLOOR_SEQ, PART_SEQ, ROOM_TYPE, MAX_CNT, MEETING_USEYN, MEETING_EQUPGUBUN,
@@ -244,7 +244,7 @@
 	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 	                               )
 	      VALUES (#{meetingId}, #{meetingName}, #{centerId}, #{floorSeq}, #{partSeq}, #{roomType}, #{maxCnt}, #{meetingUseyn}, #{meetingEqupgubun,jdbcType=VARCHAR }
-			      , NOW(), #{userId, jdbcType=VARCHAR}, NOW(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
+			      , GETDATE(), #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
 			      , #{meetingImg1, jdbcType=VARCHAR}, #{meetingImg2, jdbcType=VARCHAR}
 			      , #{meetingroomRemark, jdbcType=VARCHAR}, #{meetingConfirmgubun, jdbcType=VARCHAR}, #{meetingAdminid, jdbcType=VARCHAR}
 			      , #{avayaUserid, jdbcType=VARCHAR}, #{terminalId, jdbcType=VARCHAR}, #{endName, jdbcType=VARCHAR}, #{terminalNumber, jdbcType=VARCHAR} , #{terminalTel, jdbcType=VARCHAR}
@@ -277,7 +277,7 @@
 									 , ROOM_TYPE = #{roomType,jdbcType=VARCHAR}
 									 , MAX_CNT = #{maxCnt, jdbcType=VARCHAR}
 									 , MEETING_EQUPGUBUN = #{meetingEqupgubun, jdbcType=VARCHAR }
-									 , UPDATE_DATE = NOW()
+									 , UPDATE_DATE = GETDATE()
 									 , UPDATE_ID =  #{userId, jdbcType=VARCHAR}
 									 , AVAYA_CONFI_ID = #{avayaConfiId, jdbcType=VARCHAR}
 									 <if test="meetingImg1 != ''">
@@ -314,20 +314,21 @@
 	      WHERE MEETING_ID = #{meetingId}
    </update>
    <delete id="deleteMeetingRoomManage">
+        UPDATE TB_FLOORINFO SET MEET_CNT = MEET_CNT - b.CNT
+        FROM TB_FLOORINFO a, (SELECT COUNT(*) CNT , FLOOR_SEQ 
+						      FROM tb_meeting_room
+						      WHERE MEETING_ID IN 
+						      <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
+							            #{item}
+							  </foreach>
+						      GROUP  by FLOOR_SEQ) b
+        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+        
          DELETE FROM TB_MEETING_ROOM WHERE MEETING_ID IN
          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
             #{item}
          </foreach>
          ;
-         UPDATE TB_FLOORINFO  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
-						          FROM tb_meeting_room
-						          WHERE MEETING_ID IN 
-						          <foreach collection="meetinglist" item="item"  open="(" separator="," close=")">
-							            #{item}
-							      </foreach>
-						          GROUP  by FLOOR_SEQ) b
-						  
-        SET MEET_CNT = MEET_CNT - b.CNT
-        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+        
    </delete>
 </mapper>

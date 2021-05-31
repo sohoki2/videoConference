@@ -3,20 +3,22 @@
 <mapper namespace="com.sohoki.backoffice.sym.cnt.mapper.FloorInfoManageMapper">
 
      <select id="selectFloorInfoManageListByPagination"  resultType="lmap">
-		SELECT TB.*, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
+		SELECT TB.*
 	    FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY b.FLOOR_SEQ DESC) AS RNUM, 
-					           b.FLOOR_SEQ, b.FLOOR_NAME, b.FLOOR_INFO, 
+					    SELECT b.FLOOR_SEQ, b.FLOOR_NAME,
+					           SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY b.FLOOR_SEQ DESC) AS RNUM, 
+					            b.FLOOR_INFO, 
 					           a.CENTER_ID  ,      
 							   a.CENTER_NM  ,
-						       CASE  WHEN  length(FLOOR_MAP) > 0 THEN 
+						       CASE  WHEN  LEN(FLOOR_MAP) > 0 THEN 
 				  	               FLOOR_MAP
 							   ELSE 
 						          'no_image.gif'
 						       END FLOOR_MAP, 
-						       fn_DetailCodeNm(b.FLOOR_INFO) FLOOR_INFO_TXT,
-						       SEAT_CNT, MEET_CNT, FLOOR_USEYN, FLOOR_PART,      	
-						       DATE_FORMAT(b.UPDATE_DATE,'%Y-%m-%d %H:%i:%s') UPDATE_DATE,
+						       dbo.FN_DETAILCODENM(b.FLOOR_INFO) FLOOR_INFO_TXT,
+						       SEAT_CNT, MEET_CNT, FLOOR_USEYN, FLOOR_PART,   
+						       FORMAT(b.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE,    
 						       b.UPDATE_ID	        
 					    FROM  TB_CENTERINFO a, TB_FLOORINFO b
 					    WHERE a.CENTER_ID = b.CENTER_ID       
@@ -30,7 +32,7 @@
 							  AND b.FLOOR_USEYN = #{params.floorUseyn}
 							 </if>
 	        ) TB  
-	    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
+	    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
         ORDER BY TB.FLOOR_SEQ  DESC
         		 	    
      </select>

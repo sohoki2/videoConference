@@ -8,6 +8,8 @@
 	</settings>
 	
 
+
+    
 	<typeAliases>
 	    <typeAlias alias="lmap" type="com.sohoki.backoffice.util.service.LowerKeyMap"/>
 	    <package name="com.sohoki.backoffice.sym.ccm.cca.service"/>
@@ -37,6 +39,9 @@
 		<package name="com.sohoki.backoffice.sym.avaya.vo"/>
 		
 	</typeAliases>
-	
+	<typeHandlers>
+        <typeHandler javaType="java.sql.Clob" handler="org.apache.ibatis.type.StringTypeHandler"/>
+    </typeHandlers>
+     
 	 
 </configuration>

@@ -3,9 +3,9 @@
 <mapper namespace="com.sohoki.backoffice.cus.ten.mapper.TennantInfoManageMapper">
 
     <select id="selectTennantInfoManageListByPagination"  resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	        TB.* FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY a.TENN_SEQ DESC) AS RNUM, 
+		SELECT TB.* FROM (
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY a.TENN_SEQ DESC) AS RNUM, 
 					           a.TENN_SEQ, b.COM_NAME, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT,
 						       TENN_REC_NOW_CNT, TENN_REC_END, TENN_REMARK,  	
 						       FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE, UPDATE_ID
@@ -21,7 +21,7 @@
 							    AND a.TENN_REC_END =  #{params.tennRecEnd}
 							  </if>	
 	        ) TB  
-	        WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}   
 	        <choose>
 	           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.tennRecEnd)">
 	              ORDER BY TB.TENN_SEQ  ASC
@@ -34,9 +34,9 @@
     </select>
     
     <select id="selectTennantSubInfoManageListByPagination"  resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	        TB.* FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY a.HIS_SEQ DESC) AS RNUM, 
+		SELECT TB.* FROM (
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY a.HIS_SEQ DESC) AS RNUM, 
 					           a.HIS_SEQ, a.TENN_SEQ, a.COM_CODE, a.USER_NO, a.REG_ID, a.TENN_CNT, a.TENN_PLAY_GUBUN,
 					           a.TENN_APPRIVAL, b.CODE_NM, d.COM_NAME,
 					           CASE  WHEN a.USER_NO IS NOT NULL THEN 
@@ -71,10 +71,11 @@
 							      AND c.FLOOR_SEQ = #{params.searchFloorSeq}
 							  </if>
 	        ) TB  
-	        ORDER BY TB.HIS_SEQ  DESC
 	        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.mode)">
-	        WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
-	        </if>  		 	    
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}   
+	        </if>  
+	        ORDER BY TB.HIS_SEQ  DESC
+	       		 	    
     </select>
     
     <select id="selectTennantInfoManageCombo" resultType="lmap">
@@ -86,15 +87,15 @@
     <select id="selectTennantInfoManageDetail"  resultType="lmap">
            SELECT  a.HIS_SEQ, a.TENN_SEQ, a.COM_CODE, a.USER_NO, a.REG_ID, a.REG_DATE
                    a.TENN_CNT, a.TENN_PLAY_GUBUN, a.TENN_APPRIVAL, b.CODE_NM
-		    FROM TB_COMPAY_TENNANT_HISTORY a,  LETTCCMMNDETAILCODE b
-		    WHERE a.TENN_PLAY_GUBUN = b.CODE  
+		   FROM TB_COMPAY_TENNANT_HISTORY a,  LETTCCMMNDETAILCODE b
+		   WHERE a.TENN_PLAY_GUBUN = b.CODE  
 		          AND TENN_SEQ = #{comCode}
     </select>
     <select id="selectTennantHistorylInfoManageDetail"  resultType="lmap">
            SELECT  TENN_SEQ, COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 
 			       TENN_REC_NOW_CNT, TENN_REC_END, TENN_REMARK, REG_ID, REG_DATE, UPDATE_ID, UPDATE_DATE
-		    FROM TB_COMPAY_TENNANT a
-		    WHERE TENN_SEQ = #{comCode}
+		   FROM TB_COMPAY_TENNANT a
+		   WHERE TENN_SEQ = #{comCode}
     </select>
     <insert id="insertTennantInfoManage">
          
@@ -123,7 +124,6 @@
                    );
                                     
            INSERT INTO   TB_COMPAY_TENNANT_HISTORY (COM_CODE, REG_ID, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL,TENN_SEQ)
-           select #{item.comCode}
            VALUES (#{item.comCode}, #{item.userId,jdbcType=VARCHAR}, getdate(),  #{item.tennRecCount,jdbcType=VARCHAR}, 'TENN_PLAY_GUBUN_1', 'Y',
                    (SELECT ISNULL(MAX(TENN_SEQ),1) FROM tb_compay_tennant WHERE COM_CODE = #{item.comCode} )
                    )
@@ -170,11 +170,12 @@
 				SELECT TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, 'TENN_PLAY_GUBUN_3', TENN_APPRIVAL, RES_SEQ
 				FROM TB_COMPAY_TENNANT_HISTORY WHERE RES_SEQ =  #{tenn.resSeq};
 				
-				UPDATE TB_COMPAY_TENNANT a, TB_COMPAY_TENNANT_HISTORY b
+				UPDATE TB_COMPAY_TENNANT
 				SET a.TENN_REC_PLAY_CNT = a.TENN_REC_PLAY_CNT - b.TENN_CNT
 				    , a.TENN_REC_NOW_CNT = a.TENN_REC_NOW_CNT + b.TENN_CNT
 				    , UPDATE_DATE = getdate()
 					, UPDATE_ID = #{tenn.updateId,jdbcType=VARCHAR}
+				from TB_COMPAY_TENNANT a, TB_COMPAY_TENNANT_HISTORY b
 				WHERE a.COM_CODE  = b.COM_CODE
 				      AND a.TENN_SEQ  = b.TENN_SEQ
 				      AND b.TENN_PLAY_GUBUN = 'TENN_PLAY_GUBUN_2'

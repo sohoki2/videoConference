@@ -310,7 +310,6 @@
 	       						        jqGridFunc.fn_partState(obj.part_seq);
 	       						    }
     								$("#meetingId").show();
-    								alert(obj.use_yn);
     								toggleClick("useYn", obj.use_yn);
     								
     								jqGridFunc.fn_meetingView(obj.meeting_id);

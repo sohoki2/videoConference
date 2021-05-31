@@ -3,18 +3,19 @@
 <mapper namespace="com.sohoki.backoffice.cus.com.mapper.UserInfoManageMapper">
 
     <select id="selectUserInfoManageListByPagination"  resultType="lmap">
-		    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	               TB.* 
+		    SELECT TB.* 
 	        FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY b.USER_UPDATE DESC) AS RNUM, 
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY b.USER_UPDATE DESC) AS RNUM, 
 					           b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
 							   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
-							   FORMAT(b.USER_UPDATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE, 
+							   FORMAT(b.USER_UPDATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE,
+							   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME  
 					    FROM  TB_COMPANYINFO a, TB_USERINFO b, LETTCCMMNDETAILCODE c, TB_CENTERINFO d, TB_FLOORINFO e
 					    WHERE a.COM_CODE = b.COM_CODE 
 					          AND b.USER_STATE = c.CODE    
 					          AND a.CENTER_ID = d.CENTER_ID
-					          AND d.CENTER_ID = e.CENTER_ID
+					          AND a.FLOOR_SEQ = e.FLOOR_SEQ
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 						          <choose>
 						              <when test="params.searchCondition == 'comName'">
@@ -31,9 +32,6 @@
 						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.comCode)">
 								  AND a.COM_CODE = #{params.comCode}
 							  </if>
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.comCode)">
-								  AND a.COM_CODE = #{params.comCode}
-							  </if>
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
 							      AND d.CENTER_ID = #{params.searchCenter}
 							  </if>
@@ -41,7 +39,7 @@
 							      AND e.FLOOR_SEQ = #{params.searchFloorSeq}
 							  </if>
 		    ) TB  
-		    WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage} 
+		    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage} 
 	        ORDER BY TB.USER_UPDATE  DESC
     </select>
     <select id="selectUserInfoManageCombo" resultType="lmap">
@@ -63,13 +61,13 @@
 							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userName}, #{userNo}, #{comCode}, #{userRank,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR},  #{userEmail,jdbcType=VARCHAR},  
                  #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},
-                 NOW(), #{updateId,jdbcType=VARCHAR},  NOW(), #{updateId,jdbcType=VARCHAR});
+                 GETDATE(), #{updateId,jdbcType=VARCHAR},  GETDATE(), #{updateId,jdbcType=VARCHAR});
                  
          INSERT INTO TB_EMPINFO (EMPID, EMPNO, EMPNAME, COM_CODE,  EMPJIKW, EMPGRAD, EMPHANDPHONE, EMPTELPHONE, EMPMAIL,  AUTHOR_CODE, 
                                  EMP_STATE, UPDATE_DATE)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userNo}, #{userName},  #{comCode}, #{userPosition,jdbcType=VARCHAR}, #{userRank,jdbcType=VARCHAR},   
                  #{userCellphone,jdbcType=VARCHAR},  #{userTel,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, 'ROLE_USER', 
-                 #{userState,jdbcType=VARCHAR},  NOW());
+                 #{userState,jdbcType=VARCHAR},  GETDATE());
                 
     </insert>
     <update id="updateUserInfoManage" >
@@ -82,7 +80,7 @@
                                 , USER_STATE = #{userState,jdbcType=VARCHAR} 
                                 , USER_CELLPHONE = #{userCellphone,jdbcType=VARCHAR} 
                                 , USER_TEL = #{userTel,jdbcType=VARCHAR} 
-                                , USER_UPDATE = NOW()
+                                , USER_UPDATE = GETDATE()
                                 , USER_UPDATEID = #{updateId,jdbcType=VARCHAR}
 	    WHERE USER_NO = #{userNo} ;
 	    
@@ -91,11 +89,11 @@
                                 , COM_CODE = #{comCode}
                                 , EMPGRAD = #{userRank,jdbcType=VARCHAR}
                                 , EMPJIKW = #{userPosition,jdbcType=VARCHAR} 
-                                , USER_EMAIL = #{userEmail,jdbcType=VARCHAR} 
-                                , USER_STATE = #{userState,jdbcType=VARCHAR} 
+                                , EMPMAIL = #{userEmail,jdbcType=VARCHAR} 
+                                , EMP_STATE = #{userState,jdbcType=VARCHAR} 
                                 , EMPHANDPHONE = #{userCellphone,jdbcType=VARCHAR} 
                                 , EMPTELPHONE = #{userTel,jdbcType=VARCHAR}
-                                , UPDATE_DATE = NOW()
+                                , UPDATE_DATE = GETDATE()
 	    WHERE EMPNO = #{userNo} ;
     </update> 
     

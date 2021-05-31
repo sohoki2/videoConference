@@ -349,7 +349,7 @@
         }, fn_seatChoic : function (viewGubun){
              //고정석 일때 사용자 정보 선택 
              
-             if (viewGubun === "S"){
+             if (viewGubun === "S" && $("#seatFixUseryn").val() === "Y" ){
             	 $("#tb_seatInfo").hide();
                  $("#tb_userInfo").show();
              }else {
@@ -531,8 +531,8 @@
 		                            <label class="switch">                                               
 				                    	<input type="checkbox" id="meetingConfirmgubun" onclick="toggleValue(this);jqGridFunc.fn_adminChoic('')" value="Y">
 					                    <span class="slider round"></span> 
-				                      </label> 
-				                      <span id="sp_empView" /
+				                    </label> 
+				                    <span id="sp_empView" /
 		                       </td>
 		                       <th><span class="redText">좌석 기본번호</th>
 		                       <td><input type="text" name="seatNumber" id="seatNumber" class="input_noti" size="10"/></td>

@@ -20,8 +20,8 @@
         accessDeniedUrl="/sec/ram/accessDenied.do"
 
         dataSource="dataSource"
-        jdbcUsersByUsernameQuery="SELECT ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, ADMIN_EMAIL,  ADMIN_TEL, ADMIN_LEVEL, LOCK_YN, EMP_NO, DEPT_ID  FROM  tb_admin WHERE CONCAT(ADMIN_NAME,ADMIN_ID) =?"
-        jdbcAuthoritiesByUsernameQuery="SELECT ADMIN_ID , ADMIN_LEVEL AS AUTHOR_CODE  FROM tb_admin WHERE ADMIN_ID = ?"
+        jdbcUsersByUsernameQuery="SELECT ADMIN_ID, ADMIN_PASSWORD, ADMIN_NAME, USE_YN, ADMIN_EMAIL,  ADMIN_TEL, AUTHOR_CODE, LOCK_YN, EMP_NO, DEPT_ID  FROM  tb_admin WHERE CONCAT(ADMIN_NAME,ADMIN_ID) =?"
+        jdbcAuthoritiesByUsernameQuery="SELECT ADMIN_ID , AUTHOR_CODE  FROM tb_admin WHERE ADMIN_ID = ?"
         jdbcMapClass="com.sohoki.backoffice.uat.uia.service.impl.EgovSessionMapping"
         
         

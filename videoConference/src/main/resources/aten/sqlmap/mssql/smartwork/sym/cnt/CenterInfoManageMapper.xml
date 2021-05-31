@@ -3,10 +3,10 @@
 <mapper namespace="com.sohoki.backoffice.sym.cnt.mapper.CentertInfoManagerMapper">
 	
     <select id="selectCenterInfoManageListByPagination"  resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-		       TB.* 
+		SELECT TB.* 
 	    FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY a.CENTER_ID DESC) AS RNUM, 
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY a.CENTER_ID DESC) AS RNUM, 
 					           CENTER_ID  ,      
 							   CENTER_NM  ,
 						       CASE  WHEN  LEN(CENTER_IMG) > 0 THEN 
@@ -65,11 +65,11 @@
              );
           ]]>
           <if test="floorlist != null">
-          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
+          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, FLOOR_PART
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
-          SELECT #{centerId}, CODE, CODE_NM, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
+          SELECT #{centerId}, CODE, CODE_NM, 'FLOOR_PART_2' AS FLOOR_PART, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
           FROM LETTCCMMNDETAILCODE
-          WHERE CODE = 'CNETER_FLOOR'
+          WHERE CODE_ID = 'CENTER_FLOOR'
                 AND CODE_DC IN  
                 <foreach collection="floorlist" item="item" index="index" open="(" separator="," close=")">
                   #{item}

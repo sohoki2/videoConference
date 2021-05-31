@@ -10,10 +10,10 @@ var backoffice_common = {
 	        	 payHtml = $("#sp_PayInfo").html() + "<input type='number' id='payCost' name='payCost' value='"+payCost+"' onkeypress='only_num();' style='width:120px;'>";
 	         }else { payHtml = "";}	 
              $("#"+sp_id).html(payHtml);
-     }, fn_floorSearch : function (){
+     }, fn_floorSearch : function (floorSeq, span_id, comboboxId){
 			  var _url = "/backoffice/basicManage/floorListAjax.do";
 			  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
-		      fn_comboListPost("sp_floorCombo", "searchFloorSeq",_url, _params, "", "120px", "");  
+		      fn_comboListPost(span_id, comboboxId,_url, _params, "", "120px", floorSeq);  
 	 }, uniAjax : function(_url, _data, _sendGubun){
 	        var returnData = "";
 	        $.ajax({
@@ -41,5 +41,9 @@ var backoffice_common = {
 		    });
 	        return returnData;
 	        
-	 }         
+	 }, fn_floorPlayState : function (floorPlaySeq, span_id, checkboxField){
+		  var _url = "/backoffice/basicManage/floorListAjax.do";
+	      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
+	      fn_checkListPost(span_id, checkboxField,_url, _params, floorPlaySeq, "");
+	 }        
 }

@@ -4,11 +4,11 @@
 
 	<select id="selectCmmnCodeListByPagination" resultType="CmmnCodeVO">
 		
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-			   R.*
+		SELECT R.*
 		FROM
 		(
-			SELECT Row_Number() OVER (ORDER BY A.CODE_ID DESC) AS RNUM, 
+			SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+			       ROW_NUMBER() OVER (ORDER BY A.CODE_ID DESC) AS RNUM, 
 				   A.CODE_ID as codeId, 
 				   A.CODE_ID_NM as codeIdNm, 
 				   A.USE_AT as useAt

@@ -94,7 +94,7 @@ public class CenterInfoManageController {
 	       loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
 		}
 		model.addObject(Globals.STATUS_REGINFO , searchVO);
-		model.addObject("floorInfo", cmmnDetailService.selectCmmnDetailCombo("CNETER_FLOOR"));
+		model.addObject("floorInfo", cmmnDetailService.selectCmmnDetailCombo("CENTER_FLOOR"));
 	    model.setViewName("/backoffice/basicManage/centerList");
 		return model;	
 	}
@@ -178,7 +178,7 @@ public class CenterInfoManageController {
 			model.addObject(Globals.STATUS_REGINFO, centerInfo);
 			
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("code", "CNETER_FLOOR");
+			params.put("code", "CENTER_FLOOR");
 			params.put("startCode", centerInfo.get("start_floor"));
 			params.put("endCode", centerInfo.get("end_floor"));
 			model.addObject("floorlistInfo", cmmnDetailService.selectCmmnDetailComboEtc(params));

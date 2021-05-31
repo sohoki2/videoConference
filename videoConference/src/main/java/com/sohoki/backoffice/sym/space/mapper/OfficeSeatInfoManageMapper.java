@@ -25,6 +25,6 @@ public interface OfficeSeatInfoManageMapper {
 	
 	public int updateOfficeSeatPositionInfoManage(@Param("list") List<OfficeSeatInfo> list, @Param("type") String type);
 	
-	public int deleteOfficeSeatQrInfoManage(List<String> seatList);
+	public int deleteOfficeSeatQrInfoManage(@Param("seatList") List<String> seatList);
 	
 }

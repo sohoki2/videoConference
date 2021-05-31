@@ -3,11 +3,11 @@
 <mapper namespace="com.sohoki.backoffice.sym.ccm.cde.mapper.EgovCmmnDetailCodeManageMapper">
 
 	<select id="selectCmmnDetailCodeListByPagination" resultType="CmmnDetailCodeVO">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-			   R.*
+		SELECT R.*
 		FROM
 		(
-			SELECT Row_Number() OVER (ORDER BY A.CODE DESC) AS RNUM, 
+			SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+			       ROW_NUMBER() OVER (ORDER BY A.CODE DESC) AS RNUM, 
 				   A.CODE_ID, B.CODE_ID_NM, A.CODE, A.CODE_NM, A.CODE_DC, A.USE_AT
 			FROM LETTCCMMNDETAILCODE A
 			     INNER JOIN LETTCCMMNCODE B ON A.CODE_ID = B.CODE_ID				     

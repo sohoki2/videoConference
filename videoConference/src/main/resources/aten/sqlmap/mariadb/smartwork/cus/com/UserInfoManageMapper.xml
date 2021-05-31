@@ -92,8 +92,8 @@
                                 , COM_CODE = #{comCode}
                                 , EMPGRAD = #{userRank,jdbcType=VARCHAR}
                                 , EMPJIKW = #{userPosition,jdbcType=VARCHAR} 
-                                , USER_EMAIL = #{userEmail,jdbcType=VARCHAR} 
-                                , USER_STATE = #{userState,jdbcType=VARCHAR} 
+                                , EMPMAIL = #{userEmail,jdbcType=VARCHAR} 
+                                , EMP_STATE = #{userState,jdbcType=VARCHAR} 
                                 , EMPHANDPHONE = #{userCellphone,jdbcType=VARCHAR} 
                                 , EMPTELPHONE = #{userTel,jdbcType=VARCHAR}
                                 , UPDATE_DATE = NOW()

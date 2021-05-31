@@ -8,9 +8,9 @@
 				        SELECT 	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, tb.*
 				        FROM 	(    
 				                   SELECT ROW_NUMBER() OVER (ORDER BY a.MSG_SEQ DESC) AS RNUM, 
-				                          a.MSG_SEQ, fn_DetailCodeNm( a.MSG_GUBUN) as msg_gubuntxt, a.MSG_TITLE, a.MSG_CONTENT, a.MSG_REG_ID, 
+				                          a.MSG_SEQ, dbo.FN_DETAILCODENM( a.MSG_GUBUN) as msg_gubuntxt, a.MSG_TITLE, a.MSG_CONTENT, a.MSG_REG_ID, 
                                           FORMAT(a.MSG_REG_DATE,'yyyy-MM-dd HH:mm:ss') MSG_REG_DATE, 
-                                          MSG_UPDATE_ID, SUBSTRING( MSG_UPDATE_DATE, 1,10) MSG_UPDATE_DATE , USEYN
+                                          MSG_UPDATE_ID, FORMAT(a.MSG_UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') MSG_UPDATE_DATE , USEYN
 				                   FROM	 TB_MESSAGEINFO a  
 				                   WHERE 	1=1
                               	   <if test="searchKeyword != ''">
@@ -48,31 +48,31 @@
     
    </select>   
    <select id="selectMsgManageDetail" resultType="lmap">
-		     SELECT a.MSG_SEQ, a.MSG_GUBUN, dbdo.FN_DETAILCODENM( a.MSG_GUBUN) as msgGubunTxt, a.MSG_TITLE, a.MSG_CONTENT, 
-					a.MSG_REG_ID,  a.MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE, a.UseYn
-		     FROM	TB_MESSAGEINFO a  
-		     WHERE 	a.MSG_SEQ = #{msgSeq}
+		 SELECT a.MSG_SEQ, a.MSG_GUBUN, dbo.FN_DETAILCODENM( a.MSG_GUBUN) as msgGubunTxt, a.MSG_TITLE, a.MSG_CONTENT, 
+		   	    a.MSG_REG_ID,  a.MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE, a.UseYn
+		 FROM	TB_MESSAGEINFO a  
+		 WHERE 	a.MSG_SEQ = #{msgSeq}
    </select>
 
    <insert id="insertMsgManage">
-	      INSERT INTO tb_messageinfo( MSG_GUBUN, MSG_TITLE, MSG_SENDTYPE,  MSG_CONTENT, 
+	     INSERT INTO tb_messageinfo( MSG_GUBUN, MSG_TITLE, MSG_SENDTYPE,  MSG_CONTENT, 
 						                              	      MSG_REG_ID,  MSG_REG_DATE, MSG_UPDATE_ID, MSG_UPDATE_DATE)
-	      VALUES ( #{msgGubun}, #{msgTitle}, #{msgSendtype,jdbcType=VARCHAR }, #{msgContent,jdbcType=VARCHAR }, 
+	     VALUES ( #{msgGubun}, #{msgTitle}, #{msgSendtype,jdbcType=VARCHAR }, #{msgContent,jdbcType=VARCHAR }, 
 	                      #{msgRegId ,jdbcType=VARCHAR}, getdate(), #{msgRegId ,jdbcType=VARCHAR}, getdate())
    </insert>
    <update id="updateMsgManage">
-	      UPDATE tb_messageinfo SET MSG_GUBUN = #{msgGubun}
-		                            ,  MSG_TITLE = #{msgTitle }
-		                            ,  MSG_SENDTYPE = #{msgSendtype }
-		                            ,  MSG_CONTENT = #{msgContent,jdbcType=VARCHAR }                             
-		                            ,  MSG_UPDATE_DATE = getdate()
-		                            ,  MSG_UPDATE_ID = #{msgUpdateId ,jdbcType=VARCHAR}
-		                            , USEYN = #{useYn, jdbcType=VARCHAR}
-	      WHERE MSG_SEQ = #{msgSeq}
+	     UPDATE tb_messageinfo SET MSG_GUBUN = #{msgGubun}
+		                           ,  MSG_TITLE = #{msgTitle }
+		                           ,  MSG_SENDTYPE = #{msgSendtype }
+		                           ,  MSG_CONTENT = #{msgContent,jdbcType=VARCHAR }                             
+		                           ,  MSG_UPDATE_DATE = getdate()
+		                           ,  MSG_UPDATE_ID = #{msgUpdateId ,jdbcType=VARCHAR}
+		                           , USEYN = #{useYn, jdbcType=VARCHAR}
+	     WHERE MSG_SEQ = #{msgSeq}
    </update>
    <delete id="deleteMsgManage">
-      DELETE FROM tb_messageinfo
-      WHERE MSG_SEQ = #{msgSeq}   
+         DELETE FROM tb_messageinfo
+         WHERE MSG_SEQ = #{msgSeq}   
    </delete>
 
 </mapper>

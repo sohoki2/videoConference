@@ -2,14 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sohoki.backoffice.sym.space.mapper.OfficeSeatInfoManageMapper">
    <select id="selectOfficeSeatInfoManageListByPagination"  resultType="lmap">
-		SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-	        TB.* FROM (
-					    SELECT a.CENTER_ID, a.FLOOR_SEQ, a.PART_SEQ, a.SEAT_ID, a.SEAT_NAME, a.SEAT_USEYN, 
+		SELECT TB.* FROM (
+					    SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY a.SEAT_ORDER DESC) AS RNUM, 
+					           a.CENTER_ID, a.FLOOR_SEQ, a.PART_SEQ, a.SEAT_ID, a.SEAT_NAME, a.SEAT_USEYN, 
 							   a.SEAT_TOP, a.SEAT_LEFT, a.SEAT_FIX_USERYN, a.SEAT_FIX_USER_ID, a.ORG_CD,
 							   a.SEAT_QR_CODE, a.SEAT_QR_CODE_PATH, a.SEAT_QR_CODE_FULL_PATH, a.SEAT_ORDER, a.SEAT_NUMBER, 
-							   a.UPDATE_ID, DATE_FORMAT(a.UPDATE_DATE,'%Y-%m-%d %H:%i:%s')  UPDATE_DATE, b.CENTER_NM, c.FLOOR_NAME,
-							   d.CODE_NM , fn_DetailCodeNm(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION,
-							   fn_DetailCodeNm(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN
+							   FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE, 
+							   b.CENTER_NM, c.FLOOR_NAME, a.UPDATE_ID, 
+							   d.CODE_NM , dbo.FN_DETAILCODENM(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION,
+							   dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN
 					    FROM  TB_SEATINFO a, TB_CENTERINFO b, TB_FLOORINFO c, LETTCCMMNDETAILCODE d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
@@ -26,10 +28,10 @@
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
 								  AND a.PART_SEQ = #{params.partSeq}
 							  </if>
-					    ORDER BY a.SEAT_ORDER  DESC
 	        ) TB  
-	         ORDER BY TB.SEAT_ORDER  DESC
-	        LIMIT   ${params.firstIndex},   ${params.recordCountPerPage}  		 	    
+	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+	        ORDER BY TB.SEAT_ORDER  DESC
+	        		 	    
     </select>
     <select id="selectOfficeSeatInfoManageDetail"  resultType="lmap">
            SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
@@ -44,14 +46,14 @@
 				      WHEN SEAT_FIX_USERYN = 'Y' AND SEAT_FIX_USER_ID IS NOT NULL AND SEAT_FIX_GUBUN = 'C'  THEN 
 				         ( SELECT USER_NAME FROM tb_userinfo WHERE USER_NO = a.SEAT_FIX_USER_ID )
 				   ELSE 
-				    
+				       ''
 				   END EMPNAME
 		    FROM TB_SEATINFO a
 		    WHERE SEAT_ID = #{seatId}
     </select>
     <insert id="insertOfficeSeatInfoManage" >
          <selectKey resultType="String"  keyProperty="seatId" order="BEFORE">
-            select FN_SEATID(#{floorSeq})
+            SELECT dbo.FN_SEATID(#{floorSeq}) as seatId
          </selectKey>
          INSERT INTO TB_SEATINFO(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
@@ -62,7 +64,7 @@
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
                  #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
-                 #{userId,jdbcType=VARCHAR}, NOW(), #{userId,jdbcType=VARCHAR}, NOW(),
+                 #{userId,jdbcType=VARCHAR}, GETDATE(), #{userId,jdbcType=VARCHAR}, GETDATE(),
                  #{seatGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
                  #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  
                  );
@@ -77,50 +79,46 @@
 		           <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
 		                INSERT INTO TB_SEATINFO(SEAT_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
 		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
-		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_FIX_USERYN
 		                                        )
-						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
-						       NOW(), NOW(), #{params.userId}, #{params.userId},
-						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}
+						SELECT dbo.FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost} , #{seatFixUseryn, jdbcType=VARCHAR}
 						FROM (
 						      <![CDATA[
-							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
-							  FROM tb_floorpart a, (WITH RECURSIVE cte AS (
-														SELECT ${params.seatStr} AS RN FROM dual
-														union all
-														SELECT RN + 1 FROM cte
-														WHERE RN < ${params.seatEnd} 
-														)SELECT RN FROM cte )b 
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, 
+							          CONCAT(a.PART_SEATRULE,'_', a.PART_NAME,'_', REPLICATE('0',4 - LEN( b.rn)) , b.rn) RN, 
+							          ROW_NUMBER() OVER(ORDER BY b.RN DESC) as RNUM
+							  FROM tb_floorpart a, ( select * from dbo.FN_ROWTABLE(${params.seatStr}, ${params.seatEnd} ) )b 
 							  WHERE PART_SEQ = #{params.partSeq}
-							  ORDER BY b.RN ASC 
+							  
 							  ]]>
-						)TA;
+						)TA
+						ORDER BY TA.RN ASC ;
 		           </when>
 		           <otherwise>
 		                INSERT INTO TB_SEATINFO(SEAT_ID, CENTER_ID, FLOOR_SEQ, SEAT_NAME, SEAT_USEYN, SEAT_TOP, SEAT_LEFT, SEAT_ORDER,
 		                                        REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
-		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+		                                        SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_FIX_USERYN
 		                                        )
-						SELECT FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ, TA.RN, 'Y', 0,0 , TA.RNUM,
-						       NOW(), NOW(), #{params.userId}, #{params.userId},
-						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}
+						SELECT dbo.FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ, TA.RN, 'Y', 0,0 , TA.RNUM,
+						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}, #{seatFixUseryn, jdbcType=VARCHAR}
 						FROM (
 						      <![CDATA[
-							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT(a.FLOOR_NAME, '_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
-							  FROM tb_floorinfo a, (WITH RECURSIVE cte AS (
-														SELECT ${params.seatStr} AS RN FROM dual
-														union all
-														SELECT RN + 1 FROM cte
-														WHERE RN < ${params.seatEnd} 
-														)SELECT RN FROM cte )b 
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, 
+							          CONCAT(a.FLOOR_NAME, '_', REPLICATE('0',4 - LEN( b.rn)) , b.rn) RN, 
+							          ROW_NUMBER() OVER(ORDER BY b.RN DESC) as RNUM
+							  FROM tb_floorinfo a, ( select * from dbo.FN_ROWTABLE(${params.seatStr}, ${params.seatEnd} ) )b 
 							  WHERE FLOOR_SEQ = #{params.floorSeq}
-							  ORDER BY b.RN ASC 
+							  
 							  ]]>
-						)TA;
+						)TA
+						ORDER BY TA.RN ASC ;
 		
 		           </otherwise>
 		        </choose>
-		        UPDATE TB_FLOORINFO SET SEAT_CNT = (SELECT IFNULL(count(*),0) 
+		        UPDATE TB_FLOORINFO SET SEAT_CNT = (SELECT ISNULL(count(*),0) 
 						                            FROM tb_seatinfo 
 						                            WHERE FLOOR_SEQ = #{params.floorSeq} )
 				WHERE FLOOR_SEQ = #{params.floorSeq};
@@ -133,51 +131,48 @@
 		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, MAIL_SENDCHECK, SMS_SENDCHECK,
 		                                            ROOM_TYPE, MEETING_CONFIRMGUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                            )
-						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
-						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						SELECT dbo.FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
 						       'Y','Y',0, 'N','N',
 						       #{params.roomType}, #{params.meetingConfirmgubun}, #{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
-							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, CONCAT(''M_', a.PART_SEATRULE,'_', a.PART_NAME,'_', LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
-							  FROM tb_floorpart a, (WITH RECURSIVE cte AS (
-														SELECT ${params.seatStr} AS RN FROM dual
-														union all
-														SELECT RN + 1 FROM cte
-														WHERE RN < ${params.seatEnd} 
-														)SELECT RN FROM cte )b 
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, 
+							          CONCAT(''M_', a.PART_SEATRULE,'_', a.PART_NAME,'_', REPLICATE('0',4 - LEN( b.rn)) , b.rn) RN, 
+							          ROW_NUMBER() OVER(ORDER BY b.RN DESC) as RNUM
+							  FROM tb_floorpart a, ( select * from dbo.FN_ROWTABLE(${params.seatStr}, ${params.seatEnd} ) )b 
 							  WHERE PART_SEQ = #{params.partSeq}
-							  ORDER BY b.RN ASC 
+							  
 							  ]]>
-						)TA;
+						)TA
+						ORDER BY TA.RN ASC ;
 		           </when>
 		           <otherwise>
-		                INSERT INTO tb_meeting_room(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
+		                INSERT INTO TB_MEETING_ROOM(MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ,  MEETING_NAME, MEETING_USEYN, MEETING_TOP, MEETING_LEFT, MEETING_ORDER,
 		                                            REG_DATE, UPDATE_DATE, REG_ID, UPDATE_ID,
 		                                            MEETING_MAINVIEW, MEETING_VIEW, MAX_CNT, MAIL_SENDCHECK, SMS_SENDCHECK,
 		                                            ROOM_TYPE, MEETING_CONFIRMGUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
 		                                            )
-						SELECT FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
-						       NOW(), NOW(), #{params.userId}, #{params.userId},
+						SELECT dbo.FN_MEETINGID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
+						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
 						       'Y','Y',0, 'N','N',
 						       #{params.roomType}, #{params.meetingConfirmgubun}, #{params.payClassification},#{params.payGubun},#{params.payCost}
 						FROM (
 						      <![CDATA[
-							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, CONCAT('M_',a.FLOOR_NAME, '_',LPAD(b.rn, 4, '0')) RN, row_number() over() as RNUM
-							  FROM tb_floorinfo a, (WITH RECURSIVE cte AS (
-														SELECT ${params.seatStr} AS RN FROM dual
-														union all
-														SELECT RN + 1 FROM cte
-														WHERE RN < ${params.seatEnd} 
-														)SELECT RN FROM cte )b 
+							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, 
+							          CONCAT('M_',a.FLOOR_NAME, '_', REPLICATE('0',4 - LEN( b.rn)) , b.rn) RN, 
+							          ROW_NUMBER() OVER(ORDER BY b.RN DESC) as RNUM
+							  FROM TB_FLOORINFO a, ( SELECT * FROM dbo.FN_ROWTABLE(${params.seatStr}, ${params.seatEnd} ) )b 
 							  WHERE FLOOR_SEQ = #{params.floorSeq}
-							  ORDER BY b.RN ASC 
+							  
 							  ]]>
-						)TA;
+						)TA
+						ORDER BY TA.RN ASC 
+						;
 		
 		           </otherwise>
 		        </choose>
-		        UPDATE tb_floorinfo SET MEET_CNT = (SELECT IFNULL(count(*),0) 
+		        UPDATE tb_floorinfo SET MEET_CNT = (SELECT ISNULL(count(*),0) 
 						                            FROM tb_meeting_room 
 						                            WHERE FLOOR_SEQ = #{params.floorSeq} )
 				WHERE FLOOR_SEQ = #{params.floorSeq};
@@ -197,7 +192,7 @@
 	                              , ORG_CD = #{orgCd,jdbcType=VARCHAR} 
 	                              , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
 	                              , SEAT_NUMBER = #{seatNumber,jdbcType=VARCHAR} 
-	                              , UPDATE_DATE = NOW()
+	                              , UPDATE_DATE = GETDATE()
 	                              , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	                              , SEAT_GUBUN = #{seatGubun,jdbcType=VARCHAR}
 	                              , PAY_CLASSIFICATION = #{payClassification,jdbcType=VARCHAR}
@@ -212,7 +207,7 @@
 	                            , SEAT_QR_CODE_PATH = #{seatQrCodePath,jdbcType=VARCHAR} 
 	                            , SEAT_QR_CODE_FULL_PATH = #{seatQrCodeFullPath,jdbcType=VARCHAR} 
 	                            , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
-	                            , UPDATE_DATE = NOW()
+	                            , UPDATE_DATE = GETDATE()
 	                            , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	    WHERE SEAT_ID = #{seatId}           
     </update>
@@ -222,7 +217,7 @@
                 <foreach collection="list" item="item" separator=";">
 			        UPDATE TB_SEATINFO SET SEAT_TOP = #{item.seatTop,jdbcType=VARCHAR}
 				                           , SEAT_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
-				                           , UPDATE_DATE = NOW()
+				                           , UPDATE_DATE = GETDATE()
 				                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
 				    WHERE SEAT_ID = #{item.seatId} 
 			    </foreach> 
@@ -231,7 +226,7 @@
                 <foreach collection="list" item="item" separator=";">
 		            UPDATE TB_MEETING_ROOM SET MEETING_TOP = #{item.seatTop,jdbcType=VARCHAR}
 					                           , MEETING_LEFT = #{item.seatLeft,jdbcType=VARCHAR}
-					                           , UPDATE_DATE = NOW()
+					                           , UPDATE_DATE = GETDATE()
 					                           , UPDATE_ID = #{item.userId,jdbcType=VARCHAR}
 				    WHERE MEETING_ID = #{item.seatId} 
 	            </foreach> 
@@ -240,20 +235,21 @@
            
     </update> 
     <delete id="deleteOfficeSeatQrInfoManage">
+        UPDATE TB_FLOORINFO SET SEAT_CNT = SEAT_CNT - b.CNT
+        from TB_FLOORINFO a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
+						       FROM TB_SEATINFO
+						       WHERE SEAT_ID IN 
+					           <foreach collection="seatList" item="item"  open="(" separator="," close=")">
+						            #{item}
+						       </foreach>
+						       GROUP  by FLOOR_SEQ) b
+        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+        
         DELETE FROM TB_SEATINFO WHERE SEAT_ID IN
         <foreach collection="seatList" item="item"  open="(" separator="," close=")">
             #{item}
         </foreach>
         ;
-        UPDATE TB_FLOORINFO  a , (SELECT COUNT(*) CNT , FLOOR_SEQ 
-						          FROM tb_seatinfo
-						          WHERE SEAT_ID IN 
-						          <foreach collection="seatList" item="item"  open="(" separator="," close=")">
-							            #{item}
-							      </foreach>
-						          GROUP  by FLOOR_SEQ) b
-						  
-        SET SEAT_CNT = SEAT_CNT - b.CNT
-        WHERE a.FLOOR_SEQ = b.FLOOR_SEQ;
+       
     </delete>
 </mapper>

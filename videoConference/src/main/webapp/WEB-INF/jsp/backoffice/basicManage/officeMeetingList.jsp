@@ -182,7 +182,7 @@
             	     return "<a href='javascript:jqGridFunc.delRow(\""+rowObject.meeting_id+"\");'>삭제</a>";
             },classinfo : function(cellvalue, options, rowObject){
                 var costInfo  = rowObject.pay_classification === "PAY_CLASSIFICATION_2" ? rowObject.pay_classification_txt : rowObject.pay_classification_txt 
-                		      + ":" + rowObject.pay_gubun_txt +": 사용 테넌트:" + rowObject.pay_cost;
+                		      + ":" + rowObject.pay_gubun_txt +": 사용 크레딧:" + rowObject.pay_cost;
                 return costInfo;
             },confirmGubun: function (cellvalue, options, rowObject){
            	    return rowObject.meeting_confirmgubun == "Y" ? "관리자승인: [" +  CommonJsUtil.NVL(rowObject.seat_admini_txt) + "]": "바로사용";

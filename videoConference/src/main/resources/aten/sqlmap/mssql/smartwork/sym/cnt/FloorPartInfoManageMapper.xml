@@ -2,19 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sohoki.backoffice.sym.cnt.mapper.FloorPartInfoManageMapper">
      <select id="selectFloorPartInfoManageListByPagination"  resultType="lmap">
-		SELECT TB.* , SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT
+		SELECT TB.*
 	    FROM (
-					    SELECT ROW_NUMBER() OVER (ORDER BY c.PART_SEQ DESC) AS RNUM, 
+					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+					           ROW_NUMBER() OVER (ORDER BY c.PART_SEQ DESC) AS RNUM, 
 					           c.PART_SEQ, c.PART_NAME, b.FLOOR_SEQ, b.FLOOR_INFO, b.FLOOR_NAME,
 					           a.CENTER_ID,  a.CENTER_NM  ,
-						       CASE  WHEN  length(PART_MAP1) > 0 THEN 
+						       CASE  WHEN  LEN(PART_MAP1) > 0 THEN 
 				  	               PART_MAP1
 							   ELSE 
 						          'no_image.gif'
 						       END PART_MAP1, 
 						       b.FLOOR_PART,  c.UPDATE_ID,     	
-						       DATE_FORMAT(c.UPDATE_DATE,'%Y-%m-%d %H:%i:%s') UPDATE_DATE,
-				               c.PART_SEATRULE, c.PART_MINI_CSS, c.PART_MINI_TOP, c.PART_MINI_LEFT, 
+						       FORMAT(b.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE, 
+						       c.PART_SEATRULE, c.PART_MINI_CSS, c.PART_MINI_TOP, c.PART_MINI_LEFT, 
 			 	               c.PART_USEYN, c.PART_ORDER, c.PART_CSS
 					    FROM  TB_CENTERINFO a, TB_FLOORINFO b, TB_FLOORPART c
 					    WHERE a.CENTER_ID = b.CENTER_ID       

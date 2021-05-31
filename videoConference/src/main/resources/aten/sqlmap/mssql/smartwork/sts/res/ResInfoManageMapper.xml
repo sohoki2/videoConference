@@ -203,8 +203,8 @@
 		      a.CONFERENCE_ID, a.CON_NUMBER, a.CON_PIN, 
               a.CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI,
               DATE_FORMAT(STR_TO_DATE (CONCAT(a.RES_STARTDAY, a.RES_STARTTIME, '00'), '%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') resDayInfo,
-              DATE_FORMAT(STR_TO_DATE (CONCAT(a.RES_STARTDAY, fn_upsTimedown(a.RES_ENDTIME), '00'), '%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') resDayEndInfo,
-              
+              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(a.RES_STARTTIME), ':00')) , 20)  resDayInfo,
+              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_upsTimedown(a.RES_ENDTIME), ':00')) , 20)  resDayEndInfo,
               
               dbo.FN_DURATION(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME ), a.RES_STARTTIME ) resDurationT,
 			  d.AVAYA_CONFI_ID, d.AVAYA_USERID, d.TERMINAL_ID, d.END_NAME, d.TERMINAL_NUMBER,

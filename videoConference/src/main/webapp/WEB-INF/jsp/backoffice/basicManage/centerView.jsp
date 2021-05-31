@@ -444,7 +444,7 @@
                   <tr id="tr_meeting">
                      <th><span class="redText">*</span>회의실타입</th>
 		             <td style="text-align:left">
-                           <select id="roomType" name="roomType" style="width:120px" onChange="jqGridFunc.fn_AyavaView()">
+                           <select id="roomType" name="roomType" style="width:120px">
                                  <option value="">회의실 구분</option>
 		                         <c:forEach items="${selectSwcGubun}" var="code">
 		                            <option value="${code.code}">${code.codeNm}</option>
@@ -566,7 +566,7 @@
 	    		        subGrid: true,
 	    		        subGridRowExpanded: showChildGrid, 
 	    		        subGridBeforeExpand : function (pID, id){
-	    		        	alert("pID:" + pID + ":" + id);
+	    		        	//alert("pID:" + pID + ":" + id);
 	    		        },
 	    		        isHasSubGrid : function (rowId) {
 					        
@@ -1077,6 +1077,13 @@
 			 toggleDefault("seatFixUseryn");
 			 $("#seatStr").val("1");
 			 $("#seatEnd").val("1");
+			 //유료 무료 
+			 $('input[name^=pay]').val("");
+			 $("#payClassification").val();
+			 $("#payGubun").hide();
+			 $("#payCost").hide();
+			 
+			 
 			 $("#btn_bpop").trigger("click");  
 		 }
      }

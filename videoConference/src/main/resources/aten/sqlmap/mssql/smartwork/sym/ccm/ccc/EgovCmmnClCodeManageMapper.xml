@@ -3,14 +3,12 @@
 <mapper namespace="egovframework.com.mapper.EgovCmmnClCodeManageMapper">
 
 	<select id="selectCmmnClCodeListByPagination" resultType="CmmnClCodeVO">
-		SELECT
-		    Row_Number() OVER (ORDER BY R.CL_CODE DESC) AS RNUM, 
-			SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-		    R.*
+		SELECT R.*
 		FROM
 		(
-			SELECT 
-				CL_CODE, CL_CODE_NM, USE_AT
+			SELECT  Row_Number() OVER (ORDER BY R.CL_CODE DESC) AS RNUM, 
+			        SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+				    CL_CODE, CL_CODE_NM, USE_AT
 			FROM lettccmmncode
 			<where>
 				<if test="searchKeyword != ''">

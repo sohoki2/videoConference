@@ -9,77 +9,78 @@
 		                         ROW_NUMBER() OVER (ORDER BY BOARD_SEQ DESC) AS RNUM, 
 		                         TB.* 
 						FROM  (	
-						                    SELECT		a.BOARD_SEQ
-														, a.BOARD_TITLE
-														, DATE_FORMAT( a.BOARD_REGDATE, '%Y-%m-%d') boardRegdate 
-														, DATE_FORMAT(a.BOARD_UPDATE_DATE, '%Y-%m-%d') boardUpdateDate
-														, CASE a.BOARD_GUBUN WHEN 'QNA' THEN	
-														    (SELECT b.empname FROM tb_empInfo b where b.EMPNO = a.BOARD_REG_ID) 
-														ELSE	
-														    (SELECT c.ADMIN_NAME FROM tb_admin c where c.ADMIN_ID = a.BOARD_REG_ID) 
-														END 		userNm
-														, (SELECT DEPTNAME FROM tb_empInfo WHERE EMPNO = a.BOARD_REG_ID) deptname
-														, a.BOARD_REG_ID 
-														, a.BOARD_VISITED
-														, a.BOARD_NOTICE_USEYN
-														, a.BOARD_TOP_SEQ
-											FROM 		tb_board a
-											WHERE 		a.BOARD_GUBUN = #{boardGubun}
-											<if test="params.boardGubun== 'NOT'">
-								            	<choose>
-								            		<when test="adminYn == 0">
-								            			<![CDATA[
-					            			             AND  a.BOARD_SEQ NOT in	(SELECT board_seq FROM tb_board d 
-					            			                                                     WHERE d.BOARD_GUBUN='NOT' 
-					            			                                                                AND d.BOARD_NOTICE_STARTDAY > DATE_FORMAT(GETDATE(), '%Y%m%d') OR d.BOARD_NOTICE_ENDDAY < DATE_FORMAT(GETDATE(), '%Y%m%d'))
-					            						]]> 
-								            		</when>
-								            		<otherwise>
-								            		</otherwise>
-								            	</choose>
-								            </if>   
-								            <if test="params.boardGubun== 'FAQ'">
-								            	<choose>
-								            		<when test="adminYn == 0">
-					            			            AND 	a.BOARD_NOTICE_USEYN != 'N'
-								            		</when>
-								            		<otherwise>
-								            		</otherwise>
-								            	</choose>
-								            </if>      		        
-									        <if test="params.searchKeyword != ''">
-									        	<choose>
-									        		<when test="params.searchCondition == 0">
-									        			<![CDATA[
-											             AND (	BOARD_TITLE LIKE CONCAT('%',#{searchKeyword, jdbcType=VARCHAR},'%')  or BOARD_CONTENT LIKE CONCAT('%',#{searchKeyword, jdbcType=VARCHAR},'%') )
-														]]> 
-									        		</when>
-									        		<otherwise>
-									        			<choose>
-															<when test="params.searchCondition == 1">
-															<![CDATA[
-											                AND BOARD_TITLE LIKE CONCAT('%',#{searchKeyword, jdbcType=VARCHAR},'%') 
-															]]> 
-															</when>
-															<otherwise>
-															<![CDATA[
-														   AND	BOARD_CONTENT CONCAT('%',#{searchKeyword, jdbcType=VARCHAR},'%') 
-															]]> 
-															<if test="params.boardGubun== 'NOT'">     		     
-		        							ORDER BY BOARD_NOTICE_USEYN DESC,	BOARD_TOP_SEQ ASC, BOARD_SEQ DESC
-		        							</if></otherwise>
-														</choose>
-									        		</otherwise>
-									        	</choose>
-											</if>		   
-											
-		        							<if test="params.boardGubun!= 'NOT'">
-	        								ORDER BY BOARD_SEQ DESC
-		        							</if>
-       								) TB 
+				                    SELECT	a.BOARD_SEQ
+											, a.BOARD_TITLE
+											, FORMAT(a.BOARD_REGDATE,'yyyy-MM-dd HH:mm:ss')  BOARD_REGDATE 
+											, FORMAT(a.BOARD_UPDATE_DATE,'yyyy-MM-dd HH:mm:ss')  BOARD_UPDATE_DATE
+											, CASE a.BOARD_GUBUN WHEN 'QNA' THEN	
+											    (SELECT b.empname FROM tb_empInfo b where b.EMPNO = a.BOARD_REG_ID) 
+											ELSE	
+											    (SELECT c.ADMIN_NAME FROM tb_admin c where c.ADMIN_ID = a.BOARD_REG_ID) 
+											END 		user_nm
+											, (SELECT DEPTNAME FROM tb_empInfo WHERE EMPNO = a.BOARD_REG_ID) deptname
+											, a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN, a.BOARD_TOP_SEQ
+									FROM  tb_board a
+									WHERE a.BOARD_GUBUN = #{params.boardGubun}
+									<if test="params.boardGubun== 'NOT'">
+						            	<choose>
+						            		<when test="adminYn == 0">
+						            			<![CDATA[
+			            			             AND  a.BOARD_SEQ NOT IN	
+			            			              (SELECT BOARD_SEQ 
+     			                                   FROM TB_BOARD d 
+     			                                   WHERE d.BOARD_GUBUN='NOT' 
+     			                                          AND d.BOARD_NOTICE_STARTDAY > CONVERT(VARCHAR(8), GETDATE(), 112)
+     			                                              OR 
+     			                                              d.BOARD_NOTICE_ENDDAY <  CONVERT(varchar(8), getdate(), 112)
+     			                                   )
+			            						]]> 
+						            		</when>
+						            		<otherwise>
+						            		</otherwise>
+						            	</choose>
+						            </if>   
+						            <if test="params.boardGubun== 'FAQ'">
+						            	<choose>
+						            		<when test="adminYn == 0">
+			            			            AND 	a.BOARD_NOTICE_USEYN != 'N'
+						            		</when>
+						            	</choose>
+						            </if>      		        
+							        <if test="params.searchKeyword != ''">
+							        	<choose>
+							        		<when test="params.searchCondition == 0">
+							        			<![CDATA[
+									             AND (	BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%')  or BOARD_CONTENT LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') )
+												]]> 
+							        		</when>
+							        		<otherwise>
+							        			<choose>
+													<when test="params.searchCondition == 1">
+													<![CDATA[
+									                AND BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
+													]]> 
+													</when>
+													<otherwise>
+													<![CDATA[
+												    AND	BOARD_CONTENT CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
+													]]> 
+												  </otherwise>
+									            </choose>
+							        		</otherwise>
+							        	</choose>
+									</if>		  
+     								) TB 
 			  )TA 
-			   WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}   
-			  ORDER BY BOARD_SEQ DESC
+			  WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+			  <choose>
+			      <when test="params.boardGubun== 'NOT'">
+			         ORDER BY BOARD_NOTICE_USEYN DESC,	BOARD_TOP_SEQ ASC, BOARD_SEQ DESC
+			      </when>
+			      <otherwise>
+			         ORDER BY BOARD_SEQ DESC
+			      </otherwise>
+			  </choose>			  
      </select> 
      <select id="selectIndexBoardTitle" resultType="lmap">
         SELECT * FROM (
@@ -97,7 +98,7 @@
 			                , a.BOARD_TOP_SEQ
 			         FROM tb_board a
 			         WHERE  a.BOARD_GUBUN = 'NOT' 
-			                    AND DATE_FORMAT(GETDATE(),  '%Y%m%d')   BETWEEN a.BOARD_NOTICE_STARTDAY and  a.BOARD_NOTICE_ENDDAY
+			                    AND CONVERT(VARCHAR(8), GETDATE(), 112)  BETWEEN a.BOARD_NOTICE_STARTDAY and  a.BOARD_NOTICE_ENDDAY
 			        ) TB
         ) TA
         WHERE RNUM  BETWEEN  1 AND 5
@@ -125,7 +126,7 @@
 				              , a.BOARD_NOTICE_ENDDAY
 						    FROM  tb_board a 
 						    WHERE a.board_seq NOT in	(SELECT board_seq FROM tb_board d WHERE d.BOARD_GUBUN='NOT' 
-						               AND d.BOARD_NOTICE_STARTDAY >  DATE_FORMAT(GETDATE(),  '%Y%m%d') OR d.board_notice_endday <  DATE_FORMAT(GETDATE(),  '%Y%m%d') )
+						               AND d.BOARD_NOTICE_STARTDAY >  CONVERT(VARCHAR(8), GETDATE(), 112) OR d.board_notice_endday <  CONVERT(VARCHAR(8), GETDATE(), 112) )
 				                       AND	 a.BOARD_NOTICE_USEYN != 'N'
 						    ) TB
 	        ) 
@@ -223,86 +224,86 @@
    
     <select id="selectBoardManageView"  resultType="lmap">
     <![CDATA[
-          SELECT	    a.BOARD_SEQ
-						, a.BOARD_TITLE
-				        , a.BOARD_NOTICE_USEYN
-				        , DATE_FORMAT(STR_TO_DATE(a.BOARD_NOTICE_STARTDAY,'%Y%m%d'),'%Y-%m-%d ') BoardNoticeStartdayTxt
-				        , DATE_FORMAT(STR_TO_DATE(a.BOARD_NOTICE_ENDDAY,'%Y%m%d'),'%Y-%m-%d ') BoardNoticeEnddayTxt
-				        , a.BOARD_NOTICE_STARTDAY
-				        , a.BOARD_NOTICE_ENDDAY
-				        , a.BOARD_GUBUN
-				        , a.BOARD_CONTENT
-				        , a.BOARD_RETURN_CONTENT
-				        , date_format(a.BOARD_REGDATE, '%Y-%m-%d') boardRegdate
-				        , a.BOARD_REG_ID
-				        , date_format(a.BOARD_UPDATE_DATE, '%Y-%m-%d') boardUpdateDate
-				        , a.BOARD_UPDATE_ID
-				        , a.BOARD_FILE01
-				        , a.BOARD_FILE02
-				        , a.BOARD_VIEW_YN
-				        , fn_DetailCodeNm (a.BOARD_FAQ_GUBUN) BOARD_FAQ_GUBUN
-				        , a.BOARD_VISITED
-				        , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
-				                ( SELECT b.EMPNAME FROM tb_empInfo b WHERE EMPNO = a.BOARD_REG_ID)
-				          ELSE 
-				                (SELECT c.ADMIN_NAME FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
-				          END userNm
-				        , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
-				              ( SELECT b.DEPTNAME FROM tb_empInfo b WHERE EMPNO = a.BOARD_REG_ID)
-						  ELSE ''
-				          END deptname
-				       , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN ''
-						      ELSE ''
-				          END mobTelNo			
-                		,  CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
-                		      (SELECT d.empmail FROM tb_empInfo d WHERE a.BOARD_REG_ID = d.EMPNO)  
-						   ELSE (SELECT c.ADMIN_TEL FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
-				           END offi_tel_no				   
-				        ,  CASE a.BOARD_GUBUN WHEN 'QNA'  THEN
-				              (SELECT empmail FROM tb_empInfo b WHERE b.EMPNO = a.BOARD_REG_ID )
-						   ELSE (SELECT ADMIN_EMAIL FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
-				           END email
-				          , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq}	AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                     (  SELECT  TA.BOARD_SEQ FROM (
-                                          SELECT b.BOARD_SEQ FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}	  ORDER BY b.BOARD_SEQ ASC
+          SELECT a.BOARD_SEQ
+				, a.BOARD_TITLE
+		        , a.BOARD_NOTICE_USEYN
+		        , CONVERT(VARCHAR(10) , CONVERT(DATETIME, a.BOARD_NOTICE_STARTDAY), 120) BoardNoticeStartdayTxt
+		        , CONVERT(VARCHAR(10) , CONVERT(DATETIME, a.BOARD_NOTICE_ENDDAY), 120) BoardNoticeStartdayTxt
+		        , a.BOARD_NOTICE_STARTDAY
+		        , a.BOARD_NOTICE_ENDDAY
+		        , a.BOARD_GUBUN
+		        , a.BOARD_CONTENT
+		        , a.BOARD_RETURN_CONTENT
+		        , CONVERT(VARCHAR(10), a.BOARD_REGDATE, 120) boardRegdate
+		        , a.BOARD_REG_ID
+		        , CONVERT(VARCHAR(10), a.BOARD_UPDATE_DATE, 120) boardUpdateDate
+		        , a.BOARD_UPDATE_ID
+		        , a.BOARD_FILE01
+		        , a.BOARD_FILE02
+		        , a.BOARD_VIEW_YN
+		        , dbo.FN_DETAILCODENM (a.BOARD_FAQ_GUBUN) BOARD_FAQ_GUBUN
+		        , a.BOARD_VISITED
+		        , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
+		                ( SELECT b.EMPNAME FROM tb_empInfo b WHERE EMPNO = a.BOARD_REG_ID)
+		          ELSE 
+		                (SELECT c.ADMIN_NAME FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
+		          END userNm
+		        , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
+		              ( SELECT b.DEPTNAME FROM tb_empInfo b WHERE EMPNO = a.BOARD_REG_ID)
+				  ELSE ''
+		          END deptname
+		       , CASE a.BOARD_GUBUN WHEN 'QNA'  THEN ''
+				      ELSE ''
+		          END mobTelNo			
+              		,  CASE a.BOARD_GUBUN WHEN 'QNA'  THEN 
+              		      (SELECT d.EMPMAIL FROM TB_EMPINFO d WHERE a.BOARD_REG_ID = d.EMPNO)  
+				   ELSE (SELECT c.ADMIN_TEL FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
+		           END offi_tel_no				   
+		        ,  CASE a.BOARD_GUBUN WHEN 'QNA'  THEN
+		              (SELECT EMPMAIL FROM TB_EMPINFO b WHERE b.EMPNO = a.BOARD_REG_ID )
+				   ELSE (SELECT ADMIN_EMAIL FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID)
+		           END email
+		          , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq}	AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                   (  SELECT  TA.BOARD_SEQ FROM (
+                                        SELECT b.BOARD_SEQ FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}	  ORDER BY b.BOARD_SEQ ASC
+                                        ) TA LIMIT 1
+                                   )
+                         ELSE 0
+                         END AS nextBoardSeq
+                      ,  CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                  (  SELECT  TA.BOARD_SEQ FROM (
+                                     SELECT b.BOARD_SEQ FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
+                                     ) TA LIMIT 1
+                                 )
+                         ELSE 0
+                         END AS preBoardSeq
+                      ,  CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                 (   SELECT TA.BOARD_TITLE FROM (
+                                                SELECT b.BOARD_TITLE FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}  ORDER BY b.BOARD_SEQ ASC
+                                     ) TA LIMIT 1
+                                 )
+                         ELSE '없음'
+                         END AS nextBoardTitle
+                      , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                  (   SELECT TA.BOARD_TITLE FROM (
+                                         SELECT b.BOARD_TITLE FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
+                                   ) TA LIMIT 1
+                                 )
+                         ELSE '없음'
+                         END AS preBoardTitle
+                      , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                    (   SELECT TA.BOARD_REGDATE FROM (
+                                         SELECT b.BOARD_REGDATE FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}  ORDER BY b.BOARD_SEQ ASC
                                           ) TA LIMIT 1
                                      )
-                           ELSE 0
-                           END AS nextBoardSeq
-                        ,  CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                    (  SELECT  TA.BOARD_SEQ FROM (
-                                       SELECT b.BOARD_SEQ FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
+                        END AS nextBoardRegDate
+                      , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
+                                    (   SELECT TA.BOARD_REGDATE FROM (
+                                          SELECT b.BOARD_REGDATE FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
                                        ) TA LIMIT 1
-                                   )
-                           ELSE 0
-                           END AS preBoardSeq
-                        ,  CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                   (   SELECT TA.BOARD_TITLE FROM (
-                                                  SELECT b.BOARD_TITLE FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}  ORDER BY b.BOARD_SEQ ASC
-                                       ) TA LIMIT 1
-                                   )
-                           ELSE '없음'
-                           END AS nextBoardTitle
-                        , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                    (   SELECT TA.BOARD_TITLE FROM (
-                                           SELECT b.BOARD_TITLE FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
-                                     ) TA LIMIT 1
-                                   )
-                           ELSE '없음'
-                           END AS preBoardTitle
-                        , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ > #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                      (   SELECT TA.BOARD_REGDATE FROM (
-                                           SELECT b.BOARD_REGDATE FROM tb_board b WHERE  b.BOARD_SEQ > #{boardSeq}  ORDER BY b.BOARD_SEQ ASC
-                                            ) TA LIMIT 1
-                                       )
-                          END AS nextBoardRegDate
-                        , CASE  WHEN (SELECT COUNT(*) FROM tb_board b WHERE b.BOARD_SEQ < #{boardSeq} AND b.BOARD_GUBUN = a.BOARD_GUBUN ) > 0 THEN
-                                      (   SELECT TA.BOARD_REGDATE FROM (
-                                            SELECT b.BOARD_REGDATE FROM tb_board b WHERE  b.BOARD_SEQ < #{boardSeq}  ORDER BY b.BOARD_SEQ DESC 
-                                         ) TA LIMIT 1
-                                      )
-                          END AS preBoardRegDate				        
-			FROM 	tb_board a        	
+                                    )
+                        END AS preBoardRegDate				        
+			FROM 	TB_BOARD a        	
 			WHERE 	BOARD_SEQ = #{boardSeq}	
 			]]>	
     </select>
@@ -321,13 +322,13 @@
 			                      , BOARD_RETURN_CONTENT
 			                      , BOARD_REGDATE
 			                      , BOARD_REG_ID
-			                        , BOARD_UPDATE_DATE
-			                        , BOARD_UPDATE_ID
-			                        , BOARD_FILE01
-			                        , BOARD_FILE02
-			                        , BOARD_VIEW_YN
-			                        , BOARD_FAQ_GUBUN
-			                        , BOARD_VISITED                        
+			                      , BOARD_UPDATE_DATE
+			                      , BOARD_UPDATE_ID
+			                      , BOARD_FILE01
+			                      , BOARD_FILE02
+			                      , BOARD_VIEW_YN
+			                      , BOARD_FAQ_GUBUN
+			                      , BOARD_VISITED                        
                       )
              VALUES ( #{boardTitle}
 	                      , #{boardTopSeq,jdbcType=VARCHAR}

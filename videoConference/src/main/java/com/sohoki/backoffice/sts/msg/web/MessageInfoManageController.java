@@ -66,34 +66,18 @@ public class MessageInfoManageController {
 																			, HttpServletRequest request
 																			, BindingResult bindingResult) throws Exception {
 		
-					   ModelAndView model = new ModelAndView();
-					   model.addObject("regist", searchVO);
-					   model.addObject("selectMsgGubun", detailService.selectCmmnDetailCombo("MSG_TYPE"));
-					   if(  searchVO.getPageUnit() > 0  ){    	   
-				    	   searchVO.setPageUnit(searchVO.getPageUnit());
-					  }else {
-							   searchVO.setPageUnit(propertiesService.getInt(Globals.PAGE_UNIT));   
-					  }
-					  searchVO.setPageSize(propertiesService.getInt(Globals.PAGE_SIZE));
-				       /** pageing */       
-				   	  PaginationInfo paginationInfo = new PaginationInfo();
-					  paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
-					  paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
-					  paginationInfo.setPageSize(searchVO.getPageSize());
-			
-					  searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
-					  searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
-					  //수정
-					  searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage()); 
-				      List<Map<String, Object>> list =  msgService.selectMsgManageListByPagination(searchVO);   	
-				      int totCnt = list.size() > 0 ?  Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
-				      paginationInfo.setTotalRecordCount(totCnt);
-				      model.addObject(Globals.JSON_PAGEINFO,   paginationInfo);
-				      model.addObject(Globals.JSON_RETURN_RESULTLISR,   list);
-				      model.addObject(Globals.PAGE_TOTALCNT,   totCnt);
-				      model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-					   model.setViewName("/backoffice/basicManage/msgList");
-					   return model;	
+		   ModelAndView model = new ModelAndView();
+		   model.addObject("regist", searchVO);
+		   model.addObject("selectMsgGubun", detailService.selectCmmnDetailCombo("MSG_TYPE"));
+		   if(  searchVO.getPageUnit() > 0  ){    	   
+	    	   searchVO.setPageUnit(searchVO.getPageUnit());
+		   }else {
+				   searchVO.setPageUnit(propertiesService.getInt(Globals.PAGE_UNIT));   
+		   }
+		   searchVO.setPageSize(propertiesService.getInt(Globals.PAGE_SIZE));
+	      
+		   model.setViewName("/backoffice/basicManage/msgList");
+		   return model;	
 	}
 	@RequestMapping(value="msgListAjax.do")
 	public ModelAndView selectMsgInfoManageListAjax (@ModelAttribute("loginVO") AdminLoginVO loginVO

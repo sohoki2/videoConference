@@ -122,7 +122,6 @@
                    );
                                     
            INSERT INTO   tb_compay_tennant_history (COM_CODE, REG_ID, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL,TENN_SEQ)
-           select #{item.comCode}
            VALUES (#{item.comCode}, #{item.userId,jdbcType=VARCHAR}, NOW(),  #{item.tennRecCount,jdbcType=VARCHAR}, 'TENN_PLAY_GUBUN_1', 'Y',
                    (SELECT IFNULL(MAX(TENN_SEQ),1) FROM tb_compay_tennant WHERE COM_CODE = #{item.comCode} )
                    )

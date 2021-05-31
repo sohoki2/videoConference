@@ -172,7 +172,6 @@ public class OfficeItemInfoManageController {
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.insert"));	
 		}	
-		LOGGER.debug("model:" + model.toString());
 		return model;
 	}
 	//구역 리스트 보여 주기 

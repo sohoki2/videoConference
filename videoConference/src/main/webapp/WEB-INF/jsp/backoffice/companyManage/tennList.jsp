@@ -31,7 +31,7 @@
 	    }
 	})();
 	</script>
-    <script type="text/javascript" src="/js/common.js"></script>
+	<script type="text/javascript" src="/js/common.js"></script>
     <script src="/js/popup.js"></script>
     
     

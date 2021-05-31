@@ -5,21 +5,18 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import egovframework.com.cmm.AdminLoginVO;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
-import egovframework.let.utl.fcc.service.EgovStringUtil;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -152,133 +148,112 @@ public class BoardInfoManageController {
 			}			   
 			return model;	
 		}
-		
-		//센터 정보 상세
-		@RequestMapping (value="boardDetail.do")
-		public String selectBoardInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
-                                                   , @ModelAttribute("vo")  BoardInfo vo
-                                                   , HttpServletRequest request
-                                    			   , BindingResult bindingResult
-												   , ModelMap model ) throws Exception{	
+		@RequestMapping (value="boardView.do")
+		public ModelAndView selectBoardViewInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
+													 	  , @RequestParam("boardSeq") String boardSeq
+											              , HttpServletRequest request
+											   			  , BindingResult bindingResult ) throws Exception{	
+			
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 			
 			try{
-				AdminLoginVO user = (AdminLoginVO) request.getSession().getAttribute("AdminLoginVO");
-			    vo.setUserNm(user.getAdminName());
-			    vo.setBoardRegId(user.getAdminId());
-			    vo.setEmphandphone(user.getAdminTel());
-			    vo.setEmpemail(user.getAdminEmail());
-				model.addAttribute("regist", vo);
-				
-				if (vo.getBoardGubun().equals("FAQ")){
-					model.addAttribute("selectFaq", cmmnDetailService.selectCmmnDetailCombo("qna_gubun"));
-				}				
-				if (!vo.getMode().equals("Ins")){			
-			     	model.addAttribute("regist", boardInfoService.selectBoardManageView(vo.getBoardSeq()));	     	
-				}		
-					
+				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			    if(!isAuthenticated) {
+						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+						model.setViewName("/backoffice/login");
+						return model;
+			    }
+			    //패스로 확인 하기 
+			    
+				int hitCount = boardInfoService.updateBoardVisitedManage(boardSeq);
+			    model.addObject(Globals.STATUS_REGINFO, boardInfoService.selectBoardManageView(boardSeq));
+			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    
 			}catch(Exception e){
 				LOGGER.info("e:"+ e.toString());	
 			}
-			return "/backoffice/boardManage/boardDetail";
-		}
-		@RequestMapping (value="/backoffice/boardManage/boardView.do")
-		public String selectBoardViewInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
-												 	  , @ModelAttribute("vo")  BoardInfo vo
-										              , HttpServletRequest request
-										   			  , BindingResult bindingResult
-												      , ModelMap model ) throws Exception{	
-						
-			try{
-				LOGGER.debug("boardseq:"+vo.getBoardSeq());
-
-				int hitCount = boardInfoService.updateBoardVisitedManage(vo.getBoardSeq());
-				model.addAttribute("regist", vo);
-			    model.addAttribute("regist", boardInfoService.selectBoardManageView(vo.getBoardSeq()));
-					
-			}catch(Exception e){
-				LOGGER.info("e:"+ e.toString());	
-			}
-			return "/backoffice/boardManage/boardView";
+			return model;
 		}
 		
-		@RequestMapping (value="/backoffice/boardManage/boardDelete.do")
-		@ResponseBody
-		public String deleteBoardInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
-				                            , HttpServletRequest request)throws Exception{
+		@RequestMapping (value="boardDelete.do")
+		public ModelAndView deleteBoardInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
+				                            , @RequestParam("boardSeq") String boardSeq)throws Exception{
 			
-			String boardSeq = request.getParameter("boardSeq") != null ? request.getParameter("boardSeq") : "";
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 			String returnMessage = "F";
 			try{
-			      int ret = 	boardInfoService.deleteBoardManage(boardSeq);		      
-			      if (ret > 0 ) {		    	  
-			    	  returnMessage = "O";
-			      }else {
-			    	  returnMessage = "F";		    	  
-			      }
+				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			    if(!isAuthenticated) {
+						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+						model.setViewName("/backoffice/login");
+						return model;
+			    }
+			    
+				int ret = 	boardInfoService.deleteBoardManage(boardSeq);		      
+			    if (ret > 0 ) {		    	  
+			   	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    }else {
+			    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	    	  
+			    }
 			}catch (Exception e){
 				LOGGER.info(e.toString());
-				returnMessage = "F";			
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.delete"));
+				
 			}					
-			return returnMessage;
+			return model;
 		}		
 		
 		@RequestMapping (value="boardUpdate.do")
-		@SuppressWarnings("finally")
-		public String updateboardInfoManage(HttpServletRequest request
-				                            , MultipartRequest mRequest
-											, @ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
-											, @ModelAttribute("BoardInfoVO") BoardInfo vo					
-											, BindingResult result,
-											ModelMap model) throws Exception{
+		public ModelAndView updateboardInfoManage(HttpServletRequest request, MultipartRequest mRequest
+											      , @ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
+											      , @RequestBody BoardInfo vo					
+											      , BindingResult result) throws Exception{
 			
-			model.addAttribute("regist", vo);
-			String meesage = "";
-			String url = "/backoffice/boardManage/boardList";
-			
-			EgovStringUtil egovStringUtil = new EgovStringUtil();
-			
-			if(vo.getBoardGubun() == "NOT"){
-				String boardUseYn = vo.getBoardNoticeUseyn();
-				if(boardUseYn != null || boardUseYn=="Y"){
-					int top = boardInfoService.updateBoardTopSeq();
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+			try {
+				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			    if(!isAuthenticated) {
+						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+						model.setViewName("/backoffice/login");
+						return model;
+			    }
+				
+				if(vo.getBoardGubun() == "NOT"){
+					String boardUseYn = vo.getBoardNoticeUseyn();
+					if(boardUseYn != null || boardUseYn=="Y"){
+						int top = boardInfoService.updateBoardTopSeq();
+					}
 				}
-			}
-			vo.setBoardTopSeq("0");
-			String realFolder = propertiesService.getString("Globals.fileStorePath") ;
-	     	AdminLoginVO user = (AdminLoginVO) request.getSession().getAttribute("AdminLoginVO"); 
-	     	    			    
-	     	if( !vo.getBoardGubun().equals("QNA") ){
-	     		String originalName = mRequest.getFiles("boardFile01").get(0).getOriginalFilename();
-		     	String uploadName = uploadFile.uploadFileNm(mRequest.getFiles("boardFile01"), realFolder);
-		    	
-		     	vo.setBoardFile01(originalName);
-		    	vo.setBoardFile02(uploadName);
-	     	}
-	     	
-			
-			try{
-				int ret  = 0;
+				vo.setBoardTopSeq("0");
+				String realFolder = propertiesService.getString("Globals.fileStorePath") ;
+		     	AdminLoginVO user = (AdminLoginVO) request.getSession().getAttribute("AdminLoginVO"); 
+		     	    			    
+		     	if( !vo.getBoardGubun().equals("QNA") ){
+		     		String originalName = mRequest.getFiles("boardFile01").get(0).getOriginalFilename();
+			     	String uploadName = uploadFile.uploadFileNm(mRequest.getFiles("boardFile01"), realFolder);
+			    	
+			     	vo.setBoardFile01(originalName);
+			    	vo.setBoardFile02(uploadName);
+		     	}
+		     	int ret  = 0;
 				
-				
-				
-				meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" :  "sucess.common.update";
-				vo.setBoardTitle(egovStringUtil.checkHtmlView(vo.getBoardTitle()));
+				String meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" :  "sucess.common.update";
+				vo.setBoardTitle(vo.getBoardTitle());
 				vo.setUserId(user.getAdminId());
-				url = "redirect:/backoffice/boardManage/boardList.do?boardGubun="+vo.getBoardGubun();
 				ret = boardInfoService.updateBoardManage(vo);
 				if (ret >0){
-					model.addAttribute("status", Globals.STATUS_SUCCESS);
-					model.addAttribute("message", egovMessageSource.getMessage(meesage));
+					model.addObject("status", Globals.STATUS_SUCCESS);
+					model.addObject("message", egovMessageSource.getMessage(meesage));
 				}else {
 					throw new Exception();
 				}
-				
-			}catch (Exception e){
-				model.addAttribute("status", Globals.STATUS_FAIL);
-				model.addAttribute("message", egovMessageSource.getMessage("fail.common.insert"));			
-				url = "redirect:/backoffice/boardManage/boardList.do?boardGubun="+vo.getBoardGubun();
-			}	
-			return url;
+			}catch(Exception e) {
+				LOGGER.info(e.toString());
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
+			}
+			return model;
 		}
 		
 		
@@ -294,17 +269,13 @@ public class BoardInfoManageController {
 		
 		@RequestMapping(value="fileDownload.do")
 		public ModelAndView callDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
 			File downloadFile;
-			
 			Map<String, Object> allData = new HashMap<String, Object>();
-			
 			String filePath = propertiesService.getString("Globals.fileStorePath");
-			
 			String boardSeq = request.getParameter("boardSeq");
-			
 			String uploadFileName = boardInfoService.selectBoardUploadFileName(boardSeq);
 			String originalFileName = boardInfoService.selectBoardoriginalFileName(boardSeq);
-			
 			downloadFile = new File(filePath+uploadFileName);
 
 			try{

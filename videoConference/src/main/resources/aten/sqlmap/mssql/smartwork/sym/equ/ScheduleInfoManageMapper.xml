@@ -3,36 +3,38 @@
 <mapper namespace="com.sohoki.backoffice.sym.equ.mapper.ScheduleInfoManageMapper">
 
     <select id="selectScheduleManageListByPagination" resultType="ScheduleInfoVO">     	      
-		 	SELECT * FROM ( SELECT 	rownum RNUM
-                      							, TB.* 
-					                  FROM ( SELECT a.SCH_SEQ, a.SCH_RESULT, a.SCH_RESULTMESSAGE, a.SCH_RESULTREGDATE            
-													FROM 	TB_SCHEDULECHECK a
-					                           ORDER BY 	a.SCH_SEQ  DESC
-			               	        	     ) TB 
-			               	        	     WHERE		1=1
-											 <if test="searchKeyword != ''">
-										        	<choose>
-														<when test="searchCondition == schResult">
-														<![CDATA[    
-															and SCH_RESULT LIKE '%'||  #{searchKeyword} || '%'
-														 ]]>
-														</when>
-														<when test="searchCondition == 1">
-														<![CDATA[    
-															and SCH_RESULTMESSAGE LIKE '%'|| #{searchKeyword} || '%'
-														 ]]>
-														</when>
-														<otherwise>
-														<![CDATA[    
-															and COMPANY LIKE '%'||  #{searchKeyword} || '%'
-														 ]]>
-														</otherwise>
-													</choose>
-										        	
-											</if>		        
+		 	SELECT TA.* 
+		 	FROM ( SELECT CAST( SUM(1) OVER(PARTITION BY NULL) AS INTEGER ) AS TOTAL_RECORD_COUNT,
+		 	              ROW_NUMBER() OVER (ORDER BY TB.EQUP_CODE DESC) AS RNUM, 
+		 	              TB.* 
+				   FROM ( SELECT a.SCH_SEQ, a.SCH_RESULT, a.SCH_RESULTMESSAGE, a.SCH_RESULTREGDATE            
+						  FROM 	TB_SCHEDULECHECK a
+					      ) TB 
+            	   WHERE  1=1
+					 <if test="searchKeyword != ''">
+				        	<choose>
+								<when test="searchCondition == schResult">
+								<![CDATA[    
+									and SCH_RESULT LIKE '%'||  #{searchKeyword} || '%'
+								 ]]>
+								</when>
+								<when test="searchCondition == 1">
+								<![CDATA[    
+									and SCH_RESULTMESSAGE LIKE '%'|| #{searchKeyword} || '%'
+								 ]]>
+								</when>
+								<otherwise>
+								<![CDATA[    
+									and COMPANY LIKE '%'||  #{searchKeyword} || '%'
+								 ]]>
+								</otherwise>
+							</choose>
+				        	
+					  </if>		        
 													
-									)
-							WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	
+		       )TA
+		  WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}    
+		  ORDER BY TA.SCH_SEQ DESC  		 	
    </select>
       
    <select id="selectScheduleManageDetail" resultType="ScheduleInfoVO">
@@ -43,7 +45,7 @@
    </select>
   
    <select id="selectScheduleManageListTotCnt_S" resultType="java.lang.Integer">
-        SELECT  NVL(count(*),0)      
+        SELECT  ISNULL(COUNT(*),0)      
 	    FROM 	TB_SCHEDULECHECK a
 	    WHERE 	1=1
 	      <if test="searchKeyword != ''">
