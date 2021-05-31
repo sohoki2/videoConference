@@ -145,9 +145,9 @@ public class CenterInfoManageController {
 	//센터 정보 상세
 	@RequestMapping (value="centerDetail.do")
 	public ModelAndView selectCenterInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
-							                                               , @RequestBody  CenterInfo vo
-							                                               , HttpServletRequest request
-							                                			   , BindingResult bindingResult) throws Exception{	
+	                                                 , @RequestBody  CenterInfo vo
+	                                                 , HttpServletRequest request
+	                                			     , BindingResult bindingResult) throws Exception{	
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
 	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();

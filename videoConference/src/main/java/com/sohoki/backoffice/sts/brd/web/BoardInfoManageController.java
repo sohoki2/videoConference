@@ -35,6 +35,8 @@ import com.sohoki.backoffice.sts.brd.service.BoardInfoManageService;
 import com.sohoki.backoffice.sts.brd.vo.BoardInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
+import com.sohoki.backoffice.sym.cnt.vo.CenterInfo;
+import com.sohoki.backoffice.sym.log.annotation.NoLogging;
 
 
 @RestController
@@ -148,9 +150,10 @@ public class BoardInfoManageController {
 			}			   
 			return model;	
 		}
+		@NoLogging
 		@RequestMapping (value="boardView.do")
 		public ModelAndView selectBoardViewInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
-													 	  , @RequestParam("boardSeq") String boardSeq
+													 	  , @RequestBody Map<String,Object>  boardInfo
 											              , HttpServletRequest request
 											   			  , BindingResult bindingResult ) throws Exception{	
 			
@@ -164,9 +167,10 @@ public class BoardInfoManageController {
 						return model;
 			    }
 			    //패스로 확인 하기 
+			    if (boardInfo.get("boardVisited").toString().equals("0"))
+				   boardInfoService.updateBoardVisitedManage(boardInfo.get("boardSeq").toString() );
 			    
-				int hitCount = boardInfoService.updateBoardVisitedManage(boardSeq);
-			    model.addObject(Globals.STATUS_REGINFO, boardInfoService.selectBoardManageView(boardSeq));
+			    model.addObject(Globals.STATUS_REGINFO, boardInfoService.selectBoardManageView(boardInfo.get("boardSeq").toString()));
 			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			    
 			}catch(Exception e){
@@ -174,7 +178,7 @@ public class BoardInfoManageController {
 			}
 			return model;
 		}
-		
+		@NoLogging
 		@RequestMapping (value="boardDelete.do")
 		public ModelAndView deleteBoardInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
 				                            , @RequestParam("boardSeq") String boardSeq)throws Exception{
@@ -203,11 +207,11 @@ public class BoardInfoManageController {
 			}					
 			return model;
 		}		
-		
+		@NoLogging
 		@RequestMapping (value="boardUpdate.do")
 		public ModelAndView updateboardInfoManage(HttpServletRequest request, MultipartRequest mRequest
 											      , @ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
-											      , @RequestBody BoardInfo vo					
+											      , @ModelAttribute("BoardInfo") BoardInfo vo
 											      , BindingResult result) throws Exception{
 			
 			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -219,32 +223,19 @@ public class BoardInfoManageController {
 						return model;
 			    }
 				
-				if(vo.getBoardGubun() == "NOT"){
-					String boardUseYn = vo.getBoardNoticeUseyn();
-					if(boardUseYn != null || boardUseYn=="Y"){
+				if(vo.getBoardGubun().equals("NOT") ||  vo.getBoardNoticeUseyn() != null ||  vo.getBoardNoticeUseyn().equals("Y")){
 						int top = boardInfoService.updateBoardTopSeq();
-					}
 				}
+				LOGGER.debug("--------------------------------------------------------1");
+				vo.setBoardFile01( uploadFile.uploadFileNm(mRequest.getFiles("boardFile01"), propertiesService.getString("Globals.filePath")));
 				vo.setBoardTopSeq("0");
-				String realFolder = propertiesService.getString("Globals.fileStorePath") ;
-		     	AdminLoginVO user = (AdminLoginVO) request.getSession().getAttribute("AdminLoginVO"); 
-		     	    			    
-		     	if( !vo.getBoardGubun().equals("QNA") ){
-		     		String originalName = mRequest.getFiles("boardFile01").get(0).getOriginalFilename();
-			     	String uploadName = uploadFile.uploadFileNm(mRequest.getFiles("boardFile01"), realFolder);
-			    	
-			     	vo.setBoardFile01(originalName);
-			    	vo.setBoardFile02(uploadName);
-		     	}
-		     	int ret  = 0;
-				
-				String meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" :  "sucess.common.update";
-				vo.setBoardTitle(vo.getBoardTitle());
-				vo.setUserId(user.getAdminId());
-				ret = boardInfoService.updateBoardManage(vo);
+			 	String meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" :  "sucess.common.update";
+				vo.setUserId(EgovUserDetailsHelper.getAuthenticatedUser().toString());
+				int ret = boardInfoService.updateBoardManage(vo);
+				LOGGER.debug("--------------------------------------------------------2");
 				if (ret >0){
-					model.addObject("status", Globals.STATUS_SUCCESS);
-					model.addObject("message", egovMessageSource.getMessage(meesage));
+					model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage(meesage));
 				}else {
 					throw new Exception();
 				}
@@ -253,16 +244,17 @@ public class BoardInfoManageController {
 				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
 				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
 			}
+			LOGGER.debug("--------------------------------------------------------3");
 			return model;
 		}
 		
 		
 		@RequestMapping(value="boardPreview.do")
 		public String selectBoardPreview (@ModelAttribute("loginVO") EmpInfo loginVO
-									, @ModelAttribute("searchVO") ResInfoVO searchVO
-									, HttpServletRequest request
-									, BindingResult bindingResult						
-									, ModelMap model) throws Exception {
+										  , @ModelAttribute("searchVO") ResInfoVO searchVO
+										  , HttpServletRequest request
+										  , BindingResult bindingResult						
+										  , ModelMap model) throws Exception {
 			
 			return "/backoffice/boardManage/boardPreview";
 		}

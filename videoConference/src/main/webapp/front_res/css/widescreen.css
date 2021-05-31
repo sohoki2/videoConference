@@ -8,11 +8,11 @@
     display: none;
 }
 
-.log_b{width: 515px; height: 465px; padding: 35px 30px;}
+.log_b{width: 515px;height: 480px;padding: 35px 30px;}
 .login_reser_box {padding: 15px;}
 .log_b h1 {
     padding-bottom: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .log_b p {
@@ -62,7 +62,7 @@ header {
     .menu ul li {
         display: inline-block;
         height: 69px;
-        padding: 0 45px;
+        padding: 0 30px;
     }
 
         .menu ul li a {
@@ -169,7 +169,7 @@ header {
 }
 
 .login_reser_b {
-    margin-top: 35px;
+    margin-top: 20px;
 }
 
     .login_reser_box .reser_b_tit {
@@ -239,7 +239,7 @@ header {
 }
 
 .reserDate {
-    background: url("../img/dateImg.png")25px center no-repeat;
+    background: url("/front_res/img/dateImg.png")25px center no-repeat;
 }
 
 .date {
@@ -312,20 +312,27 @@ header {
     .leftMenu span {
         width: 23px;
         height: 23px;
-        background: url("../img/menuIcon.png")no-repeat;
+        background: url("/front_res/img/menuIcon.png")no-repeat;
     }
 
 .leftMenu {
     padding: 7px 0 0;
 }
 
-.searchBox, .dateBox {
+.dateBox {
     height: 40px;
+    width: 200px;
+    position: relative;
+    margin-top: -20px;
+    }
+
+    .searchBox {
+    height: 40px;
+    width: 200px;
     position: absolute;
     right: 0;
-    width: 200px;
     top: -50px;
-}
+    }
 .inputSearch {
     font-size: 1.5rem;
     padding: 8px 0 8px 10px;
@@ -354,7 +361,7 @@ header {
     border: 1px solid #eaeaea;
     line-height: 2.3em;
     font-size: 1.4rem;
-    background: #fff url("../img/meeting_w.png")90% center no-repeat;
+    background: #fff url("/front_res/img/meeting_w.png")90% center no-repeat;
     right: 365px;
     top: 10px;
 }
@@ -694,7 +701,7 @@ header {
     }
 
 span.date_icon {
-    background: url(../img/dateIcon.png) no-repeat;
+    background: url(/front_res/img/dateIcon.png) no-repeat;
     width: 19px;
     height: 19px;
     display: block;
@@ -790,25 +797,25 @@ span.date_icon {
     }
 
 .reser_icon01 {
-    background: url("../img/mypage01.png")left center no-repeat;
+    background: url("/front_res/img/mypage01.png")left center no-repeat;
     background-size: 30px;
 }
 
 .reser_icon02 {
-    background: url("../img/mypage02.png")40px center no-repeat;
+    background: url("/front_res/img/mypage02.png")40px center no-repeat;
 }
 
 .reser_icon03 {
-    background: url("../img/mypage03.png")40px center no-repeat;
+    background: url("/front_res/img/mypage03.png")40px center no-repeat;
 }
 
 .reser_icon04 {
-    background: url("../img/mypage04.png")left center no-repeat;
+    background: url("/front_res/img/mypage04.png")left center no-repeat;
     background-size: 30px;
 }
 
 .reser_iconGo {
-    background: url("../img/reser_iconGo.png")right center no-repeat;
+    background: url("/front_res/img/reser_iconGo.png")right center no-repeat;
     font-size: 1.6rem !important;
     padding-bottom: 0 !important;
     background-size: 8px;
@@ -864,72 +871,72 @@ span.date_icon {
         }
 
 .iconA {
-    background: url(../img/iconA.png)no-repeat left center;
+    background: url(/front_res/img/iconA.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconB {
-    background: url(../img/iconB.png)no-repeat left center;
+    background: url(/front_res/img/iconB.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconC {
-    background: url(../img/iconC.png)no-repeat left center;
+    background: url(/front_res/img/iconC.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconD {
-    background: url(../img/iconD.png)no-repeat left center;
+    background: url(/front_res/img/iconD.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconE {
-    background: url(../img/iconE.png)no-repeat left center;
+    background: url(/front_res/img/iconE.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconF {
-    background: url(../img/iconF.png)no-repeat left center;
+    background: url(/front_res/img/iconF.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconG {
-    background: url(../img/iconG.png)no-repeat left center;
+    background: url(/front_res/img/iconG.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconH {
-    background: url(../img/iconH.png)no-repeat left center;
+    background: url(/front_res/img/iconH.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconI {
-    background: url(../img/iconI.png)no-repeat left center;
+    background: url(/front_res/img/iconI.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconJ {
-    background: url(../img/iconJ.png)no-repeat left center;
+    background: url(/front_res/img/iconJ.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconK {
-    background: url(../img/iconK.png)no-repeat left center;
+    background: url(/front_res/img/iconK.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconL {
-    background: url(../img/iconL.png)no-repeat left center;
+    background: url(/front_res/img/iconL.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconM {
-    background: url(../img/iconM.png)no-repeat left center;
+    background: url(/front_res/img/iconM.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconN {
-    background: url(../img/iconN.png)no-repeat left center;
+    background: url(/front_res/img/iconN.png)no-repeat left center;
     padding-left: 30px;
 }
 
@@ -994,24 +1001,31 @@ header > .content {
 }
 
 .menu ul li.menu01 a {
-    background-image: url(../img/header_menu01.png);
+    background-image: url(/front_res/img/header_menu01.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 25px;
 }
 
 .menu ul li.menu02 a {
-    background-image: url(../img/header_menu02.png);
+    background-image: url(/front_res/img/header_menu02.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 25px;
 }
 
 .menu ul li.menu03 a {
-    background-image: url(../img/header_menu03.png);
+    background-image: url(/front_res/img/header_menu03.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 32px;
+}
+
+.menu ul li.menu04 a {
+    background-image: url(/front_res/img/header_menu04.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px;
 }
 
 .menuHeader {
@@ -1105,7 +1119,7 @@ a.user_logout {
 .user_name {
     position: absolute;
     left: 0;
-    top: 15px;
+    top: 0;
     padding-left: 75px;
 }
 
@@ -1113,7 +1127,7 @@ a.user_logout {
     font-size: 1.6rem;
 }
 
-.posSeat, .usingSeat {
+.posSeatU ,.posSeatD, .usingSeat {
     margin-left: 10px;
     padding-left: 21px;
 }
@@ -1129,3 +1143,37 @@ a.user_logout {
     font-size: 1.6rem;
 }
 .mybooking{margin-top: 25px;}
+.joinCon{width: 500px !important;}
+.joinArea {
+    margin-top: 60px;
+}
+.joinArea table section input {
+    width: 370px;
+}
+.joinArea table section button{width: 125px;}
+.resource {
+    width: 110px !important;
+    margin-top: -80px;
+    border: 1px solid #e6e6e6;
+    background-color: white;
+    border-radius: 4px;
+    height: 40px;
+    font-size: 1.4rem;
+}
+.user_reser_b {
+    height: calc(100vh - 410px) !important;
+    overflow-y: scroll !important;
+}
+.btnL{margin-top: -20px; margin-right: 10px;}
+.btnL button{border: none; width: 40px; height: 40px; cursor: pointer;}
+.calendar-container {
+    margin-top: 15px;
+}
+.mypage{position: absolute;
+    left: 75px;
+    top: 20px;}
+    .w_half {
+    width: 49%;
+    margin-top: 25px;
+    height: 220px;
+}

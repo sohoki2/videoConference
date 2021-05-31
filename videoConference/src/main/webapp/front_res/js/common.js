@@ -101,6 +101,21 @@ function closeNav() {
   document.getElementById("mySidenav1").style.width = "0";
   document.getElementById("userBox").style.width = "0";
 }
+
+//leftMenu _ gnb
+function openTime() {
+  document.getElementById("mySidetime").style.display = "block";
+  document.getElementById("mySidetime").style.width = "100%";
+  document.getElementById("mySidetime1").style.width = "280px";
+  document.getElementById("userBox").style.width = "220px";
+}
+function closeTime() {
+  document.getElementById("mySidetime").style.display = "none";
+  document.getElementById("mySidetime").style.width = "0";
+  document.getElementById("mySidetime1").style.width = "0";
+  document.getElementById("userBox").style.width = "0";
+}
+
 //rightMenu _ floor
 function openRight() {
   document.getElementById("rightMenu").style.width = "100%";
@@ -595,120 +610,16 @@ function checkFileName(obj){
 function notice_file_down(notice_id){
 	document.location.href = '/Common/getNoticeFileDownload.do?notice_id='+notice_id;
 }
-
-function getDashboardTimeList(){
-	var data = new Array();
-	data.push("0800")
-	data.push("0810");
-	data.push("0820");
-	data.push("0830");
-	data.push("0840");
-	data.push("0850");
-	data.push("0900")
-	data.push("0910");
-	data.push("0920");
-	data.push("0930");
-	data.push("0940");
-	data.push("0950");
-	data.push("1000");
-	data.push("1010");
-	data.push("1020");
-	data.push("1030");
-	data.push("1040");
-	data.push("1050");
-	data.push("1100");
-	data.push("1110");
-	data.push("1120");
-	data.push("1130");
-	data.push("1140");
-	data.push("1150");
-	data.push("1200");
-	data.push("1210");
-	data.push("1220");
-	data.push("1230");
-	data.push("1240");
-	data.push("1250");
-	data.push("1300");
-	data.push("1310");
-	data.push("1320");
-	data.push("1330");
-	data.push("1340");
-	data.push("1350");
-	data.push("1400");
-	data.push("1410");
-	data.push("1420");
-	data.push("1430");
-	data.push("1440");
-	data.push("1450");
-	data.push("1500");
-	data.push("1510");
-	data.push("1520");
-	data.push("1530");
-	data.push("1540");
-	data.push("1550");
-	data.push("1600");
-	data.push("1610");
-	data.push("1620");
-	data.push("1630");
-	data.push("1640");
-	data.push("1650");
-	data.push("1700");
-	data.push("1710");
-	data.push("1720");
-	data.push("1730");
-	data.push("1740");
-	data.push("1750");
-	data.push("1800");
-	data.push("1810");
-	data.push("1820");
-	data.push("1830");
-	data.push("1840");
-	data.push("1850");
-	data.push("1900");
-	data.push("1910");
-	data.push("1920");
-	data.push("1930");
-	data.push("1940");
-	data.push("1950");
-	data.push("2000");
-	data.push("2010");
-	data.push("2020");
-	data.push("2030");
-	data.push("2040");
-	data.push("2050");
-	data.push("2100");
-	return data;
+function any_empt_line_id(frm_nm, alert_message){
+	 var form_nm = eval("document.getElementById('"+frm_nm+"')");
+	 if (form_nm.value.length < 1)
+	 {
+		  alert(alert_message);
+		  form_nm.focus();
+		  return false;
+	 }else{
+         return true;
+	 }
 }
 
-function getDashboardTimeList2(){
-	var data = new Array();
-	data.push("0800")
-	data.push("0830");
-	data.push("0900")
-	data.push("0930");
-	data.push("1000");
-	data.push("1030");
-	data.push("1100");
-	data.push("1130");
-	data.push("1200");
-	data.push("1230");
-	data.push("1300");
-	data.push("1330");
-	data.push("1400");
-	data.push("1430");
-	data.push("1500");
-	data.push("1530");
-	data.push("1600");
-	data.push("1630");
-	data.push("1700");
-	data.push("1730");
-	data.push("1800");
-	data.push("1830");
-	data.push("1900");
-	data.push("1930");
-	data.push("2000");
-	data.push("2030");
-	data.push("2100");
-	data.push("2130");
-	return data;
-}
+

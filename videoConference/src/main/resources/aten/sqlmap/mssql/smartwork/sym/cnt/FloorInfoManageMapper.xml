@@ -33,7 +33,7 @@
 							 </if>
 	        ) TB  
 	    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
-        ORDER BY TB.FLOOR_SEQ  DESC
+        ORDER BY CAST( replace( TB.FLOOR_INFO, 'CENTER_FLOOR_','') as int)   ASC , TB.FLOOR_SEQ DESC
         		 	    
      </select>
     <select id="selectFloorInfoManageCombo" resultType="lmap">

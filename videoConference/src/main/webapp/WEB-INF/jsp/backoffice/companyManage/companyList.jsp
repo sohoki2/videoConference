@@ -199,7 +199,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">지점<span class="join_id_comment joinSubTxt"></span></p>
-                    <select path="centerId" id="centerId" title="지점구분" onChange="backoffice_common.fn_floorSearch('', 'sp_floor', 'floorSeq');backoffice_common.fn_floorPlayState('', 'sp_floorCheck', 'floorPlaySeq');">
+                    <select path="centerId" id="centerId" title="지점구분" onChange="backoffice_common.fn_floorInfo('', 'sp_floor', 'floorSeq');backoffice_common.fn_floorPlayState('', 'sp_floorCheck', 'floorPlaySeq');">
 				         <option value="">지점 선택</option>
                          <c:forEach items="${searchCenter}" var="centerList">
                             <option value="${centerList.centerId}">${centerList.centerNm}</option>
@@ -580,7 +580,7 @@
 				       						$("#comState").val(obj.com_state);
 								    		$("#comFax").val( obj.com_fax  );
 								    		$("#centerId").val( obj.center_id);
-								    		backoffice_common.fn_floorSearch(obj.floor_seq,'sp_floor', 'floorSeq');
+								    		backoffice_common.fn_floorInfo(obj.floor_seq,'sp_floor', 'floorSeq');
 								    		backoffice_common.fn_floorPlayState(obj.com_play_floor, "sp_floorCheck", "floorPlaySeq");
 								    		toggleClick("tennUseyn", obj.tenn_useyn);
 								       }

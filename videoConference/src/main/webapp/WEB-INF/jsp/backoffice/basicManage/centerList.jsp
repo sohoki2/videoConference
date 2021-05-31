@@ -197,8 +197,9 @@
             },fn_floorChange:function(floorinfo){
         	 //층수로 input 생성 
 	        	 if ($("#startFloor").val() != "" && $("#endFloor").val() != ""){
-	        		 if (fnIntervalCheck($("#startFloor").val().replace("CNETER_FLOOR_", ""),$("#endFloor").val().replace("CNETER_FLOOR_", ""), "시작 층수가 종료 층수 보다 큽니다.") == false) return;
-	        		   fnCreatCheckbox("sp_floorInfo", $("#startFloor").val().replace("CNETER_FLOOR_", ""),  $("#endFloor").val().replace("CNETER_FLOOR_", ""), floorinfo, "floorInfos", "층") ;
+	        		 if (fnIntervalCheck($("#startFloor").val().replace("CENTER_FLOOR_", ""),$("#endFloor").val().replace("CENTER_FLOOR_", ""), "시작 층수가 종료 층수 보다 큽니다.") == false) return;
+	        		    fnCreatCheckbox("sp_floorInfo", $("#startFloor").val().replace("CENTER_FLOOR_", ""),  $("#endFloor").val().replace("CENTER_FLOOR_", ""), floorinfo, "floorInfos", "층") ;
+	        		    
 	        	 }
             },fn_CenterInfo : function (mode, centerId){
         	    $("#btn_message").trigger("click");
@@ -239,7 +240,7 @@
       		 	      			        $("#endFloor").val(obj.end_floor);
       		 		            	    toggleClick("centerUseYn", obj.center_use_yn);
       		 		            	    $("#ir3").val(obj.center_info);
-      		 		            	    fnCreatCheckbox("sp_floorInfo", $("#startFloor").val().replace("CNETER_FLOOR_", ""),  $("#endFloor").val().replace("CNETER_FLOOR_", ""), obj.floor_info, "floorInfos", "층") ;
+      		 		            	    fnCreatCheckbox("sp_floorInfo", $("#startFloor").val().replace("CENTER_FLOOR_", ""),  $("#endFloor").val().replace("CENTER_FLOOR_", ""), obj.floor_info, "floorInfos", "층") ;
       		  					   }
       						    },
       						    function(request){

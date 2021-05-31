@@ -45,5 +45,9 @@ var backoffice_common = {
 		  var _url = "/backoffice/basicManage/floorListAjax.do";
 	      var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
 	      fn_checkListPost(span_id, checkboxField,_url, _params, floorPlaySeq, "");
+	 }, fn_floorInfo : function (floorSeq, span_id, comboboxId){
+			  var _url = "/backoffice/basicManage/floorListAjax.do";
+			  var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
+		      fn_comboListPost(span_id, comboboxId,_url, _params, "", "120px", floorSeq);  
 	 }        
 }

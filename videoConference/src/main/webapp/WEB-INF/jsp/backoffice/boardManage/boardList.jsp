@@ -16,9 +16,16 @@
     <link href="/css/global.css" rel="stylesheet" />
     <link href="/css/page.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/new/reset.css"> 
-    <script type="text/javascript" src="/js/jquery-ui.js"></script>
+    
+    <link rel="stylesheet" href="/css/needpopup.min.css" />
+    <link rel="stylesheet" href="/css/needpopup.css">
+    
     
     <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui.js"></script>
+    <script type="text/jscript" src="/js/SE/js/HuskyEZCreator.js" ></script>
+    
+    
     <script>
 	jQuery.browser = {};
 	(function () {
@@ -31,7 +38,6 @@
 	})();
 	</script>
     <script type="text/javascript" src="/js/common.js"></script>
-    <script type="text/javascript" src="/js/backoffice_common.js"></script>
     <script src="/js/popup.js"></script>
     
     
@@ -51,8 +57,6 @@
 		height: 30px;
 	 }
    </style>
-   <script type="text/jscript" src="/js/SE/js/HuskyEZCreator.js" ></script> 
-    
     
     
 </head>
@@ -122,7 +126,7 @@
 						</td>
 						<c:if test="${regist.boardGubun ne 'QNA'}" >
 	                    <td class="text-right">
-	                        <a href="javascript:view_Board('Ins','0')"><span class="blueBtn">등록</span></a>
+	                        <a href="javascript:boardinfo.fn_boardInfo('Ins','0')"><span class="blueBtn">등록</span></a>
 	                    </td>
 	                    </c:if>
                     </tr>
@@ -142,9 +146,33 @@
 
 
 
+
+
+    <!--  preview 설정값 -->
+    <div id="preview_value_page"></div>
+	<div id="preview_value_userNm"></div>
+	<div id="preview_value_offiTelNo"></div>
+	<div id="preview_value_email"></div>
+	<div id="preview_value_useYn"></div>
+	<div id="preview_value_fileNm"></div>
+	<div id="preview_value_fileChange"></div>  
+	<!--  preview 설정값 끝 부분-->
+	
 <div id='app_message' class="needpopup">
         <div class="popHead" id="popTitle">
-            <h2>회원사 관리</h2>
+            <h2>
+             <c:choose>
+               <c:when test="${searchVO.boardGubun eq 'NOT'}">
+                                  공지사항
+               </c:when>
+               <c:when test="${searchVO.boardGubun eq 'FAQ'}">			                
+                FAQ
+               </c:when>
+               <c:otherwise>
+                Q&A
+               </c:otherwise>
+             </c:choose>
+            </h2>
         </div>
         <!-- pop contents-->   
         <div class="popCon">
@@ -162,9 +190,9 @@
 	                    <tr id="tr_not1">
                       		<th>공지기간</th>
 	                        <td style="text-align:left">
-	                        <form:input  path="boardNoticeStartday" size="10" maxlength="8" id="boardNoticeStartday" class="date-picker-input-type-text" />
+	                        <input type="text"  name="boardNoticeStartday" size="10" maxlength="8" id="boardNoticeStartday" class="date-picker-input-type-text" />
 	                        ~ &nbsp;&nbsp;&nbsp;
-	                        <form:input  path="boardNoticeEndday" size="10" maxlength="8" id="boardNoticeEndday" class="date-picker-input-type-text" />	                        
+	                        <input type="text"  name="boardNoticeEndday" size="10" maxlength="8" id="boardNoticeEndday" class="date-picker-input-type-text" />	                        
 	                        </td>
                             <th><span class="redText">*</span>목록상단에고정</th>
 	                        <td style="text-align:left">
@@ -177,10 +205,12 @@
 	                    <tr id="tr_faq">
 	                        <th>FAQ 구분</th>
 	                        <td style="text-align:left">
-	                        <form:select path="boardFaqGubun" id="boardFaqGubun" title="소속">
-								         <form:option value="" label="FAQ구분"/>
-				                         <form:options items="${selectFaq}" itemValue="code" itemLabel="codeNm"/>
-						    </form:select>
+		                        <select id="boardFaqGubun" name="boardFaqGubun">
+		                             <option value="">FAQ 구분</option>
+			                         <c:forEach items="${selectFaq}" var="selectFaq">
+			                            <option value="${selectFaq.code}">${selectFaq.codeNm}</option>
+			                         </c:forEach>
+		                        </select>
 	                        </td>
 	                        <th><span class="redText">*</span>노출여부</th>
 	                        <td style="text-align:left">
@@ -200,7 +230,6 @@
 	                            <textarea name="ir1" id="ir1" style="width:700px; height:100px; display:none;"></textarea>
 	                        </td>
 	                    </tr>
-	                    
 	                </tbody>
 	            </table>                     
             </div>
@@ -208,120 +237,109 @@
         <div class="clear"></div>
          <div class="pop_footer">
             <span id="join_confirm_comment" class="join_pop_main_subTxt">내용을 모두 입력후 클릭해주세요.</span>
-            <a href="javascript:jqGridFunc.fn_CheckForm();" class="redBtn" id="btnUpdate"><spring:message code="button.create" /></a>    
+            <a href="javascript:boardinfo.fn_CheckForm();" class="redBtn" id="btnUpdate"><spring:message code="button.create" /></a>    
         </div>   
     </div> 
-    
-    <!--  preview 설정값 -->
-    <div id="preview_value_page"></div>
-	<div id="preview_value_userNm"></div>
-	<div id="preview_value_offiTelNo"></div>
-	<div id="preview_value_email"></div>
-	<div id="preview_value_useYn"></div>
-	<div id="preview_value_fileNm"></div>
-	<div id="preview_value_fileChange"></div>  
-	<!--  preview 설정값 끝 부분-->
-</div>
+</div>	
+
+<button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
+	
+<script src="/js/needpopup.js"></script> 
 <script type="text/javascript">
-     var postData = {"pageIndex": "1", "boardGubun" : $("#boardGubun").val()};
-     $('#"boardGrid"').jqGrid({
-			url : '/backoffice/boardManage/boardListAjax.do' ,
-		    mtype :  'POST',
-		    datatype :'json',
-		    pager: $('#pager'),  
-		    ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
-		    ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
-		    ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
-		   
-		    postData :  JSON.stringify( postData ),
-		    jsonReader : {
-		            root : 'resultlist',
-		            "page":"paginationInfo.currentPageNo",
-		            "total":"paginationInfo.totalPageCount",
-		            "records":"paginationInfo.totalRecordCount",
-		            repeatitems:false
-		    },
-		    colModel :  [
-		    	    	{ label: 'board_seq', key: true, name:'floor_seq',       index:'floor_seq',      align:'center', hidden:true},
-		            	{ label: '제목', name:'board_title',       index:'board_title',      align:'center', width:'10%'},
-			            { label: '작성자', name:'user_nm',      index:'user_nm',      align:'center', width:'10%'},
-			            { label: '조회수', name:'board_visited',      index:'board_visited',      align:'center', width:'10%'},
-		                { label: '최종 수정자', name:'user_updateid', index:'user_updateid',     align:'center', width:'10%'},
-		                { label: '최종 수정 일자', name:'board_update_id', index:'board_update_id', align:'center', width:'12%', 
-		                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
-		                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:boardinfo.rowBtn}
-		         ],  //상단면 
-		    rowNum : 10,  //레코드 수
-		    rowList : [10,20,30,40,50,100],  // 페이징 수
-		    pager : pager,
-		    refresh : true,
-		    rownumbers : true, // 리스트 순번
-		    viewrecord : true,    // 하단 레코드 수 표기 유무
-		    //loadonce : true,     // true 데이터 한번만 받아옴 
-		    loadui : "enable",
-		    loadtext:'데이터를 가져오는 중...',
-		    emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-		    height : "100%",
-		    autowidth:true,
-		    shrinkToFit : true,
-		    refresh : true,
-		    subGrid: true,
-		    subGridRowExpanded: showChildGrid, 
-		    subGridBeforeExpand : function (pID, id){
-		    	alert("pID:" + pID + ":" + id);
-		    },loadComplete : function (data){
-		    	//$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
-		    },loadError:function(xhr, status, error) {
-		        alert("error:" + error); 
-		    },onSelectRow: function(rowId){
-		        if(rowId != null) { 
-		           //멀트 체크 할떄 특정 값이면 다른 값에 대한 색 변경 	
-		        }// 체크 할떄
-		    },ondblClickRow : function(rowid, iRow, iCol, e){
-		    	grid.jqGrid('editRow', rowid, {keys: true});
-		    },onCellSelect : function (rowid, index, contents, action){
-		    	var cm = $(this).jqGrid('getGridParam', 'colModel');
-		        if (cm[index].name=='board_title' ){
-		        	boardinfo.fn_floorInfo("Edt", $(this).jqGrid('getCell', rowid, 'board_seq'));
-			    }
-		        
-		    }
-		});
-     
-       var boardinfo = {
+	 $(document).ready(function() { 
+		   jqGridFunc.setGrid("boardGrid");
+	 });
+	 var jqGridFunc  = {
+			 setGrid : function(gridOption){
+				 var postData = {"pageIndex": "1", "boardGubun" : $("#boardGubun").val(), "searchKeyword" : $("#searchKeyword").val()};
+			     
+			     $('#'+gridOption).jqGrid({
+						url : '/backoffice/boardManage/boardListAjax.do' ,
+					    mtype :  'POST',
+					    datatype :'json',
+					    pager: $('#pager'),  
+					    ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
+					    ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
+					    ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
+					   
+					    postData :  JSON.stringify( postData ),
+					    jsonReader : {
+					            root : 'resultlist',
+					            "page":"paginationInfo.currentPageNo",
+					            "total":"paginationInfo.totalPageCount",
+					            "records":"paginationInfo.totalRecordCount",
+					            repeatitems:false
+					    },
+					    colModel :  [
+					    	    	{ label: 'board_seq', key: true, name:'board_seq',       index:'board_seq',      align:'center', hidden:true},
+					            	{ label: '제목', name:'board_title',       index:'board_title',      align:'center', width:'10%'},
+						            { label: '작성자', name:'user_nm',      index:'user_nm',      align:'center', width:'10%'},
+						            { label: '조회수', name:'board_visited',      index:'board_visited',      align:'center', width:'10%'},
+					                { label: '최종 수정자', name:'user_nm', index:'user_nm',     align:'center', width:'10%'},
+					                { label: '최종 수정 일자', name:'board_update_date', index:'board_update_date', align:'center', width:'12%', 
+					                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
+					                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:boardinfo.rowBtn}
+					         ],  //상단면 
+					    rowNum : 10,  //레코드 수
+					    rowList : [10,20,30,40,50,100],  // 페이징 수
+					    pager : pager,
+					    refresh : true,
+					    rownumbers : true, // 리스트 순번
+					    viewrecord : true,    // 하단 레코드 수 표기 유무
+					    //loadonce : true,     // true 데이터 한번만 받아옴 
+					    loadui : "enable",
+					    loadtext:'데이터를 가져오는 중...',
+					    emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
+					    height : "100%",
+					    autowidth:true,
+					    shrinkToFit : true,
+					    refresh : true,
+					    loadComplete : function (data){
+					    	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
+					    },loadError:function(xhr, status, error) {
+					        alert("error:" + error); 
+					    },onSelectRow: function(rowId){
+					        if(rowId != null) { 
+					           //멀트 체크 할떄 특정 값이면 다른 값에 대한 색 변경 	
+					        }// 체크 할떄
+					    },ondblClickRow : function(rowid, iRow, iCol, e){
+					    	grid.jqGrid('editRow', rowid, {keys: true});
+					    },onCellSelect : function (rowid, index, contents, action){
+					    	var cm = $(this).jqGrid('getGridParam', 'colModel');
+					        if (cm[index].name=='board_title' ){
+					        	boardinfo.fn_boardInfo("Edt", $(this).jqGrid('getCell', rowid, 'board_seq'));
+						    }
+					        
+					    }
+				 });
+			 }
+	     
+	 }
+     var boardinfo = {
     		 fn_boardInfo : function(mode, boardSeq) {
     			    $("#btn_message").trigger("click");
 				    $("#mode").val(mode);
 			        $("#boardSeq").val(boardSeq);
+			        boardinfo.fn_boardFormCk();
 			        if (mode == "Edt"){
 			        	$("#btnUpdate").text("수정");
 			        	
-			     	   var params = {"boardSeq" : boardSeq};
+			     	   var params = {"boardSeq" : boardSeq, "boardVisited": 0};
 			     	   var url = "/backoffice/boardManage/boardView.do";
-			     	   uniAjaxSerial(url, params, 
+			     	   uniAjax(url, params, 
 			          			function(result) {
 			     				       if (result.status == "LOGIN FAIL"){
 			     				    	   location.href="/backoffice/login.do";
 			       					   }else if (result.status == "SUCCESS"){
 			       						   //총 게시물 정리 하기
 			       						    var obj  = result.regist;
-			       						    
-			       						    $("#comName").val(obj.com_name);
-			       						    $("#comGubun").val(obj.com_gubun);
-				       						$("#comNumber").val(obj.com_number);
-				       						$("#comCeoName").val(obj.com_ceo_name);
-				       						$("#comBuscondition").val(obj.com_buscondition);
-				       						$("#comItem").val(obj.com_item);
-				       						$("#comAddr1").val(obj.com_addr1);
-				       						$("#comAddr2").val(obj.com_addr2);
-				       						$("#comState").val(obj.com_state);
-				       						$("#comTel").val(obj.com_tel);
-				       						$("#comState").val(obj.com_state);
-								    		$("#comFax").val( obj.com_fax  );
-								    		$("#centerId").val( obj.center_id);
-								    		backoffice_common.fn_floorSearch(obj.floor_seq,'sp_floor', 'floorSeq');
-								    		backoffice_common.fn_floorPlayState(obj.com_play_floor, "sp_floorCheck", "floorPlaySeq");
-								    		toggleClick("tennUseyn", obj.tenn_useyn);
+			       						    $("#boardTitle").val(obj.board_title);
+			       						    $("#boardGubun").val(obj.board_gubun);
+				       						$("#ir1").val(obj.board_content);
+				       						$("#boardNoticeStartday").val(obj.board_notice_startday);
+				       						$("#boardNoticeEndday").val(obj.board_notice_endday);
+				       						toggleClick("boardViewYn", obj.board_view_yn);
+								    		toggleClick("boardNoticeUseyn", obj.board_notice_useyn);
 								       }
 			     				    },
 			     				    function(request){
@@ -333,7 +351,6 @@
 			        	$('input[name^=board]').val("");
 			        	toggleDefault("boardNoticeUseyn");
 			        	toggleDefault("boardViewYn");
-			        	//층 및 예약 층 삭제 
 			        }
     		 },fn_CheckForm  : function (){
 				    if (any_empt_line_id("boardTitle", "제목을 입력해주세요.") == false) return;	
@@ -341,54 +358,76 @@
 		     		
 		     		if (confirm(commentTxt)== true){
 		     			  //체크 박스 체그 값 알아오기 
+		     			  
+		     			  
+		     			  var sHTML = oEditors.getById["ir1"].getIR();
+     			          $("#boardContent").val(sHTML); 
+     			        
 		     			  var formData = new FormData();
+		     			  formData.append('mode' , $("#mode").val());
 		     			  formData.append('boardFile01', $('#boardFile01')[0].files[0]);
 		     			  formData.append('boardSeq' , $("#boardSeq").val());
 		     			  formData.append('boardTitle' , $("#boardTitle").val());
 		     			  formData.append('boardNoticeStartday' , $("#boardNoticeStartday").val());
 		     			  formData.append('boardNoticeEndday' , $("#boardNoticeEndday").val());
 		     			  formData.append('boardContent' , $("#boardContent").val());
+		     			  formData.append('boardGubun' , $("#boardGubun").val());
 		     			  formData.append('boardReturnContent' , $("#boardReturnContent").val());
 		     			  formData.append('boardNoticeUseyn' , fn_emptyReplace($("#boardNoticeUseyn").val(),"N"));
 		     			  formData.append('boardViewYn' , fn_emptyReplace($("#boardViewYn").val(),"N"));
-		     			  uniAjaxMutipart("/backoffice/companyManage/companyUpdate.do", formData, 
-		     						function(result) {
-		     						       //결과값 추후 확인 하기 	
-		     		    	               if (result.status == "SUCCESS"){
-		     		    	            	  jqGridFunc.fn_search();
-		     		    	               }else if (result.status == "LOGIN FAIL"){
-		     									document.location.href="/backoffice/login.do";
-		     				               }else {
-		     				            	   alert(result.message);
-		     				               }
-		     		    	               need_close();
-		     						    },
-		     						    function(request){
-		     							    alert("Error:" +request.status );	       						
-		     						    }    		
-		     				 );
+		     			  uniAjaxMutipart("/backoffice/boardManage/boardUpdate.do", formData, 
+	     						function(result) {
+		     				           alert("result:" + result);
+	     						       //결과값 추후 확인 하기 	
+	     		    	               if (result.status == "SUCCESS"){
+	     		    	            	  //jqGridFunc.fn_search();
+	     		    	               }else if (result.status == "LOGIN FAIL"){
+	     									document.location.href="/backoffice/login.do";
+	     				               }else {
+	     				            	   alert(result.message);
+	     				               }
+	     		    	               need_close();
+	     						 },
+	     						 function(request){
+	     							    alert("Error:" +request.status );	       						
+	     						 }    		
+		     			  );
 		     		    	
-		     		 } 
-		 }, rowBtn : function (cellvalue, options, rowObject){
-             if (rowObject.board_seq != "")
-          	   return '<a href="javascript:boardinfo.delRow(&#34;'+rowObject.board_seq+'&#34;);">삭제</a>';
-         }, delRow : function (board_seq){
-        	 if(com_code != "") {
-      		 var params = {'board_seq':coboard_seqm_code };
-      		 fn_uniDelAction("/backoffice/boardManage/boardDelete.do",params, "boardinfo.fn_search");
-		 } ,fn_search : function(){
-			  $("#mainGrid").setGridParam({
-	    	    	 datatype	: "json",
-	    	    	 postData	: JSON.stringify(  {
-	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
-		          		"searchKeyword" : $("#searchKeyword").val(),
-	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
-	         		 }),
-	    	    	 loadComplete	: function(data) {
-	    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
-	    	    	 }
-	    	      }).trigger("reloadGrid");
-		}
+		             } 
+		     },rowBtn : function (cellvalue, options, rowObject){
+	             if (rowObject.board_seq != "")
+	            	   return '<a href="javascript:boardinfo.delRow(&#34;'+rowObject.board_seq+'&#34;);">삭제</a>';
+	         }, delRow : function (board_seq){
+	        	 if(board_seq != "") {
+	          		 var params = {'board_seq':board_seq };
+	          		 fn_uniDelAction("/backoffice/boardManage/boardDelete.do",params, "boardinfo.fn_search");
+	        	 }
+	    	 }, fn_boardFormCk : function (){
+	    		 console.log($("#boardGubun").val());
+	    		 
+	    		 
+	    		 if ($("#boardGubun").val() == "NOT"){
+	    			 $("#tr_faq").hide();
+	    			 $("#tr_not1").show();
+	    		 }else {
+	    			 $("#tr_faq").show();
+	    			 $("#tr_not1").hide();
+	    		 }
+	    		 
+	    	 },fn_search : function(){
+				  $("#boardGrid").setGridParam({
+		    	    	 datatype	: "json",
+		    	    	 postData	: JSON.stringify(  {
+		    	    		"pageIndex": $("#pager .ui-pg-input").val(),
+		    	    		"searchCondition" : $("#searchCondition").val(),
+		    	    		"searchKeyword" : $("#searchKeyword").val(),
+		         			"pageUnit":$('.ui-pg-selbox option:selected').val()
+		         		 }),
+		    	    	 loadComplete	: function(data) {
+		    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
+		    	    	 }
+		    	   }).trigger("reloadGrid");
+			 }
      }  
 </script>
 <script type="text/javascript">
@@ -452,6 +491,20 @@
 		}
 		window.open("/backoffice/boardManage/boardPreview.do", "preview", popSpec);
 	}
+	function need_close(){
+     	needPopup.hide();
+     }
+     needPopup.config.custom = {
+         'removerPlace': 'outside',
+         'closeOnOutside': false,
+         onShow: function() {
+				console.log('needPopup is shown');
+         },
+         onHide: function() {
+             console.log('needPopup is hidden');
+         }
+     };
+     needPopup.init();
     </script>
 </body>
 </html>

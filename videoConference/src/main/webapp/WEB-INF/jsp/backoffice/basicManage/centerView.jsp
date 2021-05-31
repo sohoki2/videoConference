@@ -749,7 +749,7 @@
 		       		  						    $("#floorName").val(obj.floor_name);
 		       		 		            	    $("#floorInfo").val(obj.floor_info);
 		       		 		            	    $("#floorPart").val(obj.floor_part);
-		       		 		            	    $("#nowVal").val(obj.floor_info.replace("CNETER_FLOOR_", ""));
+		       		 		            	    $("#nowVal").val(obj.floor_info.replace("CENTER_FLOOR_", ""));
 		       		 		            	    toggleClick("floorUseyn", obj.floor_useyn);
 		       		 		               }
 		       						 },
@@ -799,7 +799,7 @@
 	     		  } 
 	    	  }, fn_floorState: function (){
 	    		  if ($("#floorInfo").val() != $("#nowVal").val())
-	    			  $("#newVal").val($("#floorInfo").val().replace("CNETER_FLOOR_", "") );
+	    			  $("#newVal").val($("#floorInfo").val().replace("CENTER_FLOOR_", "") );
 	    	  }, fn_SeatUpdate : function (){
 	    		  //좌석 업데이트 하기 
 	    		  if (any_empt_line_id("seatStr", "장비 시작 카운터을 선택해주세요.") == false) return;		  

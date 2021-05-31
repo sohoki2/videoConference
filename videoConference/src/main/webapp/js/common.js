@@ -122,6 +122,7 @@ function fnCreatCheckbox(_returnObject, _startVal, _endVal, _checkVal, _checkbox
 	var count = 0;
 	var object_height = 1;
 	for (var i = parseInt(_startVal); i <= parseInt(_endVal); i ++ ){
+	    
 		checked = _checkVal.includes(i) ? "checked" : "";
 		count += 1;
 		console.log(count%5);

@@ -114,28 +114,19 @@
 				 WHERE CENTER_ID =#{centerId}
 					    AND FLOOR_INFO NOT IN ( SELECT  CODE
 										        FROM LETTCCMMNDETAILCODE
-										        WHERE CODE_ID = 'CNETER_FLOOR'
+										        WHERE CODE_ID = 'CENTER_FLOOR'
 										                AND CODE_DC IN  (
-										                  select  SUBSTRING_INDEX(SUBSTRING_INDEX(tb_centerinfo.FLOOR_INFO, ',', tb_numbers.n), ',', -1) name
-														  FROM tb_numbers INNER JOIN tb_centerinfo 
-															   ON CHAR_LENGTH(tb_centerinfo.FLOOR_INFO)
-																  -CHAR_LENGTH(REPLACE(tb_centerinfo.FLOOR_INFO, ',', ''))>=tb_numbers.n-1
-														  WHERE  CENTER_ID =#{centerId} 
+										                   SELECT strVALUE FROM dbo.UF_SPLICT(#{floorInfo}, ',')
 										                )
-										 )
+										       )
 	      ) ;
 	      
           INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, 
-                                   REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
-          SELECT #{centerId} , CODE, CODE_NM, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
+                                   REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID, FLOOR_PART)
+          SELECT #{centerId} , CODE, CODE_NM, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}, 'FLOOR_PART_2' FLOOR_PART
           FROM LETTCCMMNDETAILCODE
-          WHERE CODE_ID = 'CNETER_FLOOR'
-                AND CODE_DC IN  ( SELECT  SUBSTRING_INDEX(SUBSTRING_INDEX(tb_centerinfo.FLOOR_INFO, ',', tb_numbers.n), ',', -1) name
-								  FROM tb_numbers INNER JOIN tb_centerinfo 
-									   ON CHAR_LENGTH(tb_centerinfo.FLOOR_INFO)
-										  -CHAR_LENGTH(REPLACE(tb_centerinfo.FLOOR_INFO, ',', ''))>=tb_numbers.n-1
-								  WHERE  center_id =#{centerId}  
-                )
+          WHERE CODE_ID = 'CENTER_FLOOR'
+                AND CODE_DC IN  (  SELECT strVALUE FROM dbo.UF_SPLICT(#{floorInfo}, ',') )
           AND CODE NOT IN ( select FLOOR_INFO FROM TB_FLOORINFO WHERE center_id = #{centerId}) ;
           </if>         
      </update>
