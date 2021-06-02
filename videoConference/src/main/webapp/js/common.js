@@ -183,7 +183,7 @@ function fn_uniCheck(url, params, _field){
 							   location.href="/backoffice/login.do";
 						   }else if (result.status == "SUCCESS"){
 			                   //관련자 보여 주기 
-			                    alert("중복된 내역이 없습니다.");
+			                   alert("중복된 내역이 없습니다.");
 							   $("#"+_field).val("Y");
 						   }else {
 						      alert("중복된 내역이 있습니다.");

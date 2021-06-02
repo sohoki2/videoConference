@@ -18,23 +18,26 @@
     <link href="/front_res/css/swiper.css" rel="stylesheet">
     <link href="/front_res/css/jquery-ui.css" rel="stylesheet" />
     <link href="/front_res/css/needpopup.min.css" rel="stylesheet" type="text/css" >
-    <link href="/front_rescss/style.css" rel="stylesheet" />
-    <link href="/front_rescss/paragraph.css" rel="stylesheet" />
-    <link href="/front_rescss/widescreen.css" rel="stylesheet" media="only screen and (min-width : 1080px)">
-    <link href="/front_rescss/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
+    <link href="/front_res/css/style.css" rel="stylesheet" />
+    <link href="/front_res/css/paragraph.css" rel="stylesheet" />
+    <link href="/front_res/css/widescreen.css" rel="stylesheet" media="only screen and (min-width : 1080px)">
+    <link href="/front_res/css/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
      
     <!--js-->
+    <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>
 <body>
-    <div class="contents joinCon">
+<form name="regist" method="post" action="/web/joinProcess.do" autocomplete="off">
+    <input type="hidden" id="uniCheck" />
+        <div class="contents joinCon">
             <div class="joinArea">
                 <h1><img src="/front_res/img/logo.png"/></h1>
                 <div class="joinform">
                     <div>
-                        <input type="checkbox" name="">
+                        <input type="checkbox" id="agreeCheck" name="agreeCheck">
                         <p>개인정보 수집 및 이용동의 <span class="blueFont">(필수)</span></p>
                     </div>
                     <div class="scroll">
@@ -47,42 +50,36 @@
                     <tbody>
                         <tr>
                             <th>* 아이디</th>
-                            <td><input type="text" name=""></td>
+                            <td><input type="text" id="userId" name="userId">
+                                <a href="javascript:join.fn_idCheck()">[중복체크]</a></td>
                         </tr>
                         <tr>
                             <th>* 비밀번호</th>
-                            <td><input type="text" name=""></td>
+                            <td><input type="password" name="userPassword1" id="userPassword1"></td>
                         </tr>
                         <tr>
                             <th>* 비밀번호 재확인</th>
-                            <td><input type="text" name=""></td>
+                            <td><input type="password" name="userPassword2" id="userPassword2"></td>
                         </tr>
                         <tr>
                             <th>* 이름</th>
-                            <td><input type="text" name=""></td>
+                            <td><input type="text" name="userName" id="userName"></td>
                         </tr>
                         <tr>
                             <th>* 이메일</th>
-                            <td><input type="text" name=""></td>
+                            <td><input type="text" name="userEmail" id="userEmail"></td>
                         </tr>
                         <tr>
                             <th>* 휴대전화</th>
                             <td>
-                                <select>
-                                    <option>대한민국 +82</option>
-                                    <option>대한민국 +82</option>
-                                    <option>대한민국 +82</option>
-                                    <option>대한민국 +82</option>
-                                    <option>대한민국 +82</option>
-                                </select>
                                 <section>
-                                    <input type="text" name="" placeholder="전화번호 입력">
+                                    <input type="text" name="userCellphone" id="userCellphone" placeholder="전화번호 입력"  id="userCellphone">
                                     <button>인증번호 받기</button>
                                 </section>
                                 <input type="text" name="" placeholder="인증번호를 입력하세요.">
                                 <!--인증번호 받기 버튼 클릭 시 추가 되는 텍스트-->
                                 <p class="noti">인증번호가 발송되었습니다</p>
-                                <button class="darkBtn joinBtn" data-needpopup-show="#agreeN_popup">가입하기</button>
+                                <button class="darkBtn joinBtn" onClick="join.fn_join()" data-needpopup-show="#agreeN_popup">가입하기</button>
                             </td>
                         </tr>
                     </tbody>
@@ -93,7 +90,7 @@
         <!--//개인정보 수집 체크 안했을 때 팝업-->
         <div id='agreeN_popup' class="needpopup">
             <p>
-                개인정보 수집 및 이용 동의는 필수입니다
+              <span id="sp_message"></span>
             </p>
         </div>
         <!--개인정보 수집 체크 안했을 때 팝업//-->
@@ -113,12 +110,85 @@
                 회원가입을 완료 하였습니다
             </p>
         </div>
-        <!--회원가입 완료 팝업//-->
-
+</form>
+<button type="button" id="btn_message" style="display:none" data-needpopup-show='#agreeN_popup'>확인1</button>
 <!--needpopup script-->
-<script src="/front_res/js/jquery-1.11.0.min.js"></script>
+
 <script src="/front_res/js/needpopup.min.js"></script>
 <script>  
+    var join = {
+    	fn_idCheck : function(){
+    		if (join.any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
+    		var params = {"userId" : $("#userId").val()};
+    		
+    		fn_uniCheck("/web/userUniCheck.do", params, "uniCheck");
+    	},fn_join : function(){
+    		if (join.any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
+			if (join.fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
+			if (join.fn_UniCheckAlert("uniCheck", "중복 검사를 하지 않았습니다") == false) return;
+			if (join.any_empt_line_span("userPassword1", "패스워드을 입력해주세요.") == false) return;
+			if (join.any_empt_line_span("userPassword2", "패스워드을 입력해주세요.") == false) return;
+		    if (join.any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
+  		    if (join.any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
+  		    if (join.any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
+  		    if ( $.trim($('#userPassword1').val()) !=   $.trim($('#userPassword2').val())  ){
+			   $("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
+   		       $("#btn_message").trigger("click");
+			   return;
+		    }
+  		    var param = {"userId" : $("#userId").val(),
+	     		     	 "userName" : $("#userName").val(),
+	     		     	 "userCellphone" : $("#userCellphone").val(),
+	     		     	 "userEmail" : $("#userEmail").val()
+  		                }
+  			
+  		   if (confirm("저장 하시겠습니까?")== true){
+  			   uniAjax("/web/JoinProcess.do", param, 
+  		     			function(result) {
+  						       if (result.status == "SUCCESS"){
+  	                               //관련자 보여 주기 
+  						    	   $("#sp_message").text(result.message);
+  				   		          // $("#btn_message").trigger("click");
+  	                               location.href="/web/Login.do";
+  		  					   }else {
+  		  						  $("#sp_message").text(result.message);
+  		  	    		          $("#btn_message").trigger("click");
+  		  					   }
+  						},
+						function(request){
+							    alert("Error:" +request.status );	       						
+						}    		
+  		        );
+  		   }
+    	} , fn_UniCheckAlert : function (_UniCheckFormNm, _btn_message){
+    		if ($("#"+_UniCheckFormNm).val() == "Y"){
+    			return true;
+    		}else {
+    		    $("#sp_message").text(_btn_message);
+    		    $("#btn_message").trigger("click");
+    			return false;
+    			
+    		}
+    	}, fn_Check : function (_UniCheckFormNm, _btn_message){
+    		if ($("#"+_UniCheckFormNm).is(":checked") == true){
+    			return true;
+    		}else {
+    		    $("#sp_message").text(_btn_message);
+    		    $("#btn_message").trigger("click");
+    			return false;
+    			
+    		}
+    	}, any_empt_line_span : function (frm_nm, alert_message){
+    	     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
+    	    	  $("#sp_message").html(alert_message);
+    	    	  $("#btn_message").trigger("click");
+     		      $('#'+frm_nm).focus();
+    			  return false;
+    		 }else{
+    	         return true;
+    		 }
+    	}
+    }
     needPopup.config.custom = {
         'removerPlace': 'outside',
         'closeOnOutside': false,

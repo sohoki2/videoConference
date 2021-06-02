@@ -16,6 +16,8 @@ public interface UserInfoManageService {
 	List<Map<String, Object>> selectUserInfoManageCombo (@Param("empNo") String userNo) throws Exception;
 	
 	Map<String, Object> selectUserInfoManageDetail(String userNo) throws Exception;
+	
+	Map<String, Object> selectUserLogin(@Param("params") Map<String, Object> params) throws Exception;
 		
 	int updateUserInfoManage(UserInfo vo) throws Exception;
 	

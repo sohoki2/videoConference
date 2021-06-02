@@ -17,6 +17,8 @@ public interface ResInfoManageService {
     
     List<ResInfoVO> selectCalenderDetailInfo(ResInfoVO searchVO)throws Exception;
     
+    List<ResInfoVO> selectCalenderMeetingState(ResInfoVO searchVO)throws Exception;
+    
     List <ResInfoVO> selectMessagentList()throws Exception;
     
     List<Map<String, Object>> selectKioskCalendarList(String swcSeq);
@@ -28,7 +30,7 @@ public interface ResInfoManageService {
     int resEquipStateChange (ResInfoVO vo) throws Exception;
     //최초 입력
     
-	int insertResManage(ResInfo vo) throws Exception;
+	int insertResManage(ResInfoVO vo) throws Exception;
 	// 예약 수정 변경 
     int updateResManageChange(ResInfo vo) throws Exception;
    

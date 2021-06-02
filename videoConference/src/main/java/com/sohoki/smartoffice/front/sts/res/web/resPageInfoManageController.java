@@ -275,7 +275,7 @@ public class resPageInfoManageController {
 	//여기 수정 하기 
 	@RequestMapping(value="resReservertionUpdate.do")	
 	public ModelAndView resUpdateInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
-									  , @RequestBody ResInfo searchVO
+									  , @RequestBody ResInfoVO searchVO
 									  , HttpServletRequest request
 									  , BindingResult bindingResult	) throws Exception {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);

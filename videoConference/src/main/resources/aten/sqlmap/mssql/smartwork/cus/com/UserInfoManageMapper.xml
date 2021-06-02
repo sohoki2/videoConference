@@ -3,65 +3,97 @@
 <mapper namespace="com.sohoki.backoffice.cus.com.mapper.UserInfoManageMapper">
 
     <select id="selectUserInfoManageListByPagination"  resultType="lmap">
-		    SELECT TB.* 
-	        FROM (
-					    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
-					           ROW_NUMBER() OVER (ORDER BY b.USER_UPDATE DESC) AS RNUM, 
-					           b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
-							   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
-							   FORMAT(b.USER_UPDATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE,
-							   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME  
-					    FROM  TB_COMPANYINFO a, TB_USERINFO b, LETTCCMMNDETAILCODE c, TB_CENTERINFO d, TB_FLOORINFO e
-					    WHERE a.COM_CODE = b.COM_CODE 
-					          AND b.USER_STATE = c.CODE    
-					          AND a.CENTER_ID = d.CENTER_ID
-					          AND a.FLOOR_SEQ = e.FLOOR_SEQ
-					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
-						          <choose>
-						              <when test="params.searchCondition == 'comName'">
-						                  AND b.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  
-						              </when>
-						              <otherwise>
-						                  AND (b.USER_NO LIKE CONCAT('%',#{params.searchKeyword},'%')  
-									           OR b.USER_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  
-									           OR b.USER_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
-									           )
-						              </otherwise>
-						          </choose>
-					          </if>
-						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.comCode)">
-								  AND a.COM_CODE = #{params.comCode}
-							  </if>
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
-							      AND d.CENTER_ID = #{params.searchCenter}
-							  </if>
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
-							      AND e.FLOOR_SEQ = #{params.searchFloorSeq}
-							  </if>
-		    ) TB  
-		    WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage} 
-	        ORDER BY TB.USER_UPDATE  DESC
+	     SELECT TB.* 
+         FROM (
+				    SELECT SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
+				           ROW_NUMBER() OVER (ORDER BY b.USER_UPDATE DESC) AS RNUM, 
+				           b.USER_ID, b.USER_NAME, b.USER_NO, b.COM_CODE, b.USER_RANK, b.USER_POSITION, b.USER_EMAIL,
+						   b.USER_TEL, b.USER_STATE, b.USER_CELLPHONE, 
+						   FORMAT(b.USER_UPDATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE,
+						   b.USER_UPDATEID, c.CODE_NM, a.COM_NAME  
+				    FROM  TB_COMPANYINFO a, TB_USERINFO b, LETTCCMMNDETAILCODE c, TB_CENTERINFO d, TB_FLOORINFO e
+				    WHERE a.COM_CODE = b.COM_CODE 
+				          AND b.USER_STATE = c.CODE    
+				          AND a.CENTER_ID = d.CENTER_ID
+				          AND a.FLOOR_SEQ = e.FLOOR_SEQ
+				          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+					          <choose>
+					              <when test="params.searchCondition == 'comName'">
+					                  AND b.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  
+					              </when>
+					              <otherwise>
+					                  AND (b.USER_NO LIKE CONCAT('%',#{params.searchKeyword},'%')  
+								           OR b.USER_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  
+								           OR b.USER_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+								           )
+					              </otherwise>
+					          </choose>
+				          </if>
+					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.comCode)">
+							  AND a.COM_CODE = #{params.comCode}
+						  </if>
+						  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+						      AND d.CENTER_ID = #{params.searchCenter}
+						  </if>
+						  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+						      AND e.FLOOR_SEQ = #{params.searchFloorSeq}
+						  </if>
+	     ) TB  
+	     WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage} 
+         ORDER BY TB.USER_UPDATE  DESC
     </select>
     <select id="selectUserInfoManageCombo" resultType="lmap">
-	       SELECT a.EMP_NO , a.EMP_NAME 
-	       FROM TB_USERINFO a
-	       WHERE a.COM_CODE =  #{comCode}
-	       ORDER BY a.EMP_NO ASC
+	     SELECT a.EMP_NO , a.EMP_NAME 
+	     FROM TB_USERINFO a
+	     WHERE a.COM_CODE =  #{comCode}
+	     ORDER BY a.EMP_NO ASC
     </select>
     <select id="selectUserInfoManageDetail"  resultType="lmap">
-           SELECT USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
+         SELECT USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
 			      USER_TEL, USER_STATE, USER_CELLPHONE, 
 			      USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, AUTHOR_CODE
-		    FROM TB_USERINFO a
-		    WHERE USER_NO = #{userNo}
+		 FROM TB_USERINFO a
+		 WHERE USER_NO = #{userNo}
     </select>
+    <select id="selectUserInfoManageDetailId"  resultType="lmap">
+         SELECT USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
+			      USER_TEL, USER_STATE, USER_CELLPHONE, 
+			      USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, AUTHOR_CODE
+		 FROM TB_USERINFO a
+		 WHERE USER_ID = #{userId}
+    </select>
+    <select id="selectUserLogin" resultType="lmap">
+         SELECT * 
+         FROM (
+               SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+		              a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		              CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
+		                    (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
+		              ELSE 
+		                     ''
+		              END as FLOOR_INFO
+			   FROM TB_EMPINFO a, TB_USERINFO b
+		       WHERE a.EMPNO = b.USER_NO 
+		             AND a.COM_CODE = b.COM_CODE
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userId)">
+		              AND b.USER_ID = #{params.userId}
+		             </if>
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userNo)">
+		              AND b.USER_NO = #{params.userNo}
+		             </if>
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userPassword)">
+		              AND b.USER_PASSWORD = #{params.userPassword}
+		             </if>
+         ) X
+    </select>
+    
     <insert id="insertUserInfoManage" >
          INSERT INTO TB_USERINFO(USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
 							     USER_TEL, USER_STATE, USER_CELLPHONE, 
-							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID)
+							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, USER_PASSWORD)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userName}, #{userNo}, #{comCode}, #{userRank,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR},  #{userEmail,jdbcType=VARCHAR},  
                  #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},
-                 GETDATE(), #{updateId,jdbcType=VARCHAR},  GETDATE(), #{updateId,jdbcType=VARCHAR});
+                 GETDATE(), #{updateId,jdbcType=VARCHAR},  GETDATE(), #{updateId,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR});
                  
          INSERT INTO TB_EMPINFO (EMPID, EMPNO, EMPNAME, COM_CODE,  EMPJIKW, EMPGRAD, EMPHANDPHONE, EMPTELPHONE, EMPMAIL,  AUTHOR_CODE, 
                                  EMP_STATE, UPDATE_DATE)
@@ -82,6 +114,9 @@
                                 , USER_TEL = #{userTel,jdbcType=VARCHAR} 
                                 , USER_UPDATE = GETDATE()
                                 , USER_UPDATEID = #{updateId,jdbcType=VARCHAR}
+                                <if test="userPassword != ''">
+                                , USER_PASSWORD = #{userPassword,jdbcType=VARCHAR}
+                                </if>
 	    WHERE USER_NO = #{userNo} ;
 	    
 	    UPDATE TB_EMPINFO SET  EMPID = #{userId,jdbcType=VARCHAR} 

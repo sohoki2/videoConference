@@ -270,7 +270,8 @@
 		     				    }    		
 		               );
 		        }else{
-		        	$('input:text[name^=meeting]').val("");
+		        	$('input[name^=meeting]').val("");
+		        	//roomType
 		        	$("#centerId").val("");
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
@@ -278,7 +279,7 @@
 		        	$("#tr_resMial").hide();
 		        	$("#tr_resSms").hide();
 		        	$(".avayaView").hide()
-		        	
+		        	$("#btnUpdate").text("등록");
 		        }
            },clearGrid : function() {
                 $("#mainGrid").clearGridData();
@@ -387,7 +388,7 @@
 	 			$("#tr_resSms").hide();			
 	 		}
 	     }, fn_AyavaView : function(){
-	    	 $("#roomType").val() == "SWC_GUBUN_1" ? $(".avayaView").hide() : $(".avayaView").show();
+	    	 $("#roomType").val() == "SWC_GUBUN_2" ? $(".avayaView").show() : $(".avayaView").hide();
 	     }, fn_adminChoic : function (empId){
 	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "[관리자 선택]" : "";
 	    	 $("#sp_empView").html(empTxt);

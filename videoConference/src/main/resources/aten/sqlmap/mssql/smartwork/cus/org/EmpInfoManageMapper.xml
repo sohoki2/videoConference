@@ -45,6 +45,31 @@
         </if>
         ORDER BY TA.EMPNAME  ASC 
     </select>
+    
+    <select id="selectUserLogin" resultType="lmap">
+         SELECT * 
+         FROM (
+               SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+		              a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		              CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
+		                    (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
+		              ELSE 
+		                     ''
+		              END as FLOOR_INFO
+			   FROM TB_EMPINFO a, TB_USERINFO b
+		       WHERE a.EMPNO = b.USER_NO 
+		             AND a.COM_CODE = b.COM_CODE
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userId)">
+		              AND b.USER_ID = #{params.userId}
+		             </if>
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userNo)">
+		              AND b.USER_NO = #{params.userNo}
+		             </if>
+		             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.userPassword)">
+		              AND b.USER_PASSWORD = #{params.userPassword}
+		             </if>
+         ) X
+    </select>
     <select id="selectMeetinngUserList" resultType="EmpInfoVO">
          SELECT EMPNO, EMPNAME, DEPTNAME, DEPTCODE , EMPMAIL
          FROM TB_EMPINFO 
@@ -54,14 +79,24 @@
                </foreach>
     </select>
     <select id="selectEmpInfoDetail" resultType="EmpInfoVO">
-	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN
-	       		 , a.EMPMAIL, a.DEPTCODE 
+	      SELECT  a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+		          a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		          CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
+	                 (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
+                  ELSE 
+	                     ''
+	              END as FLOOR_INFO
 	   	  FROM 	TB_EMPINFO a 
 	   	 WHERE 1=1 AND a.EMPID = #{empid}
     </select>
     <select id="selectEmpInfoDetailNo" resultType="EmpInfoVO">
-	      SELECT a.EMPNO, a.EMPNAME , a.EMPHANDPHONE, a.EMPMAIL, a.ADMIN_GUBUN, 
-	       		 a.EMPMAIL , a.DEPTCODE 
+	      SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+		         a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		         CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
+	                 (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
+                 ELSE 
+	                     ''
+	             END as FLOOR_INFO
 	   	  FROM 	TB_EMPINFO a 
 	   	 WHERE 1=1 AND a.EMPNO = #{empno}
     </select>

@@ -3,12 +3,16 @@ package com.sohoki.backoffice.cus.org.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 
 public interface EmpInfoManageService {
 
 	List<Map<String, Object>> selectEmpInfoList(Map<String, Object> params)  throws Exception;
+	
+	EmpInfoVO selectEmpInfoLogin(Map<String, Object> params) throws Exception;
 	
 	List<Map<String, Object>> selectMeetinngUserList(List empNoList)throws Exception;
 	

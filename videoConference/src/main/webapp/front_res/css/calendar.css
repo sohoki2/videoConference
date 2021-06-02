@@ -1,5 +1,5 @@
 .calendar {
-  display: grid;
+  /* display: grid; */
   width: 100%;
   grid-template-columns: repeat(7, minmax(120px, 1fr));
   grid-template-rows: 50px;
@@ -197,3 +197,4 @@
   font-weight: 500;
   color: rgba(81, 86, 93, 0.7);
 }
+.sun{color: #de4444;}

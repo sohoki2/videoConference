@@ -94,7 +94,7 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	  //예약 신청  
 	  @Transactional
 	  @Override
-	  public int insertResManage(ResInfo vo)   throws Exception{
+	  public int insertResManage(ResInfoVO vo)   throws Exception{
 		    
 		    
 		     
@@ -128,27 +128,26 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			    		                                                                  : uniService.selectFieldStatement("FLOOR_SEQ", "tb_seatinfo", "SEAT_ID=[" +vo.getItemId()+"[" );
 		        vo.setFloorSeq(floorInfo.get("floor_seq").toString());
 			    ret = this.resMapper.insertResManage(vo);
-		
+			    resSeq = Integer.valueOf(vo.getResSeq()).intValue();
 		        if (ret > 0){
-		        	resSeq = Integer.valueOf(vo.getResSeq()).intValue();
-			        timeinfo.put("resSeq", String.valueOf(resSeq));
-			        String appriaval =  vo.getProxyYn().equals("S") ? "Y" : "N";
-			        timeinfo.put("apprival", appriaval);
-			        //info.setResSeq(String.valueOf(resSeq));
-			        //시간 테이블 업데이트 하기 
-			        if (vo.getProxyYn().equals("S")) {
-			          LOGGER.debug("vo.getProxyYn():" + vo.getProxyYn());
-			          vo.setReservProcessGubun("PROCESS_GUBUN_2");
-			          vo.setResSeq(String.valueOf(resSeq));
-			          //자동 승인 넘기기기
-			          ret = updateResManageChange(vo);
-			        } else {
-			          boolean sendCk =   meetingService.sendMeetingEmpMessage(vo.getItemId(), vo);
-			          //메일 전송 확인 체크 
+			        vo.setResSeq(String.valueOf(resSeq));
+			        //자동 승인 넘기기기
+			        if (vo.getSeatConfirmgubun().equals("Y")) {
+			        	//관리자 승인 일때 처리 하는 구문 
+			        	timeinfo.put("resSeq", String.valueOf(resSeq));
+			        	timeinfo.put("apprival", "R");
+			        	this.timeMapper.updateTimeInfo(timeinfo);
+			        	boolean sendCk =   meetingService.sendMeetingEmpMessage(vo.getItemId(), vo);
+			        }else {
+			        	vo.setReservProcessGubun("PROCESS_GUBUN_2");
+			        	vo.setResSeq(String.valueOf(resSeq));
+			        	ret = updateResManageChange(vo);
 			        }
-			        // ret 체크 이후 정리 하기 
-			        if (ret> 0)
-			          this.timeMapper.updateTimeInfo(timeinfo);
+			        
+			    }else {
+			    	 this.resMapper.errorResDateStep01(resSeq);
+				     this.resMapper.errorResDateStep02(resSeq);
+				     ret = -1;
 			    }
 	    }
 	    else {
@@ -221,6 +220,9 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			
 			Map<String, Object> tennInfo = new HashMap<String, Object>();
 			LOGGER.debug("===============service" + vo.getReservProcessGubun());
+			
+			
+			
 			if (vo.getReservProcessGubun().equals("PROCESS_GUBUN_2") || vo.getReservProcessGubun().equals("PROCESS_GUBUN_4")){
 					info.setApprival("Y");
 					timeMapper.updateTimeInfoY(info);
@@ -394,6 +396,12 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	public String selectTennInfo(ResInfo vo) throws Exception {
 		// TODO Auto-generated method stub
 		return resMapper.selectTennInfo(vo);
+	}
+
+	@Override
+	public List<ResInfoVO> selectCalenderMeetingState(ResInfoVO searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return resMapper.selectCalenderMeetingState(searchVO);
 	}
 	  
 }

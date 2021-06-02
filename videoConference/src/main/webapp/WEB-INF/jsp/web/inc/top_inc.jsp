@@ -1,16 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import ="java.util.*"%>
+<meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1"/>
+<%@ page import ="com.sohoki.backoffice.cus.org.vo.EmpInfoVO" %>
+
+<%
+   EmpInfoVO loginVO = (EmpInfoVO) session.getAttribute("empInfoVO");
+   if(loginVO == null ){
+	   %>
+	   	<script type="text/javascript">
+	   		alert("로그인 되지 않았습니다.");
+	   		location.href="/web/Login.do";		
+	   	</script>
+<%        
+   }else{ 
+%> 
 <header>
      <div class="contents">
-         <h1 onclick="location.href='index.html'"><img src="img/logo.png" alt="서울관광플라자"></h1>
+         <h1 onclick="location.href='index.html'"><img src="/front_res/img/logo.png" alt="서울관광플라자"></h1>
          <!--//menu-->
          <div class="menu">
              <ul>
                  <!--메뉴 선택 시 li에 active 추가-->
-                 <li class="menu01"><a href="sub/seat.html">자율좌석예약</a></li>
-                 <li class="menu02"><a href="sub/meeting_day.html">회의실예약현황</a></li>
-                 <li class="menu04"><a href="sub/coronation.html">시설대관</a></li>
-                 <li class="menu03"><a href="sub/mybooking.html">나의예약</a></li>
+                 <li class="menu01"><a href="/web/seat.do">자율좌석예약</a></li>
+                 <li class="menu02"><a href="/web/meetingDay.do">회의실예약현황</a></li>
+                 <li class="menu04"><a href="/web/coronation.do">시설대관</a></li>
+                 <li class="menu03"><a href="/web/mybooking.do">나의예약</a></li>
              </ul>
          </div>
          <div class="leftMenu">
@@ -19,3 +35,6 @@
          <!--menu//-->
      </div>
 </header>
+<%
+   }
+%>

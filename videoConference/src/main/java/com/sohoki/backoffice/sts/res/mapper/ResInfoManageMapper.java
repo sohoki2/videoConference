@@ -19,8 +19,11 @@ public interface ResInfoManageMapper {
     public List<Map<String, Object>> selectIndexList(@Param("params") Map<String, Object> params );
     
     public List<ResInfoVO> selectCalenderInfo();
-    
+    //월별 예약 상세 리스트
     public List<ResInfoVO> selectCalenderDetailInfo(ResInfoVO searchVO);
+    //월별 회의실 상태
+    public List<ResInfoVO> selectCalenderMeetingState(ResInfoVO searchVO);
+    
     //메일 보내는 구문 
     public List <ResInfoVO> selectMessagentList();
     

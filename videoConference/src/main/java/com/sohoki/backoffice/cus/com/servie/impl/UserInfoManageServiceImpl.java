@@ -51,7 +51,14 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	@Override
 	public int updateUserInfoManage(UserInfo vo) throws Exception {
 		// TODO Auto-generated method stub
+		
+		System.out.println("userid:"+vo.getUserId());
+		if (vo.getUserId().equals("") )
+			vo.setUserId(vo.getUserNo());
+		if (vo.getUserPassword().equals("") )
+			vo.setUserPassword("sto3877#*&&"); 
 		return vo.getMode().equals("Ins") ?  userMapper.insertUserInfoManage(vo) :  userMapper.updateUserInfoManage(vo);
+		//return 0;
 	}
 
 	@Override
@@ -126,6 +133,12 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	public int deleteUserInfoManage(String userNo, String comCode) throws Exception {
 		// TODO Auto-generated method stub
 		return userMapper.deleteUserInfoManage(userNo, comCode);
+	}
+    //사용자 로그인  
+	@Override
+	public Map<String, Object> selectUserLogin(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return userMapper.selectUserLogin(params);
 	}
 
 }

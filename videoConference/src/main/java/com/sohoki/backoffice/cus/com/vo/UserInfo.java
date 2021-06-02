@@ -24,5 +24,7 @@ public class UserInfo {
 	private String mode = "";
 	private String updateId = "";
 	private String authorCode = "";
+	private String userPassword = "";
+	
 	
 }

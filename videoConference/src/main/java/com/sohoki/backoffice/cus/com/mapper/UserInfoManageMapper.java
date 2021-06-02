@@ -15,6 +15,10 @@ public interface UserInfoManageMapper {
 	public List<Map<String, Object>> selectUserInfoManageCombo (@Param("comCode") String comCode);
 	
 	public Map<String, Object> selectUserInfoManageDetail(String userNo);
+	//사용자 아이디 설정 
+	public Map<String, Object> selectUserInfoManageDetailId(String userId);
+	//사용자 로그인 
+	public Map<String, Object> selectUserLogin(@Param("params") Map<String, Object> params);
 		
 	public int insertUserInfoManage(UserInfo vo);
 	

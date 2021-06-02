@@ -1,4 +1,97 @@
 //facility icon effect
+function any_empt_line_id(frm_nm, alert_message){
+     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
+		  alert(alert_message);
+		  $('#'+frm_nm).focus();
+		  return false;
+	 }else{
+         return true;
+	 }
+}
+function any_empt_line_span(frm_nm, alert_message){
+     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
+		  alert(alert_message);
+		  $('#'+frm_nm).focus();
+		  return false;
+	 }else{
+         return true;
+	 }
+}
+
+function uniAjax(url, param, done_callback, fail_callback){
+	var jxFax =  $.ajax({
+		        type : 'POST',
+		        url : url,
+		        beforeSend:function(jxFax, settings){
+	        	   jxFax.setRequestHeader('AJAX', true);
+	        	   //$('.loadingDiv').show();
+	            }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : JSON.stringify(param)
+		    }).done(done_callback).fail(fail_callback);
+	return jxFax;
+}
+function fn_uniCheck(url, params, _field){
+    uniAjax(url, params, 
+			  function(result) {
+				       if (result.status == "SUCCESS"){
+		                   //관련자 보여 주기 
+		                    alert("중복된 내역이 없습니다.");
+						   $("#"+_field).val("Y");
+					   }else {
+					      alert("중복된 내역이 있습니다.");
+						  $("#"+_field).val("N");
+					   }
+			  },
+			  function(request){
+				    alert("Error:" +request.status );	       						
+			  }    		
+	);
+}
+function today_get(){
+	var now = new Date();
+    var today_day = fnLPAD(String(now.getDate()), "0", 2); //일자를 구함
+    var today_month = fnLPAD(String((now.getMonth() + 1)), "0", 2); // 월(month)을 구함    
+    var today_year = String(now.getFullYear()); //년(year)을 구함
+    var today = today_year + today_month + today_day;
+    
+    return today;
+}
+//지난 일자는 등록 하지 못하게 하기 
+function yesterDayConfirm(res_day, alert_message){
+	var day = new Date();
+    var dateNow = fnLPAD(String(day.getDate()), "0", 2); //일자를 구함
+    var monthNow = fnLPAD(String((day.getMonth() + 1)), "0", 2); // 월(month)을 구함    
+    var yearNow = String(day.getFullYear()); //년(year)을 구함
+    var today = yearNow + monthNow + dateNow;
+    
+    if (parseInt(res_day) < today){
+    	alert(alert_message);
+    	return false;
+    }else {
+    	return true;
+    }
+}
+function fnLPAD(val, set, cnt) {
+    if (!set || !cnt || val.length >= cnt) {
+        return val;
+    }
+    var max = (cnt - val.length) / set.length;
+    for (var i = 0; i < max; i++) {
+        val = set + val;
+    }
+    return val;
+}
+function fn_domNullReplace(checkField, nullVal){
+	
+	return (checkField == "" ? nullVal : checkField);
+		
+}
+function need_close(){
+     	needPopup.hide();
+}
 function toilet_men() {
   document.getElementById("toilet_men1").style.display = "block";
   document.getElementById("toilet_men2").style.display = "block";
@@ -188,6 +281,7 @@ function closeSeat2() {
 
 
 //date
+/*
 $(document).ready(function () {
 	
     // gnb
@@ -256,7 +350,7 @@ $(document).ready(function () {
     });
     
 });
-
+*/
 //$(window).ajaxStart(function () {
 //	$('.wrap-loading').show();	// 로딩바
 //});
@@ -610,16 +704,6 @@ function checkFileName(obj){
 function notice_file_down(notice_id){
 	document.location.href = '/Common/getNoticeFileDownload.do?notice_id='+notice_id;
 }
-function any_empt_line_id(frm_nm, alert_message){
-	 var form_nm = eval("document.getElementById('"+frm_nm+"')");
-	 if (form_nm.value.length < 1)
-	 {
-		  alert(alert_message);
-		  form_nm.focus();
-		  return false;
-	 }else{
-         return true;
-	 }
-}
+
 
 

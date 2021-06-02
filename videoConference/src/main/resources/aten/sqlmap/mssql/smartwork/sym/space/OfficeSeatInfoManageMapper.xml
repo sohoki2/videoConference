@@ -11,7 +11,7 @@
 							   FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE, 
 							   b.CENTER_NM, c.FLOOR_NAME, a.UPDATE_ID, 
 							   d.CODE_NM , dbo.FN_DETAILCODENM(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION,
-							   dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN
+							   dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, a.SEAT_CONFIRMGUBUN, c.FLOOR_INFO
 					    FROM  TB_SEATINFO a, TB_CENTERINFO b, TB_FLOORINFO c, LETTCCMMNDETAILCODE d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
@@ -30,7 +30,7 @@
 							  </if>
 	        ) TB  
 	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
-	        ORDER BY TB.SEAT_ORDER  DESC
+	        ORDER BY  CAST(REPLACE(TB.FLOOR_INFO, 'CENTER_FLOOR_','') AS INT) ASC, TB.SEAT_ORDER  DESC
 	        		 	    
     </select>
     <select id="selectOfficeSeatInfoManageDetail"  resultType="lmap">
@@ -83,7 +83,7 @@
 		                                        )
 						SELECT dbo.FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ,  TA.PART_SEQ, TA.RN, 'Y', 0, 0, TA.RNUM, 
 						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
-						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost} , #{seatFixUseryn, jdbcType=VARCHAR}
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost} , #{params.seatFixUseryn, jdbcType=VARCHAR}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , a.PART_SEQ, 
@@ -103,7 +103,7 @@
 		                                        )
 						SELECT dbo.FN_SEATID_INSERT(TA.FLOOR_SEQ, RNUM) , TA.CENTER_ID , TA.FLOOR_SEQ, TA.RN, 'Y', 0,0 , TA.RNUM,
 						       GETDATE(), GETDATE(), #{params.userId}, #{params.userId},
-						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}, #{seatFixUseryn, jdbcType=VARCHAR}
+						       #{params.seatGubun},#{params.payClassification},#{params.payGubun},#{params.payCost}, #{params.seatFixUseryn, jdbcType=VARCHAR}
 						FROM (
 						      <![CDATA[
 							  SELECT  a.CENTER_ID , a.FLOOR_SEQ , 0 PART_SEQ, 

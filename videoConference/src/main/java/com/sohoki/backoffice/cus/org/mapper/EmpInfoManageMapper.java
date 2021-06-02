@@ -11,7 +11,9 @@ import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 public interface EmpInfoManageMapper {
 	
 	public List<Map<String, Object>> selectEmpInfoList(@Param("params") Map<String, Object> params );
-
+	//사용자 로그인 
+    public EmpInfoVO selectEmpInfoLogin(@Param("params") Map<String, Object> params);
+	
 	public List<Map<String, Object>> selectMeetinngUserList(List list);
 	
 	public EmpInfoVO selectEmpInfoDetail(String empId);

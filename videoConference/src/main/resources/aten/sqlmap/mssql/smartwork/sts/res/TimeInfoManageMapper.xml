@@ -9,11 +9,11 @@
         	        WHEN a.SWC_TIME > REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','')  THEN RES_SEQ
         	        WHEN a.RES_SEQ > 0 THEN a.RES_SEQ
                ELSE -1
-               END AS RES_SEQ,  a.APPRIVAL, a.USE_YN, a.MEETING_ID, a.SWC_RESDAY
+               END AS RES_SEQ,  a.APPRIVAL, a.USE_YN, a.ITEM_ID, a.SWC_RESDAY
 	    FROM TB_SWCTIME a, TB_MEETING_ROOM b 
-	    WHERE a.SWC_RESDAY = #{params.swcResday} AND a.MEETING_ID = #{params.meetingId} 
+	    WHERE a.SWC_RESDAY = #{params.swcResday} AND a.ITEM_ID = #{params.itemId} 
 	          AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
-	          AND a.MEETING_ID = b.MEETING_ID
+	          AND a.ITEM_ID = b.MEETING_ID
 	    ORDER BY SWC_TIME ASC
 	   ]]>
     </select>
@@ -73,14 +73,14 @@
     
     <!--  좌석 화인  -->
     <select id="selectResPreCheckInfo" resultType="java.lang.Integer">
-          SELECT  ISNULL(COUNT(*),0)
+          SELECT  ISNULL(COUNT(*),0) AS CNT
 	      FROM TB_SWCTIME
-	      WHERE  SWC_RESDAY = #{params.timeStartDay}  and MEETING_ID = #{params.meetingId} 
-	             AND SWC_TIME BETWEEN #{params.strTime} and #{params.endTime}      
+	      WHERE  SWC_RESDAY = #{params.timeStartDay}  AND ITEM_ID = #{params.meetingId} 
+	             AND SWC_TIME BETWEEN #{params.strTime} AND #{params.endTime}      
 		         AND RES_SEQ != 0       
 		         AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
 		         <if test="params.resGubun == 'SWC_GUBUN_2' ">
-		            AND MEETING_ID IN 
+		            AND ITEM_ID IN 
 		            <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
 		               #{item}
 		            </foreach>
@@ -116,11 +116,11 @@
     
     <update id="updateTimeInfo">
         UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
-        WHERE MEETING_ID = #{params.meetingId} 
+        WHERE ITEM_ID = #{params.meetingId} 
               AND SWC_RESDAY = #{params.timeStartDay} 
               AND SWC_TIME BETWEEN #{params.strTime} AND #{params.endTime}
               <if test="params.resGubun == 'SWC_GUBUN_2' ">
-              AND MEETING_ID IN 
+              AND ITEM_ID IN 
 	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
 		            #{item}
 		           </foreach>

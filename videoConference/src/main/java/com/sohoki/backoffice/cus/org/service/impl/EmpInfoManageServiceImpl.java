@@ -73,7 +73,16 @@ public class EmpInfoManageServiceImpl extends EgovAbstractServiceImpl implements
     	if (userInfo != null && !userInfo.getEmpno().equals("") ) {    		
     		return userInfo;
     	} else {    
-    		System.out.println("==========================  해당 아이디 없음");
+    		userInfo = 	null;
+    	}
+    	return userInfo;
+	}
+	@Override
+	public EmpInfoVO selectEmpInfoLogin(Map<String, Object> params) throws Exception {
+		EmpInfoVO userInfo = empMapper.selectEmpInfoLogin(params); 
+    	if (userInfo != null && !userInfo.getEmpno().equals("") ) {    		
+    		return userInfo;
+    	} else {    
     		userInfo = 	null;
     	}
     	return userInfo;
@@ -132,6 +141,8 @@ public class EmpInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		
 		return 0;
 	}
+	
+	
 	
 	
 }

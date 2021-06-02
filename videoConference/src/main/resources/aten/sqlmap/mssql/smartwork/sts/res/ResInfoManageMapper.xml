@@ -134,6 +134,21 @@
 		 ORDER BY a.DATES ASC  
 		 
     </select>
+    <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
+         SELECT DATES, 
+               CASE WHEN DATES > CONVERT(VARCHAR(8), GETDATE(), 112) THEN 0
+		            ELSE 1
+		       END AS passDate ,DATEPART(WEEKDAY, CONVERT (DATE, DATES)) weekTxt
+		      , b.MEETING_NAME, dbo.FN_SWCRESTATE( b.MEETING_ID, DATES) RES_STATE
+		FROM TB_CALENDER a  , (select MEETING_ID, MEETING_NAME
+		                       from TB_MEETING_ROOM
+		                       where FLOOR_SEQ = #{floorSeq}) b
+		
+         WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
+		 GROUP BY DATES , MEETING_ID, MEETING_NAME
+		 ORDER BY a.DATES ASC
+		 
+    </select>
     <select id="selectIndexList" resultType="lmap">
 		    SELECT  c.RES_TITLE,  c.RES_STARTDAY,
                     dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStartTimeT ,  
@@ -202,11 +217,10 @@
 		      CASE a.PROXY_YN WHEN 'P' THEN '승인 요청'  ELSE '본인'  END proxyYnTxt,
 		      a.CONFERENCE_ID, a.CON_NUMBER, a.CON_PIN, 
               a.CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI,
-              DATE_FORMAT(STR_TO_DATE (CONCAT(a.RES_STARTDAY, a.RES_STARTTIME, '00'), '%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') resDayInfo,
               CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(a.RES_STARTTIME), ':00')) , 20)  resDayInfo,
-              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_upsTimedown(a.RES_ENDTIME), ':00')) , 20)  resDayEndInfo,
+              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(dbo.fn_upsTimedown(a.RES_ENDTIME)) , ':00')) , 20)  resDayEndInfo,
               
-              dbo.FN_DURATION(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME ), a.RES_STARTTIME ) resDurationT,
+              --dbo.FN_DURATION(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME ), a.RES_STARTTIME ) resDurationT,
 			  d.AVAYA_CONFI_ID, d.AVAYA_USERID, d.TERMINAL_ID, d.END_NAME, d.TERMINAL_NUMBER,
               d.TERMINAL_TEL, d.USER_FIRST_NM, d.USER_LAST_NM, d.USER_EMAIL , 
               d.MEETING_CONFIRMGUBUN, d.MEETING_EQUPGUBUN, a.RES_EQUPINFO, a.RES_EQUPCHECK,
@@ -412,18 +426,20 @@
               AND a.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_1', 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
 	</select>
 	
-	<select id="selectTennInfo" resultType="java.lang.String">
-	    SELECT FN_TENNPLAYINFO(#{itemId}, #{resStarttime, jdbcType=VARCHAR}, #{resEndtime, jdbcType=VARCHAR}, #{userId})
+	<select id="selectTennInfo"  resultType="java.lang.String">
+	    SELECT dbo.FN_TENNPLAYINFO(#{itemId}, #{itemGubun}, #{resStartday, jdbcType=VARCHAR}, #{resStarttime, jdbcType=VARCHAR}, #{resEndtime, jdbcType=VARCHAR}, #{userId}) as tenn
 	</select>
     <insert id="insertResManage">
-        INSERT INTO TB_SWCRESERVATION ( ITEM_ID, ITEM_GUBUN, CENTER_ID, RES_GUBUN, USER_ID, USER_TYPE,  
+        INSERT INTO TB_SWCRESERVATION ( ITEM_ID, ITEM_GUBUN, CENTER_ID, RES_GUBUN, USER_ID,   
                                         RES_STARTDAY, RES_ENDDAY, RES_STARTTIME, RES_ENDTIME, REG_DATE, 
                                         RESERV_PROCESS_GUBUN, RESERVATION_REASON, RES_REMARK, PROXY_YN, PROXY_USER_ID, 
                                         UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
                                         CONFERENCE_ID, CON_NUMBER, CON_PIN, 
-                                        CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, TENN_CNT, FLOOR_SEQ 
+                                        CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, 
+                                        TENN_CNT, FLOOR_SEQ, SEND_MESSAGE 
+                                        
                                         )
-         VALUES ( #{itemId}, #{itemGubun},  #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}, #{userType}
+         VALUES ( #{itemId}, #{itemGubun},  #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}
 			     , #{resStartday, jdbcType=VARCHAR} , #{resEndday, jdbcType=VARCHAR } , #{resStarttime, jdbcType=VARCHAR} , #{resEndtime, jdbcType=VARCHAR}, GETDATE()
 			     , 'PROCESS_GUBUN_1', #{reservationReason, jdbcType=VARCHAR}
 			     , #{resRemark, jdbcType=VARCHAR} , #{proxyYn, jdbcType=VARCHAR}, #{proxyUserId, jdbcType=VARCHAR}
@@ -432,10 +448,10 @@
 			     , #{conferenceId, jdbcType=VARCHAR} , #{conNumber, jdbcType=VARCHAR} , #{conPin, jdbcType=VARCHAR}
 			     , #{conVirtualPin, jdbcType=VARCHAR} , #{conAllowstream, jdbcType=VARCHAR} , #{conBlackdial, jdbcType=VARCHAR}
 			     , #{conSendnoti, jdbcType=VARCHAR} , #{resEqupinfo, jdbcType=VARCHAR}  , #{resEqupcheck, jdbcType=VARCHAR}  
-			     , #{tennCnt, jdbcType=VARCHAR}, #{floor_seq, jdbcType=VARCHAR}  
+			     , #{tennCnt, jdbcType=VARCHAR}, #{floorSeq, jdbcType=VARCHAR}  , #{sendMessage, jdbcType=VARCHAR}  
 			    )
          <selectKey resultType="String" keyProperty="resSeq" order="AFTER">
-		   SELECT CAST(MAX(RES_SEQ) as CHAR(10))
+		   SELECT CAST(MAX(RES_SEQ) AS int) AS resSeq
 		   FROM TB_SWCRESERVATION
 		 </selectKey>
     </insert>

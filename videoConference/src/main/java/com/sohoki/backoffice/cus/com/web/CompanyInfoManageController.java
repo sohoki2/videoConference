@@ -315,7 +315,7 @@ public class CompanyInfoManageController {
 			}else {
 		    	 HttpSession httpSession = request.getSession(true);
 		    	 loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
-		    	 vo.setUserId(EgovUserDetailsHelper.getAuthenticatedUser().toString());
+		    	 vo.setUpdateId(EgovUserDetailsHelper.getAuthenticatedUser().toString());
 		    }
 			
 			try{

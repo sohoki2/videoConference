@@ -542,8 +542,8 @@
 					                { label: 'floor_part', name:'floor_part',       index:'floor_part',      align:'center', hidden:true},
 					                { label: '구역사용', name:'floor_part',      index:'floor_part',      align:'center', width:'10%', 
 					                  formatter: jqGridFunc.partInfo	},
-					                { label: '최종 수정자', name:'user_updateid', index:'user_updateid',     align:'center', width:'10%'},
-					                { label: '최종 수정 일자', name:'user_update', index:'com_update', align:'center', width:'12%', 
+					                { label: '최종 수정자', name:'update_id', index:'update_id',     align:'center', width:'10%'},
+					                { label: '최종 수정 일자', name:'update_date', index:'update_date', align:'center', width:'12%', 
 					                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
 					                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
 			                  
@@ -975,7 +975,7 @@
 		        title = "좌석";
     	  }
     	  $(".sp_title").text(title);
-    	  var params = {"floorSeq" : $("#floorSeq").val(), "partSeq" : $("#partSeq").val()};
+    	  var params = {"floorSeq" : $("#floorSeq").val(), "partSeq" : $("#partSeq").val(), "pageUnit" : "100"};
 		  uniAjax("/backoffice/basicManage/"+url, params, 
 		 			function(result) {
 					       if (result.status == "LOGIN FAIL"){
@@ -985,7 +985,8 @@
 								    //테이블 정리 하기
  								 if(result.seatMapInfo != null){
  									var img=   $("#partSeq").val() != "" ? result.seatMapInfo.part_map1 : result.seatMapInfo.floor_map;
- 									$('.mapArea').css({"background":"#fff url("+img+")", 'background-repeat' : 'no-repeat', 'background-position':' center'});
+ 								
+ 									$('.mapArea').css({"background":"#fff url(/upload/"+img+")", 'background-repeat' : 'no-repeat', 'background-position':' center'});
  								 }else{
  									$('.mapArea').css({"background":"#fff url()", 'background-repeat' : 'no-repeat', 'background-position':' center'});
  								 }
@@ -1073,13 +1074,16 @@
 		 }else{
 			 $("#seatGubun").val("");
 			 $("#roomType").val("");
+			
 			 toggleDefault("meetingConfirmgubun");
 			 toggleDefault("seatFixUseryn");
 			 $("#seatStr").val("1");
 			 $("#seatEnd").val("1");
 			 //유료 무료 
 			 $('input[name^=pay]').val("");
-			 $("#payClassification").val();
+			 $("#payClassification").val("");
+			 $("#payGubun").val("");
+			 $("#payCost").val("0");
 			 $("#payGubun").hide();
 			 $("#payCost").hide();
 			 

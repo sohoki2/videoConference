@@ -31,7 +31,7 @@ public class EmpInfo implements Serializable {
     private String mode = "";
     private String authorCode = "";
     private String comCode = "";
-    private String emp_state = "";
-   
-
+    private String empState = "";
+    private String floorInfo = "";
+ 
 }
