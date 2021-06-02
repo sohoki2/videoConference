@@ -512,20 +512,24 @@ public class frontResInfoManageController {
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-			  	String floorSeq = floorList.get(0).get("floor_seq").toString();
+			  	if (searchVO.getFloorSeq().equals(""))
+			  		searchVO.setFloorSeq(floorList.get(0).get("floor_seq").toString());
+			  	  
 			  	model.addObject("floorinfo", floorList);
 			  	//기초 정리 하기 
 			  	String searchDay = util.reqDay(0);
-			  	reginfo.put("floorSeq", floorSeq);
+			  	reginfo.put("floorSeq", searchVO.getFloorSeq());
 			  	reginfo.put("centerId", params.get("centerId").toString());
 			  	reginfo.put("searchResStartday", searchDay);
 			  	
 			  	
 			  	model.addObject("selectMonthList", resService.selectCalenderInfo());
-			  	
 			  	String searchTxt =  searchVO.getSearchCalenderTitle().equals("") ? LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) : searchVO.getSearchCalenderTitle();
 			  	searchVO.setSearchCalenderTitle(searchTxt);
-				List<ResInfoVO> calenderList =  resService.selectCalenderDetailInfo(searchVO);
+			  	searchVO.setFloorSeq(searchVO.getFloorSeq());
+				List<ResInfoVO> calenderList =  resService.selectCalenderMeetingState(searchVO);
+				
+				
 				int firstDay = Integer.parseInt(calenderList.get(0).getWeekTxt())-1;
 				model.addObject("calenderInfo",  calenderList);
 				model.addObject("frDay",  firstDay);
