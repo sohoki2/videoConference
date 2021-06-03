@@ -32,14 +32,26 @@ public class dayTest {
 		//LocalDate.parse("20081004", DateTimeFormatter.BASIC_ISO_DATE);
 
 		
-		String day = LocalDate.parse("20181211", DateTimeFormatter.BASIC_ISO_DATE).with(TemporalAdjusters.firstDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		String day1 = LocalDate.parse("20181211", DateTimeFormatter.BASIC_ISO_DATE).with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		
-		System.out.println(day + ":" + day1);
+		System.out.println(conferenceState("다목적홀:unuse,시민아카데미:unuse") );
 	}
 	public List<String> dotToList (String _dotlist) {
     	return !_dotlist.equals("") ?  Arrays.asList(_dotlist.split("\\s*,\\s*")) : null;
     }
+	public static String conferenceState(String conference) {
+		String sHtml = "";
+		try {
+			String meetingLists[] = conference.split(",");
+			sHtml = "<ul class=\"booking\">";
+			             for (String meetingList : meetingLists) {
+					    	 String classes[] = meetingList.split(":");
+					    	 sHtml += "<li class='"+classes[1]+"'>"+classes[0]+"</li>";
+					     }
+				  sHtml  += "</ul>";
+		}catch(Exception e) {
+			System.out.println(e.toString());
+		}
+		return sHtml;
+	}
     //요소 확인 후 삭제 하기 
     public String checkItemList(List<String> _arrayList, String _nowVal, String _newVal) {
     	String itemList = "";

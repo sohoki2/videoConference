@@ -37,13 +37,15 @@ import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
 import com.sohoki.backoffice.sym.cnt.service.FloorInfoManageService;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
+import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
-
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.let.utl.sim.service.EgovClntInfo;
+import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @RestController
 @RequestMapping("/web")
@@ -84,6 +86,13 @@ public class frontResInfoManageController {
 	
 	@Autowired
 	protected EgovMessageSource egovMessageSource;
+	
+	@Autowired
+	private OfficeSeatInfoManageService  officeService;
+	
+	@Autowired
+    protected EgovPropertyService propertiesService;
+	
 	
 	//로그인 페이지로 이동 
 	@RequestMapping(value="Login.do")
@@ -544,7 +553,36 @@ public class frontResInfoManageController {
 		
 		return model;
 	}
-	
-	
+	@RequestMapping(value="meetingResource.do")	
+	public ModelAndView webMeetingResourceInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+			                                   , HttpServletRequest request
+			                                   , BindingResult bindingResult) throws Exception{				
+	    ModelAndView model = new ModelAndView();
+	    try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/meetingDay";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+			    searchVO.put("pageUnit", pageUnit);
+			    searchVO.put("pageIndex", 1);
+			  
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		  	model.setViewName("/web/meetingResource");
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMeetingInfo error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+	    return model;
+	}
 	
 }

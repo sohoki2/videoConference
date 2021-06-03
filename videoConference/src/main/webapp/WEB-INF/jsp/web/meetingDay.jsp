@@ -65,7 +65,7 @@
             <!--//date picker-->
                 <div class="contents mobileM">
                     <div class="float_right">
-                    <button class="resource" onClick="location.href='meeting_resource.html'">회의자원현황</button>
+                    <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                   </div>
                   <div class="dateBox float_left">
                       <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday">

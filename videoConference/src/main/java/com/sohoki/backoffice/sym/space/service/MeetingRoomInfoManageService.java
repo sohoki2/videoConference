@@ -11,7 +11,7 @@ public interface MeetingRoomInfoManageService {
 
 	
     List<Map<String, Object>> selectMeetingRoomManageListByPagination(@Param("params") Map<String, Object> params) throws Exception;
-	
+    
 	List<Map<String, Object>> selectMeetingRoomEmptyManageList(@Param("params") Map<String, Object> params) throws Exception;
 	
 	List<Map<String, Object>> selectMeetingRoomEmptyIntervalStatus(@Param("params") Map<String, Object> params) throws Exception;

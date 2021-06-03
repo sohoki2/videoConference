@@ -92,6 +92,40 @@ function fn_domNullReplace(checkField, nullVal){
 function need_close(){
      	needPopup.hide();
 }
+
+function ajaxPaging(currentPageNo, firstPageNo, recordCountPerPage, firstPageNoOnPageList, lastPageNoOnPageList, totalPageCount, pageSize, pageScript){
+    var pageHtml = "";
+    pageHtml += "<ul class='page_num'>";
+	 if (currentPageNo == firstPageNo ){
+      pageHtml += "<li><a href='#' >&laquo;</a></li>";
+	 }else {
+      pageHtml += "<li><a href='#' onclick='"+pageScript+"("+ firstPageNo +")';return false; '>&laquo;</a></li>";
+	 }
+	 if (parseInt(currentPageNo) > parseInt(firstPageNo)){
+      pageHtml += "<li><a href='#' onclick='"+pageScript+"("+ parseInt(parseInt(currentPageNo) -1)+");return false;'>&lt;</a></li>"
+	 }else {
+      pageHtml += "<li><a href='#' >&lt;</a></li>"
+	 }
+    for(var  i = firstPageNoOnPageList; i<= lastPageNoOnPageList; i++){
+		 if (i == currentPageNo){
+            pageHtml += "<li class=active>"+i+"</li>";
+		 }else {
+            pageHtml += "<li><a href='#' onclick='"+pageScript+"("+i+");return false; '>"+i+"</a></li>";
+		 }
+    }
+
+	 if (parseInt(totalPageCount) > parseInt(pageSize) ){
+        pageHtml += "<li><a href='#' onclick='"+pageScript+"("+ parseInt(parseInt(currentPageNo) + 1)+");return false;'>&gt;</a></li>"
+	 }else {
+        pageHtml += "<li><a href='#' onclick='"+pageScript+"("+ parseInt(parseInt(currentPageNo) + 1)+");return false;'>&gt;</a></li>"
+	 }
+    if (parseInt(totalPageCount) > parseInt(pageSize)  ){
+      pageHtml += "<li><a href='#' onclick='"+pageScript+"("+ totalPageCount +");return false;'>&raquo;</a></li>";
+	 }else{
+      pageHtml += "<li><a href='#' >&raquo;</a>";
+	 }	
+    return pageHtml;
+}
 function toilet_men() {
   document.getElementById("toilet_men1").style.display = "block";
   document.getElementById("toilet_men2").style.display = "block";

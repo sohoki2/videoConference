@@ -5,6 +5,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
+<%@ page import ="com.sohoki.smartoffice.homepage.web.HomepageUtil" %>
+<%
+    
+
+%>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +41,8 @@
     
 </head>
 <body>
-<form:form name="regist" commandName="regist" method="post" action="/front/resInfo/resMonthList.do">	
+<form:form name="regist" commandName="regist" method="post" >	
+<input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
             <!--//header 추가-->
             <c:import url="/web/inc/top_inc.do" />
             <!--header 추가//-->
@@ -45,7 +54,7 @@
             <div class="contents">
                 <div class="flooreArea float_left" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                      <button type="button" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</button>
+                      <button type="button" onClick="fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</button>
                     </c:forEach>
                 </div>               
                 <div class="clear"></div>
@@ -57,15 +66,15 @@
            <div class="line">
             <div class="contents search_con">
                 <div class="float_right">
-                  <button class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
+                  <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                 </div>
                 <div class="float_right list_T">
                      <button type="button" onClick="location.href='/web/meetingDay.do'" class="active dayBtn">day</button>  
                      <button type="button" onClick="location.href='/web/resCalendar.do'" class="calBtn">calendar</button>  
                 </div>
                 <div class="float_right btnL">
-                        <button type="button" onClick="location.href='meetingList.do'" class="listBtn"></button>  
-                        <button type="button" onClick="location.href='meetingDay.do'" class="active blockBtn"></button>  
+                      <button type="button" onClick="location.href='meetingList.do'" class="listBtn"></button>  
+                      <button type="button" onClick="location.href='meetingDay.do'" class="active blockBtn"></button>  
                 </div>
            </div>
            <div class="whiteBack">
@@ -77,15 +86,14 @@
                     <div class="clear"></div>
                <div class="calendar-container">
                   <div class="calendar-header">
-                    
-                      <select id="searchCalenderTitle" name="searchCalenderTitle" >
+                      <select id="searchCalenderTitle" name="searchCalenderTitle" onChange="fn_monthChange()">
                            <option value="">예약할 월 선택</option>
 	                        <c:forEach items="${selectMonthList}" var="floorList">
-	                            <option value="${floorList.calenderTitle}">${floorList.calenderTitleTxt}</option>
+	                            <option value="${floorList.calenderTitle}" <c:if test="${floorList.calenderTitle eq regist.searchCalenderTitle }"> selected </c:if> >${floorList.calenderTitleTxt}</option>
 	                         </c:forEach>
                       </select>
                     </h1>
-                    <p>2018</p>
+                    <p>${fn:substring(regist.searchCalenderTitle,0,4)}</p>
                   </div>
                   <table class="calendar">
                         <thead>
@@ -112,10 +120,24 @@
 							  					  
 							  <c:forEach items="${calenderInfo }" var="calenInfo" varStatus="status">
                                   <c:set var="tr_sum"  value="${tr_sum + 1}" />		
-                                  <c:set var="sum"  value="${sum + 1}" />    
-		                          <c:choose>
-		                            <c:when test="${calenInfo.passDate eq '0'}">
-		                             <td class="day">
+                                  <c:set var="sum"  value="${sum + 1}" />  
+                                  <c:set var="content" value="${calenInfo.resState}" /> 
+                                  <% 
+                                     String content = (String) pageContext.getAttribute("content"); 
+                                     content = HomepageUtil.conferenceState(content); 
+                                     pageContext.setAttribute("content", content); 
+                                  %>
+ 
+                                     <c:choose>
+				                               <c:when test="${calenInfo.passDate eq '0'}">
+				                                 <c:set var="tr_class" value="day" />
+				                               </c:when>
+				                               <c:otherwise>
+				                                  <c:set var="tr_class" value="day day--disabled" />
+				                               </c:otherwise>
+				                     </c:choose>
+				                              
+		                             <td class="${tr_class}">
 		                                    
 				                            <c:choose>
 				                               <c:when test="${calenInfo.weekTxt eq '1'}">
@@ -128,30 +150,10 @@
 				                               ${fn:substring(calenInfo.dates, 6, 8) }
 				                               </c:otherwise>
 				                            </c:choose>
-				                           
-				                            <c:if test="${calenInfo.resCnt ne '0'}" >
-				                             <section class="task task--primary">
-				                               <a href="javascript:fn_resInfo('${calenInfo.dates}')">회의실예약:${calenInfo.resCnt}</a>
-				                              </section>
-				                            </c:if>
+				                            <br />
+				                            ${content}
+				                            
 				                        </td>
-		                            </c:when>
-		                            <c:otherwise>
-		                                <td class="day day--disabled">
-		                                    <c:choose>
-				                               <c:when test="${calenInfo.weekTxt eq '1'}">
-				                               <font color="red">${fn:substring(calenInfo.dates, 6, 8) }</font>
-				                               </c:when>
-				                               <c:when test="${calenInfo.weekTxt eq '7'}">
-				                               <font color="blue">${fn:substring(calenInfo.dates, 6, 8) }</font>
-				                               </c:when>
-				                               <c:otherwise>
-				                               ${fn:substring(calenInfo.dates, 6, 8) }
-				                               </c:otherwise>
-				                            </c:choose>
-				                        </td>
-		                            </c:otherwise>
-		                         </c:choose>
 		                         <c:if test="${ tr_sum > 6 }">
 		                          </tr><tr>
 		                          <c:set var="tr_sum"  value="0" />
@@ -169,6 +171,15 @@
         </div>
         <!--contetns//-->
   </form:form>  
+  <script type="text/javascript">
+     function fn_floorSearch(floorSeq){
+    	 $("#floorSeq").val(floorSeq);
+    	 $("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
+     }
+     function fn_monthChange(){
+    	 $("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
+     }
+  </script>
  </div>
 </body>
 </html>

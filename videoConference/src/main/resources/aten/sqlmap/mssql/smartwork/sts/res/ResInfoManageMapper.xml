@@ -135,19 +135,22 @@
 		 
     </select>
     <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
-         SELECT DATES, 
-               CASE WHEN DATES > CONVERT(VARCHAR(8), GETDATE(), 112) THEN 0
-		            ELSE 1
-		       END AS passDate ,DATEPART(WEEKDAY, CONVERT (DATE, DATES)) weekTxt
-		      , b.MEETING_NAME, dbo.FN_SWCRESTATE( b.MEETING_ID, DATES) RES_STATE
-		FROM TB_CALENDER a  , (select MEETING_ID, MEETING_NAME
-		                       from TB_MEETING_ROOM
-		                       where FLOOR_SEQ = #{floorSeq}) b
-		
-         WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
-		 GROUP BY DATES , MEETING_ID, MEETING_NAME
-		 ORDER BY a.DATES ASC
-		 
+        SELECT X.DATES, X.weekTxt , X.passDate,
+               STRING_AGG(X.FLOOR_INFO, ',') WITHIN GROUP(ORDER BY X.FLOOR_INFO) resState
+        FROM ( 
+	          SELECT DATES, 
+	                 CASE WHEN DATES > CONVERT(VARCHAR(8), GETDATE(), 112) THEN 0
+			             ELSE 1
+			          END AS passDate ,DATEPART(WEEKDAY, CONVERT (DATE, DATES)) weekTxt
+			          , CONCAT( b.MEETING_NAME,':', dbo.FN_SWCRESTATE( b.MEETING_ID, DATES)) FLOOR_INFO
+			  FROM TB_CALENDER a  , (SELECT MEETING_ID, MEETING_NAME
+			                         FROM TB_MEETING_ROOM
+			                         WHERE FLOOR_SEQ = #{floorSeq}) b
+	          WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
+			  GROUP BY DATES , MEETING_ID, MEETING_NAME
+		 ) X
+		GROUP BY X.DATES, X.weekTxt, X.passDate
+		ORDER BY X.DATES ASC
     </select>
     <select id="selectIndexList" resultType="lmap">
 		    SELECT  c.RES_TITLE,  c.RES_STARTDAY,

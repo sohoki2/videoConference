@@ -66,6 +66,7 @@
             <mvc:mapping path="/backoffice/**/*.do" />
     		<mvc:exclude-mapping path="/backoffice/login.do"/>
     		<mvc:exclude-mapping path="/backoffice/SecurityLogin.do"/> 		
+    		<mvc:exclude-mapping path="/backoffice/basicManage/officeMeetingListAjax.do"/>
     		<bean class="egovframework.com.cmm.interceptor.AuthenticInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>

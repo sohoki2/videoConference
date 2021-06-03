@@ -47,7 +47,7 @@ public class EgovUserDetailsHelper {
 			List<String> listAuth = new ArrayList<String>();
 			
 			if (EgovObjectUtil.isNull((AdminLoginVO) RequestContextHolder.getRequestAttributes().getAttribute("AdminLoginVO", RequestAttributes.SCOPE_SESSION))) {
-				System.out.println("## authentication object is null!!");
+				System.out.println("## getAuthorities authentication object is null!!");
 				return null;
 			}
 			
@@ -61,7 +61,7 @@ public class EgovUserDetailsHelper {
 		public static Boolean isAuthenticated() {
 			
 			if (EgovObjectUtil.isNull((AdminLoginVO) RequestContextHolder.getRequestAttributes().getAttribute("AdminLoginVO", RequestAttributes.SCOPE_SESSION))) {
-				System.out.println("## authentication object is null!!");
+				System.out.println("## isAuthenticated authentication object is null!!");
 				return Boolean.FALSE;
 			}
 			return Boolean.TRUE;
