@@ -1,5 +1,6 @@
 package com.sohoki.smartoffice.homepage.web;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sohoki.backoffice.cus.com.servie.CompanyInfoManageService;
 import com.sohoki.backoffice.cus.com.servie.UserInfoManageService;
 import com.sohoki.backoffice.cus.com.vo.UserInfo;
 import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
@@ -33,6 +35,7 @@ import com.sohoki.backoffice.sts.res.service.TimeInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
+import com.sohoki.backoffice.sym.ccm.cde.vo.CmmnDetailCode;
 import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
 import com.sohoki.backoffice.sym.cnt.service.FloorInfoManageService;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
@@ -40,12 +43,15 @@ import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
+
+import egovframework.com.cmm.AdminLoginVO;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.let.utl.sim.service.EgovClntInfo;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import net.sf.json.JSONObject;
 
 @RestController
 @RequestMapping("/web")
@@ -92,6 +98,9 @@ public class frontResInfoManageController {
 	
 	@Autowired
     protected EgovPropertyService propertiesService;
+	
+	@Autowired
+	private CompanyInfoManageService companyService;
 	
 	
 	//로그인 페이지로 이동 
@@ -307,6 +316,7 @@ public class frontResInfoManageController {
 			  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
 			  	reginfo.put("centerId", params.get("centerId").toString());
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	params.put("searchFloor", "MEETING");
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
 			  	String floorSeq = floorList.get(0).get("floor_seq").toString();
@@ -380,6 +390,61 @@ public class frontResInfoManageController {
 	
 		
 	}
+	// 시간 콤보 보여주기 
+	@RequestMapping(value="resSeatTime.do")
+	public ModelAndView selectResInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+									  , @RequestBody Map<String, Object> searchVO
+									  , HttpServletRequest request
+									  , BindingResult bindingResult	) throws Exception {
+								
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			
+			String nowData = "";
+			LOGGER.debug("----------------------------------" +searchVO.get("searchResStartday").toString());
+			if (searchVO.get("searchResStartday").toString().equals(util.reqDay(0))) {
+				nowData = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+			}else {
+				nowData = "0800";
+			}
+			LOGGER.debug("nowData:" + nowData);
+			
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("code", "SWC_TIME");
+			params.put("nowData", nowData);
+			List<CmmnDetailCode> list = cmmnDetailService.selectCmmnDetailComboEtc(params);
+			model.addObject("resStartTime", list);
+			model.addObject("resEndTime", list);
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			StackTraceElement[] ste = e.getStackTrace();
+			LOGGER.info("error:" + e.toString() + ":" +  ste[0].getLineNumber());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
+	}
+	//좌석 예약 리스트
+	@RequestMapping(value="resSeatResult.do")
+	public ModelAndView selectSeatList(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+									   , @RequestBody Map<String, Object> searchVO
+									   , HttpServletRequest request
+									   , BindingResult bindingResult	) throws Exception {
+								
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			
+			model.addObject(Globals.JSON_RETURN_RESULTLISR,  timeService.selectSeatSearchResult(searchVO));
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			StackTraceElement[] ste = e.getStackTrace();
+			LOGGER.info("error:" + e.toString() + ":" +  ste[0].getLineNumber());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
+	}
+	
 	//회의실 예약 
 	@RequestMapping(value="resInfo.do")
 	public ModelAndView selectResInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
@@ -465,7 +530,6 @@ public class frontResInfoManageController {
 				String tennInfo = util.NVL(resService.selectTennInfo(searchVO), "");
 				if (tennInfo.indexOf("|")> 0 && tennInfo.length()> 2) {
 					String tennInfosp[] =  tennInfo.split("\\|");
-					
 					//추후 변경 예정
 					if (Integer.valueOf(tennInfosp[0]) > Integer.valueOf(tennInfosp[1])) {
 						
@@ -476,10 +540,31 @@ public class frontResInfoManageController {
 						return model;
 					}
 				}	
+			}else {
+				searchVO.setTennCnt("0");
 			}
 			LOGGER.debug("searchVO:" + searchVO.getTennCnt());
+			//좌석 이면 동일 시간때 있는지 확인 필요
+			int ret = 0;
+			if (searchVO.getItemGubun().equals("ITEM_GUBUN_2")) {
+				
+				Map<String, Object> timeinfo = new HashMap<String, Object>();
+			    timeinfo.put("timeStartDay", searchVO.getResStartday());
+			    timeinfo.put("strTime", searchVO.getResStarttime());
+			    timeinfo.put("endTime",  searchVO.getResEndtime());
+			    timeinfo.put("userId", searchVO.getUserId());
+			    timeinfo.put("resGubun", searchVO.getResGubun());
+			    
+				ret =   timeService.selectResSeatPreCheckInfo(timeinfo);
+				if (ret > 0) {
+					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+					model.addObject(Globals.STATUS_MESSAGE, "동일 시간때 다른데 예야된 좌석이 있습니다.");	
+					return model;
+				}
+				
+			}
 			
-			int ret = resService.insertResManage(searchVO); 
+			ret = resService.insertResManage(searchVO); 
 			if (ret > 0){
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_MESSAGE,
@@ -518,6 +603,8 @@ public class frontResInfoManageController {
 			  		params.put("centerId", "C21052601");
 			  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
 			  	reginfo.put("centerId", params.get("centerId").toString());
+			  	params.put("searchFloor", "MEETING");
+			  	
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
@@ -583,6 +670,333 @@ public class frontResInfoManageController {
 	    	
 	    }
 	    return model;
+	}
+	@RequestMapping(value="meetingList.do")
+	public ModelAndView selectResListInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+										  , @ModelAttribute("ResInfoVO") ResInfoVO searchVO
+										  , HttpServletRequest request
+										  , BindingResult bindingResult	) throws Exception {
+		
+        ModelAndView model = new ModelAndView();
+		
+	    try{
+	    	//SSO 관련 내용 넣기  	 		
+	    	EmpInfoVO user = new EmpInfoVO();
+			user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			if (user ==  null){
+				LOGGER.debug("로그인 기록 없음");		    	
+				model.setViewName("/web/login");
+				return model;
+			}
+			LOGGER.debug("---------------------------------------------------");
+	  		
+	  		PaginationInfo paginationInfo = new PaginationInfo();
+	  		paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.getPageIndex(), "1") ) );
+			paginationInfo.setRecordCountPerPage( propertiesService.getInt("pageUnit"));
+			paginationInfo.setPageSize( propertiesService.getInt("pageSize"));
+			
+			
+			Map<String, Object> params = new HashMap<String, Object>();
+			
+			
+			
+			
+			
+	  		if (util.NVL( params.get("centerId"), "").equals("") )
+		  		params.put("centerId", "C21052601");
+		  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
+		  	reginfo.put("centerId", params.get("centerId").toString());
+		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	
+		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
+		  	String floorSeq = floorList.get(0).get("floor_seq").toString();
+		  	model.addObject("floorinfo", floorList);
+		  	
+		  	
+			List<com.sohoki.backoffice.sym.cnt.vo.CenterInfo> list = centerService.selectCenterInfoManageCombo();
+			String centerId =  searchVO.getSearchCenterId().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenterId();
+			
+			
+			params.put("firstIndex", Integer.valueOf( paginationInfo.getFirstRecordIndex()));
+			params.put("lastRecordIndex", Integer.valueOf(paginationInfo.getLastRecordIndex()));
+			params.put("recordCountPerPage", Integer.valueOf( paginationInfo.getRecordCountPerPage()));
+			params.put("searchStartDay", LocalDateTime.now().minusMonths(2).format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+			params.put("searchEndDay", "20301231");
+			
+			LOGGER.debug("firstIndex():" + params.get("firstIndex"));
+			
+			
+			
+	    	List<Map<String, Object>> reslist = resService.selectResManageListByPagination(params);
+	  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+		    model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+		    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		    paginationInfo.setTotalRecordCount(totCnt);
+		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+		    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+		     
+		     
+	    }catch(Exception e){
+	    	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
+	    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	 
+	    }
+	    model.setViewName("/web/meetingList");
+	    return model;
+		
+	}
+	@RequestMapping(value="seatInfo.do")
+	public ModelAndView selectSeatInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+										  , @ModelAttribute("ResInfoVO") ResInfoVO searchVO
+										  , HttpServletRequest request
+										  , BindingResult bindingResult	) throws Exception {
+		
+        ModelAndView model = new ModelAndView();
+		
+	    try{
+	    	//SSO 관련 내용 넣기  	 		
+	    	EmpInfoVO user = new EmpInfoVO();
+			user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			if (user ==  null){
+				LOGGER.debug("로그인 기록 없음");		    	
+				model.setViewName("/web/login");
+				return model;
+			}
+			LOGGER.debug("---------------------------------------------------");
+			Map<String, Object> params = new HashMap<String, Object>();
+			if (util.NVL( params.get("centerId"), "").equals("") )
+		  		params.put("centerId", "C21052601");
+		  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
+		  	reginfo.put("centerId", params.get("centerId").toString());
+		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	params.put("searchFloor", "SEAT");
+		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
+		  	String floorSeq = floorList.get(0).get("floor_seq").toString();
+		  	model.addObject("floorinfo", floorList);
+		    
+		  	String searchDay = util.reqDay(0);
+		  	
+		  	reginfo.put("floorSeq", floorSeq);
+		  	reginfo.put("centerId", params.get("centerId").toString());
+		  	reginfo.put("searchResStartday", searchDay);
+		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	
+		     
+	    }catch(Exception e){
+	    	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
+	    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	 
+	    }
+	    model.setViewName("/web/seatInfo");
+	    return model;
+		
+	}
+	@NoLogging
+	@RequestMapping(value="test.do")
+	public ModelAndView webTest() throws Exception{		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/web/seatTest");
+		return model;
+	}
+	@RequestMapping (value="selectTimeInfo.do")
+	public ModelAndView selectTimeInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+							            , @RequestBody Map<String,Object>  resSearch
+							            , HttpServletRequest request
+							    	    , BindingResult bindingResult) throws Exception{	
+		
+		
+		
+			ModelAndView model = new 	ModelAndView(Globals.JSONVIEW);
+				
+			try{
+					//기초 리스트 형태 보여주기 
+					
+				EmpInfoVO user = new EmpInfoVO();
+				user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+				if (user ==  null){
+					LOGGER.debug("로그인 기록 없음");		   
+					model.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+					return model;
+				}
+				String searchDay = resSearch.get("searchResStartday").equals("")  ? util.reqDay(0)  : resSearch.get("searchResStartday").toString();
+				resSearch.put("swcResday", searchDay);
+				List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(resSearch);						
+					
+				model.addObject(Globals.JSON_RETURN_RESULTLISR, timeInfos);	
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			}catch(Exception e){
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, e.toString());
+				model.addObject("seatInfo", null);
+			}
+			return model;
+	}
+	@RequestMapping(value="mybooking.do")
+	public ModelAndView webMybooking(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+						            , HttpServletRequest request
+						            , BindingResult bindingResult) throws Exception{		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/web/myBooking");
+        try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/myBooking";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+			    searchVO.put("pageUnit", pageUnit);
+			    searchVO.put("pageIndex", 1);
+			  
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMybooking error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
+	}
+	@RequestMapping(value="mybookingAjax.do")
+	public ModelAndView webMybookingAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+						                 , HttpServletRequest request
+						                 , BindingResult bindingResult) throws Exception{		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/myBooking";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		 
+		  		 
+		  		
+		  		 HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		 
+			     searchVO.put("empno", empInfoVO.getEmpno());
+			     
+			     PaginationInfo paginationInfo = new PaginationInfo();
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
+				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
+				 
+				 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+				 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
+				 searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+				 
+		         String date1 = util.NVL(searchVO.get("searchStartDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(0)) ;
+		         String date2 =  util.NVL(searchVO.get("searchEndDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(90)) ;
+		         searchVO.put("searchStartDay", date1);
+		         searchVO.put("searchEndDay", date2);
+		          
+		  		 List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
+		  		 int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+			     model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+			     model.addObject(Globals.STATUS_REGINFO, searchVO);
+			     
+			     
+			     paginationInfo.setTotalRecordCount(totCnt);
+			     model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			     model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+			     model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			  
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMybooking error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
+	}
+	@RequestMapping(value="resUpdate.do")
+	public ModelAndView resUpdateStateInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+										   , @RequestBody ResInfoVO searchVO
+										   , HttpServletRequest request
+										   , BindingResult bindingResult	) throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try{
+			
+			EmpInfoVO user = new EmpInfoVO();
+			user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			if (user ==  null){
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+ 	    		model.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
+ 	    		return model;				
+			}
+			
+			searchVO.setUserId(user.getEmpno());
+			
+			
+			int ret = resService.updateResManageChange(searchVO);
+			if (ret > 0){
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE,   "정상적으로 처리 되었습니다.");
+			}else {
+				throw new Exception();
+			}
+			
+		}catch(Exception e){
+			
+			LOGGER.error("resUpdateInfo ERROR:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
+	}
+	@RequestMapping(value="myPage.do")
+	public ModelAndView webMyPage(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+						            , HttpServletRequest request
+						            , BindingResult bindingResult) throws Exception{		
+		ModelAndView model = new ModelAndView();
+		String url = "/web/myPage";
+        try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		
+		  		
+		  		
+		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+			    searchVO.put("pageUnit", pageUnit);
+			    searchVO.put("pageIndex", 1);
+			  
+			    Map<String, Object> userinfo = userService.selectUserInfoManageDetail(empInfoVO.getEmpno());
+			    Map<String, Object> cominfo = companyService.selectCompanyInfoManageDetail(userinfo.get("com_code").toString());
+			    
+			    model.addObject(Globals.STATUS_USERINFO, userinfo);
+			    model.addObject(Globals.STATUS_USERINFO, userinfo);
+			    
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+			    
+			    
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		  	model.setViewName(url);
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMybooking error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
 	}
 	
 }

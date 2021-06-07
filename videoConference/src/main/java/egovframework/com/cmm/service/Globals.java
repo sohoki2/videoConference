@@ -55,6 +55,8 @@ public class Globals {
 
 	public static final String CENTER_ID = "C18033001";
 	
+	public static final String STATUS_USERINFO = "userinfo";
+	public static final String STATUS_COMINFO = "cominfo";
 	
 	public static final String STATUS_REGINFO = "regist";
 	public static final String STATUS_MYPAGE = "MYPAGE";

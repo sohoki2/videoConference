@@ -54,7 +54,7 @@
             <div class="contents">
                 <div class="flooreArea float_left" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                      <button type="button" onClick="fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</button>
+                       <a href="#" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
                     </c:forEach>
                 </div>               
                 <div class="clear"></div>
@@ -69,12 +69,12 @@
                   <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                 </div>
                 <div class="float_right list_T">
-                     <button type="button" onClick="location.href='/web/meetingDay.do'" class="active dayBtn">day</button>  
-                     <button type="button" onClick="location.href='/web/resCalendar.do'" class="calBtn">calendar</button>  
+                     <a href="/web/meetingDay.do" class="dayBtn">day</a>  
+                     <a href="/web/resCalendar.do" class="active calBtn">calendar</a>  
                 </div>
                 <div class="float_right btnL">
-                      <button type="button" onClick="location.href='meetingList.do'" class="listBtn"></button>  
-                      <button type="button" onClick="location.href='meetingDay.do'" class="active blockBtn"></button>  
+                     <a href="/web/meetingList.do" class="listBtn"></a>  
+                     <a href="/web/meetingDay.do" class="active blockBtn"></a>  
                 </div>
            </div>
            <div class="whiteBack">

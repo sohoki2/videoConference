@@ -206,8 +206,8 @@ public class OfficeItemInfoManageController {
 		    paginationInfo.setTotalRecordCount(totCnt);
 		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 		    //지도 이미지 
-		    if (searchVO.get("floorSeq") != null ) {
-		    	 Map<String, Object> mapInfo = searchVO.get("partSeq") != null ? floorService.selectFloorInfoManageDetail(searchVO.get("floorSeq").toString()) : partService.selectFloorPartInfoManageDetail(searchVO.get("partSeq").toString());
+		    if (searchVO.get("searchFloorSeq") != null ) {
+		    	 Map<String, Object> mapInfo = searchVO.get("searchPartSeq") != null ? floorService.selectFloorInfoManageDetail(searchVO.get("searchFloorSeq").toString()) : partService.selectFloorPartInfoManageDetail(searchVO.get("searchPartSeq").toString());
 		    	 model.addObject("seatMapInfo", mapInfo);
 		    }
 		   
@@ -344,6 +344,9 @@ public class OfficeItemInfoManageController {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
 		try {
 			
+			
+			
+			LOGGER.debug("---------------------------------------------------------------");
 			int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
 			searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 		          

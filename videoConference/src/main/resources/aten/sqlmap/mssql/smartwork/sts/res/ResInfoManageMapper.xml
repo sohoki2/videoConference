@@ -10,8 +10,8 @@
 		                     a.USER_ID, a.DEPT_ID, 
 		                     CONVERT (DATE, a.RES_STARTDAY) resStartday,
 		                     CONVERT (DATE, a.RES_ENDDAY) resEndday,
-		                     dbo.FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(FN_UPSTIMEDOWN(a.RES_ENDTIME)) resEndtime,
-		                     a.REG_DATE, 
+		                     dbo.FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)) resEndtime,
+		                     FORMAT(a.REG_DATE,'yyyy-MM-dd HH:mm:ss') REG_DATE,
 		                     dbo.FN_DETAILCODENM(a.RESERV_PROCESS_GUBUN) AS reservProcessGubunTxt ,
 		                     a.RESERVATION_REASON, a.RESERV_PROCESS_GUBUN , a.CANCEL_REASON ,
 		                     dbo.FN_DETAILCODENM(a.CANCEL_CODE) cancelCodeTxt ,
@@ -21,8 +21,9 @@
 		                     a.PROXY_USER_ID , CONVERT(VARCHAR(10),a.UPDATE_DATE , 120 ) updateDate ,
 		                     a.UPDATE_ID ,  CONVERT(VARCHAR(10),a.RES_REPLY_DATE , 120 ) resReplyDate ,
 		                     a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE ,
-		                     a.USE_YN , b.DEPTNAME, c.MEETING_NAME, d.CENTER_NM, b.EMPNAME,
-		                     b.EMPJIKW, b.EMPMAIL, a.RES_TITLE, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST,
+		                     a.USE_YN , b.DEPTNAME,  d.CENTER_NM, 
+		                     b.EMPNAME, b.EMPHANDPHONE, c.FLOOR_NAME, b.EMPJIKW, b.EMPMAIL, b.EMPNO,
+		                     a.RES_TITLE, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST,
 		                     dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) attendListTxt    ,
 		                     CASE WHEN a.RES_PASSWORD = 'N' THEN  
 		                               '비공개' 
@@ -30,36 +31,35 @@
 		                     END AS resPassTxt,
 		                     CONFERENCE_ID, CON_NUMBER, CON_PIN, 
                              CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO,
-                             dbo.FN_DETAILCODENM(a.RES_EQUPCHECK) AS resEqupcheckTxt, a.RES_EQUPCHECK, c.MEETING_CONFIRMGUBUN
-					  FROM TB_SWCRESERVATION a, TB_EMPINFO b, TB_MEETING_ROOM c, TB_CENTERINFO d
+                             dbo.FN_DETAILCODENM(a.RES_EQUPCHECK) AS resEqupcheckTxt, a.RES_EQUPCHECK,
+                             CASE a.ITEM_GUBUN WHEN 'ITEM_GUBUN_1' THEN '회의실 예약'
+                                  ELSE '좌석 예약'
+                             END ITEM_GUBUN,  
+                             dbo.fn_resNameInfo(a.RES_SEQ, 'CONFIRMGUBUN') ITEM_CONFIRMGUBUN,
+                             dbo.fn_resNameInfo(a.RES_SEQ, 'NAME') ITEM_NAME, a.TENN_CNT
+                      FROM TB_SWCRESERVATION a, TB_EMPINFO b, TB_FLOORINFO c, TB_CENTERINFO d
 		              WHERE a.USER_ID = b.EMPNO
-				            AND a.ITEM_ID = c.MEETING_ID
 			                AND a.CENTER_ID = d.CENTER_ID
+			                AND a.FLOOR_SEQ = c.FLOOR_SEQ
 	                        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchResSeq)">
 							      AND a.RES_SEQ = #{params.searchResSeq}
 						    </if>
+						    <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.empno)">
+					            AND b.EMPNO =  #{params.empno}
+							</if>
 					        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
-					              <choose>
-					                <when test="params.searchCondition == 'EMPNAME'">
-					                   <![CDATA[    
-										AND b.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
-										]]>
-					                </when>
-					                <otherwise>
-										<![CDATA[    
-									      AND c.MEETING_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
-									     ]]>
-					                </otherwise>
-					               </choose>
+					            AND #{params.searchCondition} LIKE CONCAT('%',#{params.searchKeyword},'%') 
 							</if>
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchUserId)">
 								 AND (a.PROXY_USER_ID = #{params.searchUserId} or a.USER_ID  = #{params.searchUserId})
 							</if>
-							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenterId)">
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
 							 	 AND a.CENTER_ID = #{params.searchCenterId}
-								 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSeatSeq)">
-								 AND a.MEETING_ID = #{params.searchSeatSeq}
-								 </if>
+							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+								<![CDATA[    
+							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
+							    ]]>
 							</if>
 							<if test="params.adminLevel == 'ROLE_ANONYMOUS' ">
 							     AND c.MEETING_ADMINID  LIKE CONCAT('%',(SELECT EMPNO FROM tb_empInfo WHERE empid= #{params.searchEmpno} ) ,'%') 
@@ -99,7 +99,7 @@
 							</choose>
 		    ) TB 
 	   ) TA 
-	   WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage} 
+	   WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 	   ORDER BY 	TA.REG_DATE DESC 	
 	</select>
     <select id="selectCalenderInfo" resultType="ResInfoVO">

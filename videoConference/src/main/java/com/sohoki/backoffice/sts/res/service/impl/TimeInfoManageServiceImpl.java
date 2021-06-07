@@ -91,5 +91,23 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		return timeMapper.selectResPreCheckInfo(searchVO);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectSeatStateInfo(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.selectSeatStateInfo(params);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectSeatSearchResult(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.selectSeatSearchResult(params);
+	}
+
+	@Override
+	public int selectResSeatPreCheckInfo(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.selectResSeatPreCheckInfo(params);
+	}
+
 	
 }

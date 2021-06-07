@@ -157,23 +157,23 @@ Primary style
 }
 .cd-stretchy-nav ul li:first-of-type a::after {
   /* change custom icon using image sprites */
-  background: url(/front_res/img/floorIcon01.png) no-repeat
+  background: url(../img/floorIcon01.png) no-repeat
 }
 
 .cd-stretchy-nav ul li:nth-of-type(2) a::after {
-  background: url(/front_res/img/floorIcon02.png) no-repeat
+  background: url(../img/floorIcon02.png) no-repeat
 }
 .cd-stretchy-nav ul li:nth-of-type(3) a::after {
-  background: url(/front_res/img/floorIcon03.png) no-repeat
+  background: url(../img/floorIcon03.png) no-repeat
 }
 .cd-stretchy-nav ul li:nth-of-type(4) a::after {
-  background: url(/front_res/img/floorIcon04.png) no-repeat
+  background: url(../img/floorIcon04.png) no-repeat
 }
 .cd-stretchy-nav ul li:nth-of-type(5) a::after {
-  background: url(/front_res/img/floorIcon05.png) no-repeat
+  background: url(../img/floorIcon05.png) no-repeat
 }
 .cd-stretchy-nav ul li:nth-of-type(6) a::after {
-  background: url(/front_res/img/floorIcon06.png) no-repeat
+  background: url(../img/floorIcon06.png) no-repeat
 }
 /*편의시설텍스트*/
 .cd-stretchy-nav ul span {
@@ -394,7 +394,7 @@ add-content navigation style
   -ms-transform: translateY(-50%) scale(0);
   -o-transform: translateY(-50%) scale(0);
   transform: translateY(-50%) scale(0);
-  background-image: url(/front_res/img/cd-sprite-2.svg);
+  background-image: url(../img/cd-sprite-2.svg);
 }
 .cd-stretchy-nav.add-content ul li:first-of-type a::after {
   background-position: -16px 0px;
@@ -571,7 +571,7 @@ edit content
   -ms-transform: translateX(-50%) translateY(-50%);
   -o-transform: translateX(-50%) translateY(-50%);
   transform: translateX(-50%) translateY(-50%);
-  background: url(/front_res/img/cd-sprite-3.svg) no-repeat 0 0;
+  background: url(../img/cd-sprite-3.svg) no-repeat 0 0;
 }
 .cd-stretchy-nav.edit-content .cd-nav-trigger span, .cd-stretchy-nav.edit-content .cd-nav-trigger::after {
   -webkit-transition: opacity 0.2s;
@@ -618,7 +618,7 @@ edit content
 }
 .cd-stretchy-nav.edit-content ul a::after {
   right: 7px;
-  background-image: url(/front_res/img/cd-sprite-3.svg);
+  background-image: url(../img/cd-sprite-3.svg);
 }
 
 .cd-stretchy-nav.edit-content ul li:first-of-type a::after {

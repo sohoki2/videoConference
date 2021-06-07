@@ -526,13 +526,18 @@ function day_convert(date ){
 	return (date.length> 7) ?  date.substring(0,4)+"년"+date.substring(4,6)+"월"+date.substring(6,8)+"일" : date ;
 	
 }
+//특정 시간 보여주기 
+function fn_swcTimeCombo(){
+
+
+}
 function fn_swcTime(swcTime, resSeq, itemId){
 	var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId};
 	uniAjax("/front/resInfo/resInfo.do", params, 
  			function(result) {
 			       if (result.status == "LOGIN FAIL"){
 			    	    alert(result.message);
-							location.href="/front/resInfo/noInfo.do";
+							location.href="/web/Login.do";
 					   }else if (result.status == "SUCCESS"){
 						    //테이블 정리 하기
 							var objS = result.resStartTime;

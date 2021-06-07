@@ -100,11 +100,14 @@ header {
 
 
 
-    #allFloors button {
+    #allFloors a {
         font-size: 1.6rem;
         height: 40px;
         width: 80px;
         cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        line-height: 40px;
     }
 
 .leftMenu {
@@ -239,7 +242,7 @@ header {
 }
 
 .reserDate {
-    background: url("/front_res/img/dateImg.png")25px center no-repeat;
+    background: url("../img/dateImg.png")25px center no-repeat;
 }
 
 .date {
@@ -312,7 +315,7 @@ header {
     .leftMenu span {
         width: 23px;
         height: 23px;
-        background: url("/front_res/img/menuIcon.png")no-repeat;
+        background: url("../img/menuIcon.png")no-repeat;
     }
 
 .leftMenu {
@@ -330,7 +333,7 @@ header {
     height: 40px;
     width: 200px;
     position: absolute;
-    right: 0;
+    right: 75px;
     top: -50px;
     }
 .inputSearch {
@@ -342,8 +345,8 @@ header {
 .searchIcon {
     position: absolute;
     text-align: center;
-    top: 5px;
-    right: 10px;
+    top: 0;
+    right: -75px;
 }
 
 .dateIcon {
@@ -361,7 +364,7 @@ header {
     border: 1px solid #eaeaea;
     line-height: 2.3em;
     font-size: 1.4rem;
-    background: #fff url("/front_res/img/meeting_w.png")90% center no-repeat;
+    background: #fff url("../img/meeting_w.png")90% center no-repeat;
     right: 365px;
     top: 10px;
 }
@@ -701,7 +704,7 @@ header {
     }
 
 span.date_icon {
-    background: url(/front_res/img/dateIcon.png) no-repeat;
+    background: url(../img/dateIcon.png) no-repeat;
     width: 19px;
     height: 19px;
     display: block;
@@ -797,25 +800,25 @@ span.date_icon {
     }
 
 .reser_icon01 {
-    background: url("/front_res/img/mypage01.png")left center no-repeat;
+    background: url("../img/mypage01.png")left center no-repeat;
     background-size: 30px;
 }
 
 .reser_icon02 {
-    background: url("/front_res/img/mypage02.png")40px center no-repeat;
+    background: url("../img/mypage02.png")40px center no-repeat;
 }
 
 .reser_icon03 {
-    background: url("/front_res/img/mypage03.png")40px center no-repeat;
+    background: url("../img/mypage03.png")40px center no-repeat;
 }
 
 .reser_icon04 {
-    background: url("/front_res/img/mypage04.png")left center no-repeat;
+    background: url("../img/mypage04.png")left center no-repeat;
     background-size: 30px;
 }
 
 .reser_iconGo {
-    background: url("/front_res/img/reser_iconGo.png")right center no-repeat;
+    background: url("../img/reser_iconGo.png")right center no-repeat;
     font-size: 1.6rem !important;
     padding-bottom: 0 !important;
     background-size: 8px;
@@ -871,72 +874,72 @@ span.date_icon {
         }
 
 .iconA {
-    background: url(/front_res/img/iconA.png)no-repeat left center;
+    background: url(../img/iconA.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconB {
-    background: url(/front_res/img/iconB.png)no-repeat left center;
+    background: url(../img/iconB.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconC {
-    background: url(/front_res/img/iconC.png)no-repeat left center;
+    background: url(../img/iconC.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconD {
-    background: url(/front_res/img/iconD.png)no-repeat left center;
+    background: url(../img/iconD.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconE {
-    background: url(/front_res/img/iconE.png)no-repeat left center;
+    background: url(../img/iconE.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconF {
-    background: url(/front_res/img/iconF.png)no-repeat left center;
+    background: url(../img/iconF.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconG {
-    background: url(/front_res/img/iconG.png)no-repeat left center;
+    background: url(../img/iconG.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconH {
-    background: url(/front_res/img/iconH.png)no-repeat left center;
+    background: url(../img/iconH.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconI {
-    background: url(/front_res/img/iconI.png)no-repeat left center;
+    background: url(../img/iconI.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconJ {
-    background: url(/front_res/img/iconJ.png)no-repeat left center;
+    background: url(../img/iconJ.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconK {
-    background: url(/front_res/img/iconK.png)no-repeat left center;
+    background: url(../img/iconK.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconL {
-    background: url(/front_res/img/iconL.png)no-repeat left center;
+    background: url(../img/iconL.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconM {
-    background: url(/front_res/img/iconM.png)no-repeat left center;
+    background: url(../img/iconM.png)no-repeat left center;
     padding-left: 30px;
 }
 
 .iconN {
-    background: url(/front_res/img/iconN.png)no-repeat left center;
+    background: url(../img/iconN.png)no-repeat left center;
     padding-left: 30px;
 }
 
@@ -1001,28 +1004,28 @@ header > .content {
 }
 
 .menu ul li.menu01 a {
-    background-image: url(/front_res/img/header_menu01.png);
+    background-image: url(../img/header_menu01.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 25px;
 }
 
 .menu ul li.menu02 a {
-    background-image: url(/front_res/img/header_menu02.png);
+    background-image: url(../img/header_menu02.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 25px;
 }
 
 .menu ul li.menu03 a {
-    background-image: url(/front_res/img/header_menu03.png);
+    background-image: url(../img/header_menu03.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 32px;
 }
 
 .menu ul li.menu04 a {
-    background-image: url(/front_res/img/header_menu04.png);
+    background-image: url(../img/header_menu04.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding-left: 25px;
@@ -1150,7 +1153,7 @@ a.user_logout {
 .joinArea table section input {
     width: 370px;
 }
-.joinArea table section button{width: 125px;}
+.joinArea table section a{width: 125px;}
 .resource {
     width: 110px !important;
     margin-top: -80px;
@@ -1159,13 +1162,17 @@ a.user_logout {
     border-radius: 4px;
     height: 40px;
     font-size: 1.4rem;
+    display: block;
+    text-align: center;
+    line-height: 40px;
+    color: #333333;
 }
 .user_reser_b {
     height: calc(100vh - 410px) !important;
     overflow-y: scroll !important;
 }
 .btnL{margin-top: -20px; margin-right: 10px;}
-.btnL button{border: none; width: 40px; height: 40px; cursor: pointer;}
+.btnL a{border: none;width: 40px;height: 40px;cursor: pointer;display: inline-block;}
 .calendar-container {
     margin-top: 15px;
 }

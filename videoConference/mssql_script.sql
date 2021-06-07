@@ -1,86 +1,86 @@
 USE [master]
 GO
-/****** Object:  Database [smarwork]    Script Date: 2021-05-26 오후 1:35:21 ******/
-CREATE DATABASE [smarwork]
+/****** Object:  Database [smartwork]    Script Date: 2021-06-04 오후 5:57:22 ******/
+CREATE DATABASE [smartwork]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'smarwork', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\smarwork.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'smarwork', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\smarwork.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'smarwork_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\smarwork_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'smarwork_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\smarwork_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
  WITH CATALOG_COLLATION = DATABASE_DEFAULT
 GO
-ALTER DATABASE [smarwork] SET COMPATIBILITY_LEVEL = 150
+ALTER DATABASE [smartwork] SET COMPATIBILITY_LEVEL = 150
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
-EXEC [smarwork].[dbo].[sp_fulltext_database] @action = 'enable'
+EXEC [smartwork].[dbo].[sp_fulltext_database] @action = 'enable'
 end
 GO
-ALTER DATABASE [smarwork] SET ANSI_NULL_DEFAULT OFF 
+ALTER DATABASE [smartwork] SET ANSI_NULL_DEFAULT OFF 
 GO
-ALTER DATABASE [smarwork] SET ANSI_NULLS OFF 
+ALTER DATABASE [smartwork] SET ANSI_NULLS OFF 
 GO
-ALTER DATABASE [smarwork] SET ANSI_PADDING OFF 
+ALTER DATABASE [smartwork] SET ANSI_PADDING OFF 
 GO
-ALTER DATABASE [smarwork] SET ANSI_WARNINGS OFF 
+ALTER DATABASE [smartwork] SET ANSI_WARNINGS OFF 
 GO
-ALTER DATABASE [smarwork] SET ARITHABORT OFF 
+ALTER DATABASE [smartwork] SET ARITHABORT OFF 
 GO
-ALTER DATABASE [smarwork] SET AUTO_CLOSE ON 
+ALTER DATABASE [smartwork] SET AUTO_CLOSE ON 
 GO
-ALTER DATABASE [smarwork] SET AUTO_SHRINK OFF 
+ALTER DATABASE [smartwork] SET AUTO_SHRINK OFF 
 GO
-ALTER DATABASE [smarwork] SET AUTO_UPDATE_STATISTICS ON 
+ALTER DATABASE [smartwork] SET AUTO_UPDATE_STATISTICS ON 
 GO
-ALTER DATABASE [smarwork] SET CURSOR_CLOSE_ON_COMMIT OFF 
+ALTER DATABASE [smartwork] SET CURSOR_CLOSE_ON_COMMIT OFF 
 GO
-ALTER DATABASE [smarwork] SET CURSOR_DEFAULT  GLOBAL 
+ALTER DATABASE [smartwork] SET CURSOR_DEFAULT  GLOBAL 
 GO
-ALTER DATABASE [smarwork] SET CONCAT_NULL_YIELDS_NULL OFF 
+ALTER DATABASE [smartwork] SET CONCAT_NULL_YIELDS_NULL OFF 
 GO
-ALTER DATABASE [smarwork] SET NUMERIC_ROUNDABORT OFF 
+ALTER DATABASE [smartwork] SET NUMERIC_ROUNDABORT OFF 
 GO
-ALTER DATABASE [smarwork] SET QUOTED_IDENTIFIER OFF 
+ALTER DATABASE [smartwork] SET QUOTED_IDENTIFIER OFF 
 GO
-ALTER DATABASE [smarwork] SET RECURSIVE_TRIGGERS OFF 
+ALTER DATABASE [smartwork] SET RECURSIVE_TRIGGERS OFF 
 GO
-ALTER DATABASE [smarwork] SET  ENABLE_BROKER 
+ALTER DATABASE [smartwork] SET  ENABLE_BROKER 
 GO
-ALTER DATABASE [smarwork] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+ALTER DATABASE [smartwork] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
 GO
-ALTER DATABASE [smarwork] SET DATE_CORRELATION_OPTIMIZATION OFF 
+ALTER DATABASE [smartwork] SET DATE_CORRELATION_OPTIMIZATION OFF 
 GO
-ALTER DATABASE [smarwork] SET TRUSTWORTHY OFF 
+ALTER DATABASE [smartwork] SET TRUSTWORTHY OFF 
 GO
-ALTER DATABASE [smarwork] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+ALTER DATABASE [smartwork] SET ALLOW_SNAPSHOT_ISOLATION OFF 
 GO
-ALTER DATABASE [smarwork] SET PARAMETERIZATION SIMPLE 
+ALTER DATABASE [smartwork] SET PARAMETERIZATION SIMPLE 
 GO
-ALTER DATABASE [smarwork] SET READ_COMMITTED_SNAPSHOT OFF 
+ALTER DATABASE [smartwork] SET READ_COMMITTED_SNAPSHOT OFF 
 GO
-ALTER DATABASE [smarwork] SET HONOR_BROKER_PRIORITY OFF 
+ALTER DATABASE [smartwork] SET HONOR_BROKER_PRIORITY OFF 
 GO
-ALTER DATABASE [smarwork] SET RECOVERY SIMPLE 
+ALTER DATABASE [smartwork] SET RECOVERY SIMPLE 
 GO
-ALTER DATABASE [smarwork] SET  MULTI_USER 
+ALTER DATABASE [smartwork] SET  MULTI_USER 
 GO
-ALTER DATABASE [smarwork] SET PAGE_VERIFY CHECKSUM  
+ALTER DATABASE [smartwork] SET PAGE_VERIFY CHECKSUM  
 GO
-ALTER DATABASE [smarwork] SET DB_CHAINING OFF 
+ALTER DATABASE [smartwork] SET DB_CHAINING OFF 
 GO
-ALTER DATABASE [smarwork] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+ALTER DATABASE [smartwork] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
 GO
-ALTER DATABASE [smarwork] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+ALTER DATABASE [smartwork] SET TARGET_RECOVERY_TIME = 60 SECONDS 
 GO
-ALTER DATABASE [smarwork] SET DELAYED_DURABILITY = DISABLED 
+ALTER DATABASE [smartwork] SET DELAYED_DURABILITY = DISABLED 
 GO
-ALTER DATABASE [smarwork] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+ALTER DATABASE [smartwork] SET ACCELERATED_DATABASE_RECOVERY = OFF  
 GO
-ALTER DATABASE [smarwork] SET QUERY_STORE = OFF
+ALTER DATABASE [smartwork] SET QUERY_STORE = OFF
 GO
-USE [smarwork]
+USE [smartwork]
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_ATTENTLIST]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_ATTENTLIST]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -111,7 +111,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_AVAYAREQID]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_AVAYAREQID]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -130,7 +130,7 @@ GO
 
  end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_CENTERID]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_CENTERID]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -151,7 +151,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCODENM]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCODENM]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -166,7 +166,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCODENMETC]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCODENMETC]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -181,7 +181,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCOODEID]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_DETAILCOODEID]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -200,26 +200,28 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_FLOORNM]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_FLOORNM]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
- create function  [dbo].[FN_FLOORNM]( @PLAY_FLOOR varchar(200))
+ CREATE function  [dbo].[FN_FLOORNM]( @PLAY_FLOOR varchar(200))
  returns varchar(1200)
  begin
       DECLARE @v_floorTxt varchar(1000); 
+
 	  SET @v_floorTxt = (SELECT STRING_AGG(FLOOR_NAME, ',') WITHIN GROUP(ORDER BY FLOOR_NAME) FLOOR_NAME
 						 FROM tb_floorinfo 
-						 WHERE FLOOR_SEQ IN (select dbo.UF_SPLICT(@PLAY_FLOOR, ','))
+						 WHERE FLOOR_SEQ IN (select  strVALUE from  dbo.UF_SPLICT(@PLAY_FLOOR, ','))
 						 );
 	  RETURN @v_floorTxt;
 
-
  end 
+
+ 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_JOBNMFN_JOBNM]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_JOBNMFN_JOBNM]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -236,33 +238,68 @@ begin
 end 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_MEETINGID_INSERT]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_MEETINGID]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
- create function [dbo].[FN_MEETINGID_INSERT](@AS_FLOORSEQ int, @AS_NUMBER int)
+ create function [dbo].[FN_MEETINGID] (@AS_FLOORSEQ int)
  returns varchar(18)
  begin
-     
-   DECLARE @flootInfo char(15);
-   DECLARE @RTN_SEATID char(18);
+
+   declare @flootInfo char(15);
+   declare @RTN_SEATID char(18);
    
    SET @flootInfo = (
-				     SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)) ,'_M')  
+				     SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)) , b.CODE_DC ,'_M')  
 				     FROM TB_FLOORINFO a, LETTCCMMNDETAILCODE b
 				     WHERE a.FLOOR_INFO = b.CODE 
-				           AND FLOOR_SEQ = @AS_FLOORSEQ
-   );
-   SET @RTN_SEATID = (SELECT CONCAT(@flootInfo, REPLICATE('0', 3- LEN(@AS_NUMBER))));
-   
+				          AND FLOOR_SEQ = @AS_FLOORSEQ
+                     );
+   SET @RTN_SEATID = (SELECT CONCAT(@flootInfo, 
+                             REPLICATE('0',3 - LEN( ISNULL(  cast( replace(MAX(MEETING_ID), @flootInfo, '') as int ) , 0) + 1 ))
+							 , ISNULL( cast( replace(MAX(MEETING_ID), @flootInfo, '') as int ) , 0) + 1
+							 )
+					  FROM TB_MEETING_ROOM 
+					  WHERE FLOOR_SEQ = @AS_FLOORSEQ
+					 );
    
   return @RTN_SEATID;
 
  end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_MEETINGNM]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_MEETINGID_INSERT]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ CREATE function [dbo].[FN_MEETINGID_INSERT](@AS_FLOORSEQ int, @AS_NUMBER int)
+ returns varchar(18)
+ begin
+     
+   DECLARE @flootInfo char(15);
+   DECLARE @RTN_SEATID char(18);
+   DECLARE @maxCnt int ;
+
+
+   SET @flootInfo = (    
+				      SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)), b.CODE_DC ,'_M')
+				      FROM tb_floorinfo a, lettccmmndetailcode b
+				      WHERE a.FLOOR_INFO = b.CODE 
+				           AND FLOOR_SEQ = @AS_FLOORSEQ
+                     );
+   SET @maxCnt = (SELECT CAST( REPLACE(isnull(max(MEETING_ID),0), @flootInfo, '') as int) 
+                  FROM  TB_MEETING_ROOM	
+                  WHERE substring(MEETING_ID, 1, 15) =@flootInfo);
+
+   SET @RTN_SEATID = (SELECT CONCAT(@flootInfo, REPLICATE('0',3 - LEN(@AS_NUMBER + @maxCnt)), @AS_NUMBER + @maxCnt ));
+    
+   RETURN @RTN_SEATID;
+
+ end 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_MEETINGNM]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -278,7 +315,7 @@ GO
 
  end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_MESSAGECONTENT]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_MESSAGECONTENT]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -294,7 +331,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_MESSAGETITLE]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_MESSAGETITLE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -310,7 +347,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_NOIMAGEFN_NO]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_NOIMAGEFN_NO]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -329,7 +366,7 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_ORGNM]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_ORGNM]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -343,13 +380,33 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_SEATID]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_ROWTABLE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
- create function [dbo].[FN_SEATID] (@AS_FLOORSEQ int)
+CREATE function [dbo].[FN_ROWTABLE] (@strVal int, @endVal int)
+RETURNS  @RETURN_TABLE TABLE 
+(
+   RN varchar(500)
+)
+begin
+    WITH GEN AS (  
+		SELECT @strVal AS NUM  
+		UNION ALL  
+		SELECT NUM+1 FROM GEN WHERE NUM+1 <= @endVal  
+	 )
+    INSERT @RETURN_TABLE (RN) 
+    SELECT * FROM GEN   ;
+    return 
+end 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_SEATID]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ CREATE function [dbo].[FN_SEATID] (@AS_FLOORSEQ int)
  returns varchar(17)
  begin
 
@@ -357,13 +414,14 @@ GO
    declare @RTN_SEATID char(17);
    
    SET @flootInfo = (
-				     SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)) ,'_')  
+				     SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)) , b.CODE_DC ,'_')  
 				     FROM TB_FLOORINFO a, LETTCCMMNDETAILCODE b
 				     WHERE a.FLOOR_INFO = b.CODE 
 				          AND FLOOR_SEQ = @AS_FLOORSEQ
                      );
    SET @RTN_SEATID = (SELECT CONCAT(@flootInfo, 
-                             REPLICATE('0',3 - LEN( ISNULL( cast( replace(MAX(SEAT_ID), @flootInfo, '') as int ) , 0)))
+                             REPLICATE('0',3 - LEN( ISNULL(  cast( replace(MAX(SEAT_ID), @flootInfo, '') as int ) , 0) + 1 ))
+							 , ISNULL( cast( replace(MAX(SEAT_ID), @flootInfo, '') as int ) , 0) + 1
 							 )
 					  FROM TB_SEATINFO 
 					  WHERE FLOOR_SEQ = @AS_FLOORSEQ
@@ -373,7 +431,165 @@ GO
 
  end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[FN_UPSTIMEDOWN]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_SEATID_INSERT]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE function [dbo].[FN_SEATID_INSERT] (@AS_FLOORSEQ int, @AS_NUMBER int )
+returns varchar(17)
+begin
+   
+   DECLARE @flootInfo char(14);
+   DECLARE @RTN_SEATID char(17);
+   DECLARE @maxCnt int ;
+   SET @flootInfo = (    
+				      SELECT CONCAT( CENTER_ID, '_', REPLICATE('0',3 - LEN( b.CODE_DC)), b.CODE_DC ,'_')
+				      FROM tb_floorinfo a, lettccmmndetailcode b
+				      WHERE a.FLOOR_INFO = b.CODE 
+				           AND FLOOR_SEQ = @AS_FLOORSEQ
+                     );
+   SET @maxCnt = (SELECT CAST( REPLACE(isnull(max(SEAT_ID),0), @flootInfo, '') as int) 
+                  FROM  tb_seatinfo	
+                  WHERE substring(SEAT_ID, 1, 14) =@flootInfo);
+
+   SET @RTN_SEATID = (SELECT CONCAT(@flootInfo, REPLICATE('0',3 - LEN(@AS_NUMBER + @maxCnt)), @AS_NUMBER + @maxCnt ));
+    
+   RETURN @RTN_SEATID;
+
+
+end 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_SWCRESTATE]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE function [dbo].[FN_SWCRESTATE] ( @MEETING_ID varchar(20), @RES_DAY varchar(8))
+returns varchar(5)
+begin
+
+    declare @resState varchar(5)
+	
+	set @resState = ( SELECT case  
+					          WHEN   CNT > 13  then 
+					          'useU'
+                               WHEN  CNT < 13 AND CNT > 0  then
+							  'useD'
+							   ELSE 
+							  'unuse'
+							end 
+				      FROM 	
+						 (SELECT isnull(count(APPRIVAL),0) CNT, APPRIVAL
+						  FROM TB_SWCTIME
+						  WHERE ITEM_ID = @MEETING_ID AND SWC_RESDAY = @RES_DAY
+								AND SWC_TIME not in ('1130', '1200','1230')
+								AND SWC_TIME between '0800' AND '1830'
+						  GROUP BY APPRIVAL
+						  ) X
+					  WHERE X.APPRIVAL = 'N' );
+    
+	set @resState = (select isnull(@resState, 'unuse'))
+
+	return @resState;
+
+end 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_TENNPLAYINFO]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE function [dbo].[FN_TENNPLAYINFO] (@itemId varchar(20),
+                                 @itemGubun varchar(20),
+								 @in_resDay varchar(10),
+                                 @in_StartTime varchar(20),                                 
+								 @in_endTime varchar(20),
+                                 @in_uesrNo varchar(20)
+								 )
+RETURNS	VARCHAR(100)
+BEGIN
+
+    DECLARE @tennCnt int;
+    DECLARE @costTenn int;
+	
+   
+    SET @tennCnt = (SELECT ISNULL( SUM(TENN_REC_NOW_CNT), 0)
+                    FROM tb_companyinfo a, tb_userinfo b, tb_compay_tennant c
+                    WHERE a.COM_CODE  = b.COM_CODE
+                          AND a.COM_CODE  = c.COM_CODE
+                          AND TENN_REC_END  = 'Y'
+                          AND b.USER_NO = @in_uesrNo);
+    IF (@itemGubun = 'ITEM_GUBUN_1')
+	BEGIN 
+        SET @costTenn = (SELECT CASE a.PAY_CLASSIFICATION WHEN 'PAY_CLASSIFICATION_2' THEN 0
+                           ELSE 
+                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_2' THEN 
+	                                 (SELECT ISNULL(COUNT(*), 0) 
+								      FROM tb_swctime
+								      WHERE SWC_RESDAY = @in_resDay
+								           AND ITEM_ID = @itemId 
+								           AND SWC_TIME BETWEEN @in_StartTime AND @in_endTime
+								      ) * a.PAY_COST
+                                  ELSE a.PAY_COST
+                               end 
+                           END COST 
+                     FROM
+					     (SELECT PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+					       FROM tb_meeting_room
+					       WHERE MEETING_ID = @itemId
+					     ) a 
+						 
+					);
+	END 
+	ELSE 
+	BEGIN
+	     SET @costTenn = (SELECT CASE a.PAY_CLASSIFICATION WHEN 'PAY_CLASSIFICATION_2' THEN 0
+                           ELSE 
+                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_2' THEN 
+	                                 (SELECT ISNULL(COUNT(*), 0) 
+								      FROM tb_swctime
+								      WHERE SWC_RESDAY = @in_resDay
+								           AND ITEM_ID = @itemId 
+								           AND SWC_TIME BETWEEN @in_StartTime AND @in_endTime
+								      ) * a.PAY_COST
+                                  ELSE a.PAY_COST
+                               end 
+                           END COST 
+                     FROM
+					     (SELECT PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+					       FROM TB_SEATINFO
+					       WHERE SEAT_ID = @itemId
+					     ) a 
+						 
+					);
+	END 
+	return concat(@tennCnt , '|', @costTenn);
+ 
+
+    
+END
+GO
+/****** Object:  UserDefinedFunction [dbo].[fn_TimeSplit]    Script Date: 2021-06-04 오후 5:57:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create function [dbo].[fn_TimeSplit] (@AS_Time varchar(4))
+returns varchar(5)
+begin
+  
+   DECLARE @v_timeSplit VARCHAR(5);
+   SET @v_timeSplit =  (select concat(substring(@AS_Time,1,2),':',substring(@AS_Time,3,2)) );
+   RETURN @v_timeSplit;
+
+
+end 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_UPSTIMEDOWN]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -400,13 +616,13 @@ begin
 
 end 
 GO
-/****** Object:  UserDefinedFunction [dbo].[UF_SPLICT]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  UserDefinedFunction [dbo].[UF_SPLICT]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create  function [dbo].[UF_SPLICT] (@STRMORE AS VARCHAR(8000), @STRDELIMETER AS VARCHAR(10))
+CREATE  function [dbo].[UF_SPLICT] (@STRMORE AS VARCHAR(8000), @STRDELIMETER AS VARCHAR(10))
 
 RETURNS  @RETURN_TABLE TABLE 
 (
@@ -459,7 +675,7 @@ RETURN
 
 END 
 GO
-/****** Object:  Table [dbo].[COMTECOPSEQ]    Script Date: 2021-05-26 오후 1:35:21 ******/
+/****** Object:  Table [dbo].[COMTECOPSEQ]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -469,7 +685,7 @@ CREATE TABLE [dbo].[COMTECOPSEQ](
 	[NEXT_ID] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[COMTNLOGINLOG]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[COMTNLOGINLOG]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -488,7 +704,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[COMTNSYSLOG]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[COMTNSYSLOG]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -521,7 +737,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[IDS]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[IDS]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -531,7 +747,7 @@ CREATE TABLE [dbo].[IDS](
 	[NEXT_ID] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[LETTCCMMNCLCODE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[LETTCCMMNCLCODE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -547,7 +763,7 @@ CREATE TABLE [dbo].[LETTCCMMNCLCODE](
 	[LAST_UPDUSR_ID] [varchar](20) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[LETTCCMMNCODE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[LETTCCMMNCODE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -568,7 +784,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[LETTCCMMNDETAILCODE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[LETTCCMMNDETAILCODE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -592,7 +808,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[LETTNAUTHORINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[LETTNAUTHORINFO]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -604,7 +820,7 @@ CREATE TABLE [dbo].[LETTNAUTHORINFO](
 	[AUTHOR_CREAT_DE] [char](20) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[LETTNFILEDETAIL]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[LETTNFILEDETAIL]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -630,7 +846,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RTETCCODE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[RTETCCODE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -640,7 +856,7 @@ CREATE TABLE [dbo].[RTETCCODE](
 	[CODE_NM] [varchar](200) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RTETNAUTH]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[RTETNAUTH]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -650,7 +866,7 @@ CREATE TABLE [dbo].[RTETNAUTH](
 	[URL] [varchar](200) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_ADMIN]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_ADMIN]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -666,7 +882,7 @@ CREATE TABLE [dbo].[TB_ADMIN](
 	[ADMIN_TEL] [varchar](15) NULL,
 	[REG_DATE] [datetime] NULL,
 	[UPDATE_PASSWORD] [datetime] NULL,
-	[ADMIN_LEVEL] [varchar](15) NULL,
+	[AUTHOR_CODE] [varchar](15) NULL,
 	[LOCK_YN] [char](1) NULL,
 	[USE_YN] [char](1) NULL,
 PRIMARY KEY CLUSTERED 
@@ -675,7 +891,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_ATTENDANCE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_ATTENDANCE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -695,7 +911,7 @@ CREATE TABLE [dbo].[TB_ATTENDANCE](
 	[LOGOUT] [datetime] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_AVAYASENDMESSAGE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_AVAYASENDMESSAGE]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -709,7 +925,7 @@ CREATE TABLE [dbo].[TB_AVAYASENDMESSAGE](
 	[REQ_REGDATE] [datetime] NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_BOARD]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_BOARD]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -739,7 +955,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_CALENDER]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_CALENDER]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -751,7 +967,7 @@ CREATE TABLE [dbo].[TB_CALENDER](
 	[DAY] [char](2) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_CENTERINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_CENTERINFO]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -785,7 +1001,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_COMPANYINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_COMPANYINFO]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -821,7 +1037,7 @@ CREATE TABLE [dbo].[TB_COMPANYINFO](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_COMPAY_TENNANT]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_COMPAY_TENNANT]    Script Date: 2021-06-04 오후 5:57:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -829,23 +1045,23 @@ GO
 CREATE TABLE [dbo].[TB_COMPAY_TENNANT](
 	[TENN_SEQ] [int] IDENTITY(1,1) NOT NULL,
 	[COM_CODE] [char](10) NULL,
-	[TENN_REC_DATE] [datetime] NULL,
+	[TENN_REC_DATE] [varchar](8) NULL,
 	[TENN_REC_COUNT] [int] NULL,
 	[TENN_REC_PLAY_CNT] [int] NULL,
 	[TENN_REC_NOW_CNT] [int] NULL,
 	[TENN_REC_END] [varchar](20) NULL,
 	[TENN_REMARK] [varchar](1200) NULL,
-	[REG_ID] [datetime] NULL,
-	[REG_DATE] [varchar](30) NULL,
-	[UPDATE_ID] [datetime] NULL,
-	[UPDATE_DATE] [varchar](30) NULL,
-PRIMARY KEY CLUSTERED 
+	[REG_ID] [varchar](30) NULL,
+	[REG_DATE] [datetime] NULL,
+	[UPDATE_ID] [varchar](30) NULL,
+	[UPDATE_DATE] [datetime] NULL,
+ CONSTRAINT [PK__TB_COMPA__ED5402407A62993B] PRIMARY KEY CLUSTERED 
 (
 	[TENN_SEQ] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_COMPAY_TENNANT_HISTORY]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_COMPAY_TENNANT_HISTORY]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -859,13 +1075,16 @@ CREATE TABLE [dbo].[TB_COMPAY_TENNANT_HISTORY](
 	[TENN_CNT] [int] NULL,
 	[TENN_PLAY_GUBUN] [varchar](30) NULL,
 	[TENN_APPRIVAL] [char](1) NULL,
+	[RES_SEQ] [int] NULL,
+	[USER_NO] [varchar](20) NULL,
+	[UPDATE_DATE] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[HIS_SEQ] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_DEVICEINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_DEVICEINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -890,13 +1109,14 @@ CREATE TABLE [dbo].[TB_DEVICEINFO](
 	[UPDATE_ID] [varchar](30) NULL,
 	[UPDATE_DATE] [datetime] NULL,
 	[DEVICE_REMARK] [text] NULL,
+	[DEVICE_ENDCONNTIME] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[DEVICE_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_EMPINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_EMPINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -907,8 +1127,8 @@ CREATE TABLE [dbo].[TB_EMPINFO](
 	[EMPNAME] [varchar](10) NULL,
 	[DEPTNAME] [varchar](30) NULL,
 	[DEPTCODE] [varchar](10) NULL,
-	[EMPGARD] [varchar](15) NULL,
-	[EMPGARDCODE] [varchar](20) NULL,
+	[EMPGRAD] [varchar](15) NULL,
+	[EMPGRADCODE] [varchar](20) NULL,
 	[EMPJIKW] [varchar](20) NULL,
 	[EMPJIKWCODE] [varchar](20) NULL,
 	[EMPHANDPHONE] [varchar](15) NULL,
@@ -918,10 +1138,13 @@ CREATE TABLE [dbo].[TB_EMPINFO](
 	[UPDATE_DATE] [datetime] NOT NULL,
 	[AVAYA_USERID] [varchar](30) NULL,
 	[DT_COENT] [varchar](8) NULL,
-	[CD_LVLGRD] [varchar](10) NULL
+	[CD_LVLGRD] [varchar](10) NULL,
+	[AUTHOR_CODE] [varchar](20) NULL,
+	[COM_CODE] [varchar](10) NULL,
+	[EMP_STATE] [varchar](20) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_EQUIPMENTINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_EQUIPMENTINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -948,7 +1171,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_FLOORINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_FLOORINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -974,7 +1197,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_FLOORPART]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_FLOORPART]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1003,7 +1226,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_JOBINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_JOBINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1013,7 +1236,7 @@ CREATE TABLE [dbo].[TB_JOBINFO](
 	[EMPJIKWCODE] [varchar](15) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_MEETING_ROOM]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_MEETING_ROOM]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1058,13 +1281,16 @@ CREATE TABLE [dbo].[TB_MEETING_ROOM](
 	[UPDATE_ID] [varchar](30) NULL,
 	[UPDATE_DATE] [datetime] NULL,
 	[MEETINGROOM_REMARK] [text] NULL,
+	[MEETING_TOP] [int] NULL,
+	[MEETING_LEFT] [int] NULL,
+	[AVAYA_ROOMCODE] [varchar](30) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[MEETING_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_MESSAGEINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_MESSAGEINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1082,13 +1308,14 @@ CREATE TABLE [dbo].[TB_MESSAGEINFO](
 	[MSG_UPDATE_ID] [varchar](20) NULL,
 	[MSG_UPDATE_DATE] [datetime] NULL,
 	[MSG_VARINFO] [varchar](100) NULL,
+	[USEYN] [char](1) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[MSG_SEQ] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_ORGINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_ORGINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1100,7 +1327,23 @@ CREATE TABLE [dbo].[TB_ORGINFO](
 	[USE_YN] [char](1) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_SEATINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_SCHEDULECHECK]    Script Date: 2021-06-04 오후 5:57:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TB_SCHEDULECHECK](
+	[SCH_SEQ] [int] IDENTITY(1,1) NOT NULL,
+	[SCH_RESULT] [varchar](30) NULL,
+	[SCH_RESULTREGDATE] [datetime] NULL,
+	[SCH_RESULTMESSAGE] [text] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[SCH_SEQ] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TB_SEATINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1138,7 +1381,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_SWC_ROOM]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_SWC_ROOM]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1180,7 +1423,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_SWCINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_SWCINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1193,14 +1436,15 @@ CREATE TABLE [dbo].[TB_SWCINFO](
 	[COM_TITLE] [varchar](255) NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_SWCRESERVATION]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_SWCRESERVATION]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[TB_SWCRESERVATION](
 	[RES_SEQ] [int] IDENTITY(1,1) NOT NULL,
-	[SWC_SEQ] [int] NOT NULL,
+	[ITEM_ID] [varchar](20) NOT NULL,
+	[ITEM_GUBUN] [varchar](30) NULL,
 	[CENTER_ID] [char](9) NOT NULL,
 	[RES_GUBUN] [varchar](30) NULL,
 	[USER_ID] [varchar](30) NULL,
@@ -1246,13 +1490,16 @@ CREATE TABLE [dbo].[TB_SWCRESERVATION](
 	[FLOOR_SEQ] [int] NULL,
 	[IN_TIME] [datetime] NULL,
 	[OT_TIME] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
+	[HIS_SEQ] [int] NULL,
+	[SEND_MESSAGE] [char](1) NULL,
+	[RES_EQUPCHECK] [char](1) NULL,
+ CONSTRAINT [PK__TB_SWCRE__DBA0695F9BEF347F] PRIMARY KEY CLUSTERED 
 (
 	[RES_SEQ] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_SWCTIME]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_SWCTIME]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1272,7 +1519,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TB_USERINFO]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  Table [dbo].[TB_USERINFO]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1292,11 +1539,35 @@ CREATE TABLE [dbo].[TB_USERINFO](
 	[USER_REGID] [varchar](30) NULL,
 	[USER_UPDATE] [datetime] NULL,
 	[USER_UPDATEID] [varchar](30) NULL,
+	[AUTHOR_CODE] [varchar](30) NULL,
+	[USER_PASSWORD] [varchar](500) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[USER_NO] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_TB_SWCTIME]    Script Date: 2021-06-04 오후 5:57:23 ******/
+CREATE NONCLUSTERED INDEX [IX_TB_SWCTIME] ON [dbo].[TB_SWCTIME]
+(
+	[SWC_TIME] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_TB_SWCTIME_1]    Script Date: 2021-06-04 오후 5:57:23 ******/
+CREATE NONCLUSTERED INDEX [IX_TB_SWCTIME_1] ON [dbo].[TB_SWCTIME]
+(
+	[SWC_RESDAY] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_TB_SWCTIME_2]    Script Date: 2021-06-04 오후 5:57:23 ******/
+CREATE NONCLUSTERED INDEX [IX_TB_SWCTIME_2] ON [dbo].[TB_SWCTIME]
+(
+	[RES_SEQ] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[COMTNLOGINLOG] ADD  DEFAULT (NULL) FOR [CONECT_ID]
 GO
@@ -1446,7 +1717,7 @@ ALTER TABLE [dbo].[TB_ADMIN] ADD  DEFAULT (getdate()) FOR [REG_DATE]
 GO
 ALTER TABLE [dbo].[TB_ADMIN] ADD  DEFAULT (NULL) FOR [UPDATE_PASSWORD]
 GO
-ALTER TABLE [dbo].[TB_ADMIN] ADD  DEFAULT (NULL) FOR [ADMIN_LEVEL]
+ALTER TABLE [dbo].[TB_ADMIN] ADD  DEFAULT (NULL) FOR [AUTHOR_CODE]
 GO
 ALTER TABLE [dbo].[TB_ADMIN] ADD  DEFAULT (NULL) FOR [LOCK_YN]
 GO
@@ -1560,13 +1831,17 @@ ALTER TABLE [dbo].[TB_COMPANYINFO] ADD  CONSTRAINT [DF__TB_COMPAN__TENN___42ACE4
 GO
 ALTER TABLE [dbo].[TB_COMPANYINFO] ADD  CONSTRAINT [DF__TB_COMPAN__COM_R__43A1090D]  DEFAULT (getdate()) FOR [COM_REGDATE]
 GO
-ALTER TABLE [dbo].[TB_COMPAY_TENNANT] ADD  DEFAULT (getdate()) FOR [TENN_REC_DATE]
+ALTER TABLE [dbo].[TB_COMPAY_TENNANT] ADD  CONSTRAINT [DF__TB_COMPAY__TENN___4D2A7347]  DEFAULT (getdate()) FOR [TENN_REC_DATE]
 GO
-ALTER TABLE [dbo].[TB_COMPAY_TENNANT] ADD  DEFAULT (getdate()) FOR [REG_ID]
+ALTER TABLE [dbo].[TB_COMPAY_TENNANT] ADD  CONSTRAINT [DF__TB_COMPAY__REG_I__4E1E9780]  DEFAULT (getdate()) FOR [REG_ID]
 GO
 ALTER TABLE [dbo].[TB_COMPAY_TENNANT_HISTORY] ADD  DEFAULT (getdate()) FOR [REG_DATE]
 GO
 ALTER TABLE [dbo].[TB_COMPAY_TENNANT_HISTORY] ADD  DEFAULT ('Y') FOR [TENN_APPRIVAL]
+GO
+ALTER TABLE [dbo].[TB_COMPAY_TENNANT_HISTORY] ADD  DEFAULT ((0)) FOR [RES_SEQ]
+GO
+ALTER TABLE [dbo].[TB_COMPAY_TENNANT_HISTORY] ADD  CONSTRAINT [DF_TB_COMPAY_TENNANT_HISTORY_UPDATE_DATE]  DEFAULT (getdate()) FOR [UPDATE_DATE]
 GO
 ALTER TABLE [dbo].[TB_DEVICEINFO] ADD  DEFAULT ('Y') FOR [USE_YN]
 GO
@@ -1582,9 +1857,9 @@ ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [DEPTNAME]
 GO
 ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [DEPTCODE]
 GO
-ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [EMPGARD]
+ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [EMPGRAD]
 GO
-ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [EMPGARDCODE]
+ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [EMPGRADCODE]
 GO
 ALTER TABLE [dbo].[TB_EMPINFO] ADD  DEFAULT (NULL) FOR [EMPJIKW]
 GO
@@ -1656,6 +1931,10 @@ ALTER TABLE [dbo].[TB_MEETING_ROOM] ADD  DEFAULT ('N') FOR [SMS_SENDCHECK]
 GO
 ALTER TABLE [dbo].[TB_MEETING_ROOM] ADD  DEFAULT (getdate()) FOR [REG_DATE]
 GO
+ALTER TABLE [dbo].[TB_MEETING_ROOM] ADD  DEFAULT ((0)) FOR [MEETING_TOP]
+GO
+ALTER TABLE [dbo].[TB_MEETING_ROOM] ADD  DEFAULT ((0)) FOR [MEETING_LEFT]
+GO
 ALTER TABLE [dbo].[TB_MESSAGEINFO] ADD  DEFAULT (NULL) FOR [MSG_STARTDAY]
 GO
 ALTER TABLE [dbo].[TB_MESSAGEINFO] ADD  DEFAULT (NULL) FOR [MSG_ENDDAY]
@@ -1672,6 +1951,8 @@ ALTER TABLE [dbo].[TB_MESSAGEINFO] ADD  DEFAULT (NULL) FOR [MSG_UPDATE_DATE]
 GO
 ALTER TABLE [dbo].[TB_MESSAGEINFO] ADD  DEFAULT (NULL) FOR [MSG_VARINFO]
 GO
+ALTER TABLE [dbo].[TB_MESSAGEINFO] ADD  DEFAULT ('N') FOR [USEYN]
+GO
 ALTER TABLE [dbo].[TB_ORGINFO] ADD  DEFAULT (NULL) FOR [DEPTCODE]
 GO
 ALTER TABLE [dbo].[TB_ORGINFO] ADD  DEFAULT (NULL) FOR [DEPTNAME]
@@ -1679,6 +1960,8 @@ GO
 ALTER TABLE [dbo].[TB_ORGINFO] ADD  DEFAULT (getdate()) FOR [UPDATE_DATE]
 GO
 ALTER TABLE [dbo].[TB_ORGINFO] ADD  DEFAULT ('Y') FOR [USE_YN]
+GO
+ALTER TABLE [dbo].[TB_SCHEDULECHECK] ADD  DEFAULT (getdate()) FOR [SCH_RESULTREGDATE]
 GO
 ALTER TABLE [dbo].[TB_SEATINFO] ADD  DEFAULT ('Y') FOR [SEAT_USEYN]
 GO
@@ -1742,85 +2025,89 @@ ALTER TABLE [dbo].[TB_SWC_ROOM] ADD  DEFAULT (NULL) FOR [SEAT_EQUPGUBUN]
 GO
 ALTER TABLE [dbo].[TB_SWC_ROOM] ADD  DEFAULT (NULL) FOR [SEAT_ADMINID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_GUBUN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_G__14E61A24]  DEFAULT (NULL) FOR [RES_GUBUN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [USER_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__USER___15DA3E5D]  DEFAULT (NULL) FOR [USER_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [DEPT_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__DEPT___16CE6296]  DEFAULT (NULL) FOR [DEPT_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RANK_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RANK___17C286CF]  DEFAULT (NULL) FOR [RANK_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_STARTDAY]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_S__18B6AB08]  DEFAULT (NULL) FOR [RES_STARTDAY]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_ENDDAY]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_E__19AACF41]  DEFAULT (NULL) FOR [RES_ENDDAY]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_STARTTIME]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_S__1A9EF37A]  DEFAULT (NULL) FOR [RES_STARTTIME]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_ENDTIME]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_E__1B9317B3]  DEFAULT (NULL) FOR [RES_ENDTIME]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (getdate()) FOR [REG_DATE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__REG_D__1C873BEC]  DEFAULT (getdate()) FOR [REG_DATE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RESERV_PROCESS_GUBUN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RESER__1D7B6025]  DEFAULT (NULL) FOR [RESERV_PROCESS_GUBUN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RESERVATION_REASON]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RESER__1E6F845E]  DEFAULT (NULL) FOR [RESERVATION_REASON]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CANCEL_REASON]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CANCE__1F63A897]  DEFAULT (NULL) FOR [CANCEL_REASON]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CANCEL_CODE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CANCE__2057CCD0]  DEFAULT (NULL) FOR [CANCEL_CODE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_REMARK]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_R__214BF109]  DEFAULT (NULL) FOR [RES_REMARK]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [PROXY_YN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__PROXY__22401542]  DEFAULT (NULL) FOR [PROXY_YN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [PROXY_USER_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__PROXY__2334397B]  DEFAULT (NULL) FOR [PROXY_USER_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [UPDATE_DATE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__UPDAT__24285DB4]  DEFAULT (NULL) FOR [UPDATE_DATE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [UPDATE_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__UPDAT__251C81ED]  DEFAULT (NULL) FOR [UPDATE_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_REPLY_DATE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_R__2610A626]  DEFAULT (NULL) FOR [RES_REPLY_DATE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [ADMIN_REPLY_DATE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__ADMIN__2704CA5F]  DEFAULT (NULL) FOR [ADMIN_REPLY_DATE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [ADMIN_PROCESS_GUBUN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__ADMIN__27F8EE98]  DEFAULT (NULL) FOR [ADMIN_PROCESS_GUBUN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [ADMIN_CANCELCODE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__ADMIN__28ED12D1]  DEFAULT (NULL) FOR [ADMIN_CANCELCODE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [USE_YN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__USE_Y__29E1370A]  DEFAULT (NULL) FOR [USE_YN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_TITLE]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_T__2AD55B43]  DEFAULT (NULL) FOR [RES_TITLE]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_PASSWORD]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_P__2BC97F7C]  DEFAULT (NULL) FOR [RES_PASSWORD]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [MEETING_SEQ]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__MEETI__2CBDA3B5]  DEFAULT (NULL) FOR [MEETING_SEQ]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_ATTENDLIST]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_A__2DB1C7EE]  DEFAULT (NULL) FOR [RES_ATTENDLIST]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [MEETINGLOG]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__MEETI__2EA5EC27]  DEFAULT (NULL) FOR [MEETINGLOG]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_FILE1]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_F__2F9A1060]  DEFAULT (NULL) FOR [RES_FILE1]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_FILE2]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_F__308E3499]  DEFAULT (NULL) FOR [RES_FILE2]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CONFERENCE_ID]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CONFE__318258D2]  DEFAULT (NULL) FOR [CONFERENCE_ID]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_NUMBER]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_N__32767D0B]  DEFAULT (NULL) FOR [CON_NUMBER]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_PIN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_P__336AA144]  DEFAULT (NULL) FOR [CON_PIN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_VIRTUAL_PIN]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_V__345EC57D]  DEFAULT (NULL) FOR [CON_VIRTUAL_PIN]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_ALLOWSTREAM]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_A__3552E9B6]  DEFAULT (NULL) FOR [CON_ALLOWSTREAM]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_BLACKDIAL]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_B__36470DEF]  DEFAULT (NULL) FOR [CON_BLACKDIAL]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [CON_SENDNOTI]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__CON_S__373B3228]  DEFAULT (NULL) FOR [CON_SENDNOTI]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_SEND_RESULT]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_S__382F5661]  DEFAULT (NULL) FOR [RES_SEND_RESULT]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_SEND_RESULT_TXT]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_S__39237A9A]  DEFAULT (NULL) FOR [RES_SEND_RESULT_TXT]
 GO
-ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT (NULL) FOR [RES_EQUPINFO]
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF__TB_SWCRES__RES_E__3A179ED3]  DEFAULT (NULL) FOR [RES_EQUPINFO]
+GO
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  CONSTRAINT [DF_TB_SWCRESERVATION_HIS_SEQ]  DEFAULT ((0)) FOR [HIS_SEQ]
+GO
+ALTER TABLE [dbo].[TB_SWCRESERVATION] ADD  DEFAULT ('N') FOR [SEND_MESSAGE]
 GO
 ALTER TABLE [dbo].[TB_SWCTIME] ADD  DEFAULT (NULL) FOR [SWC_TIME]
 GO
@@ -1832,31 +2119,31 @@ ALTER TABLE [dbo].[TB_SWCTIME] ADD  DEFAULT (NULL) FOR [USE_YN]
 GO
 ALTER TABLE [dbo].[TB_USERINFO] ADD  DEFAULT (getdate()) FOR [USER_REGDATE]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Calender]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[sp_Calender]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
- create proc [dbo].[sp_Calender]
+ CREATE proc [dbo].[sp_Calender]
  as
  begin
      DECLARE @v_sdate char(8);
      DECLARE @v_edate char(8);
    
-     SET @v_sdate = '20200101';
+     SET @v_sdate = '20210101';
      SET @v_edate = '20991231';
   
-     WHILE (@v_sdate <= @v_sdate) 
+     WHILE (@v_sdate <= @v_edate) 
 	 begin 
         insert INTO TB_CALENDER values(@v_sdate, substring(@v_sdate, 1, 4),  substring(@v_sdate,5,2), substring(@v_sdate,7,2));
-        set @v_sdate = (select convert( varchar(8), dateadd(DD, 1, '20210526'), 112) );
+        set @v_sdate = (select convert( varchar(8), dateadd(DD, 1, @v_sdate), 112) );
      end;
 
 
  end 
 GO
-/****** Object:  StoredProcedure [dbo].[sp_ComboBox]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ComboBox]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1875,7 +2162,7 @@ GO
 
  end 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_MAXVAL]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[SP_MAXVAL]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1890,12 +2177,12 @@ begin
 
 end 
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Room_TimeCreate]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[sp_Room_TimeCreate]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create proc [dbo].[sp_Room_TimeCreate] 
+CREATE proc [dbo].[sp_Room_TimeCreate] 
 as
 
 begin
@@ -1927,25 +2214,26 @@ begin
 		 SET @vt_RoomNowCount = 0;
 
 		 WHILE (@vt_RoomNowCount < @vt_SWCRoomCount) 
+
+		
 		 BEGIN
+		    
 		     BEGIN
 			 -- 회의실 정리 
 		     IF (@vt_RoomNowCount = 0) 
 				 BEGIN
-				     SET @vt_swc_roomID = (SELECT X.MEETING_ID  FROM ( 
-                                            SELECT TOP 1 MEETING_ID  FROM TB_MEETING_ROOM WHERE MEETING_USEYN = 'Y'  ORDER BY MEETING_ID ASC  ) X
-                                           )
+				     SET @vt_swc_roomID = ( SELECT TOP 1 MEETING_ID  FROM TB_MEETING_ROOM WHERE MEETING_USEYN = 'Y'  ORDER BY MEETING_ID ASC  )
 				 END 
 			 ELSE 
 				 BEGIN
-				     SET @vt_swc_roomID = (SELECT X.MEETING_ID   FROM ( 
-                                              SELECT TOP 1 MEETING_ID FROM tb_meeting_room WHERE MEETING_USEYN = 'Y'  ORDER BY MEETING_ID ASC  ) X 
-										   WHERE   X.MEETING_ID > @vt_swc_roomID  );
+				     SET @vt_swc_roomID = (  SELECT TOP 1 MEETING_ID FROM tb_meeting_room WHERE MEETING_USEYN = 'Y' AND MEETING_ID > @vt_swc_roomID  ORDER BY MEETING_ID ASC  );
 				 END 
              END 
-
 			 SET @vt_centerID = (SELECT CENTER_ID FROM TB_MEETING_ROOM  WHERE  MEETING_ID = @vt_swc_roomID);
-             SET @vt_TableCount = (SELECT isnull(COUNT(*),0)   FROM TB_SWCTIME WHERE SWC_RESDAY =  @vt_nowDay AND ITEM_ID = @vt_swc_roomID);
+
+			 SET @vt_TableCount = (SELECT isnull(COUNT(*),0)   FROM TB_SWCTIME WHERE SWC_RESDAY =  @vt_nowDay AND ITEM_ID = @vt_swc_roomID);
+
+			
 
 			 IF (@vt_TableCount =0) 
 			 BEGIN
@@ -1965,36 +2253,85 @@ begin
 				  SET @vt_roomStart = (SELECT CAST( CONCAT('1', START_TIME) as int) FROM TB_SWCINFO);
 
 			 END 
-	         set @vt_RoomNowCount = @vt_RoomNowCount +1;    
-
+	         
+             set @vt_RoomNowCount = @vt_RoomNowCount +1; 
+	
 		 END 
 		 
+		 
 	END 
-    
+  
+	SET @vt_nowDay = (select  convert(varchar(8), getdate(), 112));
+	WHILE (@vt_nowDay < @vt_nextDay) 
+	BEGIN
+	     SET @vt_nowDay =  (select  CONVERT(varchar(8),DATEADD(DAY,  1, @vt_nowDay), 112));
+         SET @vt_SWCRoomCount = (SELECT isnull(COUNT(*),0) FROM TB_SEATINFO WHERE SEAT_USEYN = 'Y');
+		 SET @vt_RoomNowCount = 0;
 
-end 
+		 WHILE (@vt_RoomNowCount < @vt_SWCRoomCount) 
+		 BEGIN
+		      BEGIN
+			 -- 좌석 정리 
+		     IF (@vt_RoomNowCount = 0) 
+				 BEGIN
+				     SET @vt_swc_roomID = ( SELECT TOP 1 SEAT_ID  FROM TB_SEATINFO WHERE SEAT_USEYN = 'Y'  ORDER BY SEAT_ID ASC  )
+				 END 
+			 ELSE 
+				 BEGIN
+				     SET @vt_swc_roomID = (  SELECT TOP 1 SEAT_ID FROM TB_SEATINFO WHERE SEAT_USEYN = 'Y' AND SEAT_ID > @vt_swc_roomID  ORDER BY SEAT_ID ASC  );
+				 END 
+             END 
+			 SET @vt_centerID = (SELECT CENTER_ID FROM TB_SEATINFO  WHERE  SEAT_ID = @vt_swc_roomID);
+
+			 SET @vt_TableCount = (SELECT isnull(COUNT(*),0)   FROM TB_SWCTIME WHERE SWC_RESDAY =  @vt_nowDay AND ITEM_ID = @vt_swc_roomID);
+			 IF (@vt_TableCount =0) 
+			 BEGIN
+			     WHILE (@vt_roomStart  < @vt_roomEnd) 
+				 BEGIN 
+	                    INSERT INTO TB_SWCTIME (CENTER_ID, SWC_RESDAY, SWC_TIME, RES_SEQ, APPRIVAL, USE_YN, ITEM_ID)
+                        VALUES (  @vt_centerID, @vt_nowDay, substring(CAST(@vt_roomStart AS VARCHAR(5)), 2,4)  ,0, 'N', 'N', @vt_swc_roomID);
+	              
+                        BEGIN 
+							IF  substring(CAST(@vt_roomStart AS VARCHAR(5)), 4,2) = '30' 
+								set @vt_roomStart = ((@vt_roomStart + 100) - 30);
+							ELSE
+								set @vt_roomStart = (@vt_roomStart +  30);
+                        END 
+                        
+	              END
+				  SET @vt_roomStart = (SELECT CAST( CONCAT('1', START_TIME) as int) FROM TB_SWCINFO);
+
+			 END 
+	         
+             set @vt_RoomNowCount = @vt_RoomNowCount +1; 
+
+		 END 
+
+	END 
+
+END 
 
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UNICHECK]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[SP_UNICHECK]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
- create proc [dbo].[SP_UNICHECK] (@isColumn varchar(25), @isTable VARCHAR(255), @isCondition varchar(1000) )
+ CREATE proc [dbo].[SP_UNICHECK] (@isColumn varchar(25), @isTable VARCHAR(255), @isCondition varchar(1000) )
  as
  begin
      
 	   
 	   DECLARE @stmt nvarchar(4000);
-	   SET @stmt = ' SELECT ISNULL(COUNT( '+ @isColumn + '  ),0)   FROM '+ @isTable + '  where ' +    replace(    @isCondition  , '[','''') ;
+	   SET @stmt = ' SELECT ISNULL(COUNT( '+ @isColumn + '  ),0) CNT   FROM '+ @isTable + '  where ' +    replace(    @isCondition  , '[','''') ;
        EXEC sp_executesql @stmt  
 
  end 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UNIDEL]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[SP_UNIDEL]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2011,7 +2348,7 @@ begin
 
 end 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UNISELECT]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[SP_UNISELECT]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2030,7 +2367,7 @@ GO
 
  
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UNIUPDATE]    Script Date: 2021-05-26 오후 1:35:22 ******/
+/****** Object:  StoredProcedure [dbo].[SP_UNIUPDATE]    Script Date: 2021-06-04 오후 5:57:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2051,5 +2388,5 @@ GO
 GO
 USE [master]
 GO
-ALTER DATABASE [smarwork] SET  READ_WRITE 
+ALTER DATABASE [smartwork] SET  READ_WRITE 
 GO

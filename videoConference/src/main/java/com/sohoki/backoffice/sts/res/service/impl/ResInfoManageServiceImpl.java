@@ -80,13 +80,13 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	  
 	  @Override
 	  public List<Map<String, Object>> selectResManageListByPagination(Map<String, Object> searchVO)   throws Exception  {
-	         return this.resMapper.selectResManageListByPagination(searchVO);
+		  return this.resMapper.selectResManageListByPagination(searchVO);
 	  }
 	  
 	  // 예약 화면 리스트
 	  @Override
 	  public List<Map<String, Object>> selectIndexList( Map<String, Object> params)   throws Exception  {
-	         return this.resMapper.selectIndexList(params);
+	      return this.resMapper.selectIndexList(params);
 	  }
 	 
 	  
@@ -132,11 +132,12 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		        if (ret > 0){
 			        vo.setResSeq(String.valueOf(resSeq));
 			        //자동 승인 넘기기기
-			        if (vo.getSeatConfirmgubun().equals("Y")) {
+			        timeinfo.put("resSeq", String.valueOf(resSeq));
+			        timeinfo.put("apprival", "R");
+		        	this.timeMapper.updateTimeInfo(timeinfo);
+		        	if (vo.getSeatConfirmgubun().equals("Y")) {
 			        	//관리자 승인 일때 처리 하는 구문 
-			        	timeinfo.put("resSeq", String.valueOf(resSeq));
-			        	timeinfo.put("apprival", "R");
-			        	this.timeMapper.updateTimeInfo(timeinfo);
+			        	
 			        	boolean sendCk =   meetingService.sendMeetingEmpMessage(vo.getItemId(), vo);
 			        }else {
 			        	vo.setReservProcessGubun("PROCESS_GUBUN_2");
@@ -213,6 +214,7 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		// TODO Auto-generated method stub
 		TimeInfoVO info = new TimeInfoVO();
 		info.setResSeq(vo.getResSeq());
+		
 		int ret = 0;
 		String resCode = "";
 		Map<String, Object> resInfo = null;
@@ -223,14 +225,18 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			
 			
 			
+			
+			
 			if (vo.getReservProcessGubun().equals("PROCESS_GUBUN_2") || vo.getReservProcessGubun().equals("PROCESS_GUBUN_4")){
 					info.setApprival("Y");
 					timeMapper.updateTimeInfoY(info);
 					resCode = "RES";
 					//메일 보내기
 					ret = resMapper.updateResManageChange(vo);
-					LOGGER.debug("---------------- 테넌트 사용 여부 확인  ------" + vo.getTennCnt());
-					if (ret > 0 && Integer.valueOf( vo.getTennCnt()) > 0) {
+					//여기 구문 확인 필요
+					LOGGER.debug("체크 시작  ------");
+					LOGGER.debug("---------------- 테넌트 사용 여부 확인  ------" + util.NVL(vo.getTennCnt(), "0"));
+					if (ret > 0 && Integer.valueOf(util.NVL(vo.getTennCnt(), "0")) > 0) {
 						
 						
 						tennInfo.put("userId",  vo.getUserId());
@@ -248,13 +254,15 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 				    resCode = "CANCEL";
 					info.setApprival("N");
 					ret = resMapper.updateResManageChange(vo);
+					//여기 구문 확인 필요
+					LOGGER.debug("체크 시작  ------1");
 					
 					if (ret > 0) {
 						resInfo = resMapper.selectResManageView(vo.getResSeq() );
 						if (! util.NVL(resInfo.get("RES_EQUPINFO") , "").equals("")){
 							EquipStateChange( resInfo, "EQUIP_STATE_1");
 						}
-						
+						LOGGER.debug("체크 시작  ------2");
 						timeMapper.resTimeReset(info);
 						//테넌트 값이 있으지 확인 후 처리
 						if ( Integer.valueOf( util.NVL(resInfo.get("tenn_cnt"), "0")) > 0) {
@@ -262,9 +270,11 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 						    tennInfo.put("resSeq",  vo.getResSeq());
 						    ret = tennService.updateRetireTennantInfoManage(tennInfo);
 						}
+						LOGGER.debug("체크 시작  ------3");
 					}
 			}
 			// 어바이어 장비 통신 
+			LOGGER.debug("------------------------------------------------------1");
 			if (vo.getResGubun().equals("SWC_GUBUN_2")){
 				//영상 회이 이면 어바이어 장비로 값 넘기기
 				int result = 0;
@@ -284,8 +294,10 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 					//취소 로직 변경 후 작업 
 				}				
 			}	
-			//메일 및 메세지 전송
-			meetingService.sendMeetingUserMessage(resInfo);
+			LOGGER.debug("------------------------------------------------------2");
+			//메일 및 메세지 전송(회의실만 적용 예정)
+			if (vo.getItemGubun().equals("ITEM_GUBUN_1"))
+			   meetingService.sendMeetingUserMessage(resInfo);
 		}catch(Exception e) {
 			ret = -1;
 			StackTraceElement[] ste = e.getStackTrace();

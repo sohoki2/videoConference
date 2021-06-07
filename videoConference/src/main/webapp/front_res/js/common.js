@@ -92,6 +92,34 @@ function fn_domNullReplace(checkField, nullVal){
 function need_close(){
      	needPopup.hide();
 }
+function NVL(reqValue){
+			return (reqValue == undefined || reqValue == "") ? "" : reqValue;
+}
+//체크 박스 체크 여부
+function checkbox_val(message, checkboxNm){
+			var checkboxvalue = "";
+			var check_length = $("input:checkbox[name="+checkboxNm+"]:checked").length;
+			if (check_length <1){
+				alert(message);
+				return false;
+			}else {
+				$("input:checkbox[name="+checkboxNm+"]:checked").each(function(){
+					checkboxvalue = checkboxvalue+","+ $(this).val();
+				});	
+			}
+			return checkboxvalue.substring(1);
+}
+//특정 길이 대체 문자
+function stringLength (str, strlength, replaceTxt){
+	if (str.length < parseInt(strlength)){
+		for (var i =0; i < (parseInt(strlength) - str.length); i++ ){
+			str = replaceTxt + str;
+		}
+	}else {
+		str = str;
+	}
+	return str;
+}
 
 function ajaxPaging(currentPageNo, firstPageNo, recordCountPerPage, firstPageNoOnPageList, lastPageNoOnPageList, totalPageCount, pageSize, pageScript){
     var pageHtml = "";
@@ -233,13 +261,11 @@ function closeNav() {
 function openTime() {
   document.getElementById("mySidetime").style.display = "block";
   document.getElementById("mySidetime").style.width = "100%";
-  document.getElementById("mySidetime1").style.width = "280px";
   document.getElementById("userBox").style.width = "220px";
 }
 function closeTime() {
   document.getElementById("mySidetime").style.display = "none";
   document.getElementById("mySidetime").style.width = "0";
-  document.getElementById("mySidetime1").style.width = "0";
   document.getElementById("userBox").style.width = "0";
 }
 

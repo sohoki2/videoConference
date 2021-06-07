@@ -80,7 +80,7 @@
     		 var params = {'resSeq': $("#resSeq").val(), 'cancelCode': $("#cancelCode").val(), 
     				       'reservProcessGubun' : $("#reservProcessGubun").val(), 'cancelReason' : $("#cancelReason").val()
     		              };
-    	     uniAjax("/backoffice/res/reservationProcessChange.do", params, 
+    	     uniAjax("/backoffice/resManage/reservationProcessChange.do", params, 
     	  			function(result) {
     					       if (result.status == "LOGIN FAIL"){
     					    	    alert(result.message);

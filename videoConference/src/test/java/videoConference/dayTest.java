@@ -1,6 +1,7 @@
 package videoConference;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -32,7 +33,9 @@ public class dayTest {
 		//LocalDate.parse("20081004", DateTimeFormatter.BASIC_ISO_DATE);
 
 		
-		System.out.println(conferenceState("다목적홀:unuse,시민아카데미:unuse") );
+		//System.out.println(conferenceState("다목적홀:unuse,시민아카데미:unuse") );
+		LocalDateTime now = LocalDateTime.now();
+		System.out.println( LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm")));
 	}
 	public List<String> dotToList (String _dotlist) {
     	return !_dotlist.equals("") ?  Arrays.asList(_dotlist.split("\\s*,\\s*")) : null;

@@ -19,15 +19,21 @@
 						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 								  AND (    a.SEAT_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 							  </if>		
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
-								  AND a.CENTER_ID = #{params.centerId}
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
+								<![CDATA[    
+							    AND a.CENTER_ID = #{params.searchCenter}
+							    ]]>
 							  </if>
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorSeq)">
-								  AND a.FLOOR_SEQ = #{params.floorSeq}
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
+								<![CDATA[    
+							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
+							    ]]>
 							  </if>
-							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.partSeq)">
-								  AND a.PART_SEQ = #{params.partSeq}
-							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchPartSeq)">
+								<![CDATA[    
+							    AND a.PART_SEQ = #{params.searchPartSeq}
+							    ]]>
+							  </if>	
 	        ) TB  
 	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 	        ORDER BY  CAST(REPLACE(TB.FLOOR_INFO, 'CENTER_FLOOR_','') AS INT) ASC, TB.SEAT_ORDER  DESC

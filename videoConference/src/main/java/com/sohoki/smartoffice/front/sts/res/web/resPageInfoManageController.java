@@ -199,8 +199,7 @@ public class resPageInfoManageController {
 		
 		
 				ModelAndView model = new 	ModelAndView(Globals.JSONVIEW);
-				
-		        JSONObject datas = new JSONObject();
+				JSONObject datas = new JSONObject();
 		
 		
 				try{
@@ -291,9 +290,6 @@ public class resPageInfoManageController {
 			}
 			//사용자 정버 넣기 
 			// 테스트로 해서 사용자 정보 넣기 
-			
-			//searchVO.setUserId( user.getEmpno() );
-			searchVO.setUserId("0027881");
 			
 			//크레딧 정보 사용 여부 확인 
 			if (!empInfoVO.getAuthorCode().equals("ROLE_USER")) {

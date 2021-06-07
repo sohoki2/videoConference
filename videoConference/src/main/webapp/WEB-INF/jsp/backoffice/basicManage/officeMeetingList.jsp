@@ -32,7 +32,7 @@
 	})();
 	</script>
     <script type="text/javascript" src="/js/common.js"></script>
-    <script type="text/javascript" src="/js/backoffice_common.js"></script>
+    <script type="text/javascript" src="/js/back_common.js"></script>
     <script src="/js/popup.js"></script>
     
     
@@ -159,6 +159,9 @@
 		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
 		    		          	  postData : JSON.stringify({
 							    		          			"pageIndex": gridPage,
+							    		          			"searchCenter" :  $("#searchCenter").val(),
+							    		          			"searchFloorSeq" : $("#searchFloorSeq").val(),
+							    		         			"searchKeyword" : $("#searchKeyword").val(),
 							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
 							    		          		    })
     		          		}).trigger("reloadGrid");
@@ -350,7 +353,7 @@
 	    	    	datatype	: "json",
 	    	    	postData	: JSON.stringify({
 	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
-	          			"searchCenter" :  $("#searchCenter").val(),
+	    	    		"searchCenter" :  $("#searchCenter").val(),
 	          			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
 	         			"pageUnit":$('.ui-pg-selbox option:selected').val()
@@ -428,8 +431,8 @@
 		                <tr class="tableM">
 		                	<th>지점</th>
 		                	<td  style="text-align:left;padding-left: 20px;">
-		                	    <select name="searchCenter"  id="searchCenter" onChange="backoffice_common.fn_floorSearch()">
-			                        <option value="">지점 선택</option>
+		                	    <select path="searchCenter" id="searchCenter" title="지점구분" onChange="backoffice_common.fn_floorSearch('','sp_floorCombo', 'searchFloorSeq')">
+		                	        <option value="">지점 선택</option>
 			                         <c:forEach items="${centerInfo}" var="centerInfo">
 			                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
 			                         </c:forEach>

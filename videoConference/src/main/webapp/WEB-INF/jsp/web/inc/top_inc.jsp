@@ -23,7 +23,7 @@
          <div class="menu">
              <ul>
                  <!--메뉴 선택 시 li에 active 추가-->
-                 <li class="menu01"><a href="/web/seat.do">자율좌석예약</a></li>
+                 <li class="menu01"><a href="/web/seatInfo.do">자율좌석예약</a></li>
                  <li class="menu02"><a href="/web/meetingDay.do">회의실예약현황</a></li>
                  <li class="menu04"><a href="/web/coronation.do">시설대관</a></li>
                  <li class="menu03"><a href="/web/mybooking.do">나의예약</a></li>

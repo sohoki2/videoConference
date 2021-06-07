@@ -425,8 +425,6 @@ var CommonJsUtil = {
 				});	
 			}
 			return checkboxvalue.substring(1);
-			
-			CommonJsUtil
 		},tagFilter : function(reqValue){
 			reqValue = reqValue.replace(/</gi,"&lt;");
 			reqValue = reqValue.replace(/>/gi,"&gt;");

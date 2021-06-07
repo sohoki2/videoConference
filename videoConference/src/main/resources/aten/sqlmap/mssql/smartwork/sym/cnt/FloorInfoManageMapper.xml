@@ -36,6 +36,31 @@
 							    AND FLOOR_SEQ in (SELECT strValue FROM dbo.UF_SPLICT( #{params.floorInfo}) )
 							    </if>
 							 </if>
+							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloor)">
+							    <choose>
+							      <when test="params.searchFloor == 'SEAT'">
+							         AND FLOOR_SEQ IN (SELECT FLOOR_SEQ
+													   FROM TB_SEATINFO
+													   WHERE SEAT_USEYN ='Y'
+													   GROUP BY FLOOR_SEQ)    
+							      </when>
+							      <when test="params.searchFloor == 'MEETING'">
+							         AND FLOOR_SEQ IN (SELECT FLOOR_SEQ
+													   FROM TB_MEETING_ROOM
+													   WHERE MEETING_USEYN ='Y'
+														      AND ROOM_TYPE IN('SWC_GUBUN_1', 'SWC_GUBUN_2')
+													   GROUP by FLOOR_SEQ)  
+							      </when>
+							      <otherwise>
+							         AND FLOOR_SEQ IN (SELECT FLOOR_SEQ
+													   FROM TB_MEETING_ROOM
+													   WHERE MEETING_USEYN ='Y'
+														      AND ROOM_TYPE = 'SWC_GUBUN_3'
+													   GROUP by FLOOR_SEQ)
+							      </otherwise>
+							    </choose>
+							 </if>
+							 
 							 
 	        ) TB  
 	    <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.firstIndex)">

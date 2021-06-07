@@ -30,10 +30,13 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
 import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
 import com.sohoki.backoffice.sts.res.service.ResInfoManageService;
+import com.sohoki.backoffice.sts.res.service.TimeInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.ccm.cde.vo.CmmnDetailCodeVO;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
+import com.sohoki.backoffice.sym.cnt.service.FloorInfoManageService;
+import com.sohoki.backoffice.sym.cnt.service.FloorPartInfoManageService;
 import com.sohoki.backoffice.sym.equ.mapper.EquipmentManageMapper;
 import com.sohoki.backoffice.sym.equ.vo.EquipmentVO;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
@@ -41,7 +44,7 @@ import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
 
 @RestController
-//@RequestMapping("/backoffice/basicManage")
+@RequestMapping("/backoffice/resManage")
 public class ResBackInfoManageController {
 
 	
@@ -77,11 +80,21 @@ public class ResBackInfoManageController {
 		@Autowired
 		private EquipmentManageMapper equipMapper;
 		
+		//시간 관련 
+		@Autowired
+		private TimeInfoManageService timeService;
+		
 		@Autowired
 		private SmartUtil util;
 		
+		@Autowired
+		private FloorInfoManageService floorService;
 		
-		@RequestMapping("/backoffice/res/resEquipChange.do")
+		@Autowired
+		private FloorPartInfoManageService partService;
+		
+		
+		@RequestMapping("resEquipChange.do")
 		public ModelAndView updateEquipChange(@ModelAttribute("loginVO") AdminLoginVO loginVO
 													                , @RequestBody ResInfoVO searchVO
 													            	, HttpServletRequest request
@@ -102,15 +115,21 @@ public class ResBackInfoManageController {
                  return model;
                 
         }
-        @RequestMapping("/backoffice/res/reservationProcessChange.do")
+        @RequestMapping("reservationProcessChange.do")
         public ModelAndView updateResProcessChange(@ModelAttribute("loginVO") AdminLoginVO loginVO
-							                , @RequestBody ResInfoVO searchVO
-											, HttpServletRequest request
-											, BindingResult bindingResult) throws Exception{
+									                , @RequestBody ResInfoVO searchVO
+													, HttpServletRequest request
+													, BindingResult bindingResult) throws Exception{
         	ModelAndView model = new ModelAndView(Globals.JSONVIEW);
         	try{
     			  
+        		
+        		  //테넌트 값 가지고 오기 
+        		   
       			  int ret = resService.updateResManageChange(searchVO);
+      			  //테넌트 처리 
+      			  
+      			  
       			  if (ret>0){
 	      				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 	    				model.addObject(Globals.STATUS_MESSAGE, "정상적으로 처리 되었습니다.");
@@ -124,7 +143,7 @@ public class ResBackInfoManageController {
         	}
         	return model;
         }
-        @RequestMapping(value="/backoffice/popup/reasonPop.do")		
+        @RequestMapping(value="reasonPop.do")		
 		public ModelAndView resPopResCancelInfo(@ModelAttribute("loginVO") AdminLoginVO loginVO
 				                                , @ModelAttribute("searchVO") ResInfoVO searchVO
 												, HttpServletRequest request
@@ -146,7 +165,7 @@ public class ResBackInfoManageController {
 		   
         }
         
-        @RequestMapping(value="/backoffice/res/resSendMessage.do")
+        @RequestMapping(value="resSendMessage.do")
         public ModelAndView resSendMessage(@ModelAttribute("loginVO") AdminLoginVO loginVO
 												                , @ModelAttribute("searchVO") ResInfoVO searchVO
 																, HttpServletRequest request
@@ -181,7 +200,7 @@ public class ResBackInfoManageController {
         	return model;
         }
 		
-		@RequestMapping(value="/backoffice/popup/resInfo.do")		
+		@RequestMapping(value="resInfo.do")		
 		public ModelAndView resResInfoPop(@ModelAttribute("loginVO") AdminLoginVO loginVO
 				                                , @ModelAttribute("searchVO") ResInfoVO searchVO
 												, HttpServletRequest request
@@ -218,7 +237,7 @@ public class ResBackInfoManageController {
 		   return model;
           
 		}
-		@RequestMapping(value="/backoffice/resManage/resInfoAjax.do")		
+		@RequestMapping(value="resInfoAjax.do")		
 		public ModelAndView resResInfoAjax(@ModelAttribute("loginVO") AdminLoginVO loginVO
 							                                , @RequestParam("resSeq") String resSeq
 															, HttpServletRequest request
@@ -261,7 +280,7 @@ public class ResBackInfoManageController {
 		   return model;
           
 		}
-		@RequestMapping(value="/backoffice/resManage/resEquChange.do")
+		@RequestMapping(value="resEquChange.do")
 		public ModelAndView resEquipChange(@ModelAttribute("loginVO") AdminLoginVO loginVO
 															 , @RequestBody ResInfoVO searchVO
 															 , HttpServletRequest request
@@ -278,64 +297,45 @@ public class ResBackInfoManageController {
 			   }
 		       return model;
 		}
-		@RequestMapping(value="/backoffice/resManage/resListAjax.do")
-		public ModelAndView resList (@RequestBody Map<String, Object> searchVO
-	                                  , HttpServletRequest request
-	                                  , BindingResult bindingResult) throws Exception {
-			
-			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-			
-			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-			
-			try{
-				if(!isAuthenticated) {
-			    	 model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
-			    	 model.setViewName("/backoffice/login");
-			    	 return model;
-				}else{
-					 HttpSession httpSession = request.getSession(true);
-				     AdminLoginVO loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
-				     
-				     searchVO.put("authorCode", loginVO.getAuthorCode());
-				     
-				     
-				     
-				     PaginationInfo paginationInfo = new PaginationInfo();
-					 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
-					 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
-					 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
-						
-					 searchVO.put("firstindex", paginationInfo.getFirstRecordIndex());
-					 searchVO.put("lastindex", paginationInfo.getLastRecordIndex());
-					 searchVO.put("recordcountperpage", paginationInfo.getRecordCountPerPage());
-					
-					 
-			          String date1 = util.NVL(searchVO.get("searchStartDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(-7)) ;
-			          String date2 =  util.NVL(searchVO.get("searchEndDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(0)) ;
-			          searchVO.put("searchStartDay", date1);
-			          searchVO.put("searchEndDay", date2);
-			          searchVO.put("SearchEmpno", loginVO.getAdminId());
-			          
-			  		  
-			  		  
-			  		  List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
-			  		  int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
-				      model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
-				      model.addObject(Globals.STATUS_REGINFO, searchVO);
-				      paginationInfo.setTotalRecordCount(totCnt);
-				      model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
-				      model.addObject(Globals.PAGE_TOTALCNT, totCnt);
-				}
-			}catch(Exception e){
-				
-			}
-			return model;
+		
+		//좌셕 현황 리스트
+		@RequestMapping(value="seatStateInfo.do")		
+		public ModelAndView resSeatStateInfo(@RequestBody Map<String, Object> params
+												 , HttpServletRequest request
+												 , BindingResult bindingResult) throws Exception{
+		
+		  ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		  
+		  try{
+			  //지도 이미지
+			  //System.out.println("floorSeq" + params.get("floorSeq"));
+			  
+			  if (params.get("resStarttime") == null ) {
+				  params.put("resStarttime", "0800");
+			  }
+			  if (params.get("resEndtime") == null ) {
+				  params.put("resEndtime", "1730");
+			  }
+			  
+			  if (params.get("floorSeq") != null ) {
+				     //System.out.println("partSeq" + params.get("partSeq"));
+			    	 Map<String, Object> mapInfo = params.get("partSeq") == null ? floorService.selectFloorInfoManageDetail(params.get("floorSeq").toString()) : partService.selectFloorPartInfoManageDetail(params.get("partSeq").toString());
+			    	 model.addObject("seatMapInfo", mapInfo);
+			  }
+	  		  model.addObject(Globals.JSON_RETURN_RESULTLISR, timeService.selectSeatStateInfo(params));
+	  		  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  }catch(Exception e){
+			  LOGGER.error("resSeatStateInfo error:"+ e.toString());
+			  model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		  }
+		  return model;
 		}
-		@RequestMapping(value="/backoffice/resManage/resList.do")		
-		public ModelAndView resPreCheckString(@ModelAttribute("loginVO") AdminLoginVO loginVO
-																 , @ModelAttribute("searchVO") ResInfoVO searchVO
-																 , HttpServletRequest request
-																 , BindingResult bindingResult) throws Exception{
+		@RequestMapping(value="resList.do")		
+		public ModelAndView resList(@ModelAttribute("loginVO") AdminLoginVO loginVO
+											 , @ModelAttribute("searchVO") ResInfoVO searchVO
+											 , HttpServletRequest request
+											 , BindingResult bindingResult) throws Exception{
 		
 		  ModelAndView model = new ModelAndView("/backoffice/resManage/resList");
 		  
@@ -383,48 +383,64 @@ public class ResBackInfoManageController {
 		  }
 		  return model;
 		}
-		// 엑셀 다운로드는 jqgrid 로 변경 
-		/*
-		@RequestMapping("/backoffice/res/resListExcel.do")
-    	public ModelAndView selectBrodExcelList (@ModelAttribute("loginVO") AdminLoginVO loginVO
-												 , @ModelAttribute("searchVO") ResInfoVO searchVO
-												 , HttpServletRequest request
-												 , BindingResult bindingResult) throws Exception{
-        	
-        	
-			 Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-			  if(!isAuthenticated) {
-				        ModelAndView model = new ModelAndView();
-			    		model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
-			    		model.setViewName("/backoffice/login");
-			    		return model;
-			  }else{
-			    	 HttpSession httpSession = request.getSession(true);
-			    	 loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
-				     searchVO.setAuthorCode(loginVO.getAuthorCode());
-			  }
+		@RequestMapping(value="resListAjax.do")
+		public ModelAndView resListAjax (@ModelAttribute("loginVO") AdminLoginVO loginVO
+				                        , @RequestBody Map<String, Object> searchVO
+	                                    , HttpServletRequest request
+	                                    , BindingResult bindingResult) throws Exception {
 			
-            //관리자 강제로 사용
-            searchVO.setUserId("");
-            
-            PaginationInfo paginationInfo = new PaginationInfo();
-  		    paginationInfo.setCurrentPageNo(1);
-  		    paginationInfo.setRecordCountPerPage(10000);
-  		    paginationInfo.setPageSize(10000);
-  		    searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
-		    searchVO.setLastIndex(100000000);
-		    searchVO.setRecordCountPerPage(1000000);
-  		    
-    		List<ResInfoVO> resReport =  resService.selectResManageListByPagination(searchVO);
-    		
-    		Map<String, Object> map = new HashMap<String, Object>();
-    		map.put("resReport", resReport);
-    		map.put("resType", searchVO.getSearchRoomType());
-    		
-    		
-    		LOGGER.debug("2");
-    		return new ModelAndView("ResReportExcelView", map);
-    		
-    	}
-    	*/
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+			
+			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			
+			try{
+				if(!isAuthenticated) {
+			    	 model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+			    	 model.setViewName("/backoffice/login");
+			    	 return model;
+				}else{
+					 HttpSession httpSession = request.getSession(true);
+				     loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+				     searchVO.put("authorCode", loginVO.getAuthorCode());
+				     
+				     PaginationInfo paginationInfo = new PaginationInfo();
+					 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+					 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
+					 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
+					 
+					 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+					 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
+					 searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+					
+					 
+			         String date1 = util.NVL(searchVO.get("searchStartDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(-7)) ;
+			         String date2 =  util.NVL(searchVO.get("searchEndDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(0)) ;
+			         searchVO.put("searchStartDay", date1);
+			         searchVO.put("searchEndDay", date2);
+			         searchVO.put("SearchEmpno", loginVO.getAdminId());
+			          
+			  		 List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
+			  		 int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+				     model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+				     model.addObject(Globals.STATUS_REGINFO, searchVO);
+				     
+				     
+				     paginationInfo.setTotalRecordCount(totCnt);
+				     model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+				     model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+				     model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				     
+				}
+			}catch(Exception e){
+				 StackTraceElement[] ste = e.getStackTrace();
+			      
+		         int lineNumber = ste[0].getLineNumber();
+				 LOGGER.error("resPreCheckString error:"+ e.toString() + ":" + lineNumber);
+				 
+				 model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				 model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+			}
+			return model;
+		}
+		
 }

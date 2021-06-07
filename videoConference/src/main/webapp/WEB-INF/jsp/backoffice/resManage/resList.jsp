@@ -16,23 +16,21 @@
     <link href="/css/global.css" rel="stylesheet" />
     <link href="/css/page.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/new/reset.css"> 
-    
-    
     <link rel="stylesheet" href="/css/new/needpopup.min.css">
-    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+    
+    
+    <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/back_common.js"></script>
     <script src="/js/popup.js"></script>
     <link rel="stylesheet" href="/css/new/jquery-ui.css">
     <link rel="stylesheet" href="/css/new/needpopup.min.css">
+    
+    
+    
     <script src="/js/jquery-ui.js"></script>
-    <script type="text/javascript" src="/js/com_resInfo.js"></script>
-    <script type="text/javascript" src="/js/common_res.js"></script>
-    
-    
-     <link rel="stylesheet" type="text/css" href="/resources/jqgrid/src/css/ui.jqgrid.css">
-     <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
-     <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
-     
+    <script type="text/javascript" src="/js/front/com_resInfo.js"></script>
+    <script type="text/javascript" src="/js/front/common_res.js"></script>
     <script>
 	jQuery.browser = {};
 	(function () {
@@ -43,6 +41,14 @@
 	        jQuery.browser.version = RegExp.$1;
 	    }
 	})();
+	</script>
+    <link rel="stylesheet" type="text/css" href="/css/toggle.css">
+    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="/resources/jqgrid/src/css/ui.jqgrid.css">
+    <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
+    <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
+     
+    <script>
     $(function () {
         var clareCalendar = {
             monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
@@ -63,7 +69,7 @@
         $("img.ui-datepicker-trigger").attr("style", "margin-left:3px; vertical-align:middle; cursor:pointer;"); //이미지버튼 style적용
 	    $("#ui-datepicker-div").hide(); //자동으로 생성되는 div객체 숨김
 	    // jqgrid  생성 하기
-
+	    jqGridFunc.setGrid("mainGrid");
 	});	
     </script>
 
@@ -77,26 +83,204 @@
 			height: 30px;
 		 }
 	 </style>
-    
+    <script type="text/javascript">
+      var jqGridFunc  = {
+    		 setGrid : function(gridOption){
+    			var grid = $('#'+gridOption);
+    		    var postData = {"pageIndex": "1"};
+    		    grid.jqGrid({
+    		    	url : '/backoffice/resManage/resListAjax.do' ,
+    		        mtype :  'POST',
+    		        datatype :'json',
+    		        pager: $('#pager'),  
+    		        ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
+    		        ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
+    		        ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
+    		       
+    		        postData : JSON.stringify( postData ),
+    		        jsonReader : {
+	   		             root : 'resultlist',
+	   		             "page":"paginationInfo.currentPageNo",
+	   		             "total":"paginationInfo.totalPageCount",
+	   		             "records":"paginationInfo.totalRecordCount",
+	   		             repeatitems:false
+   		            },
+    		        colModel :  [
+    		 	                { label: 'res_seq', key: true, name:'res_seq',   index:'res_seq',      align:'center', hidden:true},
+    			                { label: '부서',  name:'deptname',         index:'deptname',        align:'left',   width:'10%' },
+    			                { label: '이름',  name:'empname',         index:'empname',        align:'left',   width:'10%' },
+    			                { label: '사번',  name:'empno',         index:'empno',        align:'left',   width:'10%' },
+    			                { label: '연락처',  name:'emphandphone',         index:'emphandphone',        align:'left',   width:'10%' },
+    			                { label: '지점',  name:'center_nm',         index:'center_nm',        align:'left',   width:'10%' },
+    			                { label: '층수', name:'floor_name',       index:'floor_name',      align:'center', width:'10%'},
+    			                { label: '예약 구분', name:'item_gubun',       index:'item_gubun',      align:'center', width:'10%'},
+    			                { label: '예약시설명', name:'item_name',       index:'item_name',      align:'center', width:'10%'},
+    			                { label: '신청 제목', name:'res_title',       index:'res_title',      align:'center', width:'20%' },
+    			                { label: '예약 신청일', name:'resStartday',       index:'resStartday',      align:'center', width:'20%' 
+    			                  , formatter: jqGridFunc.resDayInfo},
+    			                { label: '예약 일자', name:'reg_date', index:'reg_date', align:'center', width:'12%', 
+      			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
+    			                { label: '결제상태', name:'reservprocessgubuntxt',       index:'reservprocessgubuntxt',  align:'center', width:'10%'},
+    			                { label: '관리자승인', name:'reserv_process_gubun',       index:'reserv_process_gubun',  align:'center', width:'10%'
+    			                  , formatter: jqGridFunc.resProcess}
+    			               
+    			                
+    			         ],  //상단면 
+    		        rowNum : 10,  //레코드 수
+    		        rowList : [10,20,30,40,50,100],  // 페이징 수
+    		        pager : pager,
+    		        refresh : true,
+    	            rownumbers : true, // 리스트 순번
+    		        viewrecord : true,    // 하단 레코드 수 표기 유무
+    		        //loadonce : false,     // true 데이터 한번만 받아옴 
+    		        loadui : "enable",
+    		        loadtext:'데이터를 가져오는 중...',
+    		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
+    		        height : "100%",
+    		        autowidth:true,
+    		        shrinkToFit : true,
+    		        refresh : true,
+    		        loadComplete : function (data){
+    		        	 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
+    		        },loadError:function(xhr, status, error) {
+    		            alert(error); 
+    		        }, onPaging: function(pgButton){
+    		        	  var gridPage = grid.getGridParam('page'); //get current  page
+    		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
+    		        	  var totalPage = grid.getGridParam("total");
+    		              if (pgButton == "next"){
+    		            	  if (gridPage < totalPage ){
+    		            		  gridPage += 1;
+    		            	  }else{
+    		            		  gridPage = gridPage;
+    		            	  }
+    		              }else if (pgButton == "prev"){
+    		            	  if (gridPage > 1 ){
+    		            		  gridPage -= 1;
+    		            	  }else{
+    		            		  gridPage = gridPage;
+    		            	  }
+    		              }else if (pgButton == "first"){
+    		            	  gridPage = 1;
+    		              }else if  ( pgButton == "last"){
+    		            	  gridPage = totalPage;
+    		              } else if (pgButton == "user"){
+    		            	  var nowPage = Number($("#pager .ui-pg-input").val());
+    		            	  
+    		            	  if (totalPage >= nowPage && nowPage > 0 ){
+    		            		  gridPage = nowPage;
+    		            	  }else {
+    		            		  $("#pager .ui-pg-input").val(nowPage);
+    		            		  gridPage = nowPage;
+    		            	  }
+    		              }else if (pgButton == "records"){
+    		            	  gridPage = 1;
+    		              }
+    		              grid.setGridParam({
+		    		          	  page : gridPage,
+		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
+		    		          	  postData : JSON.stringify(  {
+							    		          			"pageIndex": gridPage,
+							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
+							    		          		})
+    		          		}).trigger("reloadGrid");
+    		        },onSelectRow: function(rowId){
+    	                if(rowId != null) {  }// 체크 할떄
+    	            },ondblClickRow : function(rowid, iRow, iCol, e){
+    	            	grid.jqGrid('editRow', rowid, {keys: true});
+    	            },onCellSelect : function (rowid, index, contents, action){
+    	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
+    	                if (cm[index].name=='empname' || cm[index].name=='empno' || cm[index].name=='center_nm' || cm[index].name=='floor_name'
+    	                	 || cm[index].name=='res_gubun'  || cm[index].name=='item_name' ){
+    	                	jqGridFunc.fn_ResInfo("Edt", $(this).jqGrid('getCell', rowid, 'center_id'));
+            		    }
+    	                
+    	            }
+    		    });
+    		    
+    		}, resDayInfo : function(cellvalue, options, rowObject){
+    			return rowObject.resstartday +"일 " + rowObject.resstarttime + "~" + rowObject.resendtime ;
+    		}, resProcess : function (cellvalue, options, rowObject){
+    			//예약 combo 
+    			var resCombo = ""
+    			if (rowObject.reserv_process_gubun == "PROCESS_GUBUN_1" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_2" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_4"){
+    				var selecte1 =  (rowObject.reserv_process_gubun == 'PROCESS_GUBUN_4') ? "selected" : "";
+    				var selecte2 =  (rowObject.reserv_process_gubun == 'PROCESS_GUBUN_5') ? "selected" : "";
+    				resCombo = "<select name=\"reservProcessGubun\"  id=\"reservProcessGubun_"+rowObject.res_seq+"\" onChange=\"jqGridFunc.fn_change_process('reservProcessGubun_"+rowObject.res_seq+"', '"+rowObject.res_seq+"');\">"
+    			             + "   <option value=''>관리자 승인여부</option>"  
+    			             + "   <option value='PROCESS_GUBUN_4' "+ selecte1 +">관리자 승인</option>"
+    			             + "   <option value='PROCESS_GUBUN_5' "+ selecte2 +">관리자 취소</option>"
+    			             + "</select>";
+    			}else {
+    				resCombo = rowObject.reservprocessgubuntxt;
+    			}
+    			return resCombo;
+    		}, fn_ResInfo : function (cellvalue, options, rowObject){
+    			//예약 상세 
+    			
+    		}, fn_change_process : function(code, seq){
+    			
+    	    	if (confirm( "승인여부를 변경 하시겠습니까?")== true){
+    	    		if($("#"+code+"").val() == "PROCESS_GUBUN_5" ){
+    					var url ="/backoffice/resManage/reasonPop.do?resSeq="+seq;
+    		  			var pop_up = NewWindow(url, 'name', '550', '550', 'yes');
+    				}else {
+    					 var params = {'resSeq': seq, 'cancelCode': '', 
+    		    				       'reservProcessGubun' : $("#"+code+"").val(), 'cancelReason' : ''
+    		    		              };
+    		    	     uniAjax("/backoffice/resManage/reservationProcessChange.do", params, 
+    		    	  			 function(result) {
+    		    					       if (result.status == "LOGIN FAIL"){
+    		    					    	    alert(result.message);
+    		    								location.href="/backoffice/login.do";
+    		    						   }else if (result.status == "SUCCESS"){
+    		    							    alert(result.message);
+    		    							    jqGridFunc.fn_search();
+    		    						   }else {
+    		    							   alert(result.message);
+    		    						   }
+   		    					  },function(request){
+   		    						    alert("Error:" +request.status );	       						
+   		    					  }    		
+    		    	     );
+    				}
+    	   		}else{
+    	   			jqGridFunc.fn_search();
+    	   		}
+    	    }, fn_search: function(){
+ 	    	   $("#mainGrid").setGridParam({
+	    	    	 datatype	: "json",
+	    	    	 postData	: JSON.stringify(  {
+	    	    		 "searchDayGubun" : fn_emptyReplace($('input[name="searchDayGubun"]:checked').val(),"")	,
+	    	    		 "searchStartDay" : $("#searchStartDay").val(),
+	    	    		 "searchEndDay" : $("#searchEndDay").val(),
+	    	    		 "searchCondition" : $("#searchCondition").val(),
+	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
+	    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
+	         			 "searchKeyword" : $("#searchKeyword").val(),
+	         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
+	         		}),
+	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
+	    	     }).trigger("reloadGrid");
+
+	        }
+       
+      }
+  </script>
     
 </head>
 <body>
 <div id="wrapper">	
 <form:form name="regist" commandName="regist" method="post" action="/backoffice/resManage/resList.do">
-<jsp:useBean id="nowDate" class="java.util.Date" />
-<c:set var="sysday"><fmt:formatDate value="${nowDate}" pattern="yyyyMMdd" /></c:set>
-<c:set var="systime"><fmt:formatDate value="${nowDate}" pattern="HH:mm" /></c:set>
-
-
-
 <c:import url="/backoffice/inc/top_inc.do" />
-<input type="hidden" name="pageIndex" id="pageIndex" value="${regist.pageIndex }">
-
-<input type="hidden" name="delResSeq" id="delResSeq">
-<input type="hidden" name="hid_equpState" id="hid_equpState">
-
-<input type="hidden" name="mode" id="mode">
-<input type="hidden" name="searchRoomType" id="searchRoomType" value="${regist.searchRoomType}">
+	<jsp:useBean id="nowDate" class="java.util.Date" />
+	<c:set var="sysday"><fmt:formatDate value="${nowDate}" pattern="yyyyMMdd" /></c:set>
+	<c:set var="systime"><fmt:formatDate value="${nowDate}" pattern="HH:mm" /></c:set>
+	<input type="hidden" name="pageIndex" id="pageIndex" value="${regist.pageIndex }">
+	<input type="hidden" name="delResSeq" id="delResSeq">
+	<input type="hidden" name="hid_equpState" id="hid_equpState">
+	<input type="hidden" name="mode" id="mode">
+	<input type="hidden" name="searchRoomType" id="searchRoomType" value="${regist.searchRoomType}">
 
 <div class="Aconbox">
         <div class="rightT">
@@ -137,9 +321,9 @@
 		                	<th style="width:90px;">검색어</th>
 		                	<td colspan="5"  style="text-align:left;padding-left: 20px;">
 		                		<select name="searchCondition"  id="searchCondition">
-									<option value="c.SEAT_NAME" >회의실</option>
-									<option value="b.EMP_NO" >사번</option>
-									<option value="b.EMP_NM" >이름</option>
+									<option value="a.ITEM_NAME">시설명코드</option>
+									<option value="b.EMPNO" >사번</option>
+									<option value="b.EMPNAME" >이름</option>
 								</select>
 								<input class="nameB " type="text" name="searchKeyword" id="searchKeyword"   size="20"  maxlength="30"    onkeydown="if(event.keyCode==13){search_form();}">
 		                	</td>
@@ -150,26 +334,13 @@
 						</tr>
 						<tr>  
 		                	<th>회의실별</th>
-		                	<td style="text-align:left;padding-left: 20px;">
-		                		<form:select path="searchCenterId" id="searchCenterId" title="회의실구분">
+		                	<td style="text-align:left;padding-left: 20px;" colspan="5">
+		                		<form:select path="searchCenter" id="searchCenter" title="회의실구분" onChange="backoffice_common.fn_floorSearch('','sp_floorCombo', 'searchFloorSeq')">
 								         <form:option value="" label="회의실구분"/>
 				                         <form:options items="${searchCenterId}" itemValue="centerId" itemLabel="centerNm"/>
 						    	</form:select>	
-		                	</td>
-		                	<th>승인구분</th>
-				            <td style="text-align:left;padding-left: 20px;">
-			                    <select name="searchProxyYn"  id="searchProxyYn">
-									<option value="">승인/구분</option>
-									<option value="S"  >본인</option>
-									<option value="P" >승인자 지정</option>
-								</select>
-							</td>
-		                	<th>부서별</th>
-		                	<td style="text-align:left;padding-left: 20px;">
-		                		<form:select path="searchOrgId" id="searchOrgId" title="부서구분" style="width:120px;">
-								         <form:option value="" label="부서구분"/>
-				                         <form:options items="${selectOrg}" itemValue="deptcode" itemLabel="deptname"/>
-						    	</form:select>
+						    	<span id="sp_floorCombo"></span>
+						    	
 		                	</td>
 		                	<th>결재상태별</th>
 		                	<td colspan="3">
@@ -202,11 +373,10 @@
 <c:import url="/backoffice/inc/bottom_inc.do" /> 
 <!--  장비 요청 팝업 -->
 
-<div id='equipPop' class="needpopup">
+    <div id='equipPop' class="needpopup">
         <div class="popHead">
             <h2>대여 현황</h2>
         </div>
-        
         <div class="pop_footer">
             <span id="join_confirm_comment" class="join_pop_main_subTxt">장비를 선택 후 상태 변경 버튼을 클릭 하세요.</span>
              <a href="javascript:fn_equpChange('EQUIP_STATE_2');" class="redBtn" id="btnRental">장비 대여</a> 
@@ -298,7 +468,6 @@
 				   <th>참석자 상세</th>
 				   <td colspan="3">
 				    <span id="sp_resAttendInfo"></span>
-				   
 				   </td>
 				 </tr>
 			
@@ -325,198 +494,6 @@
 <script src="/js/jquery-ui.js"></script>
 </div>
  <script type="text/javascript">
-    $(document).ready(function() {	
-	    jqGridFunc.setGrid("mainGrid");
-	});	  
-    var jqGridFunc  = {
-    		
-    		setGrid : function(gridOption){
-    		var grid = $('#'+gridOption);
-    		    //ajax 관련 내용 정리 하기 
-    		    grid.jqGrid({
-    		    	url : '/backoffice/resManage/resListAjax.do' ,
-    		        mtype :  'POST',
-    		        datatype :'json',
-    		        pager: $('#pager'),  
-    		        ajaxGridOptions: { contentType: "application/json; charset=UTF-8" },
-    		        ajaxRowOptions: { contentType: "application/json; charset=UTF-8", async: true },
-    		        ajaxSelectOptions: { contentType: "application/json; charset=UTF-8", dataType: "JSON" }, 
-    		       
-    		        postData :  JSON.stringify( postData ),
-    		        jsonReader : {
-	   		             root : 'resultlist',
-	   		             "page":"paginationInfo.currentPageNo",
-	   		             "total":"paginationInfo.totalPageCount",
-	   		             "records":"paginationInfo.totalRecordCount",
-	   		             repeatitems:false
-   		            },
-    		        colModel :  [
-    		 	                { label: 'resSeq', key: true, name:'resSeq',       index:'resSeq',      align:'center', hidden:true},
-    			                { label: '부서',  name:'deptname',         index:'deptname',        align:'left',   width:'10%'},
-    			                { label: '이름',  name:'empname',         index:'empname',        align:'left',   width:'9%'},
-    			                { label: '사번',  name:'userId',         index:'userId',        align:'left',   width:'9%'},
-    			                
-    			                { label: '연락처',  name:'empmail',         index:'empmail',        align:'left',   width:'9%'},
-    			                { label: '센터',  name:'centerNm',         index:'centerNm',        align:'left',   width:'9%'},
-    			                { label: '회의실명',  name:'seatName',         index:'seatName',        align:'left',   width:'9%'},
-    			                { label: '회의구분',  name:'resGubunTxt',         index:'resGubunTxt',        align:'left',   width:'9%'},
-    			                { label: '회의명',  name:'resTitle',         index:'resTitle',        align:'left',   width:'15%'},
-    			                
-    			                
-    			                { label: '공개여부', name:'resPassTxt',       index:'resPassTxt',      align:'center', width:'10%'},
-    			                { label: '참여인원', name:'attendListTxt',       index:'attendListTxt',      align:'center', width:'10%'},
-    			                { label: '신청일자', name:'regDate',       index:'regDate',      align:'center', width:'10%'},
-    			                { label: '예약일자', name:'resStartday',    index:'resStartday',     align:'center', width:'10%'},
-    			                { label: '결제상태', name:'reservProcessGubunTxt',       index:'reservProcessGubunTxt',      align:'center', width:'10%'},
-    			                { label: '관리자승인', name:'reservProcessGubun',      index:'reservProcessGubun',     align:'center', width:'14%'},
-    			                { label: '비품승인', name: 'equipType01',  index:'equipType01',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
-    			         ],  //상단면 
-    		        rowNum : 30,  //레코드 수
-    		        rowList : [10,20,30,40,50,100],  // 페이징 수
-    		        pager : pager,
-    		        refresh : true,
-    	            rownumbers : true, // 리스트 순번
-    		        viewrecord : true,    // 하단 레코드 수 표기 유무
-    		        //loadonce : false,     // true 데이터 한번만 받아옴 
-    		        loadui : "enable",
-    		        loadtext:'데이터를 가져오는 중...',
-    		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "380px",
-    		        autowidth:true,
-    		        shrinkToFit : true,
-    		        refresh : true,
-    		        loadComplete : function (data){
-    		        	
-    		        },loadError:function(xhr, status, error) {
-    		            alert(error); 
-    		        }, onPaging: function(pgButton){
-    		        	  var gridPage = grid.getGridParam('page'); //get current  page
-    		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
-    		        	  var totalPage = grid.getGridParam("total");
-    		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
-    		            		  gridPage += 1;
-    		            	  }else{
-    		            		  gridPage = gridPage;
-    		            	  }
-    		              }else if (pgButton == "prev"){
-    		            	  if (gridPage > 1 ){
-    		            		  gridPage -= 1;
-    		            	  }else{
-    		            		  gridPage = gridPage;
-    		            	  }
-    		              }else if (pgButton == "first"){
-    		            	  gridPage = 1;
-    		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
-    		              } else if (pgButton == "user"){
-    		            	  var nowPage = Number($("#pager .ui-pg-input").val());
-    		            	  
-    		            	  if (totalPage >= nowPage && nowPage > 0 ){
-    		            		  gridPage = nowPage;
-    		            	  }else {
-    		            		  $("#pager .ui-pg-input").val(nowPage);
-    		            		  gridPage = nowPage;
-    		            	  }
-    		              }else if (pgButton == "records"){
-    		            	  gridPage = 1;
-    		              }
-    		              grid.setGridParam({
-		    		          	  page : gridPage,
-		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
-		    		          	  postData : JSON.stringify(  {
-							    		          			"pageIndex": gridPage,
-							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
-							    		          		})
-    		          		}).trigger("reloadGrid");
-    		        },onSelectRow: function(rowId){
-    	                if(rowId != null) {  }// 체크 할떄
-    	            },ondblClickRow : function(rowid, iRow, iCol, e){
-    	            	grid.jqGrid('editRow', rowid, {keys: true});
-    	            },onCellSelect : function (rowid, index, contents, action){
-    	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
-    	                //console.log(cm);
-    	                if (cm[index].name=='msg_title'){
-    	                	jqGridFunc.fn_MessageInfo("Edt", $(this).jqGrid('getCell', rowid, 'msg_seq'));
-            		    }
-    	            }
-    		    });
-    		},rowBtn: function (cellvalue, options, rowObject){
-            	 if (rowObject.msg_seq != "")
-            	    	return '<a href="javascript:jqGridFunc.delRow('+rowObject.msg_seq+');">삭제</a>';
-           },refreshGrid : function(){
-	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	       }, delRow : function (msg_seq){
-        	    if(msg_seq != "") {
-        		   var params = {'msgSeq':msg_seq };
-        		   fn_uniDel("/backoffice/basicManage/msgDelete.do",params, " /backoffice/basicManage/msgList.do");
-		        }
-           },fn_MessageInfo : function (mode, msgSeq){
-        	    $("#btn_message").trigger("click");
-			    $("#mode").val(mode);
-		        $("#msgSeq").val(msgSeq);
-		        if (mode == "Edt"){
-		        	$("#btnUpdate").text("수정");
-		        	
-		     	   var params = "msgSeq="+$("#msgSeq").val();
-		     	   var url = "/backoffice/basicManage/msgDetail.do?"+params;
-		     	   uniAjaxSerial(url, params, 
-		          			function(result) {
-		     				       if (result.status == "LOGIN FAIL"){
-		     				    	   alert(result.meesage);
-		       						   location.href="/backoffice/login.do";
-		       					   }else if (result.status == "SUCCESS"){
-		       						   //총 게시물 정리 하기
-		       						    var obj  = result.regist;
-		       						      $("#msgTitle").val(obj.msg_title);
-							    		   $("#msgGubun").val( obj.msg_gubun  );
-							    		   $("#msgContent").val(obj.msg_content);
-							    		   $('input:radio[name=useYn]:radio[value=' + obj.useyn + ']').prop("checked", true);	 
-							    		   jqGridFunc.fn_contentView();
-		       					   }
-		     				    },
-		     				    function(request){
-		     					    alert("Error:" +request.status );	       						
-		     				    }    		
-		               );
-		        }
-           },clearGrid : function() {
-               $("#mainGrid").clearGridData();
-           },fn_contentView : function (){
-			  if ($("#msgGubun").val() == "MSG_TYPE_1")
-				  $("#dv_message").show();
-			  else 
-				  $("#dv_message").hide();
-		  },fn_CheckForm  : function (){
-			     if (any_empt_line_id("msgTitle", "메세지 제목을 입력해주세요.") == false) return;		
-		    	 if (any_empt_line_id("msgGubun", "메세지 구분을 선택해주세요.") == false) return;		
-		    	 //확인 
-		    	 var url = "/backoffice/basicManage/msgUpdate.do";
-		    	 var params = { 'msgSeq' : $("#msgSeq").val(),
-		    			 'msgTitle' : $("#msgTitle").val(),
-		    			 'msgGubun' : $("#msgGubun").val(),
-		    			 'msgContent' : $("#msgContent").val(),
-		    			 'useYn' :  fn_emptyReplace($('input[name="useYn"]:checked').val(),"Y"),
-		    			 'mode' : $("#mode").val()
-		    	 }; 
-		    	 uniAjax(url, params, 
-		      			function(result) {
-		 				       if (result.status == "LOGIN FAIL"){
-		 				    	   alert(result.meesage);
-		   						   location.href="/backoffice/login.do";
-		   					   }else if (result.status == "SUCCESS"){
-		   						   //총 게시물 정리 하기
-		   						   $("#btn_needPopHide").trigger("click");
-		   						   $('#mainGrid').jqGrid().trigger("reloadGrid");
-		   					   }
-		 				    },
-		 				    function(request){
-		 					    alert("Error:" +request.status );	   
-		 					    $("#btn_needPopHide").trigger("click");
-		 				    }    		
-		           );
-		  }   
-    }
     function fn_resinfo(resSeq){
        var params =  {"resSeq" : resSeq};
        uniAjaxSerial("/backoffice/resManage/resInfoAjax.do?resSeq="+resSeq, params, 
@@ -650,55 +627,6 @@
  	      );
     }
     var pop_up;
-    function change_process(code, seq){
-    	
-    	$('input[id="resCode"]:checked').each(function(){
-  			 seqArr += "," + $(this).val();
-  		 })
-  		 
-		if (confirm( "승인여부를 변경 하시겠습니까?")== true){
-			if($("#"+code+"").val() == "PROCESS_GUBUN_5" ){
-				var url ="/backoffice/popup/reasonPop.do?resSeq="+seq;
-	  			pop_up = NewWindow(url, 'name', '550', '550', 'yes');
-			}else {
-				 var params = {'resSeq': seq, 'cancelCode': '', 
-	    				       'reservProcessGubun' : $("#"+code+"").val(), 'cancelReason' : ''
-	    		              };
-	    	     uniAjax("/backoffice/res/reservationProcessChange.do", params, 
-	    	  			function(result) {
-	    					       if (result.status == "LOGIN FAIL"){
-	    					    	    alert(result.message);
-	    								location.href="/backoffice/login.do";
-	    						   }else if (result.status == "SUCCESS"){
-	    							    alert(result.message);
-	    							    location.reload();
-	    						   }else {
-	    							   alert(result.message);
-	    						   }
-	    					    },
-	    					    function(request){
-	    						    alert("Error:" +request.status );	       						
-	    					    }    		
-	    	      );
-			}
-		  	
-   		}else{
-   			document.location.reload();
-   		}
-    	
-    }
-    function search_form(){
-    	if ($("#searchStartDay").val() > $("#searchEndDay").val()) {
-    		alert("시작일이 종료일 보다 빠를수 없습니다.");
-    		return;
-    	}
-    	
-    	$(":hidden[name=pageIndex]").val("1");				
-		$("form[name=regist]").attr("action", "/backoffice/resManage/resList.do").submit();
-    }   
-    function fn_ExcelDown(){    	
-    	$("form[name=regist]").attr("action", "/backoffice/res/resListExcel.do").submit();
-    }
     function cancel_check(){
     	//예약을취소하시겠습니까? confirm
     	var cnt = $("input[name=resCode]:checkbox:checked").length;
@@ -733,10 +661,6 @@
 				}
 		}
     }
-    function linkPage(pageNo) {
-		$(":hidden[name=pageIndex]").val(pageNo);				
-		$("form[name=regist]").attr("action", "/backoffice/resManage/resList.do").submit();
-	}
 	</script>
 </body>
 </html>

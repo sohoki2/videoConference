@@ -26,7 +26,7 @@ public class ImagePaginationRenderer extends AbstractPaginationRenderer implemen
 	private ServletContext servletContext;
 	
 	public ImagePaginationRenderer() {
-		firstPageLabel    = "<ul><li><a href=\"#\" onclick=\"{0}({1});return false; \"><img src='/images/icon_prevend.gif' border='0'/></a></li>";		
+		firstPageLabel    = "<ul class='page_num'><li><a href=\"#\" onclick=\"{0}({1});return false; \"><img src='/images/icon_prevend.gif' border='0'/></a></li>";		
         previousPageLabel = "<li><a href=\"#\" onclick=\"{0}({1});return false; \"><img src='/images/icon_prev.gif' border='0'/></a></li>";        
         currentPageLabel  = "<li><a class='select'>{0}</a></li>";
         otherPageLabel    = "<li><a href=\"#\" onclick=\"{0}({1});return false; \">{2}</a></li>";

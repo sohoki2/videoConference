@@ -25,8 +25,9 @@
      
     <!--js-->
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
-    <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
+    <script src="/front_res/js/jquery-ui.js"></script>
+    
     <script src="/front_res/js/com_resInfo.js"></script>
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
     
@@ -41,18 +42,19 @@
 <input type="hidden" id="hid_attendList" name="hid_attendList">
 <input type="hidden" id="hid_equipList" name="hid_equipList">
 
-          <c:import url="/web/inc/top_inc.do" />
-            <!--header 추가//-->
-            <!--// left menu -->
-            <c:import url="/web/inc/right_menu.do" />
-            <!--left menu //-->
+         <c:import url="/web/inc/top_inc.do" />
+         <!--header 추가//-->
+         <!--// left menu -->
+         <c:import url="/web/inc/right_menu.do" />
+         <!--left menu //-->
         <!--//floor Btn-->
         <div id="allFloors">
             <div class="contents">
                 <div class="flooreArea float_left" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                      <button type="button" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</button>
+                       <a href="#" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
                     </c:forEach>
+                    
                 </div>               
                 <div class="clear"></div>
             </div>
@@ -70,18 +72,18 @@
                   <div class="dateBox float_left">
                       <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday">
                       <div class="dateIcon">
-                        <a class="dateBtn">검색</a>
+                        <a href="" class="dateBtn">검색</a>
                       </div>
                       <div class="clear"></div>
                    </div>
                    <div class="float_right list_T">
-                     <button type="button" onClick="location.href='/web/meetingDay.do'" class="active dayBtn">day</button>  
-                     <button type="button" onClick="location.href='/web/resCalendar.do'" class="calBtn">calendar</button>  
+                     <a href="/web/meetingDay.do" class="active dayBtn">day</a>  
+                     <a href="/web/resCalendar.do" class="calBtn">calendar</a>  
                    </div>
                    <div class="float_right btnL">
-                        <button type="button" onClick="location.href='meetingList.do'" class="listBtn"></button>  
-                        <button type="button" onClick="location.href='meetingDay.do'" class="active blockBtn"></button>  
-                   </div>
+                        <a href="/web/meetingList.do" class="listBtn"></a>  
+                        <a href="/web/meetingDay.do" class="active blockBtn"></a>  
+                    </div>
                 <div class="clear"></div>
                 </div>
               <!--date picker//-->
@@ -250,7 +252,7 @@
             						    }    		
             		    );
             		}, fn_floorSearch : function (floorSeq){
-            			$("#dv_floor").find("button[name=btn_floor]").attr('class', '');
+            			$("#dv_floor").find("[name=btn_floor]").attr('class', '');
             			$("#btn_"+floorSeq).attr('class', 'active');
             			$("#floorSeq").val(floorSeq);
             			res.fn_floorInfo();

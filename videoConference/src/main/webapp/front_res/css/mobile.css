@@ -48,7 +48,7 @@ header .userInfo {
 
 
 
-    #allFloors button {
+    #allFloors a {
         float: left;
         padding: 7px 0;
         font-size: 1.4rem;
@@ -89,7 +89,7 @@ header .userInfo {
 
 .mapArea {
     width: 100%;
-    margin: 9px 0 0 0;
+    margin: 40px 0 0 0;
     height: calc(100vh - 295px);
     padding: 5px;
     box-sizing: border-box;
@@ -178,7 +178,7 @@ header .userInfo {
 }
 
 .reserDate {
-    background: url("/front_res/img/dateImg.png")left center no-repeat;
+    background: url("../img/dateImg.png")left center no-repeat;
 }
 
 .date {
@@ -253,7 +253,7 @@ header .userInfo {
 .leftMenu span {
     width: 20px;
     height: 16px;
-    background: url("/front_res/img/menuIcon.png")no-repeat;
+    background: url("../img/menuIcon.png")no-repeat;
     background-size: 100%;
 }
 
@@ -276,7 +276,7 @@ header .userInfo {
 
 .inputSearch {
     font-size: 1.4rem;
-    width: 100%;
+    width: 78% !important;
     padding: 6px 10px;
     height: 100%;
 }
@@ -284,12 +284,12 @@ header .userInfo {
 
 .searchIcon {
     position: absolute;
-    right: 7px;
+    right: 5px;
     top: 0;
-    width: 25px;
-    text-align: right;
-    padding: 4px 4px;
+    width: 18%;
+    padding: 0;
     box-sizing: border-box;
+    text-align: center;
 }
 
 .searchMeeting {
@@ -299,7 +299,7 @@ header .userInfo {
     box-shadow: 0px 2px 4px 2px #eaeaea;
     border: 1px solid #eee;
     font-size: 0;
-    background: #fff url("/front_res/img/meeting.png")center no-repeat;
+    background: #fff url("../img/meeting.png")center no-repeat;
 }
 
 .floorBtn span {
@@ -639,7 +639,7 @@ tr:last-child {
     }
 
 span.date_icon {
-    background: url(/front_res/img/dateIcon.png) no-repeat;
+    background: url(../img/dateIcon.png) no-repeat;
     width: 19px;
     height: 19px;
     display: block;
@@ -789,25 +789,25 @@ span.date_icon {
 }
 
 .reser_icon01 {
-    background: url("/front_res/img/mypage01.png")left center no-repeat;
+    background: url("../img/mypage01.png")left center no-repeat;
     background-size: 35px;
 }
 
 .reser_icon02 {
-    background: url("/front_res/img/mypage02.png")30px center no-repeat;
+    background: url("../img/mypage02.png")30px center no-repeat;
 }
 
 .reser_icon03 {
-    background: url("/front_res/img/mypage03.png")30px center no-repeat;
+    background: url("../img/mypage03.png")30px center no-repeat;
 }
 
 .reser_icon04 {
-    background: url("/front_res/img/mypage04.png")left center no-repeat;
+    background: url("../img/mypage04.png")left center no-repeat;
     background-size: 35px;
 }
 
 .reser_iconGo {
-    background: url("/front_res/img/reser_iconGo.png")97% center no-repeat;
+    background: url("../img/reser_iconGo.png")97% center no-repeat;
     padding-bottom: 0 !important;
     background-size: 8px;
 }
@@ -1060,7 +1060,7 @@ a.user_logout {
     box-sizing: border-box;
 }
 .list_T{right: 0;margin-top: 10px;position: absolute;bottom: 0;}
-.list_T button{cursor: pointer; font-size: 1.2rem; height: 33px;  width: 65px;}
+.list_T a{cursor: pointer;font-size: 1.2rem;height: 33px;width: 65px;line-height: 33px;}
 .meet{padding: 10px;box-sizing: border-box;margin-top: 10px;}
 .whiteBack h5{font-size: 1.2rem;margin-bottom: 10px;word-break: keep-all;line-height: 16px;}
 .calendar {
@@ -1126,7 +1126,7 @@ a.user_logout {
     margin-bottom: 15px;
 }
 
-.footerBtn button {
+.footerBtn a {
     border-radius: 4px !important;
     padding: 0;
     height: 40px;
@@ -1142,7 +1142,7 @@ input[type="checkbox"] + label{margin-left:0;}
     width: 58%;
 }
 
-.joinArea table section button{width: 40%;}
+.joinArea table section a{width: 40%;}
 .main_titB {
     padding-top: 40px;
     font-size: 1.6rem;
@@ -1207,7 +1207,8 @@ p.main_tit {
     position: relative;
 }
 
-button.resource {
+a.resource {
+    text-align: center;
     position: absolute;
     top: 0;
     right: 0;
@@ -1216,7 +1217,10 @@ button.resource {
     height: 35px;
     border: 1px solid #e6e6e6;
     background-color: white;
+    line-height: 35px;
     border-radius: 5px;
+    color: #5d5d5d;
+    display: block;
 }
 .btnL {
     margin: 0;
@@ -1225,7 +1229,7 @@ button.resource {
     bottom: 0;
 }
 
-.btnL button {
+.btnL a {
     width: 33px;
     height: 33px;
     border: none;
@@ -1270,7 +1274,7 @@ button.resource {
 .mypage{    position: absolute;
     left: 75px;
     top: 45px;}
-    button.backBtn{width: 100% !important; position: relative !important;}
+    a.backBtn{width: 100% !important; position: relative !important;}
         .select_time p {
     font-size: 1.2rem;
 }
@@ -1330,4 +1334,41 @@ button.resource {
 .cor_text {
     font-size: 1.1rem;
     padding: 0 5px;
+}
+.pass p {
+    font-size: 1.5rem;
+}
+
+.pass span {
+    font-size: 1.3rem;
+}
+.searchBtn {
+    font-size: 1.3rem;
+    line-height: 35px;
+    padding: 0;
+    height: 35px;
+}
+.resource_margT .float_right a {
+    top: 45px;
+}
+
+.resource_margT .resourceT {
+    margin-top: 60px;
+}
+
+.resource_margT .inputSearch {
+    width: 80%;
+}
+
+.resource_margT .dateBox {
+    width: 100%;
+}
+.seat_fast {
+    position: absolute;
+    bottom: -35px;
+    right: 0;
+    font-size: 1.3rem;
+    line-height: 35px;
+    height: 35px;
+    margin: 0;
 }

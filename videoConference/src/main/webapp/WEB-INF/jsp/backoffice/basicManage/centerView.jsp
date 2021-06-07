@@ -975,7 +975,7 @@
 		        title = "좌석";
     	  }
     	  $(".sp_title").text(title);
-    	  var params = {"floorSeq" : $("#floorSeq").val(), "partSeq" : $("#partSeq").val(), "pageUnit" : "100"};
+    	  var params = {"searchCenter": $("#centerId").val(), "searchFloorSeq" : $("#floorSeq").val(), "searchPartSeq" : $("#partSeq").val(), "pageUnit" : "100"};
 		  uniAjax("/backoffice/basicManage/"+url, params, 
 		 			function(result) {
 					       if (result.status == "LOGIN FAIL"){
@@ -1100,6 +1100,16 @@
 	 function save(){
 			if(confirm('저장 하시겠습니까?')){
 				var SeatsArray = new Array();
+				//여기 부분 좌표값으로 가지고 오기 
+				$("input:hidden[name=seat_id]").each(function () {
+					
+		        	var SeatsView = new Object();
+		            SeatsView.seatId = $(this).val();
+		            SeatsView.seatTop = $("#top_"+SeatsView.seatId).val();// $(this).css('top').replace('px', '');
+		            SeatsView.seatLeft = $("#left_"+SeatsView.seatId).val(); //$(this).css('left').replace('px', '');
+		            SeatsArray.push(SeatsView);
+		        });
+				/*
 		        $('.seat').each(function () {
 		        	var SeatsView = new Object();
 		            SeatsView.seatId = $(this).attr('seat-id');
@@ -1107,14 +1117,15 @@
 		            SeatsView.seatLeft = $(this).css('left').replace('px', '');
 		            SeatsArray.push(SeatsView);
 		        });
+				*/
 		        var param =  new Object();
+		       
 		        param.data = SeatsArray;
 		        if(SeatsArray.length == 0){
 		        	alert('저장할 내용이 없습니다.');
 		        	return false;
 		        }
 		        param.type = $("#viewMode").val();
-		        
 		        var url = "/backoffice/basicManage/officeSeatGuiUpdate.do";
 		        uniAjax(url, param, 
    		     			function(result) {
@@ -1132,6 +1143,49 @@
     		    );
 				
 			}
+	 }
+
+	 /***********************************
+	 * + - 버튼
+	 ************************************/
+	 function top_up(str){
+	 	var top = parseInt($('#top_'+str).val())+1;
+	 	$('#top_'+str).val(top);
+	 	$('li[name="'+str+'"]').css('top', top+'px');
+	 }
+
+	 function top_down(str){
+	 	var top = parseInt($('#top_'+str).val())-1;
+	 	$('#top_'+str).val(top);
+	 	$('li[name="'+str+'"]').css('top', top+'px');
+	 }
+
+	 function left_up(str){
+	 	var left = parseInt($('#left_'+str).val())+1;
+	 	$('#left_'+str).val(left);
+	 	$('li[name="'+str+'"]').css('left', left+'px');
+	 }
+
+	 function left_down(str){
+	 	var left = parseInt($('#left_'+str).val())-1;
+	 	$('#left_'+str).val(left);
+	 	$('li[name="'+str+'"]').css('left', left+'px');
+	 }
+
+
+	 /***********************************
+	 * text mode top 수정
+	 ************************************/
+	 function top_chage(str, str2){
+	 	console.log('str : ' + str + ', str2 : '+ str2);
+	 	$('li[name="'+str+'"]').css('top', str2+'px');
+	 }
+
+	 /***********************************
+	 * text mode left 수정
+	 ************************************/
+	 function left_chage(str, str2){
+	 	$('li[name="'+str+'"]').css('left', str2+'px');
 	 }
      needPopup.config.custom = {
          'removerPlace': 'outside',

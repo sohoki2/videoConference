@@ -13,7 +13,7 @@
              <div class="float_left">
                  <img src="/front_res/img/userImg.png">
                  <p class="user_name"><%=loginVO.getEmpname() %> 님</p>
-                 <a href="mypage.html" class="join mypage">마이페이지</a>
+                 <a href="/web/myPage.do" class="join mypage">마이페이지</a>
                  <p class="logout"><a href="/web/Logout.do" class="user_logout" >로그아웃</a></p>
              </div>
              <!--  좌석 일반 사무실 유저만 보여주기 -->
@@ -40,11 +40,11 @@
 
         <div class="gnb user_reser_b">
              <div class="reser_box reser_box_txt"><span>바로가기 메뉴</span></div>
-             <div onclick="" class="reser_box"><a class="reser_iconGo" href="sub/seat.html">자율좌석예약</a></div>
-             <div onclick="" class="reser_box"><a class="reser_iconGo" href="sub/meeting_day.html">회의실예약현황</a></div>
-             <div onclick="" class="reser_box"><a class="reser_iconGo" href="sub/coronation.html">시설대관</a></div>
-             <div onclick="" class="reser_box"><a class="reser_iconGo" href="sub/mybooking.html">나의예약</a></div>
-             <div onclick="" class="reser_box"><a class="reser_iconGo" href="sub/notice.html">공지사항</a></div>
+             <div onclick="" class="reser_box"><a class="reser_iconGo" href="/web/seatInfo.do">자율좌석예약</a></div>
+             <div onclick="" class="reser_box"><a class="reser_iconGo" href="/web/meetingDay.do">회의실예약현황</a></div>
+             <div onclick="" class="reser_box"><a class="reser_iconGo" href="/web/coronation.do">시설대관</a></div>
+             <div onclick="" class="reser_box"><a class="reser_iconGo" href="/web/mybooking.do">나의예약</a></div>
+             <div onclick="" class="reser_box"><a class="reser_iconGo" href="/web/notice.do">공지사항</a></div>
              <div class="clear"></div>
          </div>
      </div>

@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/css/needpopup.css">
     
     
-    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/jscript" src="/js/SE/js/HuskyEZCreator.js" ></script>
     <script src="/js/popup.js"></script>

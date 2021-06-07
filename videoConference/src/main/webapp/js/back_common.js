@@ -11,9 +11,9 @@ var backoffice_common = {
 	         }else { payHtml = "";}	 
              $("#"+sp_id).html(payHtml);
      }, fn_floorSearch : function (floorSeq, span_id, comboboxId){
-			  var _url = "/backoffice/basicManage/floorListAjax.do";
-			  var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
-		      fn_comboListPost(span_id, comboboxId,_url, _params, "", "120px", floorSeq);  
+             var _url = "/backoffice/basicManage/floorListAjax.do";
+			 var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
+		     fn_comboListPost(span_id, comboboxId,_url, _params, "", "120px", floorSeq);  
 	 }, uniAjax : function(_url, _data, _sendGubun){
 	        var returnData = "";
 	        $.ajax({
