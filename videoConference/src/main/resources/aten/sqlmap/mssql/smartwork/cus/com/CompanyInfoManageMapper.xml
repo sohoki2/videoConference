@@ -23,7 +23,8 @@
                                        )
 						            ELSE 
 						               '사용안함'
-						       END TENN_INFO, a.COM_PLAY_FLOOR, dbo.FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
+						       END TENN_INFO
+						       , a.COM_PLAY_FLOOR, dbo.FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
 						       
 					    FROM  TB_COMPANYINFO a, LETTCCMMNDETAILCODE b, TB_CENTERINFO c, TB_FLOORINFO d
 					    WHERE a.COM_STATE = b.CODE       
@@ -51,7 +52,23 @@
     <select id="selectCompanyInfoManageDetail"  resultType="lmap">
            SELECT  COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 				   COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, COM_LOGO,
-				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR
+				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR,
+				   CASE a.TENN_USEYN WHEN 'Y' THEN 
+			              (SELECT ISNULL(SUM(TENN_REC_NOW_CNT),0) 
+			               FROM tb_compay_tennant e
+                                    WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
+                                    )
+			            ELSE 
+			               '사용안함'
+			       END TENN_INFO,
+			       CASE a.TENN_USEYN WHEN 'Y' THEN 
+			              (SELECT ISNULL(SUM(TENN_REC_COUNT),0) 
+			               FROM tb_compay_tennant e
+                                    WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
+                                    )
+			            ELSE 
+			               '사용안함'
+			       END TENN_TOTAL_INFO
 		   FROM TB_COMPANYINFO a
 		   WHERE COM_CODE = #{comCode}
     </select>

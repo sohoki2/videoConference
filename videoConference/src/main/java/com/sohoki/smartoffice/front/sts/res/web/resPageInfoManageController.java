@@ -32,7 +32,6 @@ import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
 import com.sohoki.backoffice.cus.org.service.jobInfoManageService;
 import com.sohoki.backoffice.sts.brd.service.BoardInfoManageService;
 import com.sohoki.backoffice.sts.brd.vo.BoardInfo;
-import com.sohoki.backoffice.sts.iot.service.InoutManageInfoManageService;
 import com.sohoki.backoffice.sts.res.service.ResInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
@@ -533,7 +532,7 @@ public class resPageInfoManageController {
 			}
 			
 			List<com.sohoki.backoffice.sym.cnt.vo.CenterInfo> list = centerService.selectCenterInfoManageCombo();
-			String centerId =  searchVO.getSearchCenterId().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenterId();
+			String centerId =  searchVO.getSearchCenter().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenter();
 			//예약 리스트 가지고 오기 
 	    	Map<String, Object> params = new HashMap<String, Object>();
 	    	params.put("pageIndx", searchVO.getPageIndex());

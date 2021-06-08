@@ -47,7 +47,7 @@
 						            		</when>
 						            	</choose>
 						            </if>      		        
-							        <if test="params.searchKeyword != ''">
+							        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							        	<choose>
 							        		<when test="params.searchCondition == 0">
 							        			<![CDATA[

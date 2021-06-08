@@ -79,6 +79,9 @@
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomType)">
 							    AND c.ROOM_TYPE  = #{params.searchRoomType}
 							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchTenn)">
+							    AND c.TENN_CNT > 0
+							</if>
 							<choose>
 								<when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchStartDay)  and 
 								            !@org.apache.commons.lang3.StringUtils@isEmpty(params.searchEndDay)">						

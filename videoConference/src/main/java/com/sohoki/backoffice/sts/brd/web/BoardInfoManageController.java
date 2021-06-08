@@ -109,12 +109,18 @@ public class BoardInfoManageController {
 			
 			try{
 				
-				  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-			      if(!isAuthenticated) {
-						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
-						model.setViewName("/backoffice/login");
-						return model;
-			      }
+				  LOGGER.info("getContextPath:" + request.getHeader("REFERER")); 
+				  
+				  
+				  if (!request.getHeader("REFERER").contains("/web/notice.do")) {
+					  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+				      if(!isAuthenticated) {
+							model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+							model.setViewName("/backoffice/login");
+							return model;
+				      } 
+				  }
+				  
 			      
 			      int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
 				  

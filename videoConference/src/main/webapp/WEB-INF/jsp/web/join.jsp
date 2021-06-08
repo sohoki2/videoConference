@@ -139,10 +139,11 @@
   		    var param = {"userId" : $("#userId").val(),
 	     		     	 "userName" : $("#userName").val(),
 	     		     	 "userCellphone" : $("#userCellphone").val(),
-	     		     	 "userEmail" : $("#userEmail").val()
+	     		     	 "userEmail" : $("#userEmail").val(),
+	     		     	 "mode" :  "Ins"
   		                }
   			
-  		   if (confirm("저장 하시겠습니까?")== true){
+  		    if (confirm("저장 하시겠습니까?")== true){
   			   uniAjax("/web/JoinProcess.do", param, 
   		     			function(result) {
   						       if (result.status == "SUCCESS"){

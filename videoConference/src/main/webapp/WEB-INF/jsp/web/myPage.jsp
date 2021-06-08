@@ -21,7 +21,7 @@
     <link href="/front_res/css/style.css" rel="stylesheet" />
     <link href="/front_res/css/paragraph.css" rel="stylesheet" />
     <link href="/front_res/css/widescreen.css" rel="stylesheet" media="only screen and (min-width : 1080px)">
-    <link href="../css/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
+    <link href="/front_res/css/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
     <!--js-->
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/common.js"></script>
@@ -30,6 +30,14 @@
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>
 <body>
+<form:form name="regist" commandName="regist" method="post" >
+<input type="hidden" name="pageIndex" id="pageIndex" value="${regist.pageIndex }" />
+<input type="hidden" name="pageSize" id="pageSize"  value="${regist.pageSize }" />
+<input type="hidden" name="pageUnit" id="pageUnit"  value="${regist.pageUnit }"/>
+<input type="hidden" name="resSeq" id="resSeq" />
+<input type="hidden" name="boardGubun" id="boardGubun" />
+<input type="hidden" name="cancelCode" id="cancelCode" value="CANCEL_CODE_3"/>
+<input type="hidden" name="reservProcessGubun" id="reservProcessGubun" />
         <c:import url="/web/inc/top_inc.do" />
         <!--header 추가//-->
         <!--// left menu -->
@@ -45,20 +53,22 @@
                         <ul>
                             <li>
                                 <span class="tit">이름</span>
-                                <span>홍길동</span>
+                                <span>${userinfo.empname }</span>
                             </li>
                             <li>
                                 <span class="tit">이메일</span>
-                                <span>abv@atensys.co.kr</span>
+                                <span>${userinfo.empmail }</span>
                             </li>
                             <li>
                                 <span class="tit">휴대전화</span>
-                                <span>010-0000-0000</span>
+                                <span>${userinfo.emphandphone }</span>
                             </li>
                         </ul>
                     </div>
                     <div class="clear"></div>
-                    <a href="myModify.do" class="darkBtn">수정</a>
+                    <c:if test="${userinfo.authorCode eq 'ROLE_USER' }">
+                    <a href="/web/myModify.do" class="darkBtn">수정</a>
+                    </c:if>
                 </div>
             </div>
             <div class="whiteBack w_half float_right">
@@ -67,8 +77,8 @@
                     <div class="float_left">
                         <h5>잔여 크레딧</h5>    
                         <div class="res">
-                        <span class="blueFont">50</span>
-                        / 100
+                        <span class="blueFont">${cominfo.tenn_info }</span>
+                        / ${cominfo.tenn_total_info }
                     </div>
                     </div>
                     <div class="clear"></div>
@@ -77,9 +87,17 @@
             </div>
             <div class="clear"></div>
             <div class="whiteBack mybooking">
-                <h5>크레딧 사용 내역</h5>      
+                <div id="allFloors">
+		            <div class="contents">
+		                <div class="flooreArea float_left" >
+		                     <a href="#" onClick="fn_boardList('res')" id="a_res" class="active">예약 내역</a>  
+		                     <a href="#" onClick="fn_boardList('ten')" id="a_tenn">크레딧내역</a>  
+		                </div>               
+		                <div class="clear"></div>
+		            </div>
+		        </div>
                 <section>
-                <table class="my_T" id="tb_tenn">
+                <table class="my_T" id="tb_booking">
                     <thead>
                         <tr>
                             <th>NO</th>
@@ -103,13 +121,8 @@
                 </table>
                 </section>
                 <!--//page number-->
-               <ul class="page_num">
-                   <li class="active">1</li>
-                   <li>2</li>
-                   <li>3</li>
-                   <li>4</li>
-                   <li>5</li>
-               </ul>
+                <div id="dv_page"></div>
+                
                <!--page number//-->
              </div>
         </div>
@@ -119,7 +132,130 @@
         <!--needpopup script-->
         
         <script src="/front_res/js/needpopup.min.js"></script>
-        <script>  
+        
+        <script type="text/javascript">
+		    $( function() {
+		    	$("#boardGubun").val("res");
+		    	fn_bookingList();
+		    });
+		    function fn_boardList(gubun){
+		    	$("#boardGubun").val(gubun);
+		    	if (gubun == "res"){
+		    		$("#a_res").addClass("active");
+		    		$("#a_tenn").removeClass("active");
+		    		
+		    	}else {
+		    		$("#a_res").removeClass("active");
+		    		$("#a_tenn").addClass("active");
+		    	}
+		    	fn_bookingList(gubun);
+		    }
+		    
+	        function fn_bookingList(){
+	        	var gubun = $("#boardGubun").val();
+	        	var url =  (gubun == "res") ? "/web/mybookingAjax.do" : "/web/myTennAjax.do";
+	        	var params = { 
+			    	    		"pageIndex": $("#pageIndex").val(),
+			    	    		"searchKeyword" : $("#searchKeyword").val(),
+			         			"pageUnit": $("#pageUnit").val()
+	     		}; 
+		    	uniAjax(url, params, 
+		      			function(result) {
+		 				       if (result.status == "LOGIN FAIL"){
+		 				    	   alert(result.meesage);
+		   						   location.href="/web/Login";
+		   					   }else if (result.status == "SUCCESS"){
+		   						   //총 게시물 정리 하기
+		   						   $("#tb_booking > thead").empty();
+		   						   var tHtml  = "";
+		   						   if (gubun == "res"){
+		   							  tHtml = "<tr><th>NO</th><th>구분</th><th>예약내용</th><th>이용날짜</th><th>이용시간</th><th>이용크레딧</th><th></th></tr>";
+		   						   }else {
+		   							  tHtml = "<tr><th>NO</th><th>구분</th><th>예약내용</th><th>이용날짜</th><th>이용시간</th><th>이용크레딧</th></tr>";  
+		   						   }
+		   						   $("#tb_booking > thead").append(tHtml);
+		   						    
+		   						   $("#tb_booking > tbody").empty();
+		   						   if (result.resultlist.length > 0){
+		   							   var sHtml = "";
+		   							   var obj = result.resultlist;
+		   							   var costInfo  = "";
+		   							   var a = "1";
+		   							   for (var i in result.resultlist ){
+		   								
+		   								costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2") ?
+		   										   "<a href='' onClick='fn_resCancel(&#39;"+ obj[i].res_seq+"&#39;,&#39;PROCESS_GUBUN_6&#39;)' class='cancleBtn active' data-needpopup-show='#cancle_popup'>예약취소</a>" :
+		   										   "취소완료";
+		   								  
+		   								  sHtml	+="<tr>"
+					                            +"    <td>"+a+"</td>"
+					                            +"    <td>"+obj[i].item_gubun+"</td>"
+					                            +"    <td>"+obj[i].res_title+"</td>"
+					                            +"    <td>"+obj[i].resstartday+"</td>"
+					                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"
+					                            +"    <td>"+obj[i].tenn_cnt+"</td>";
+					                            if (gubun == "res"){
+					                            	sHtml+="    <td>"+costInfo+"</td>";
+					                            }	
+					                            sHtml += "</tr>";
+		   								  a = parseInt(a)+1;
+		   							   }
+		   							   $("#tb_booking > tbody").append(sHtml);
+		   							   
+		   							   //페이지 설정 
+		   							   var pageObj = result.paginationInfo
+		  						       var pageHtml = ajaxPaging(pageObj.currentPageNo, pageObj.firstPageNo, pageObj.recordCountPerPage, 
+								                                 pageObj.firstPageNoOnPageList, pageObj.lastPageNoOnPageList, 
+								                                 pageObj.totalRecordCount, pageObj.pageSize, "ajaxPageChange");
+								        $("#dv_page").html(pageHtml);
+		   						   }
+	
+		   					   }
+		 				    },
+		 				    function(request){
+		 					    alert("Error:" +request.status );	   
+		 					    $("#btn_needPopHide").trigger("click");
+		 				    }    		
+		        );
+	        }
+	        function fn_search(){
+	        	if (any_empt_line_id("searchKeyword", "검색어를 입력해 주세요.") == false) return;	
+	        	$("#pageIndex").val("1");
+	        	fn_bookingList();
+	        }
+	        function ajaxPageChange(pageNo) {
+	       	   $(":hidden[name=pageIndex]").val(pageNo);
+	           fn_bookingList();
+	   	    }
+	        function fn_resCancel(resSeq, reservProcessGubun){
+	        	
+	        	$("#resSeq").val(resSeq);
+	        	$("#reservProcessGubun").val(reservProcessGubun);
+	        	
+	        }
+	        function fn_resUpdate(){
+	        	if (any_empt_line_id("cancelCode", '취소 유형을 선택해 주세요.') == false) return;
+	        	if (any_empt_line_id("cancelReason", '취소 사유를 입력해 주세요.') == false) return;
+	        	var params = {'resSeq': $("#resSeq").val(), 'reservProcessGubun': $("#reservProcessGubun").val(), 
+	        			           'cancelCode' : $("#cancelCode").val(), 'cancelReason' : $("#cancelReason").val() };
+	        	uniAjax("/web/resUpdate.do", params, 
+	         			function(result) {
+	        			       if (result.status == "LOGIN FAIL"){
+	        			    	        alert(result.message);
+	        							location.href="/web/Login.do";
+	        					   }else if (result.status == "SUCCESS"){
+	        						    //테이블 정리 하기
+	        						    need_close();
+	        							$("#sp_message").text(result.message);
+	        							$("#btn_result").trigger("click");
+	        						    fn_bookingList();
+	        					   }
+	        			    },
+	        			    function(request){
+	        				    alert("Error:" +request.status );	       						
+	        			    }    		
+	             );
+	        }
             needPopup.config.custom = {
                 'removerPlace': 'outside',
                 'closeOnOutside': false,
@@ -132,5 +268,6 @@
             };
             needPopup.init();
         </script>
+</form:form>
 </body>
 </html>

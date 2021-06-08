@@ -18,7 +18,7 @@
 %> 
 <header>
      <div class="contents">
-         <h1 onclick="location.href='index.html'"><img src="/front_res/img/logo.png" alt="서울관광플라자"></h1>
+         <h1 onclick="location.href='/web/index.do'"><img src="/front_res/img/logo.png" alt="서울관광플라자"></h1>
          <!--//menu-->
          <div class="menu">
              <ul>

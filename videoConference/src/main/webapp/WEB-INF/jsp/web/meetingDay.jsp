@@ -72,7 +72,7 @@
                   <div class="dateBox float_left">
                       <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday">
                       <div class="dateIcon">
-                        <a href="" class="dateBtn">검색</a>
+                        <a href="javascript:res.fn_floorInfo()" class="dateBtn">검색</a>
                       </div>
                       <div class="clear"></div>
                    </div>

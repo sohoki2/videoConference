@@ -30,6 +30,7 @@ import com.sohoki.backoffice.cus.com.vo.UserInfo;
 import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
+import com.sohoki.backoffice.cus.ten.service.TennantInfoManageService;
 import com.sohoki.backoffice.sts.res.service.ResInfoManageService;
 import com.sohoki.backoffice.sts.res.service.TimeInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
@@ -94,13 +95,13 @@ public class frontResInfoManageController {
 	protected EgovMessageSource egovMessageSource;
 	
 	@Autowired
-	private OfficeSeatInfoManageService  officeService;
-	
-	@Autowired
     protected EgovPropertyService propertiesService;
 	
 	@Autowired
 	private CompanyInfoManageService companyService;
+	
+	@Autowired
+	private TennantInfoManageService tennService;
 	
 	
 	//로그인 페이지로 이동 
@@ -197,13 +198,15 @@ public class frontResInfoManageController {
 			    		                  , BindingResult bindingResult) throws Exception {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try {
-			vo.setMode("Ins");
+			
 			vo.setComCode("C_00000004");
+			vo.setUserNo(vo.getUserId());
 			vo.setUserState("USER_STATE_1");
 			int ret = userService.updateUserInfoManage(vo);
+			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
 			if (ret >0){
 				model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
-				model.addObject(Globals.STATUS_MESSAGE, " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다");
+				model.addObject(Globals.STATUS_MESSAGE, message);
 			}else {
 				throw new Exception();
 			}
@@ -714,7 +717,7 @@ public class frontResInfoManageController {
 		  	
 		  	
 			List<com.sohoki.backoffice.sym.cnt.vo.CenterInfo> list = centerService.selectCenterInfoManageCombo();
-			String centerId =  searchVO.getSearchCenterId().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenterId();
+			String centerId =  searchVO.getSearchCenter().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenter();
 			
 			
 			params.put("firstIndex", Integer.valueOf( paginationInfo.getFirstRecordIndex()));
@@ -976,19 +979,74 @@ public class frontResInfoManageController {
 				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 			    searchVO.put("pageUnit", pageUnit);
 			    searchVO.put("pageIndex", 1);
-			  
-			    Map<String, Object> userinfo = userService.selectUserInfoManageDetail(empInfoVO.getEmpno());
-			    Map<String, Object> cominfo = companyService.selectCompanyInfoManageDetail(userinfo.get("com_code").toString());
-			    
-			    model.addObject(Globals.STATUS_USERINFO, userinfo);
-			    model.addObject(Globals.STATUS_USERINFO, userinfo);
-			    
+			    empInfoVO = empService.selectEmpInfoDetailNo(empInfoVO.getEmpno().toString());
+			    Map<String, Object> cominfo = new HashMap<String, Object>();
+			    if (empInfoVO.getAuthorCode().equals("ROLE_USER")) {
+			    	cominfo = companyService.selectCompanyInfoManageDetail(empInfoVO.getComCode().toString());
+			    }else {
+			    	cominfo.put("tenn_info", 0);
+			    	cominfo.put("tenn_total_info", 0);
+			    }
+			    model.addObject(Globals.STATUS_USERINFO, empInfoVO);
+			    model.addObject(Globals.STATUS_COMINFO, cominfo);
 			    model.addObject(Globals.STATUS_REGINFO, searchVO);
-			    
-			    
-		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		  	}
 		  	model.setViewName(url);
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMyPage error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
+	}
+	@RequestMapping(value="myTennAjax.do")
+	public ModelAndView webTennAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+						                 , HttpServletRequest request
+						                 , BindingResult bindingResult) throws Exception{		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/myBooking";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		 
+		  		 
+		  		
+		  		 HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		 
+			     searchVO.put("empno", empInfoVO.getEmpno());
+			     searchVO.put("searchTenn", "tenn");
+			     
+			     PaginationInfo paginationInfo = new PaginationInfo();
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
+				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
+				 
+				 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+				 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
+				 searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+				 
+				 
+		  		 List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
+		  		 int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+			     model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+			     model.addObject(Globals.STATUS_REGINFO, searchVO);
+			     
+			     
+			     paginationInfo.setTotalRecordCount(totCnt);
+			     model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			     model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+			     model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			  
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		
 	    }catch(Exception e) {
 	    	StackTraceElement[] ste = e.getStackTrace();
 		      
@@ -998,5 +1056,76 @@ public class frontResInfoManageController {
 	    }
 		return model;
 	}
+	@RequestMapping(value="myModify.do")
+	public ModelAndView webmyModify(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+						            , HttpServletRequest request
+						            , BindingResult bindingResult) throws Exception{		
+		ModelAndView model = new ModelAndView();
+		String url = "/web/myModify";
+        try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		
+		  		
+		  		
+		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+			    searchVO.put("pageUnit", pageUnit);
+			    searchVO.put("pageIndex", 1);
+			    empInfoVO = empService.selectEmpInfoDetailNo(empInfoVO.getEmpno().toString());
+			    model.addObject(Globals.STATUS_USERINFO, empInfoVO);
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		  	model.setViewName(url);
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMyPage error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
+	}
+	@RequestMapping(value="notice.do")
+	public ModelAndView selectNotice(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+                                         , HttpServletResponse response
+			    		                 , HttpServletRequest request
+			    		                 , BindingResult bindingResult) throws Exception {
+		
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/web/notice");
+        try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/myBooking";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+			    searchVO.put("pageUnit", pageUnit);
+			    searchVO.put("pageIndex", 1);
+			  
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+		
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMybooking error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+		return model;
+    }
 	
 }

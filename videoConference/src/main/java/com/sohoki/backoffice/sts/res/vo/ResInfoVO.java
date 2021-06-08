@@ -42,7 +42,7 @@ public class ResInfoVO extends ResInfo implements Serializable {
     private int recordCountPerPage = 10;
     
     
-    private String searchCenterId = "";
+    private String searchCenter = "";
     private String searchRoomType = "";
     private String searchResStartday = "";
     

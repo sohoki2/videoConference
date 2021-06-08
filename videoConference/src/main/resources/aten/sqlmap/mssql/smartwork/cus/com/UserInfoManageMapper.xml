@@ -105,11 +105,19 @@
     <update id="updateUserInfoManage" >
         UPDATE  TB_USERINFO SET USER_ID = #{userId,jdbcType=VARCHAR} 
                                 , USER_NAME = #{userName} 
+                                <if test="comCode != ''">
                                 , COM_CODE = #{comCode}
+                                </if>
+                                <if test="userRank != ''">
                                 , USER_RANK = #{userRank,jdbcType=VARCHAR}
+                                </if>
+                                <if test="userPosition != ''">
                                 , USER_POSITION = #{userPosition,jdbcType=VARCHAR} 
+                                </if>
                                 , USER_EMAIL = #{userEmail,jdbcType=VARCHAR} 
+                                <if test="userState != ''">
                                 , USER_STATE = #{userState,jdbcType=VARCHAR} 
+                                </if>
                                 , USER_CELLPHONE = #{userCellphone,jdbcType=VARCHAR} 
                                 , USER_TEL = #{userTel,jdbcType=VARCHAR} 
                                 , USER_UPDATE = GETDATE()
@@ -119,13 +127,23 @@
                                 </if>
 	    WHERE USER_NO = #{userNo} ;
 	    
-	    UPDATE TB_EMPINFO SET  EMPID = #{userId,jdbcType=VARCHAR} 
-                                , EMPNAME = #{userName} 
+	    UPDATE TB_EMPINFO SET  EMPNAME = #{userName}  
+	                           <if test="userId != ''"> 
+                                , EMPID = #{userId,jdbcType=VARCHAR} 
+                                </if>
+                                <if test="comCode != ''">
                                 , COM_CODE = #{comCode}
+                                </if>
+                                <if test="userRank != ''">
                                 , EMPGRAD = #{userRank,jdbcType=VARCHAR}
+                                </if>
+                                <if test="userPosition != ''">
                                 , EMPJIKW = #{userPosition,jdbcType=VARCHAR} 
+                                </if>
                                 , EMPMAIL = #{userEmail,jdbcType=VARCHAR} 
+                                <if test="userState != ''">
                                 , EMP_STATE = #{userState,jdbcType=VARCHAR} 
+                                </if>
                                 , EMPHANDPHONE = #{userCellphone,jdbcType=VARCHAR} 
                                 , EMPTELPHONE = #{userTel,jdbcType=VARCHAR}
                                 , UPDATE_DATE = GETDATE()
