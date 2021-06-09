@@ -111,8 +111,20 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		    	//영상 회의 자기 자신 아이디 이외 추가 회의실 아이디 체크 해서 넣기 
 		    	timeinfo.put("meetingSeq", util.dotToList(vo.getItemId() + "," + vo.getMeetingSeq())); 	
 		    }
+		    int resCnt  = 0;
+		    
+		    LOGGER.debug("vo.getResGubun()" + vo.getResGubun());
+		    //단기/장기 예약 정리 하기 
+		    if (vo.getResGubun().equals("SWC_GUBUN_3")) {
+		    	//장기 예약 정리 하기 
+		    	timeinfo.put("timeEndDay", vo.getResEndday());
+		    	resCnt = this.timeMapper.selectResPreCheckInfoL1(timeinfo);
+		    	
+		    }else {
+		    	resCnt = this.timeMapper.selectResPreCheckInfo(timeinfo);
+		    }
 		    // 예약 상태 확인 
-		    int resCnt = this.timeMapper.selectResPreCheckInfo(timeinfo);
+		    
 		    int ret = 0;
 		    
 		    
@@ -124,7 +136,7 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			    // 여기 구문에 FLOOR_SEQ 내용 넣기 
 			    //돌아 버리겠다 왜 좌석 회의실을 쪼갰는지 모르겠네
 			    
-			    Map<String, Object> floorInfo = vo.getItemGubun().equals("ITEM_GUBUN_1") ? uniService.selectFieldStatement("FLOOR_SEQ", "tb_meeting_room", "MEETING_ID=[" +vo.getItemId()+"[" )
+			    Map<String, Object> floorInfo = !vo.getItemGubun().equals("ITEM_GUBUN_2") ? uniService.selectFieldStatement("FLOOR_SEQ", "tb_meeting_room", "MEETING_ID=[" +vo.getItemId()+"[" )
 			    		                                                                  : uniService.selectFieldStatement("FLOOR_SEQ", "tb_seatinfo", "SEAT_ID=[" +vo.getItemId()+"[" );
 		        vo.setFloorSeq(floorInfo.get("floor_seq").toString());
 			    ret = this.resMapper.insertResManage(vo);
@@ -134,7 +146,11 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			        //자동 승인 넘기기기
 			        timeinfo.put("resSeq", String.valueOf(resSeq));
 			        timeinfo.put("apprival", "R");
-		        	this.timeMapper.updateTimeInfo(timeinfo);
+			        if (vo.getResGubun().equals("SWC_GUBUN_3")) {
+		        	    this.timeMapper.updateTimeInfoL1(timeinfo);
+			        }else {
+			        	this.timeMapper.updateTimeInfo(timeinfo);
+			        }
 		        	if (vo.getSeatConfirmgubun().equals("Y")) {
 			        	//관리자 승인 일때 처리 하는 구문 
 			        	
@@ -232,6 +248,7 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 					timeMapper.updateTimeInfoY(info);
 					resCode = "RES";
 					//메일 보내기
+					
 					ret = resMapper.updateResManageChange(vo);
 					//여기 구문 확인 필요
 					LOGGER.debug("체크 시작  ------");

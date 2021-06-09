@@ -123,19 +123,23 @@ public class ResBackInfoManageController {
         	ModelAndView model = new ModelAndView(Globals.JSONVIEW);
         	try{
     			  
-        		
-        		  //테넌트 값 가지고 오기 
-        		   
-      			  int ret = resService.updateResManageChange(searchVO);
-      			  //테넌트 처리 
-      			  
-      			  
-      			  if (ret>0){
+        		  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+				  if(!isAuthenticated) {
+				    		model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
+				    		return model;
+				  }
+	        	  if (searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_4") || searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_5")) {
+	        		  searchVO.setProxyUserId(EgovUserDetailsHelper.getAuthorities().toString());
+				  }
+	    		  int ret = resService.updateResManageChange(searchVO);
+	  			  //테넌트 처리 
+	  			  if (ret>0){
 	      				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 	    				model.addObject(Globals.STATUS_MESSAGE, "정상적으로 처리 되었습니다.");
-      			  }else{
-      				throw new Exception();
-      			  }
+	  			  }else{
+	  				throw new Exception();
+	  			  }
         	}catch(Exception e){
 	  			  LOGGER.error("resPreCheckString error:"+ e.toString());
 	  			  model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -143,28 +147,7 @@ public class ResBackInfoManageController {
         	}
         	return model;
         }
-        @RequestMapping(value="reasonPop.do")		
-		public ModelAndView resPopResCancelInfo(@ModelAttribute("loginVO") AdminLoginVO loginVO
-				                                , @ModelAttribute("searchVO") ResInfoVO searchVO
-												, HttpServletRequest request
-												, BindingResult bindingResult) throws Exception{
-			
-		   String resSeq = request.getParameter("resSeq") != null ? request.getParameter("resSeq") : "";
-		   searchVO.setResSeq(resSeq);
-		   searchVO.setReservProcessGubun("PROCESS_GUBUN_5");
-		   ModelAndView model = new ModelAndView("/backoffice/popup/reasonPop");
-		   try{
-			   model.addObject("selectCancel", cmmnDetailService.selectCmmnDetailCombo("CANCEL_CODE") );
-			   model.addObject(Globals.STATUS,  Globals.STATUS_SUCCESS);
-			   model.addObject(Globals.STATUS_REGINFO, searchVO);
-		   }catch(Exception e){
-	  		   model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-	  		   model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
-		   }
-		   return model;
-		   
-        }
-        
+        //페이지 삭제 
         @RequestMapping(value="resSendMessage.do")
         public ModelAndView resSendMessage(@ModelAttribute("loginVO") AdminLoginVO loginVO
 												                , @ModelAttribute("searchVO") ResInfoVO searchVO
@@ -259,21 +242,22 @@ public class ResBackInfoManageController {
 				model.addObject("resInfo", resInfo);
 				//참석자
 				LOGGER.debug("resInfo.getResAttendlist():" + resInfo.get("res_attendlist"));
-				if (! util.NVL(resInfo.get("res_attendlist"), "").equals("")){
+				if (!util.NVL(resInfo.get("res_attendlist"), "").equals("")){
 					List<String> empNoList =  Arrays.asList(resInfo.get("res_attendlist").toString().split("\\s*,\\s*"));
 					LOGGER.debug("empNoList:" + empNoList.size());
 					model.addObject("resUserList", empInfo.selectMeetinngUserList(empNoList));
-					
 				}
 				//영상회의 이면 
-				if (resInfo.get("RES_GUBUN").toString().equals("SWC_GUBUN_2") && !util.NVL(resInfo.get("meeting_seq"), "").equals("")){
+				if (resInfo.get("res_gubun").toString().equals("SWC_GUBUN_2") && !util.NVL(resInfo.get("meeting_seq"), "").equals("")){
 					LOGGER.debug("resInfo.getMeetingSeq():" + resInfo.get("meeting_seq"));
 					List<String> swSeqList =   util.dotToList(resInfo.get("meeting_seq").toString() );
 					model.addObject("resRoomInfo", meetingService.selectConferenceList(swSeqList));
 				}
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		   }catch(Exception e){
-			   LOGGER.error("resResInfoPop error:" + e.toString());
+			   StackTraceElement[] ste = e.getStackTrace();
+			   int lineNumber = ste[0].getLineNumber();
+			   LOGGER.error("resResInfoPop error:" + e.toString() + ":" + lineNumber);
 			   model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			   model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
 		   }
@@ -367,6 +351,8 @@ public class ResBackInfoManageController {
 			  model.addObject("searchCenterId", centerService.selectCenterInfoManageCombo());    
 	  		  model.addObject("selectOrg", orgService.selectOrgInfoCombo());
 	  		  model.addObject("selectResType", cmmnDetailService.selectCmmnDetailCombo("swc_gubun"));
+	  		  model.addObject("selectItemGubun", cmmnDetailService.selectCmmnDetailCombo("ITEM_GUBUN"));
+	  		  model.addObject("selectCancel", cmmnDetailService.selectCmmnDetailCombo("CANCEL_CODE") );
 	  		  
 	  		  //신규 추가 
 	  		  CmmnDetailCodeVO detailvo = new CmmnDetailCodeVO();
@@ -376,6 +362,7 @@ public class ResBackInfoManageController {
 	  		  model.addObject("selectProcessTypeAdmin", cmmnDetailService.selectCmmnDetailResTypeCombo(detailvo));
 	  		  model.addObject(Globals.STATUS_REGINFO, searchVO);
 	  		  
+	  		  //
 		  }catch(Exception e){
 			  LOGGER.error("resPreCheckString error:"+ e.toString());
 			  model.addObject(Globals.STATUS, Globals.STATUS_FAIL);

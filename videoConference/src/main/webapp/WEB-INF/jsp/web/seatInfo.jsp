@@ -47,7 +47,7 @@
             <div class="contents">
                 <div class="flooreArea" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                      <a href="#" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
+                      <a href="#" onClick="fn_floorSearch(${floorList.floor_seq }, 'res.fn_seatTimeCombo()')" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
                     </c:forEach>
                 </div>
                 <div class="clear"></div>
@@ -116,10 +116,7 @@
         <!--contetns//-->
        
         <!--에약완료팝업-->
-        <div id="ok_reserve" class="needpopup opened">
-            <span id="sp_message"></span>
-            <a href="#" class="needpopup_remover"></a>
-        </div>
+        
         <div id='seat_fastR_popup' class="needpopup opened">
            <h2 class="pop_tit">예약 정보</h2>
             <ul class="form">
@@ -187,23 +184,17 @@
             <!--시간선택 슬라이드 //-->
 
         <!--예약 완료 팝업//-->
-        <!--//needpopup script-->
-        <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
-        <button id="btn_Res" type="button" style="display:none" data-needpopup-show='#seat_fastR_popup'>예약 팝업</button>
         
-        <script src="/front_res/js/needpopup.min.js"></script>
+        <button id="btn_Res" type="button" style="display:none" data-needpopup-show='#seat_fastR_popup'>예약 팝업</button>
+        <c:import url="/web/inc/unimessage.do" />
+        
         <script>  
          $( function() {
 	       	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
 	       	 res.fn_seatTimeCombo();
          });
          var res = {
-        		fn_floorSearch : function (floorSeq){
-        			$("#dv_floor").find("[name=btn_floor]").attr('class', '');
-        			$("#btn_"+floorSeq).attr('class', 'active');
-        			$("#floorSeq").val(floorSeq);
-        			res.fn_seatTimeCombo();
-        		}, fn_userSearch : function (){
+        		fn_userSearch : function (){
         			//사용자 검색 
         		}, fn_seatState : function(){
         			var url = "/backoffice/resManage/seatStateInfo.do";
@@ -321,7 +312,7 @@
 		        		               'resPassword' : "Y", 
 		        		               'resStartday' : $("#searchResStartday").val(),
 		        				       'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
-		        				       'proxyUserId' : "", 'resGubun' : "",
+		        				       'proxyUserId' : "", 'resGubun' : "SWC_GUBUN_4",
 		        				       'useYn' : "Y", 'centerId': $("#centerId").val(),
 		        				       'proxyYn' : "Y",  'meetingSeq' : "", 
 		        				       'seatConfirmgubun': $("#seatConfirmgubun").val(),
@@ -420,18 +411,6 @@
         		}
         		
             } 
-        
-            needPopup.config.custom = {
-                'removerPlace': 'outside',
-                'closeOnOutside': false,
-                onShow: function() {
-                    console.log('needPopup is shown');
-                },
-                onHide: function() {
-                    console.log('needPopup is hidden');
-                }
-            };
-            needPopup.init();
         </script>
 
          <script type="text/javascript">

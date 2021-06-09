@@ -44,7 +44,7 @@
         <!--//contents-->
         <div class="contents">
             <!--//floor Btn-->
-            <div id="allFloors">
+            <div id="allFloors" style="height:60px">
 	            <div class="contents">
 	                <div class="flooreArea float_left" id="dv_floor">
 	                    <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
@@ -67,7 +67,7 @@
                   <div class="dateBox float_left">
                       <input type="text" id="searchKeyword" name="searchKeyword" placeholder="회의실을 검색해보세요" class="inputSearch">
                       <div class="searchIcon">
-                        <a href="" onClick="fn_search()" class="searchBtn">검색</a>
+                        <a href="#" onClick="fn_searchForm()" class="searchBtn">검색</a>
                       </div>
                       <div class="clear"></div>
                    </div>
@@ -148,13 +148,14 @@
 		   							   var sHtml = "";
 		   							   var obj = result.resultlist;
 		   							   var costInfo  = "";
+		   							   var a = "1";
 		   							   for (var i in result.resultlist ){
 		   								   
 		   								  costInfo  = obj[i].pay_classification === "PAY_CLASSIFICATION_2" ? obj[i].pay_classification_txt : obj[i].pay_classification_txt 
 		   		                		      + ":" + obj[i].pay_gubun_txt +": 사용 크레딧:" + obj[i].pay_cost;
 		   		             
 		   								  sHtml	+="<tr>"
-					                            +"    <td>"+i+"</td>"
+					                            +"    <td>"+a+"</td>"
 					                            +"    <td>"+obj[i].floor_name+"</td>"
 					                            +"    <td>"+obj[i].meeting_name+"</td>"
 					                            +"    <td>"+obj[i].meetingroom_remark+"</td>"
@@ -162,6 +163,7 @@
 					                            +"    <td>"+costInfo+"</td>"
 					                            +"    <td>"+obj[i].meeting_useyn+"</td>"
 					                            +"</tr>";
+		   								   a = parseInt(a)+1;
 		   							   }
 		   							   $("#tb_meetingInfo > tbody").append(sHtml);
 		   							   
@@ -181,7 +183,7 @@
 		 				    }    		
 		        );
             }
-            function fn_search(){
+            function fn_searchForm(){
             	if (any_empt_line_id("searchKeyword", "검색어를 입력해 주세요.") == false) return;	
             	$("#pageIndex").val("1");
             	fn_meetingList();

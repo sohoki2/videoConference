@@ -76,76 +76,64 @@
         </div>
         <!--contetns//-->
 
-        <!--//팝업-->
-        <!--//퇴실 팝업-->
-        <div id='cancle_popup' class="needpopup">
-            <p>
-                예약 취소가 완료되었습니다.
-            </p>
-        </div>
-        <!--퇴실 팝업-//->
-
         <!--needpopup script-->
         <script src="/front_res/js/needpopup.min.js"></script>
         <script type="text/javascript">
-        $( function() {
-		    	$("#boardGubun").val("res");
-		    	fn_noticeList();
-		});
-        function fn_noticeList(){
-        	var gubun = $("#boardGubun").val();
-        	var url =  "/backoffice/boardManage/boardListAjax.do";
-        	var params = { 
-		    	    		"pageIndex": $("#pageIndex").val(),
-		    	    		"boardGubun": "Not",
-		    	    		"searchKeyword" : $("#searchKeyword").val(),
-		         			"pageUnit": $("#pageUnit").val()
-     		}; 
-	    	uniAjax(url, params, 
-	      			function(result) {
-	 				       if (result.status == "LOGIN FAIL"){
-	 				    	   alert(result.meesage);
-	   						   location.href="/web/Login";
-	   					   }else if (result.status == "SUCCESS"){
-	   						   //총 게시물 정리 하기
-	   						   $("#tb_notice > tbody").empty();
-	   						   if (result.resultlist.length > 0){
-	   							   var sHtml = "";
-	   							   var obj = result.resultlist;
-	   							   var costInfo  = "";
-	   							   var a = "1";
-	   							   for (var i in result.resultlist ){
-	   								  
-	   								  sHtml	+="<tr onClick='fn_noticView(\""+obj[i].board_seq+"\")'>"
-				                            +"    <td>"+a+"</td>"
-				                            +"    <td>"+obj[i].board_title+"</td>"
-				                            +"    <td>"+obj[i].user_nm+"</td>"
-				                            +"    <td>"+obj[i].board_visited+"</td>"
-				                            +"    <td>"+obj[i].board_update_date.substring(0,10)+"</td>";
-				                           	+" </tr>";
-	   								  a = parseInt(a)+1;
-	   							   }
-	   							   $("#tb_notice > tbody").append(sHtml);
-	   							   
-	   							   //페이지 설정 
-	   							   var pageObj = result.paginationInfo
-	  						       var pageHtml = ajaxPaging(pageObj.currentPageNo, pageObj.firstPageNo, pageObj.recordCountPerPage, 
-							                                 pageObj.firstPageNoOnPageList, pageObj.lastPageNoOnPageList, 
-							                                 pageObj.totalRecordCount, pageObj.pageSize, "ajaxPageChange");
-							        $("#dv_page").html(pageHtml);
-	   						   }
-
-	   					   }
-	 				    },
-	 				    function(request){
-	 					    alert("Error:" +request.status );	   
-	 					    $("#btn_needPopHide").trigger("click");
-	 				    }    		
-	        );
-        }
-        
-        </script>
-        <script>  
+	        $( function() {
+			    	$("#boardGubun").val("res");
+			    	fn_noticeList();
+			});
+	        function fn_noticeList(){
+	        	var gubun = $("#boardGubun").val();
+	        	var url =  "/backoffice/boardManage/boardListAjax.do";
+	        	var params = { 
+			    	    		"pageIndex": $("#pageIndex").val(),
+			    	    		"boardGubun": "Not",
+			    	    		"searchKeyword" : $("#searchKeyword").val(),
+			         			"pageUnit": $("#pageUnit").val()
+	     		}; 
+		    	uniAjax(url, params, 
+		      			function(result) {
+		 				       if (result.status == "LOGIN FAIL"){
+		 				    	   alert(result.meesage);
+		   						   location.href="/web/Login";
+		   					   }else if (result.status == "SUCCESS"){
+		   						   //총 게시물 정리 하기
+		   						   $("#tb_notice > tbody").empty();
+		   						   if (result.resultlist.length > 0){
+		   							   var sHtml = "";
+		   							   var obj = result.resultlist;
+		   							   var costInfo  = "";
+		   							   var a = "1";
+		   							   for (var i in result.resultlist ){
+		   								  
+		   								  sHtml	+="<tr onClick='fn_noticView(\""+obj[i].board_seq+"\")'>"
+					                            +"    <td>"+a+"</td>"
+					                            +"    <td>"+obj[i].board_title+"</td>"
+					                            +"    <td>"+obj[i].user_nm+"</td>"
+					                            +"    <td>"+obj[i].board_visited+"</td>"
+					                            +"    <td>"+obj[i].board_update_date.substring(0,10)+"</td>";
+					                           	+" </tr>";
+		   								  a = parseInt(a)+1;
+		   							   }
+		   							   $("#tb_notice > tbody").append(sHtml);
+		   							   
+		   							   //페이지 설정 
+		   							   var pageObj = result.paginationInfo
+		  						       var pageHtml = ajaxPaging(pageObj.currentPageNo, pageObj.firstPageNo, pageObj.recordCountPerPage, 
+								                                 pageObj.firstPageNoOnPageList, pageObj.lastPageNoOnPageList, 
+								                                 pageObj.totalRecordCount, pageObj.pageSize, "ajaxPageChange");
+								        $("#dv_page").html(pageHtml);
+		   						   }
+	
+		   					   }
+		 				    },
+		 				    function(request){
+		 					    alert("Error:" +request.status );	   
+		 					    $("#btn_needPopHide").trigger("click");
+		 				    }    		
+		        );
+	        }
             needPopup.config.custom = {
                 'removerPlace': 'outside',
                 'closeOnOutside': false,

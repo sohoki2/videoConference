@@ -68,6 +68,7 @@ public class ResInfo implements Serializable {
     private String tennCnt = "";
     private String floorSeq = "";
     private String sendMessage = "";
+    private String resPerson = "";
     
 	
 }

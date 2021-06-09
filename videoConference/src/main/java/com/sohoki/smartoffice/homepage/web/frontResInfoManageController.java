@@ -263,6 +263,18 @@ public class frontResInfoManageController {
 		model.setViewName("/web/inc/top_inc");
 		return model;
 	}
+	//메세지 공용툴
+	@NoLogging
+	@RequestMapping(value="inc/unimessage.do")
+	public ModelAndView unimessage() throws Exception{		
+		ModelAndView model = new ModelAndView();
+		//다음주 설정 작업 예정 
+		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		//System.out.println(" top ===============  isAuthenticated :  " + isAuthenticated);
+		
+		model.setViewName("/web/inc/uniMessage");
+		return model;
+	}
 	@NoLogging
 	@RequestMapping(value="inc/bottom_inc.do")	
 	public ModelAndView webBottom() throws Exception{				
@@ -492,7 +504,14 @@ public class frontResInfoManageController {
 				params.put("code", "SWC_TIME");
 				params.put("nowData", searchVO.getResStarttime());
 				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
-				model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				if (searchVO.getSearchRoomType().equals("SWC_GUBUN_3")) {
+					params.put("nowData", "0800");
+					model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				}else {
+					model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				}
+				
+				
 				model.addObject("seatInfo", meetingService.selectMeetingRoomDetailInfoManage(searchVO.getItemId() ));
 			}
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);	
@@ -600,7 +619,7 @@ public class frontResInfoManageController {
 		  	if (empInfoVO.getEmpno() ==  null) {
 		  		url = "/web/login";
 		  	}else {
-		  		LOGGER.debug("resCalendar:---------------------------------------------------");
+		  		
 		  		Map<String, Object> params = new HashMap<String, Object>();
 		  		if (util.NVL( params.get("centerId"), "").equals("") )
 			  		params.put("centerId", "C21052601");
@@ -616,10 +635,8 @@ public class frontResInfoManageController {
 			  	  
 			  	model.addObject("floorinfo", floorList);
 			  	//기초 정리 하기 
-			  	String searchDay = util.reqDay(0);
 			  	reginfo.put("floorSeq", searchVO.getFloorSeq());
 			  	reginfo.put("centerId", params.get("centerId").toString());
-			  	reginfo.put("searchResStartday", searchDay);
 			  	
 			  	
 			  	model.addObject("selectMonthList", resService.selectCalenderInfo());
@@ -691,9 +708,7 @@ public class frontResInfoManageController {
 				model.setViewName("/web/login");
 				return model;
 			}
-			LOGGER.debug("---------------------------------------------------");
-	  		
-	  		PaginationInfo paginationInfo = new PaginationInfo();
+			PaginationInfo paginationInfo = new PaginationInfo();
 	  		paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.getPageIndex(), "1") ) );
 			paginationInfo.setRecordCountPerPage( propertiesService.getInt("pageUnit"));
 			paginationInfo.setPageSize( propertiesService.getInt("pageSize"));
@@ -703,31 +718,37 @@ public class frontResInfoManageController {
 			
 			
 			
-			
-			
-	  		if (util.NVL( params.get("centerId"), "").equals("") )
-		  		params.put("centerId", "C21052601");
-		  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
-		  	reginfo.put("centerId", params.get("centerId").toString());
-		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
-		  	
-		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-		  	String floorSeq = floorList.get(0).get("floor_seq").toString();
-		  	model.addObject("floorinfo", floorList);
-		  	
-		  	
 			List<com.sohoki.backoffice.sym.cnt.vo.CenterInfo> list = centerService.selectCenterInfoManageCombo();
 			String centerId =  searchVO.getSearchCenter().equals("") ? list.get(0).getCenterId() :  searchVO.getSearchCenter();
 			
 			
+	  		if (util.NVL( params.get("centerId"), "").equals("") )
+		  		params.put("centerId", "C21052601");
+	  		
+		  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
+		  	reginfo.put("centerId", params.get("centerId").toString());
+		  	params.put("searchFloor", "MEETING");
+		  	
+		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
+		  	model.addObject("floorinfo", floorList);
+		  	
+		  	String floorSeq =  searchVO.getFloorSeq().equals("") ?  floorList.get(0).get("floor_seq").toString() : searchVO.getFloorSeq();
+		  	searchVO.setFloorSeq(floorSeq);
+		  	
+		  	String searchResStartday = searchVO.getSearchResStartday().equals("") ?    util.reqDay(0): searchVO.getSearchResStartday();
+		  	searchVO.setSearchResStartday(searchResStartday);
+		  	
+		  	
 			params.put("firstIndex", Integer.valueOf( paginationInfo.getFirstRecordIndex()));
 			params.put("lastRecordIndex", Integer.valueOf(paginationInfo.getLastRecordIndex()));
 			params.put("recordCountPerPage", Integer.valueOf( paginationInfo.getRecordCountPerPage()));
-			params.put("searchStartDay", LocalDateTime.now().minusMonths(2).format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-			params.put("searchEndDay", "20301231");
+			params.put("searchResStartday",  searchResStartday);
 			
-			LOGGER.debug("firstIndex():" + params.get("firstIndex"));
-			
+			//params.put("searchStartDay", LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+			//params.put("searchEndDay", "20301231");
+			params.put("itemGubun", "ITEM_GUBUN_1");
+			params.put("resGubun", "SWC_GUBUN_1");
+			params.put("searchFloorSeq", floorSeq);
 			
 			
 	    	List<Map<String, Object>> reslist = resService.selectResManageListByPagination(params);
@@ -1127,5 +1148,49 @@ public class frontResInfoManageController {
 	    }
 		return model;
     }
+	//회의실 예약 부터 시작
+	@RequestMapping(value="coronation.do")	
+	public ModelAndView webCoronation(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                           , HttpServletRequest request
+			                           , BindingResult bindingResult) throws Exception{				
+	    ModelAndView model = new ModelAndView();
+	    try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/coronation";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		LOGGER.debug("---------------------------------------------------");
+		  		Map<String, Object> params = new HashMap<String, Object>();
+		  		if (util.NVL( params.get("centerId"), "").equals("") )
+			  		params.put("centerId", "C21052601");
+			  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
+			  	reginfo.put("centerId", params.get("centerId").toString());
+			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	params.put("searchFloor", "CORN");
+			  	
+			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
+			  	String floorSeq = floorList.get(0).get("floor_seq").toString();
+			  	model.addObject("floorinfo", floorList);
+			  	//기초 정리 하기 
+			  	String searchDay = util.reqDay(0);
+			  	reginfo.put("floorSeq", floorSeq);
+			  	reginfo.put("centerId", params.get("centerId").toString());
+			  	reginfo.put("searchResStartday", searchDay);
+			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	}
+		  	model.setViewName(url);
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+		      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMeetingInfo error:" + e.toString() + ":" + lineNumber);
+	    	
+	    }
+	    return model;
+	
+		
+	}
 	
 }

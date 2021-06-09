@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sohoki.backoffice.sts.hly.mapper.HolyInfoManagerMapper">
+
+   <select id="selectHolyInfoManageListByPagination" resultType="lmap">     	      
+		 	SELECT	* 
+			FROM 		( SELECT	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
+			                        ROW_NUMBER() OVER (ORDER BY HOLY_DAY DESC) AS RNUM, 
+									TB.* 
+					          FROM 	(	
+					                 SELECT a.HOLY_DAY, a.HOLY_TITLE, a.HOLY_USEYN,
+					                        a.REG_DATE, a.REG_ID, a.UPDATE_ID
+					                        FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE, 
+							         FROM  TB_HOLYINFO a
+							         WHERE 	1=1
+					                       <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+					                         AND ( a.HOLY_DAY LIKE CONCAT('%',#{params.searchKeyword},'%') or 
+					                               a.HOLY_TITLE LIKE CONCAT('%',#{params.searchKeyword},'%')) 
+								           </if>	
+								           <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchStartDay) ">
+								             AND a.HOLY_DAY between #{params.searchStartDay} and #{params.searchEndDay}
+								           </if>
+								     ) TB 
+					        ) 
+		WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+	    ORDER BY TB.HOLY_DAY ASC 
+   </select>
+
+   <select id="selectHolyInfoManageView" resultType="HolyworkInfoVO">
+        SELECT a.HOLY_DAY, a.HOLY_TITLE, a.HOLY_USEYN,
+			   a.REG_DATE, a.REG_ID, a.UPDATE_DATE, a.UPDATE_ID
+		FROM  TB_HOLYINFO a
+		WHERE a.HOLY_DAY = #{holyDay}
+   </select>
+   <insert id="insertHolyInfoManage">
+       INSERT INTO 	TB_HOLYINFO	(HOLY_DAY, HOLY_TITLE, HOLY_USEYN
+                                     REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
+       VALUES (#{holyDay,jdbcType=VARCHAR}, #{holyTitle,jdbcType=VARCHAR} , #{holyUseyn,jdbcType=VARCHAR }
+			  , getdate(), #{userId ,jdbcType=VARCHAR}, getdate(), #{userId ,jdbcType=VARCHAR})
+   </insert>
+   <update id="updateHolyInfoManage">
+       UPDATE TB_HOLYINFO SET HOLY_DAY = #{holyDay}
+                             ,  HOLY_TITLE = #{holyTitle,jdbcType=VARCHAR }
+                             ,  HOLY_USEYN = #{holyUseyn,jdbcType=VARCHAR }
+                             ,  UPDATE_DATE = getdate()
+                             ,  UPDATE_ID = #{updateId ,jdbcType=VARCHAR}                        
+       WHERE HOLY_DAY = #{holyDay}
+   </update>
+
+
+</mapper>

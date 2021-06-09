@@ -27,7 +27,7 @@
 				                       WHERE a.CENTER_ID = b.CENTER_ID 
 				                             AND a.FLOOR_SEQ = c.FLOOR_SEQ
 				                             <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">	
-									        	AND ( a.MEETING_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') OR c.CENTER_NM LIKE CONCAT('%',#{params.searchKeyword},'%'))
+									        	AND ( a.MEETING_NAME LIKE CONCAT('%',#{params.searchKeyword},'%'))
 									         </if>	
 											 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchAdminid)">	  
 											    AND a.MEETING_ADMINID = #{params.searchAdminid}

@@ -26,16 +26,20 @@ public interface TimeInfoManageMapper {
 	public int selectResPreCheckInfo(@Param("params") Map<String, Object> params);
 	//좌석 동일 시간때 중복 예약 체크
 	public int selectResSeatPreCheckInfo(@Param("params") Map<String, Object> params);
-	
-	public int selectResPreCheckInfoL(TimeInfoVO searchVO);
+	//장기 일반
+	public int selectResPreCheckInfoL(@Param("params") Map<String, Object> params);
+	//장기 시작일 시작 시간 부터 종료일 끝 시간 까지 
+	public int selectResPreCheckInfoL1(@Param("params") Map<String, Object> params);
 	
 	public int inseretTimeCreate();
 	
 	public String selectTimeUp(String endTime);
-	
-	public int updateTimeInfoL(TimeInfo searchVO);
-	
+	//단기 예약
 	public int updateTimeInfo(@Param("params") Map<String, Object> params);
+    //장기 일반
+	public int updateTimeInfoL(@Param("params") Map<String, Object> params);
+	//장기 시작일 시작 시간 부터 종료일 끝 시간 까지 
+	public int updateTimeInfoL1(@Param("params") Map<String, Object> params);
 	
 	public int updateTimeInfoY(TimeInfo vo); 
 	//예약 시간 정리 

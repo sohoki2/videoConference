@@ -36,14 +36,14 @@ function uniAjax(url, param, done_callback, fail_callback){
 function fn_uniCheck(url, params, _field){
     uniAjax(url, params, 
 			  function(result) {
-				       if (result.status == "SUCCESS"){
-		                   //관련자 보여 주기 
-		                    alert("중복된 내역이 없습니다.");
-						   $("#"+_field).val("Y");
-					   }else {
-					      alert("중복된 내역이 있습니다.");
-						  $("#"+_field).val("N");
-					   }
+			       if (result.status == "SUCCESS"){
+	                   //관련자 보여 주기 
+	                    alert("중복된 내역이 없습니다.");
+					   $("#"+_field).val("Y");
+				   }else {
+				      alert("중복된 내역이 있습니다.");
+					  $("#"+_field).val("N");
+				   }
 			  },
 			  function(request){
 				    alert("Error:" +request.status );	       						
@@ -85,9 +85,7 @@ function fnLPAD(val, set, cnt) {
     return val;
 }
 function fn_domNullReplace(checkField, nullVal){
-	
-	return (checkField == "" ? nullVal : checkField);
-		
+	return ( (checkField == "" || checkField == undefined) ? nullVal : checkField);		
 }
 function need_close(){
      	needPopup.hide();
@@ -154,6 +152,15 @@ function ajaxPaging(currentPageNo, firstPageNo, recordCountPerPage, firstPageNoO
 	 }	
     return pageHtml;
 }
+//top 메뉴 
+function fn_floorSearch(floorSeq , _action_url){
+        
+		$("#dv_floor").find("[name=btn_floor]").attr('class', '');
+		$("#btn_"+floorSeq).attr('class', 'active');
+		$("#floorSeq").val(floorSeq);
+		var call_script = eval("window."+_action_url+"();"); 		
+ }
+ 
 function toilet_men() {
   document.getElementById("toilet_men1").style.display = "block";
   document.getElementById("toilet_men2").style.display = "block";

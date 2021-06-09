@@ -3,10 +3,12 @@ package com.sohoki.backoffice.sts.hly.web;
 
 import egovframework.com.cmm.AdminLoginVO;
 import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
+import com.sohoki.backoffice.sts.hly.vo.HolyInfo;
 import com.sohoki.backoffice.sts.hly.vo.HolyworkInfo;
 import com.sohoki.backoffice.sts.hly.vo.HolyworkInfoVO;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
+import com.sohoki.backoffice.sts.hly.service.HolyInfoService;
 import com.sohoki.backoffice.sts.hly.service.HolyworkInfoManageService;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
@@ -30,7 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @RestController
-@RequestMapping("/backoffice/resManage")
+@RequestMapping("/backoffice/basicManage")
 public class HolyworkInfoManageController {
 
 	
@@ -54,6 +56,166 @@ public class HolyworkInfoManageController {
 	
 	@Autowired
 	private UniSelectInfoManageService  uniService;
+	
+	@Autowired
+	private HolyInfoService holyDayService;
+	
+	@RequestMapping(value="holyDayList.do")
+	public ModelAndView selectholyDayInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
+																, @ModelAttribute("searchVO") HolyworkInfoVO searchVO
+																, HttpServletRequest request
+																, BindingResult bindingResult) throws Exception {
+				
+		ModelAndView model = new ModelAndView("/backoffice/basicManage/holyDayList");
+		try {
+			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			if(!isAuthenticated) {
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				model.setViewName("/backoffice/login");
+				return model;	
+			}else {
+	    	   HttpSession httpSession = request.getSession(true);
+	    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+	    	   
+	    	   
+			}
+		}catch(Exception e) {
+			
+		}
+		return model;
+	}
+	@RequestMapping(value="holyDayListAjax.do")
+	public ModelAndView  selectholyDayInfoManageListByPaginationAjax(@ModelAttribute("loginVO") AdminLoginVO loginVO
+																	, @RequestBody Map<String, Object> searchVO
+																	, HttpServletRequest request
+																	, BindingResult bindingResult) throws Exception {
+		
+		ModelAndView model = new ModelAndView (Globals.JSONVIEW);
+		
+		
+		try {
+			int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
+			searchVO.put("pageSize", propertiesService.getInt("pageSize"));
+		          
+	   	    PaginationInfo paginationInfo = new PaginationInfo();
+		    paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
+		    paginationInfo.setRecordCountPerPage(pageUnit);
+		    paginationInfo.setPageSize(propertiesService.getInt("pageSize"));
+
+		    searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+		    searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
+		    searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+		    
+		    String searchStartDay = util.NVL(searchVO.get("searchStartDay"), util.reqDay(0)) ;
+	    	String searchEndDay = util.NVL(searchVO.get("searchEndDay"), util.reqDay(120)) ;
+	    	
+	    	
+			List<Map<String, Object>> list = holyDayService.selectHolyInfoManageListByPagination(searchVO);
+	        int totCnt =  list.size() > 0 ? Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
+	   
+
+	    	   
+	    	
+	    	   
+			model.addObject(Globals.JSON_RETURN_RESULTLISR, list);
+		    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+		    paginationInfo.setTotalRecordCount(totCnt);
+		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+		    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);	    
+		  
+		}catch(Exception e) {
+			LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+		
+	}
+	@RequestMapping (value="holyDayView.do")
+	public ModelAndView selecholyDayInfoManageView(@ModelAttribute("loginVO") AdminLoginVO loginVO
+                                                 , @RequestParam("holeDay") String holeDay
+                                                 , HttpServletRequest request
+                                    			 , BindingResult bindingResult) throws Exception{	
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+	    if(!isAuthenticated) {
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				model.setViewName("/backoffice/login");
+				return model;	
+	    }
+	    try {
+	    	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			model.addObject(Globals.STATUS_REGINFO, holyDayService.selectHolyInfoManageView(holeDay));
+	    }catch(Exception e) {
+			LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
+	    }
+	    return model;
+		
+	}
+	@RequestMapping (value="holyDayDelete.do")
+	public ModelAndView deleteholyDayInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
+			                                 , @RequestParam("holeDay") String holeDay
+									         , HttpServletRequest request) throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+	    if(!isAuthenticated) {
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				model.setViewName("/backoffice/login");
+				return model;	
+	    }	
+		try{
+			  int ret = 	uniService.deleteUniStatement("", "TB_HOLYINFO", "HOLE_DAY="+holeDay);		      
+		      if (ret > 0 ) {		
+		    	  //층 삭제
+		    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		    	  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("success.common.delete") );		    	 
+		      }else {
+		    	  throw new Exception();		    	  
+		      }
+		      
+		}catch (Exception e){
+			LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.delete"));			
+		}		
+		return model;
+	}
+	@RequestMapping (value="holyDayUpdate.do")
+	public ModelAndView updateholyDayInfoManage( @ModelAttribute("loginVO") AdminLoginVO loginVO
+											    , @RequestBody HolyInfo vo	
+	                                            , HttpServletRequest request                         				 
+											    , BindingResult result) throws Exception{
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		String meesage = null;
+		try{
+			 Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			 if(!isAuthenticated) {
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+					model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
+					return model;	
+		     }
+			 
+			int ret  = holyDayService.updateHolyInfoManage(vo);
+			meesage = (vo.getMode().equals("Ins")) ? "sucess.common.insert" : "sucess.common.update";
+			if (ret >0){
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage(meesage));
+						
+			}else {
+				throw new Exception();
+			}
+		}catch (Exception e){
+			meesage = (vo.getMode().equals("Ins")) ? "fail.common.insert" : "fail.common.update";
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage(meesage));			
+		}
+		return model;
+	}
 	
 	@RequestMapping(value="holyList.do")
 	public ModelAndView  selectholyInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO

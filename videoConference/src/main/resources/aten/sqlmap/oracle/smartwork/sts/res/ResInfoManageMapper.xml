@@ -19,7 +19,7 @@
 		                       END proxyYnTxt, a.PROXY_YN, 
 		                       a.PROXY_USER_ID , TO_CHAR (a.UPDATE_DATE, 'yyyy-MM-dd') AS updateDate ,
 		                       a.UPDATE_ID , to_char(a.RES_REPLY_DATE, 'yyyy-MM-dd') as resReplyDate ,
-		                       a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE ,
+		                       a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, 
 		                       a.USE_YN , FN_ORGNM(b.CD_DEPT) nmDept, c.SEAT_NAME, d.CENTER_NM, b.NM_KORNAME,
 		                       b.CD_DEPT, b.NM_EMAIL, 
 		                       a.RES_TITLE, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST,
@@ -345,6 +345,7 @@
                                        <if test="reservProcessGubun == 'PROCESS_GUBUN_4' or reservProcessGubun == 'PROCESS_GUBUN_5'">
                                        , ADMIN_REPLY_DATE = SYSDATE
                                        , ADMIN_PROCESS_GUBUN = #{reservProcessGubun}
+                                       , PROXY_USER_ID = #{userId}
                                        </if>
                                        <if test="resTitle != '' ">
                                        , RES_TITLE = #{resTitle}

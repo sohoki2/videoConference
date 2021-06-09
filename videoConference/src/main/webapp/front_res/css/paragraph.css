@@ -224,12 +224,14 @@ header {
 
 .searchBtn {
     cursor: pointer;
-    background: url("/front_res/img/searchIcon.png") no-repeat center 4px;
-    width: 22px;
-    height: 28px;
-    display: inline-block;
-    font-size: 0;
-    vertical-align: middle;
+    font-size: 1.6rem;
+    background-color: #888888;
+    color: white;
+    height: 40px;
+    display: block;
+    line-height: 40px;
+    padding: 0 20px;
+    border-radius: 4px;
 }
 .dateIcon{
     background: url("/front_res/img/dateIcon.png") no-repeat center 4px;

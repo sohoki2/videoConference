@@ -175,15 +175,46 @@
     
     
     
-    <!--  회의실 장기 예약 -->
+    <!--  회의실 장기 예약 일반 -->
     <select id="selectResPreCheckInfoL" resultType="java.lang.Integer">
           SELECT  ISNULL(COUNT(*),0) as CNT
 	      FROM TB_SWCTIME
-	      WHERE  SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay}  
-	             AND MEETING_ID = #{meetingId} 
-	             AND swc_time BETWEEN #{strTime} AND #{endTime}      
+	      WHERE  SWC_RESDAY BETWEEN #{params.timeStartDay} AND #{params.timeEndDay}  
+	             AND MEETING_ID = #{params.meetingId} 
+	             AND swc_time BETWEEN #{params.strTime} AND #{params.endTime}      
 				 AND RES_SEQ != 0       
 				 AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+    </select>
+    <!--  회의실 장기 시작 시간 부터 종료 시간 까지  -->
+    <select id="selectResPreCheckInfoL1" resultType="java.lang.Integer">
+          SELECT SUM(X.CNT)  as CNT
+		  FROM (
+			    SELECT ISNULL(COUNT(*),0) as CNT
+			    FROM TB_SWCTIME 
+			    WHERE SWC_RESDAY = #{params.timeStartDay} 
+			         AND ITEM_ID = #{params.meetingId} 
+					 AND swc_time BETWEEN #{params.strTime} AND '1830'      
+					 AND RES_SEQ != 0       
+					 AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+			   UNION ALL 
+			   SELECT  ISNULL(COUNT(*),0) as CNT
+			   FROM TB_SWCTIME
+			   WHERE SWC_RESDAY BETWEEN  Convert(varchar(8), dateadd(dd, 1 , Convert(datetime, #{params.timeStartDay})), 112)
+					 AND  Convert(varchar(8), dateadd(dd, -1 , Convert(datetime, #{params.timeEndDay}  )), 112) 
+				     AND ITEM_ID = #{params.meetingId} 
+				     AND swc_time BETWEEN '0800' AND '1830'      
+					 AND RES_SEQ != 0       
+					 AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+			   UNION ALL
+			   SELECT ISNULL(COUNT(*),0) as CNT
+			   FROM TB_SWCTIME 
+			   WHERE SWC_RESDAY = #{params.timeEndDay}  
+			         AND ITEM_ID =#{params.meetingId} 
+					 AND swc_time BETWEEN '0800' AND #{params.endTime}      
+					 AND RES_SEQ != 0       
+					 AND USE_YN = 'N'   and  APPRIVAL in ('R','Y','E')
+			)X
+				
     </select>
     
     
@@ -198,6 +229,57 @@
 		            #{item}
 		           </foreach>
               </if>
+    </update>
+    <!--  장기 일반 -->
+    <update id="updateTimeInfoL">
+        UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
+        WHERE ITEM_ID = #{params.meetingId} 
+              AND SWC_RESDAY BETWEEN #{params.timeStartDay} AND #{params.timeEndDay}
+              AND SWC_TIME BETWEEN #{params.strTime} AND #{params.endTime}
+              <if test="params.resGubun == 'SWC_GUBUN_2' ">
+              AND ITEM_ID IN 
+	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		            #{item}
+		           </foreach>
+              </if>
+    </update>
+    <!--  장기 시작 끝 부분  -->
+    <update id="updateTimeInfoL1">
+        UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
+        WHERE ITEM_ID = #{params.meetingId} 
+              AND SWC_RESDAY = #{params.timeStartDay} 
+              AND SWC_TIME BETWEEN #{params.strTime} AND '1830'
+              <if test="params.resGubun == 'SWC_GUBUN_2' ">
+              AND ITEM_ID IN 
+	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		            #{item}
+		           </foreach>
+              </if>
+              ;
+        UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
+        WHERE SWC_RESDAY BETWEEN  Convert(varchar(8), dateadd(dd, 1 , Convert(datetime, #{params.timeStartDay})), 112)
+			  AND  Convert(varchar(8), dateadd(dd, -1 , Convert(datetime, #{params.timeEndDay}  )), 112) 
+		      AND ITEM_ID = #{params.meetingId} 
+		      AND swc_time BETWEEN '0800' AND '1830'  
+              <if test="params.resGubun == 'SWC_GUBUN_2' ">
+              AND ITEM_ID IN 
+	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		            #{item}
+		           </foreach>
+              </if>
+              ;
+        UPDATE tb_swctime SET RES_SEQ = #{params.resSeq} , APPRIVAL =#{params.apprival}
+        WHERE SWC_RESDAY = #{params.timeEndDay}  
+			  AND ITEM_ID =#{params.meetingId} 
+			  AND swc_time BETWEEN '0800' AND #{params.endTime}    
+              <if test="params.resGubun == 'SWC_GUBUN_2' ">
+              AND ITEM_ID IN 
+	               <foreach collection="params.meetingSeq" item="item" open="(" close=")" separator=",">
+		            #{item}
+		           </foreach>
+              </if>
+              ;
+              
     </update>
     
     <!-- <update id="updateTimeInfoMeeting">
@@ -214,13 +296,6 @@
         WHERE RES_SEQ = #{resSeq}
      </update>
 
-    
-    <update id="updateTimeInfoL">
-        UPDATE tb_swctime set RES_SEQ = #{resSeq}, APPRIVAL =#{apprival}
-        WHERE SWC_SEQ = #{swcSeq} 
-              AND SWC_RESDAY BETWEEN #{timeStartDay} AND #{timeEndDay} 
-              AND SWC_TIME BETWEEN #{strTime} AND #{endTime}
-    </update>
     
     <update id="resTimeReset">
         UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL =#{apprival}

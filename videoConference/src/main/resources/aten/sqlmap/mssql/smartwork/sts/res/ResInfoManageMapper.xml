@@ -20,7 +20,7 @@
 		                     END proxyYnTxt, a.PROXY_YN, 
 		                     a.PROXY_USER_ID , CONVERT(VARCHAR(10),a.UPDATE_DATE , 120 ) updateDate ,
 		                     a.UPDATE_ID ,  CONVERT(VARCHAR(10),a.RES_REPLY_DATE , 120 ) resReplyDate ,
-		                     a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE ,
+		                     a. ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, 
 		                     a.USE_YN , b.DEPTNAME,  d.CENTER_NM, 
 		                     b.EMPNAME, b.EMPHANDPHONE, c.FLOOR_NAME, b.EMPJIKW, b.EMPMAIL, b.EMPNO,
 		                     a.RES_TITLE, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST,
@@ -32,11 +32,9 @@
 		                     CONFERENCE_ID, CON_NUMBER, CON_PIN, 
                              CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO,
                              dbo.FN_DETAILCODENM(a.RES_EQUPCHECK) AS resEqupcheckTxt, a.RES_EQUPCHECK,
-                             CASE a.ITEM_GUBUN WHEN 'ITEM_GUBUN_1' THEN '회의실 예약'
-                                  ELSE '좌석 예약'
-                             END ITEM_GUBUN,  
-                             dbo.fn_resNameInfo(a.RES_SEQ, 'CONFIRMGUBUN') ITEM_CONFIRMGUBUN,
-                             dbo.fn_resNameInfo(a.RES_SEQ, 'NAME') ITEM_NAME, a.TENN_CNT
+                             dbo.FN_DETAILCODENM(a.ITEM_GUBUN) ITEM_GUBUN_T, ITEM_GUBUN,  
+                             dbo.FN_RESNAMEINFO(a.RES_SEQ, 'CONFIRMGUBUN') ITEM_CONFIRMGUBUN,
+                             dbo.FN_RESNAMEINFO(a.RES_SEQ, 'NAME') ITEM_NAME, a.TENN_CNT
                       FROM TB_SWCRESERVATION a, TB_EMPINFO b, TB_FLOORINFO c, TB_CENTERINFO d
 		              WHERE a.USER_ID = b.EMPNO
 			                AND a.CENTER_ID = d.CENTER_ID
@@ -77,11 +75,28 @@
 							    AND a.RESERV_PROCESS_GUBUN NOT IN ('PROCESS_GUBUN_5', 'PROCESS_GUBUN_6', 'PROCESS_GUBUN_3', 'PROCESS_GUBUN_7') 
 							</if>
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomType)">
-							    AND c.ROOM_TYPE  = #{params.searchRoomType}
+							    AND a.ROOM_TYPE  = #{params.searchRoomType}
 							</if>
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchTenn)">
-							    AND c.TENN_CNT > 0
+							    AND a.TENN_CNT > 0
 							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.itemGubun)">
+							    AND a.ITEM_GUBUN = #{params.itemGubun}
+							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchResStartday)">
+							    AND a.RES_STARTDAY = #{params.searchResStartday}
+							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.resGubun)">
+						        <choose>
+						           <when test="params.resGubun == 'SWC_GUBUN_3'">
+						              AND RES_GUBUN  = 'SWC_GUBUN_3'
+						           </when>
+						           <otherwise>
+						              AND RES_GUBUN IN ('SWC_GUBUN_1', 'SWC_GUBUN_2')
+						           </otherwise>
+						        </choose>
+						    </if>	   
+							
 							<choose>
 								<when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchStartDay)  and 
 								            !@org.apache.commons.lang3.StringUtils@isEmpty(params.searchEndDay)">						
@@ -205,55 +220,7 @@
     </select>
     
     <select id="selectResManageView" resultType="lmap">
-     <![CDATA[
-       SELECT a.RES_SEQ, a.ITEM_ID, a.CENTER_ID, dbo.FN_DETAILCODENM(a.RES_GUBUN) resGubunTxt,   
-              a.RES_GUBUN, a.USER_ID, a.DEPT_ID,  
-              CONVERT (DATE, a.RES_STARTDAY) resStartday,
-		      a.RES_ENDDAY, dbo.FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.fn_upsTimedown(a.RES_ENDTIME)) resEndtime, 
-		      dbo.FN_DETAILCODENM(a.RESERV_PROCESS_GUBUN) AS reservProcessGubunTxt ,
-			  a.REG_DATE, a.RESERV_PROCESS_GUBUN, a.RESERVATION_REASON, a.CANCEL_REASON, 
-			  dbo.FN_DETAILCODENM(a.CANCEL_CODE) cancelCodeTxt, a.CANCEL_CODE, a.PROXY_YN, a.PROXY_USER_ID, a.UPDATE_DATE,
-			  a.UPDATE_ID, a.RES_REPLY_DATE, a.ADMIN_REPLY_DATE, a.ADMIN_PROCESS_GUBUN, a.ADMIN_CANCELCODE, 
-			  dbo.FN_DETAILCODENM(a.ADMIN_CANCELCODE) adminCancelcodeTxt, a.USE_YN,
-			  b.DEPTCODE, b.EMPMAIL, b.EMPNAME, d.MEETING_NAME, b.DEPTNAME, b.EMPHANDPHONE, b.EMPNO,
-			  b.AVAYA_USERID, a.RES_PASSWORD, a.MEETING_SEQ, a.RES_ATTENDLIST, a.RES_TITLE,
-			  a.MEETINGLOG, a.RES_FILE1, a.RES_FILE2,
-		      dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) attendListTxt    ,
-		      CASE WHEN a.RES_PASSWORD = 'N' THEN  '비공개' ELSE '공개' end as resPassTxt,
-		      CASE a.PROXY_YN WHEN 'P' THEN '승인 요청'  ELSE '본인'  END proxyYnTxt,
-		      a.CONFERENCE_ID, a.CON_NUMBER, a.CON_PIN, 
-              a.CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI,
-              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(a.RES_STARTTIME), ':00')) , 20)  resDayInfo,
-              CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(dbo.fn_upsTimedown(a.RES_ENDTIME)) , ':00')) , 20)  resDayEndInfo,
-              
-              --dbo.FN_DURATION(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME ), a.RES_STARTTIME ) resDurationT,
-			  d.AVAYA_CONFI_ID, d.AVAYA_USERID, d.TERMINAL_ID, d.END_NAME, d.TERMINAL_NUMBER,
-              d.TERMINAL_TEL, d.USER_FIRST_NM, d.USER_LAST_NM, d.USER_EMAIL , 
-              d.MEETING_CONFIRMGUBUN, d.MEETING_EQUPGUBUN, a.RES_EQUPINFO, a.RES_EQUPCHECK,
-              d.MEETING_ADMINID, d.MAIL_SENDCHECK, d.SMS_SENDCHECK
-              , CASE d.MAIL_SENDCHECK WHEN 'Y' THEN  dbo.FN_MESSAGETITLE( d.RES_MESSAGE_MAIL )
-				   ELSE '메세지 없음' 
-			    END resMessageMailTxt
-			  , CASE d.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGECONTENT( d.RES_MESSAGE_MAIL )
-				  ELSE '메세지 없음' 
-			    END resMessageMailContextTxt
-			  , CASE d.SMS_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( d.RES_MESSAGE_SMS )
-				  ELSE '메세지 없음' 
-				END resMessageSmsTxt
-			  , CASE d.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( d.CAN_MESSAGE_MAIL )
-				  ELSE '메세지 없음' 
-				 END canMessageMailTxt
-			  , CASE d.MAIL_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGECONTENT( d.CAN_MESSAGE_MAIL )
-				  ELSE '메세지 없음' 
-			  END resMessageMailContextTxt
-			  , CASE d.SMS_SENDCHECK WHEN 'Y' THEN dbo.FN_MESSAGETITLE( d.CAN_MESSAGE_SMS )
-				  ELSE '메세지 없음' 
-			   END canMessageSmsTxt, a.TENN_CNT
-		FROM TB_SWCRESERVATION a, TB_EMPINFO b, TB_MEETING_ROOM d
-		WHERE a.USER_ID = b.EMPNO 
-		          AND a.ITEM_ID = d.MEETING_ID
-		          AND a.RES_SEQ = #{resSeq}   
-	 ]]>
+          { call SP_RESINFO(#{resSeq ,mode=IN, jdbcType=VARCHAR, javaType=string} )   }
     </select>
     
     <select id="selectCancelReason" resultType="ResInfoVO">
@@ -442,7 +409,7 @@
                                         UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
                                         CONFERENCE_ID, CON_NUMBER, CON_PIN, 
                                         CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, 
-                                        TENN_CNT, FLOOR_SEQ, SEND_MESSAGE 
+                                        TENN_CNT, FLOOR_SEQ, SEND_MESSAGE , RES_PERSON
                                         
                                         )
          VALUES ( #{itemId}, #{itemGubun},  #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}
@@ -454,7 +421,7 @@
 			     , #{conferenceId, jdbcType=VARCHAR} , #{conNumber, jdbcType=VARCHAR} , #{conPin, jdbcType=VARCHAR}
 			     , #{conVirtualPin, jdbcType=VARCHAR} , #{conAllowstream, jdbcType=VARCHAR} , #{conBlackdial, jdbcType=VARCHAR}
 			     , #{conSendnoti, jdbcType=VARCHAR} , #{resEqupinfo, jdbcType=VARCHAR}  , #{resEqupcheck, jdbcType=VARCHAR}  
-			     , #{tennCnt, jdbcType=VARCHAR}, #{floorSeq, jdbcType=VARCHAR}  , #{sendMessage, jdbcType=VARCHAR}  
+			     , #{tennCnt, jdbcType=VARCHAR}, #{floorSeq, jdbcType=VARCHAR}  , #{sendMessage, jdbcType=VARCHAR}  , #{resPerson, jdbcType=VARCHAR}  
 			    )
          <selectKey resultType="String" keyProperty="resSeq" order="AFTER">
 		   SELECT CAST(MAX(RES_SEQ) AS int) AS resSeq

@@ -141,8 +141,8 @@ public class ResInfoVO extends ResInfo implements Serializable {
     private String resEndTimeT  = "";
     private String resState   = "";
     private String meetingName   = "";
-    
-    
+    private String roomType = "";
+   
    
     
 }

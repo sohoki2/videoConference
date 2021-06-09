@@ -8,7 +8,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title><spring:message code="URL.TITLE" /></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title><spring:message code="URL.TITLE" /></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     
@@ -39,99 +40,19 @@
    <link rel="stylesheet" type="text/css" href="/resources/jqgrid/src/css/ui.jqgrid.css">
    <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
    <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
-</head>
-<body>
-<div id="wrapper">	
-<form:form name="regist" commandName="regist" method="post" action="/backoffice/basicManage/holyList.do">
-<c:import url="/backoffice/inc/top_inc.do" />
-<input type="hidden" name="pageIndex" id="pageIndex" value="${searchVO.pageIndex }">
-<input type="hidden" name="mode" id="mode" >
-<input type="hidden" name="holySeq" id="holySeq" >
-
-<div class="Aconbox">
-        <div class="rightT">
-            <div class="Smain">
-                <div class="Swrap Stitle">
-                    <div class="infomenuA">
-                        <img src="/images/home.png" alt="homeicon" />
-                        <span>></span>
-                        기초관리
-                        <span>></span>
-                        <strong>휴일근무관리</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="Swrap Asearch">
-                <div class="Atitle">총 <span>${totalCnt}</span>건의 휴일근무 신청자가 있습니다.</div>
-                
-                <section class="Bclear">
-                	<table class="pop_table searchThStyle">
-		                <tr class="tableM">
-		                	<th>
-		                		검색어
-		                	</th>
-		                	<td>
-		                		<select name="searchCondition"  id="searchCondition">
-									<option value="0">전체</option>
-									<option value="1" <c:if test="${searchVO.searchCondition == '1' }"> selected="selected" </c:if>>이름</option>
-									<option value="2" <c:if test="${searchVO.searchCondition == '2' }"> selected="selected" </c:if>>사번</option>
-								</select>	
-								<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}">     
-								<a href="javascript:search_form();"><span class="searchTableB">조회</span></a>       
-		                	</td>
-		                	<td class="text-right">
-		                		<a href="javascript:view_holy('Ins','0')" ><span class="deepBtn">등록</span></a>
-		                	</td>		                	
-						</tr>
-                    </table>                
-                <br/>
-               
-                </section>
-            </div>
-
-            <div class="Swrap tableArea">
-                <table class="backTable">
-                    <thead>
-                        <tr>
-                            <th>번호</th>
-                            <th>휴일명</th>
-                            <th>휴일구분</th>
-                            <th>예외처리</th>
-                            <th>직급</th>
-                            <th>이름</th>
-                            <th>사번</th>
-                            <th>삭제</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                     <c:forEach items="${resultList }" var="holyInfo" varStatus="status">
-                        <tr>
-                            <td><c:out value="${(searchVO.pageIndex - 1) * searchVO.pageSize + status.count}"/></td>
-                            <td><a href="javascript:view_holy('Edt','${ holyInfo.holySeq }')" class="underline" >${ holyInfo.holyDate }</a></td>
-                            <td><a href="javascript:view_holy('Edt','${ holyInfo.holySeq }')" class="underline" >${ holyInfo.holyNm }</a></td>
-                            <td>${ holyInfo.orgName }</td>
-                            <td>${holyInfo.posGrdNm }</td>
-                            <td>${ holyInfo.empNm }</td>
-                            <td>${ holyInfo.empNo }</td>
-                            <td><a href="javascript:del_check('${ holyInfo.holySeq }');" class="grayBtn">삭제</a></td>
-                        </tr>
-                      </c:forEach>                        
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagenum">
-                <div class="pager">
-                	<ol>
-		                		<ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="linkPage"  />
-		                   </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-</form:form>
-
-<script type="text/javascript">
+   <style type="text/css">
+   
+     .ui-jqgrid .ui-jqgrid-htable th div{
+		outline-style: none;
+		height: 30px;
+	 }
+     .ui-jqgrid tr.jqgrow {
+		outline-style: none;
+		height: 30px;
+	 }
+   </style>
+   
+   <script type="text/javascript">
 	$(document).ready(function() { 
 		   jqGridFunc.setGrid("mainGrid");
 	 });
@@ -143,7 +64,7 @@
     		
                 var postData = {};
     		    grid.jqGrid({
-    		    	url : '/backoffice/basicManage/msgListAjax.do' ,
+    		    	url : '/backoffice/basicManage/holyDayListAjax.do' ,
     		        mtype :  'POST',
     		        datatype :'json',
     		        pager: $('#pager'),  
@@ -160,12 +81,12 @@
 	   		             repeatitems:false
    		            },
     		        colModel :  [
-    		 	                { label: 'msg_seq', key: true, name:'msg_seq',       index:'msg_seq',      align:'center', hidden:true},
-    			                { label: '메세지구분',  name:'msg_gubuntxt',         index:'msg_gubunTxt',        align:'left',   width:'12%'},
-    			                { label: '제목', name:'msg_title',       index:'msg_title',      align:'center', width:'50%'},
-    			                { label: '사용유무', name:'useyn',       index:'UseYn',      align:'center', width:'10%'},
-    			                { label: '작성자', name:'msg_update_id',      index:'msg_update_id',     align:'center', width:'14%'},
-    			                { label: '최종 수정 일자', name:'msg_reg_date', index:'msg_reg_date', align:'center', width:'12%', 
+    		 	                { label: 'holy_day', key: true, name:'holy_day',       index:'msg_seq',      align:'center', hidden:true},
+    			                { label: '휴일',  name:'holy_day',         index:'holy_day',        align:'left',   width:'12%'},
+    			                { label: '휴일 타이틀', name:'holy_title',       index:'holy_title',      align:'center', width:'50%'},
+    			                { label: '사용유무', name:'holy_useyn',       index:'holy_useyn',      align:'center', width:'10%'},
+    			                { label: '작성자', name:'update_id',      index:'update_id',     align:'center', width:'14%'},
+    			                { label: '최종 수정 일자', name:'update_date', index:'update_date', align:'center', width:'12%', 
     			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
     			                { label: '삭제', name: 'btn',  index:'btn',      align:'center',  width: 50, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
     			         ],  //상단면 
@@ -235,7 +156,7 @@
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
     	                //console.log(cm);
     	                if (cm[index].name=='msg_title'){
-    	                	jqGridFunc.fn_MessageInfo("Edt", $(this).jqGrid('getCell', rowid, 'msg_seq'));
+    	                	jqGridFunc.fn_HolyInfo("Edt", $(this).jqGrid('getCell', rowid, 'holy_day'));
             		    }
     	            }
     		    });
@@ -244,19 +165,19 @@
             	    	return '<a href="javascript:jqGridFunc.delRow('+rowObject.msg_seq+');">삭제</a>';
            },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	       }, delRow : function (msg_seq){
-        	    if(msg_seq != "") {
-        		   var params = {'msgSeq':msg_seq };
-        		   fn_uniDelAction("/backoffice/basicManage/msgDelete.do",params, "jqGridFunc.fn_search");
+	       }, delRow : function (holyDay){
+        	    if(holyDay != "") {
+        		   var params = {'holyDay':holyDay };
+        		   fn_uniDelAction("/backoffice/holyDayDelete/holyDayDelete.do",params, "jqGridFunc.fn_search");
 		        }
-           },fn_MessageInfo : function (mode, msgSeq){
-        	    $("#btn_message").trigger("click");
+           },fn_HolyInfo : function (mode, holyDay){
+        	    $("#app_message").attr("data-needpopup-show", "#resInfoPop").trigger("click");
 			    $("#mode").val(mode);
 		        $("#msgSeq").val(msgSeq);
 		        if (mode == "Edt"){
 		           $("#btnUpdate").text("수정");
-		           var params = {"msgSeq" : msgSeq};
-		     	   var url = "/backoffice/basicManage/msgDetail.do";
+		           var params = {"holyDay" : holyDay};
+		     	   var url = "/backoffice/basicManage/holyDayView.do";
 		     	   uniAjaxSerial(url, params, 
 		          			function(result) {
 		     				       if (result.status == "LOGIN FAIL"){
@@ -265,11 +186,10 @@
 		       					   }else if (result.status == "SUCCESS"){
 		       						   //총 게시물 정리 하기
 		       						    var obj  = result.regist;
-		       						      $("#msgTitle").val(obj.msg_title);
-							    		   $("#msgGubun").val( obj.msg_gubun  );
-							    		   $("#msgContent").val(obj.msg_content);
-							    		   toggleClick("useYn", obj.useyn);
-							    		   jqGridFunc.fn_contentView();
+		       						      $("#holyDay").val(obj.holyDay).attr('readonly', true);
+							    		  $("#holyTitle").val( obj.holyTitle);
+							    		  toggleClick("holyUseyn", obj.holyUseyn);
+							    		  
 		       					   }
 		     				    },
 		     				    function(request){
@@ -277,26 +197,19 @@
 		     				    }    		
 		               );
 		        }else{
-		        	$('input[name^=msg]').val("");
-		        	toggleDefault("useYn");
+		        	$('input[name^=holy]').val("");
+		        	toggleDefault("holyUseyn");
 		        }
            },clearGrid : function() {
                $("#mainGrid").clearGridData();
-           },fn_contentView : function (){
-			  if ($("#msgGubun").val() == "MSG_TYPE_1")
-				  $("#dv_message").show();
-			  else 
-				  $("#dv_message").hide();
-		  },fn_CheckForm  : function (){
-			     if (any_empt_line_id("msgTitle", "메세지 제목을 입력해주세요.") == false) return;		
-		    	 if (any_empt_line_id("msgGubun", "메세지 구분을 선택해주세요.") == false) return;		
+           },fn_CheckForm  : function (){
+			     if (any_empt_line_id("holyDay", "휴일을 입력해주세요.") == false) return;		
+		    	 if (any_empt_line_id("holyTitle", "휴일 타이틀을 입력해주세요.") == false) return;		
 		    	 //확인 
-		    	 var url = "/backoffice/basicManage/msgUpdate.do";
-		    	 var params = { 'msgSeq' : $("#msgSeq").val(),
-				    			'msgTitle' : $("#msgTitle").val(),
-				    		    'msgGubun' : $("#msgGubun").val(),
-				    			'msgContent' : $("#msgContent").val(),
-				    			'useYn' :  fn_emptyReplace($('#useYn').val(),"Y"),
+		    	 var url = "/backoffice/basicManage/holyDayUpdate.do";
+		    	 var params = { 'holyDay' : $("#holyDay").val(),
+				    			'holyTitle' : $("#holyTitle").val(),
+				    		   'holyUseyn' :  fn_emptyReplace($('#holyUseyn').val(),"Y"),
 				    			'mode' : $("#mode").val()
 		    	 }; 
 		    	 uniAjax(url, params, 
@@ -329,8 +242,111 @@
 		 }   
     }
   </script>
-  
-  
+</head>
+<body>
+<div id="wrapper">	
+<form:form name="regist" commandName="regist" method="post" action="/backoffice/basicManage/msgList.do">
+<c:import url="/backoffice/inc/top_inc.do" />
+<input type="hidden" name="pageIndex" id="pageIndex">
+<input type="hidden" name="mode" id="mode" >
+<input type="hidden" name="msgSeq" id="msgSeq" >
+
+<div class="Aconbox">
+        <div class="rightT">
+            <div class="Smain">
+                <div class="Swrap Stitle">
+                    <div class="infomenuA">
+                        <img src="/images/home.png" alt="homeicon" />
+                        <span>></span> <spring:message code="menu.menu01" /><span>></span>
+                        <strong>휴일 관리</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Swrap Asearch">
+                <div class="Atitle">총 <span id="sp_totcnt" /> 휴일수 </div>
+                <section class="Bclear">
+                   
+                	<table class="pop_table searchThStyle">
+		                <tr class="tableM">
+		                	<th>
+		                		검색어
+		                	</th>
+		                	<td>
+			                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" readonly="true"  />
+			                     ~
+			                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" readonly="true" />
+			                    
+		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword" > 
+								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
+		                	</td>
+		                	<td class="text-right">
+		                		<a href="javascript:jqGridFunc.fn_HolyInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
+		                	</td>
+						</tr>
+                    </table>
+                <br/>
+        
+               </section>
+            </div>
+
+            <div class="Swrap tableArea">
+            
+               <table id="mainGrid"></table>
+               <div id="pager" class="scroll" style="text-align:center;"></div>     
+               <br />
+               <div id="paginate"></div>          
+            </div>
+           
+        </div>
+    </div>
+<c:import url="/backoffice/inc/bottom_inc.do" />
+
+
+<div id='app_message' class="needpopup">
+        <div class="popHead" id="popTitle">
+            <h2>메세지 관리</h2>
+        </div>
+        <!-- pop contents-->   
+        <div class="popCon">
+            <!--// 팝업 필드박스-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*<spring:message code="page.message.messageNm" /> <span class="join_id_comment joinSubTxt"></span></p>
+                    <input type="text" name="holyDay" id="holyDay" class="input_noti" size="10"/>
+                    
+                </div>                
+            </div>
+            <div class="pop_box1000">
+                <div class="padding15">
+                    <p class="pop_tit"><spring:message code="page.message.messageContent" /> <span class="join_id_comment joinSubTxt"></span></p>
+                    <input type="text" name="holyTitle" id="holyTitle" class="input_noti" size="10"/>
+                </div>                
+            </div>
+      
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*<spring:message code="common.UseYn.title" /> <span class="join_id_comment joinSubTxt"></span></p>
+                       <label class="switch">                                               
+	                    	<input type="checkbox" id="holyUseyn" name="holyUseyn" onclick="toggleValue(this)" value="Y">
+		                    <span class="slider round"></span> 
+				       </label>
+                </div>                
+            </div>
+        </div>
+        <div class="clear"></div>
+         <div class="pop_footer">
+            <span id="join_confirm_comment" class="join_pop_main_subTxt">내용을 모두 입력후 클릭해주세요.</span>
+            <a href="javascript:jqGridFunc.fn_CheckForm();" class="redBtn" id="btnUpdate"><spring:message code="button.create" /></a>    
+        </div>   
+    </div>  
+   
+ </form:form>
+    
 </div>
+
+
+
+
 </body>
 </html>

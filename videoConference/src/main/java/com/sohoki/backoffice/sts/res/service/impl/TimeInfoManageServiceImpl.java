@@ -37,15 +37,26 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	
 
 	@Override
-	public int selectResPreCheckInfoL(TimeInfoVO searchVO) throws Exception {
+	public int selectResPreCheckInfoL(Map<String, Object> searchVO) throws Exception {
 		// TODO Auto-generated method stub
 		return timeMapper.selectResPreCheckInfoL(searchVO);
 	}
+	@Override
+	public int selectResPreCheckInfoL1(Map<String, Object> searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.selectResPreCheckInfoL1(searchVO);
+	}
 
 	@Override
-	public int updateTimeInfoL(TimeInfo searchVO) throws Exception {
+	public int updateTimeInfoL(Map<String, Object> searchVO) throws Exception {
 		// TODO Auto-generated method stub
 		return timeMapper.updateTimeInfoL(searchVO);
+	}
+	
+	@Override
+	public int updateTimeInfoL1(Map<String, Object> searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.updateTimeInfoL1(searchVO);
 	}
 
 	@Override
@@ -108,6 +119,10 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		// TODO Auto-generated method stub
 		return timeMapper.selectResSeatPreCheckInfo(params);
 	}
+
+	
+
+	
 
 	
 }

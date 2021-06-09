@@ -31,6 +31,9 @@
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorUseyn)">
 							  AND b.FLOOR_USEYN = #{params.floorUseyn}
 							 </if>
+							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorSeq)">
+							  AND b.FLOOR_SEQ = #{params.floorSeq}
+							 </if>
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.authorCode)">
 							    <if test="params.authorCode == 'ROLE_USER'">
 							    AND FLOOR_SEQ in (SELECT strValue FROM dbo.UF_SPLICT( #{params.floorInfo}) )

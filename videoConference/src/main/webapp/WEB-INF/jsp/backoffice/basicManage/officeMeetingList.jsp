@@ -699,29 +699,12 @@
         </div>   
     </div>  
 
-   <script src="/js/needpopup.js"></script> 
+   
    <script src="/js/jquery-ui.js"></script>
 
  </form:form>
  <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
-
- <script type="text/javascript">
-	 function need_close(){
-     	needPopup.hide();
-     }
-	 needPopup.config.custom = {
-         'removerPlace': 'outside',
-         'closeOnOutside': false,
-         onShow: function() {
-				console.log('needPopup is shown');
-         },
-         onHide: function() {
-             console.log('needPopup is hidden');
-         }
-     };
-     needPopup.init();
-</script>
-	
+ <c:import url="/backoffice/inc/uni_pop.do" />
 	    
 </div>
 </body>

@@ -8,7 +8,6 @@ if(loginVO == null ){
 	
 	%>
 	<script type="text/javascript">
-	alert("세션 체크 ");
 	location.href="/backoffice/login.do";
 	</script>
 	<%        
@@ -30,7 +29,7 @@ if(loginVO == null ){
                                 <li><a href="/backoffice/basicManage/centerList.do">회의실분류관리</a></li>
                                 <li><a href="/backoffice/basicManage/officeSeatList.do">좌석관리</a></li>
                                 <li><a href="/backoffice/basicManage/officeMeetingList.do">회의실관리</a></li>
-                                <!-- <li><a href="/backoffice/basicManage/holyList.do">휴일근무관리</a></li> -->
+                                <li><a href="/backoffice/basicManage/holyDayList.do">휴일관리</a></li>
                                 <li><a href="/backoffice/basicManage/devicelist.do">did관리</a></li>
                                 <li><a href="/backoffice/basicManage/equpList.do">비품관리</a></li>
                                 <li><a href="/backoffice/basicManage/msgList.do">메시지관리</a></li>
@@ -41,6 +40,7 @@ if(loginVO == null ){
                           <ul class="dropdown-content">
                               <li><a href="/backoffice/basicManage/codeList.do">코드관리</a></li>
                               <li><a href="/backoffice/orgManage/empList.do">인사관리</a></li>
+                              <!-- <li><a href="/backoffice/basicManage/holyList.do">휴일근무관리</a></li> -->
                               <li><a href="/backoffice/orgManage/depthList.do">부서관리</a></li>
                               <li><a href="/backoffice/basicManage/managerList.do">관리자관리</a></li>
                               <li><a href="/backoffice/orgManage/swcInfo.do">환경설정</a></li>
@@ -72,13 +72,7 @@ if(loginVO == null ){
                                 <li><a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_3">좌석 예약관리</a></li>
                             </ul>
                       </li>
-					  <!-- <li class="dropdown">
-                            <a href="https://slcequinoxmgmt.slc.or.kr:9443/iview/views/index.jsf" target="_blank" class="dropbtn">회의방계설</a>
-                            <ul class="dropdown-content">
-                                <li><a href="https://slcequinoxmgmt.slc.or.kr:9443/iview/views/index.jsf"  target="_blank">회의방계설</a></li>
-								<li><a href="https://slcacp5.slc.or.kr:8445/view.html;jsessionid=868BED6A1A59BDA568A15C27662B456C"  target="_blank">녹화매니저</a></li>
-                            </ul>
-                      </li> -->
+					  
                     </ul>
                 </nav>
                 <p>                                   

@@ -6,13 +6,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
 <%@ page import ="com.sohoki.smartoffice.homepage.web.HomepageUtil" %>
-<%
-    
-
-%>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,8 +47,9 @@
             <div class="contents">
                 <div class="flooreArea float_left" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                       <a href="#" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
+                       <a href="#" onClick="fn_floorSearch(${floorList.floor_seq }, 'fn_floorSubmit')" name="btn_floor" id="btn_${floorList.floor_seq}" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
                     </c:forEach>
+                    
                 </div>               
                 <div class="clear"></div>
             </div>
@@ -122,12 +116,11 @@
                                   <c:set var="tr_sum"  value="${tr_sum + 1}" />		
                                   <c:set var="sum"  value="${sum + 1}" />  
                                   <c:set var="content" value="${calenInfo.resState}" /> 
-                                  <% 
-                                     String content = (String) pageContext.getAttribute("content"); 
-                                     content = HomepageUtil.conferenceState(content); 
-                                     pageContext.setAttribute("content", content); 
-                                  %>
- 
+	                                  <% 
+	                                     String content = (String) pageContext.getAttribute("content"); 
+	                                     content = HomepageUtil.conferenceState(content); 
+	                                     pageContext.setAttribute("content", content); 
+	                                  %> 
                                      <c:choose>
 				                               <c:when test="${calenInfo.passDate eq '0'}">
 				                                 <c:set var="tr_class" value="day" />
@@ -138,7 +131,6 @@
 				                     </c:choose>
 				                              
 		                             <td class="${tr_class}">
-		                                    
 				                            <c:choose>
 				                               <c:when test="${calenInfo.weekTxt eq '1'}">
 				                               <font color="red">${fn:substring(calenInfo.dates, 6, 8) }</font>
@@ -172,12 +164,11 @@
         <!--contetns//-->
   </form:form>  
   <script type="text/javascript">
-     function fn_floorSearch(floorSeq){
-    	 $("#floorSeq").val(floorSeq);
-    	 $("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
+     function fn_floorSubmit(){
+    	$("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
      }
      function fn_monthChange(){
-    	 $("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
+    	$("form[name=regist]").attr("action", "/web/resCalendar.do").submit();
      }
   </script>
  </div>

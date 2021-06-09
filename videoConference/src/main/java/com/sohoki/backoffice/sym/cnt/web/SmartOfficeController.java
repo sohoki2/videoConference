@@ -14,7 +14,7 @@ public class SmartOfficeController {
 	
 	@NoLogging
 	@RequestMapping(value="/backoffice/inc/top_inc.do")
-	public ModelAndView nhisTop() throws Exception{		
+	public ModelAndView smartworkTop() throws Exception{		
 		ModelAndView model = new ModelAndView();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 		//System.out.println(" top ===============  isAuthenticated :  " + isAuthenticated);
@@ -24,14 +24,19 @@ public class SmartOfficeController {
 	}
 	@NoLogging
 	@RequestMapping(value="/backoffice/inc/bottom_inc.do")	
-	public ModelAndView nhisBottom() throws Exception{				
+	public ModelAndView smartworkBottom() throws Exception{				
 		ModelAndView model = new ModelAndView();
 		
 		
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		//System.out.println(" buttom ===============  isAuthenticated :  " + isAuthenticated);
-		
 		model.setViewName("/backoffice/inc/bottom_inc");
+		return model;		
+	}
+	@NoLogging
+	@RequestMapping(value="/backoffice/inc/uni_pop.do")	
+	public ModelAndView smartworkPop() throws Exception{				
+		ModelAndView model = new ModelAndView();
+		
+		model.setViewName("/backoffice/inc/back_uniPop");
 		return model;		
 	}
 }

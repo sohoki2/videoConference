@@ -113,13 +113,14 @@
     			                { label: '연락처',  name:'emphandphone',         index:'emphandphone',        align:'left',   width:'10%' },
     			                { label: '지점',  name:'center_nm',         index:'center_nm',        align:'left',   width:'10%' },
     			                { label: '층수', name:'floor_name',       index:'floor_name',      align:'center', width:'10%'},
-    			                { label: '예약 구분', name:'item_gubun',       index:'item_gubun',      align:'center', width:'10%'},
+    			                { label: '예약 구분', name:'item_gubun_t',       index:'item_gubun_t',      align:'center', width:'10%'},
     			                { label: '예약시설명', name:'item_name',       index:'item_name',      align:'center', width:'10%'},
     			                { label: '신청 제목', name:'res_title',       index:'res_title',      align:'center', width:'20%' },
-    			                { label: '예약 신청일', name:'resStartday',       index:'resStartday',      align:'center', width:'20%' 
+    			                { label: '예약 신청일', name:'resStartday',       index:'resStartday',      align:'center', width:'40%' 
     			                  , formatter: jqGridFunc.resDayInfo},
     			                { label: '예약 일자', name:'reg_date', index:'reg_date', align:'center', width:'12%', 
       			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
+      			                { label: '사용크레딧', name:'tenn_cnt',       index:'tenn_cnt',  align:'center', width:'10%'},
     			                { label: '결제상태', name:'reservprocessgubuntxt',       index:'reservprocessgubuntxt',  align:'center', width:'10%'},
     			                { label: '관리자승인', name:'reserv_process_gubun',       index:'reserv_process_gubun',  align:'center', width:'10%'
     			                  , formatter: jqGridFunc.resProcess}
@@ -190,16 +191,19 @@
     	            	grid.jqGrid('editRow', rowid, {keys: true});
     	            },onCellSelect : function (rowid, index, contents, action){
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
+    	            	
     	                if (cm[index].name=='empname' || cm[index].name=='empno' || cm[index].name=='center_nm' || cm[index].name=='floor_name'
     	                	 || cm[index].name=='res_gubun'  || cm[index].name=='item_name' ){
-    	                	jqGridFunc.fn_ResInfo("Edt", $(this).jqGrid('getCell', rowid, 'center_id'));
+    	                	fn_resinfo($(this).jqGrid('getCell', rowid, 'res_seq'));
             		    }
     	                
     	            }
     		    });
     		    
     		}, resDayInfo : function(cellvalue, options, rowObject){
-    			return rowObject.resstartday +"일 " + rowObject.resstarttime + "~" + rowObject.resendtime ;
+    			var resdayinfo = (rowObject.item_gubun === "ITEM_GUBUN_3") ? rowObject.resstartday +"일 " + rowObject.resstarttime + " 부터 ~" + rowObject.resendday +"일 " + rowObject.resendtime  + "까지"
+    					                                                   : rowObject.resstartday +"일 " + rowObject.resstarttime + "~" + rowObject.resendtime ;
+    			return resdayinfo ;
     		}, resProcess : function (cellvalue, options, rowObject){
     			//예약 combo 
     			var resCombo = ""
@@ -215,15 +219,14 @@
     				resCombo = rowObject.reservprocessgubuntxt;
     			}
     			return resCombo;
-    		}, fn_ResInfo : function (cellvalue, options, rowObject){
-    			//예약 상세 
-    			
     		}, fn_change_process : function(code, seq){
     			
     	    	if (confirm( "승인여부를 변경 하시겠습니까?")== true){
     	    		if($("#"+code+"").val() == "PROCESS_GUBUN_5" ){
-    					var url ="/backoffice/resManage/reasonPop.do?resSeq="+seq;
-    		  			var pop_up = NewWindow(url, 'name', '550', '550', 'yes');
+    	    			//여기 부분 수정 
+    	    			$("#resSeq").val(seq);
+    	    			$("#btn_pop").trigger("click");
+    	    			
     				}else {
     					 var params = {'resSeq': seq, 'cancelCode': '', 
     		    				       'reservProcessGubun' : $("#"+code+"").val(), 'cancelReason' : ''
@@ -256,6 +259,7 @@
 	    	    		 "searchEndDay" : $("#searchEndDay").val(),
 	    	    		 "searchCondition" : $("#searchCondition").val(),
 	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
+	    	    		 "itemGubun" : $("#itemGubun").val(),
 	    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
 	         			 "searchKeyword" : $("#searchKeyword").val(),
 	         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
@@ -263,6 +267,29 @@
 	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
 	    	     }).trigger("reloadGrid");
 
+	        }, fn_cancel: function(){
+	        	 if (any_empt_line_id("cancelCode", '취소 유형을 입력해 주세요') == false) return;
+	    		 if (any_empt_line_id("cancelReason", '취소 이유를  입력해 주세요') == false) return;
+	    		 
+	    		 var params = {'resSeq': $("#resSeq").val(), 'cancelCode': $("#cancelCode").val(), 
+	    				       'reservProcessGubun' : 'PROCESS_GUBUN_5', 'cancelReason' : $("#cancelReason").val()};
+	    	     uniAjax("/backoffice/resManage/reservationProcessChange.do", params, 
+	    	  			function(result) {
+	    					       if (result.status == "LOGIN FAIL"){
+	    					    	   alert(result.message);
+	    							   location.href="/backoffice/login.do";
+	    						   }else if (result.status == "SUCCESS"){
+	    							   need_close();
+	   		    	                   jqGridFunc.fn_search();
+	    						   }else {
+	    							   alert(result.message);
+	    						   }
+	    					    },
+	    					    function(request){
+	    						    alert("Error:" +request.status );	       						
+	    					    }    		
+	    	      );
+	        	
 	        }
        
       }
@@ -281,7 +308,7 @@
 	<input type="hidden" name="hid_equpState" id="hid_equpState">
 	<input type="hidden" name="mode" id="mode">
 	<input type="hidden" name="searchRoomType" id="searchRoomType" value="${regist.searchRoomType}">
-
+    <input type="hidden" name="resSeq" id="resSeq">
 <div class="Aconbox">
         <div class="rightT">
             <div class="Smain">
@@ -306,18 +333,16 @@
 			                <th style="width:90px;">
 			                	기간
 			                </th>
-	                   			<td colspan="3" style="text-align:left;padding-left: 20px;">
-	                   			   
-	                   			    
-	                   			    <input type="radio" id="searchDayGubun" name="searchDayGubun" value="REG_DATE"    />
-					                <label>신청일</label>
-				                    <input type="radio" id="searchDayGubun" name="searchDayGubun" value="RES_STARTDAY"   />
-				                    <label>예약일 </label> 
-				                	&nbsp;&nbsp;&nbsp;&nbsp;
-				                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" readonly="true"  />
-				                     ~
-				                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" readonly="true" />
-		                		</td>
+                   			<td colspan="3" style="text-align:left;padding-left: 20px;">
+                   			    <input type="radio" id="searchDayGubun" name="searchDayGubun" value="REG_DATE"    />
+				                <label>신청일</label>
+			                    <input type="radio" id="searchDayGubun" name="searchDayGubun" value="RES_STARTDAY"   />
+			                    <label>예약일 </label> 
+			                	&nbsp;&nbsp;&nbsp;&nbsp;
+			                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" readonly="true"  />
+			                     ~
+			                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" readonly="true" />
+	                		</td>
 		                	<th style="width:90px;">검색어</th>
 		                	<td colspan="5"  style="text-align:left;padding-left: 20px;">
 		                		<select name="searchCondition"  id="searchCondition">
@@ -327,7 +352,6 @@
 								</select>
 								<input class="nameB " type="text" name="searchKeyword" id="searchKeyword"   size="20"  maxlength="30"    onkeydown="if(event.keyCode==13){search_form();}">
 		                	</td>
-		                	
 		                	<td rowspan="2" class="border-left" style="width:70px">
 			                    <a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
 		                	</td>
@@ -342,8 +366,15 @@
 						    	<span id="sp_floorCombo"></span>
 						    	
 		                	</td>
+		                	<th>예약 구분</th>
+		                	<td>
+		                		<form:select path="itemGubun" id="itemGubun" title="결재상태">
+							    	<form:option value="" label="결재상태"/>
+				                    <form:options items="${selectItemGubun}" itemValue="code" itemLabel="codeNm"/>
+							    </form:select>
+		                	</td>
 		                	<th>결재상태별</th>
-		                	<td colspan="3">
+		                	<td>
 		                		<form:select path="searchReservProcessGubun" id="searchReservProcessGubun" title="결재상태">
 							    	<form:option value="" label="결재상태"/>
 				                    <form:options items="${selectProcessType}" itemValue="code" itemLabel="codeNm"/>
@@ -354,8 +385,7 @@
                     </table>
                 </section>
                 <div class="rightB magin-bottom20">
-                	  <!-- <a href="javascript:fn_ResCheck('C');"><span class="grayBtn">예약취소</span></a> -->
-                      <a href="javascript:fn_ExcelDown();"><span class="deepBtn">엑셀다운</span></a>
+                	  <a href="javascript:fn_ExcelDown();"><span class="deepBtn">엑셀다운</span></a>
                 </div>
                 <div class="clear"></div>
             </div>
@@ -370,164 +400,180 @@
             </div>
         </div>
     </div>
-<c:import url="/backoffice/inc/bottom_inc.do" /> 
-<!--  장비 요청 팝업 -->
+    <c:import url="/backoffice/inc/bottom_inc.do" /> 
 
-    <div id='equipPop' class="needpopup">
+	    <!--  장비 요청 팝업 -->
+	    <div id='equipPop' class="needpopup">
+	        <div class="popHead">
+	            <h2>대여 현황</h2>
+	        </div>
+	        <div class="pop_footer">
+	            <span id="join_confirm_comment" class="join_pop_main_subTxt">장비를 선택 후 상태 변경 버튼을 클릭 하세요.</span>
+	             <a href="javascript:fn_equpChange('EQUIP_STATE_2');" class="redBtn" id="btnRental">장비 대여</a> 
+	             <a href="javascript:fn_equpChange('EQUIP_STATE_1');" class="redBtn" id="btnReturn">대여 반납</a>    
+	             <a href="javascript:fn_equpChange('EQUIP_STATE_5');" class="redBtn" id="btnCancel">장비 취소</a>    
+	            <div class="clear"></div>
+	        </div>
+	        
+	        <!-- pop contents-->   
+	        <div class="popCon">
+	            <!--// 팝업 필드박스-->
+	            <div class="pop_box100">
+	                <div class="padding15" style="background-color:white">
+	                    <table class="pop_table thStyle" id="tb_equip">
+	                       <thead>
+	                          <tr>
+	                               <td><input type="checkbox" id="allCheck" />전체선택</td>
+	                               <td>장비명</td>
+	                               <td>시리얼번호</td>
+	                               <td>상태</td>
+	                          </tr>
+	                       </thead>
+	                       <tbody>
+	                       </tbody>
+	                     </table>
+	                </div>                
+	            </div>
+	            <div class="clear"></div>   
+	        </div>           
+	    </div> 
+	    <!--  장비 요청 팝업 끝 부분-->
+
+        <!--  예약 정보 상세 팝업 -->
+        <div id='resInfoPopCancel' class="needpopup">
         <div class="popHead">
-            <h2>대여 현황</h2>
+            <h2>예약 취소</h2>
         </div>
-        <div class="pop_footer">
-            <span id="join_confirm_comment" class="join_pop_main_subTxt">장비를 선택 후 상태 변경 버튼을 클릭 하세요.</span>
-             <a href="javascript:fn_equpChange('EQUIP_STATE_2');" class="redBtn" id="btnRental">장비 대여</a> 
-             <a href="javascript:fn_equpChange('EQUIP_STATE_1');" class="redBtn" id="btnReturn">대여 반납</a>    
-             <a href="javascript:fn_equpChange('EQUIP_STATE_5');" class="redBtn" id="btnCancel">장비 취소</a>    
-            <div class="clear"></div>
-        </div>
-        
-        <!-- pop contents-->   
-        <div class="popCon">
-            <!--// 팝업 필드박스-->
-            <div class="pop_box100">
-                <div class="padding15" style="background-color:white">
-                    <table class="pop_table thStyle" id="tb_equip">
-                       <thead>
-                          <tr>
-                               <td><input type="checkbox" id="allCheck" />전체선택</td>
-                               <td>장비명</td>
-                               <td>시리얼번호</td>
-                               <td>상태</td>
-                          </tr>
-                       </thead>
-                       <tbody>
-                       </tbody>
-                     </table>
-                </div>                
-            </div>
-            <div class="clear"></div>   
-        </div>           
-    </div> 
-<!--  장비 요청 팝업 끝 부분-->
-
-<!--  예약 정보 상세 팝업 -->
-
-
+	        <!-- pop contents-->   
+	        <div class="popCon">
+				<table class="pop_table thStyle">
+					<tbody class="search">
+						<tr>							         	
+				        	<td style="text-align:left">
+				        		<form:select path="cancelCode" id="cancelCode" title="신청사유">
+	                       			<form:option value="" label="신청사유"/>
+		                         	<form:options items="${selectCancel}" itemValue="code" itemLabel="codeNm" />
+			    				</form:select>
+				        	</td>
+			        	</tr>
+			        	<tr>
+				        	<td style="text-align:left">
+					        	<textarea rows="10" id="cancelReason" name="cancelReason">${regist.cancelReason }</textarea>
+					        </td>
+			        	</tr>
+					</tbody>
+				</table>
+				<div class="footerBtn">
+		        	<a href="#" onclick="jqGridFunc.fn_cancel()" class="redBtn">저장</a>
+		        	<a href="#" onClick="need_close()" class="deepBtn">닫기</a>
+                </div>
+			</div>
+		</div>
+		
         <div id='resInfoPop' class="needpopup">
         <div class="popHead">
             <h2>예약 현황</h2>
         </div>
-        
-        <!-- pop contents-->   
         <div class="popCon">
             <!--// 팝업 필드박스-->
             <div class="pop_box100">
                 <div class="padding15" style="background-color:white">
-                    <table class="pop_table thStyle">
-				<tbody class="search">
-				 <tr>
-				  <th>회의 제목</th>
-				  <td colspan="3"><span id="sp_resTitle"></span></td>
-				 </tr>
-				 <tr>
-				   <th>회의장소</th>
-				   <td><span id="sp_seatName"></span></td>
-				   <th>회의일자</th>
-				   <td><span id="sp_resStartday"></span>  </td>
-				 </tr>
-				 <tr>
-				   <th>회의구분</th>
-				   <td><span id="sp_resGubunTxt"></span></td>
-				   <th>진행상태</th>
-				   <td><span id="sp_reservProcessGubunTxt"></span>   </td>
-				 </tr>
-				  <tr  id="tr_swcGubun">
-				   <th>참여 회의실</th>
-				   <td colspan="3">
-				      <span id="sp_meegintRoomInfo"></span>
-				   </td>
-				 </tr>
-				 <tr>
-				   <th>신청자</th>
-				   <td><span id="sp_empname"></span>  </td>
-				   <th>연락처</th>
-				   <td> <span id="sp_empmail"></span> </td>
-				 </tr>
-				 <tr>
-				   <th>승인구분</th>
-				   <td><span id="sp_proxyYnTxt"></span></td>
-				   <th>승인자</th>
-				   <td><span id="sp_proxyUserId"></span>  </td>
-				 </tr>
-				 <tr>
-				   <th>결제상태</th>
-				   <td> <span id="sp_reservProcessGubunTxt"></span></td>
-				   <th>참석자</th>
-				   <td><span id="sp_attendListTxt"></span>   </td>
-				 </tr>
-				 <tr>
-				   <th>참석자 상세</th>
-				   <td colspan="3">
-				    <span id="sp_resAttendInfo"></span>
-				   </td>
-				 </tr>
-			
-				 <tr id="tr_cancel">
-				   <th>취소유형</th>
-				   <td><span id="sp_cancelCodeTxt"></span>
-				   </td>
-				   <th>취소 사유</th>
-				   <td><span id="sp_cancelReason"></span>
-				   </td>
-				 </tr>
-			
-				</tbody>
-			</table>
+                <table class="pop_table thStyle">
+					<tbody class="search">
+						 <tr>
+						  <th>예약 제목</th>
+						  <td colspan="3"><span id="sp_resTitle"></span></td>
+						 </tr>
+						 <tr>
+						   <th>장소</th>
+						   <td><span id="sp_seatName"></span></td>
+						   <th>일자</th>
+						   <td><span id="sp_resStartday"></span>  </td>
+						 </tr>
+						 <tr>
+						   <th>예약 구분</th>
+						   <td><span id="sp_resGubunTxt"></span></td>
+						   <th>진행상태</th>
+						   <td><span id="sp_reservProcessGubunTxt"></span>   </td>
+						 </tr>
+						  <tr  id="tr_swcGubun">
+						   <th>참여 회의실</th>
+						   <td colspan="3">
+						      <span id="sp_meegintRoomInfo"></span>
+						   </td>
+						 </tr>
+						 <tr>
+						   <th>신청자</th>
+						   <td><span id="sp_empname"></span>  </td>
+						   <th>연락처</th>
+						   <td> <span id="sp_empmail"></span> </td>
+						 </tr>
+						 <tr>
+						   <th>신청 구분</th>
+						   <td><span id="sp_proxyYnTxt"></span></td>
+						   <th>승인자</th>
+						   <td><span id="sp_proxyUserId"></span>  </td>
+						 </tr>
+						 <tr id="tr_attend">
+						   <th>참석자 상세</th>
+						   <td colspan="3">
+						    <span id="sp_resAttendInfo"></span>
+						   </td>
+						 </tr>
+					
+						 <tr id="tr_cancel">
+						   <th>취소유형</th>
+						   <td><span id="sp_cancelCodeTxt"></span>
+						   </td>
+						   <th>취소 사유</th>
+						   <td><span id="sp_cancelReason"></span>
+						   </td>
+						 </tr>
+					</tbody>
+				</table>
                 </div>                
             </div>
             <div class="clear"></div>   
         </div>           
     </div> 
-
 <!--  예약 정보 상세 팝업 끝-->
 </form:form>
-<script src="/js/needpopup.js"></script> 
-<script src="/js/jquery-ui.js"></script>
+<c:import url="/backoffice/inc/uni_pop.do" />
+<button id="btn_pop" style="display:none" data-needpopup-show='#resInfoPopCancel'>취소 팝업</button>
 </div>
+
+
  <script type="text/javascript">
     function fn_resinfo(resSeq){
-       var params =  {"resSeq" : resSeq};
-       uniAjaxSerial("/backoffice/resManage/resInfoAjax.do?resSeq="+resSeq, params, 
+    	uniAjaxSerial("/backoffice/resManage/resInfoAjax.do?resSeq="+resSeq, null, 
  	  			function(result) {
  					       if (result.status == "LOGIN FAIL"){
  					    	    alert(result.message);
  								location.href="/backoffice/login.do";
  						   }else if (result.status == "SUCCESS"){
 	 							var obj = result.resInfo;
-	 							$("#sp_resTitle").html(obj.resTitle);
-	 							$("#sp_seatName").html(obj.seatName);
-	 							$("#sp_resStartday").html(obj.sp_resStartday + "  " + obj.resStarttime +"~"+ obj.resEndtime);
-	 							
-	 							
-	 							$("#sp_resGubunTxt").html(obj.resGubunTxt);
-	 							$("#sp_reservProcessGubunTxt").html(obj.reservProcessGubunTxt);
+	 							$("#sp_resTitle").html(obj.res_title);
+	 							$("#sp_seatName").html(obj.floor_name +" "+  obj.itme_name );
+	 							var resdayinfo = (obj.item_gubun === "ITEM_GUBUN_3") ? obj.resstartday +"일 " + obj.resstarttime + " 부터 ~" + obj.resendday +"일 " + obj.resendtime  + "까지"
+                                                                                      : obj.resstartday +"일 " + obj.resstarttime + "~" + obj.resendtime ;
+
+	 							$("#sp_resStartday").html(resdayinfo);
+	 							$("#sp_resGubunTxt").html(obj.resgubuntxt);
 	 							$("#sp_empname").html(obj.empname);
 	 							$("#sp_empmail").html(obj.empmail);
-	 							$("#sp_proxyYnTxt").html(obj.proxyYnTxt);
-	 							$("#sp_proxyUserId").html(obj.proxyUserId);
-	 							$("#sp_reservProcessGubunTxt").html(obj.reservProcessGubunTxt);
-	 							$("#sp_attendListTxt").html(obj.attendListTxt);
+	 							$("#sp_proxyYnTxt").html(obj.proxyyntxt);
+	 							$("#sp_proxyUserId").html(obj.proxy_user_id);
+	 							$("#sp_reservProcessGubunTxt").html(obj.reservprocessgubuntxt);
 	 							
-	 							$("#sp_attendListTxt").html(obj.attendListTxt);
-	 							$("#sp_attendListTxt").html(obj.attendListTxt);
 	 							var arr = ["PROCESS_GUBUN_3", "PROCESS_GUBUN_5", "PROCESS_GUBUN_6",  "PROCESS_GUBUN_7" ];
-	 							if (arr.indexOf(obj.reservProcessGubun)   ){
+	 							if (arr.indexOf(obj.reserv_process_gubun) > 0 ){
 	 								$("#tr_cancel").show();
-	 								$("#sp_cancelCodeTxt").html(obj.cancelCodeTxt);
-	 								$("#sp_cancelReason").html(obj.cancelReason);
+	 								$("#sp_cancelCodeTxt").html(obj.cancelcodetxt);
+	 								$("#sp_cancelReason").html(obj.cancel_reason);
 	 							}else {
 	 								$("#tr_cancel").hide();
 	 							}
-	 							if (obj.resGubun == "SWC_GUBUN_2"){
+	 							if (obj.res_gubun == "SWC_GUBUN_2"){
 									if (result.resRoomInfo != undefined){
 										$("#tr_swcGubun").show();
 										var meetingInfoTxt = "동시 진행할 영상회의실: ";
@@ -543,20 +589,25 @@
           						}else{
           							$("#tr_swcGubun").hide();
           						}
-	 							
-	 							if (result.resUserList.length > 0){
-          							var userInfoTxt = "예약자: "+ obj.empname+"("+obj.deptname+ ") 참석자: ";
-									if (obj.resPassword == "Y"){
-          								for (var i=0; i < result.resUserList.length; i++){
-        							  		var userInfos = result.resUserList[i];
-        							  	    userInfoTxt += "<span style='padding-left: 10px;'>"+userInfos.empname+"("+userInfos.deptname+")</span>";
-        							  	}	
-          							}else {
-          								userInfoTxt += "*****************";
-          							}
-          							$("#sp_resAttendInfo").html(userInfoTxt);
-          						} 
- 						   }else {
+	 							if (result.resRoomInfo != undefined){
+	 								if (result.resUserList.length > 0){
+	          							var userInfoTxt = "예약자: "+ obj.empname+"("+obj.deptname+ ") 참석자: ";
+										if (obj.resPassword == "Y"){
+	          								for (var i in result.resUserList){
+	        							  		 var userInfos = result.resUserList[i];
+	        							  	     userInfoTxt += "<span style='padding-left: 10px;'>"+userInfos.empname+"("+userInfos.deptname+")</span>";
+	        							  	}	
+	          							}else {
+	          								userInfoTxt += "*****************";
+	          							}
+	          							$("#sp_resAttendInfo").html(userInfoTxt);
+	          						} 
+	 								$("#tr_attend").show();
+	 							}else{
+	 								$("#tr_attend").hide();
+	 							}
+	 							$("#btn_pop").attr("data-needpopup-show", "#resInfoPop").trigger("click");
+	 					   }else {
  							   alert(result.message);
  						   }
  					    },
@@ -625,41 +676,6 @@
  						    alert("Error:" +request.status );	       						
  					    }    		
  	      );
-    }
-    var pop_up;
-    function cancel_check(){
-    	//예약을취소하시겠습니까? confirm
-    	var cnt = $("input[name=resCode]:checkbox:checked").length;
-		var del_atch = "";
-		var insert_resCode = "";
-		if (cnt < 1) {
-			alert("하나 이상의 체크를 선택 하셔야 합니다");
-		} else {			
-			
-			for (var i = 0; i < document.getElementsByName("resCode").length; i++) {
-				if (document.getElementsByName("resCode")[i].checked == true) {
-					insert_resCode = insert_resCode + "," + document.getElementsByName("resCode")[i].value;					
-				}
-			}
-			insert_resCode = insert_resCode.substring(1)
-			if (confirm("예약을취소하시겠습니까?")== true){
-				apiExecute(
-						"POST",
-						"/backoffice/res/reservationCancel.do",
-						{
-							resCancelCode : insert_resCode
-						}, null, function(result) {
-							if (result != null) {
-								if (result == "T") {
-									alert("정삭적으로 예약취소 되었습니다.");
-									location.reload();
-								} else {
-									alert("예약취소시 문제가 생겼습니다.");
-								}
-							}
-						}, null, null);		
-				}
-		}
     }
 	</script>
 </body>

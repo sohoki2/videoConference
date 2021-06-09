@@ -1,3 +1,4 @@
+//대관 추가 
 function fn_ResGubunCombo(resSelectId, resGubun, resGubunVal){
 	
     var radio_value = "";
@@ -12,6 +13,13 @@ function fn_ResGubunCombo(resSelectId, resGubun, resGubunVal){
 		$("#resPassword_2").show();
 		$("#sp_01").show();
 		$("#sp_02").show();
+	}else if (resGubun == "SWC_GUBUN_3"){
+	    $("#"+resSelectId).append("<option value='SWC_GUBUN_3'>대관</option>");
+		radio_value = "Y";
+		$("#resPassword_1").show();
+		$("#resPassword_2").hide();
+		$("#sp_01").show();
+		$("#sp_02").hide();
 	}else{
 		$("#"+resSelectId).append("<option value='SWC_GUBUN_1'>일반 회의실</option>");
 		radio_value = "Y";
@@ -24,7 +32,7 @@ function fn_ResGubunCombo(resSelectId, resGubun, resGubunVal){
     
 
 	$(":radio[name=resPassword][value='"+radio_value+"']").prop("checked", true);
-	console.log("check_value="+ $(":radio[name='resPassword']:checked").val());
+	
 	$("#"+resSelectId).val(resGubunVal);
 }
 function fn_resReset(){	
@@ -533,7 +541,7 @@ function fn_swcTimeCombo(){
 }
 function fn_swcTime(swcTime, resSeq, itemId){
 	var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId};
-	uniAjax("/front/resInfo/resInfo.do", params, 
+	uniAjax("/web/resInfo.do", params, 
  			function(result) {
 			       if (result.status == "LOGIN FAIL"){
 			    	    alert(result.message);
@@ -696,22 +704,20 @@ function fn_resView(resSeq){
         					   }else if (result.status == "SUCCESS"){
         						    //예약 정보 넣기 
         						    var obj = result.resInfo;
-        						    var shtml = ""
-        						              + "<span class=\"popuptext\" >"
-                                              + "  <p class=\"m_room\">"+obj.meeting_name+"</p>"
-                                              + "  <p class=\"m_day\">"+obj.resstartday+" "+obj.resstarttime+"~"+obj.resendtime+"</p>"
-                                              + "  <p class=\"m_title\">"+obj.res_title+"</p>"
-                                              + "</span>";
-                                    $("#sp_message").html(shtml);
-										
+        						    $("#sp_roomNm").html(obj.meeting_name);
+        						    $("#sp_resDay").html(obj.resstartday);
+        						    $("#sp_resStartTime").html(obj.resstarttime);
+        						    $("#sp_resEndTime").html(obj.resendtime);
+        						    $("#sp_roomTitle").html(obj.res_title);
         					   }
         			    },
         			    function(request){
         				    alert("Error:" +request.status );	       						
         			    }    		
              );
-        	$("#btn_result").trigger("click");
+        	$("#btn_meetingInfo").trigger("click");
 }
+
 function fn_ResSave(){
 	 
 	 var resEqupcheck = "";
@@ -767,8 +773,7 @@ function fn_ResSave(){
 						    alert(result.message);
 							location.href="/web/Login.do";
 					   }else  {
-					        
-					   	    need_close()
+					   	    need_close();
 						    $("#sp_message").text(result.message);
 						    $("#btn_result").trigger("click");
 						    fn_resCancel();

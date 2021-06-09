@@ -217,6 +217,25 @@ function fn_returnVal(url, params, _action_url){
 	);
 	return returnVal;
 }
+function fn_returnInfo(url, params){
+    var returnVal = "";
+    uniAjax(url, params, 
+				  function(result) {
+					       if (result.status == "LOGIN FAIL"){
+							   location.href="/backoffice/login.do";
+						   }else if (result.status == "SUCCESS"){
+			                   returnVal=  result.result;
+						   }else {
+						      alert("장애가 발생 하였습니다.");
+							  returnVal = "";
+						   }
+				  },
+				  function(request){
+					    alert("Error:" +request.status );	       						
+				  }    		
+	);
+	return returnVal;
+}
 
 function today_get(){
 	var now = new Date();
