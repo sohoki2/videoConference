@@ -70,6 +70,19 @@
 		             </if>
          ) X
     </select>
+    <!--  사용자 로그인 관리자는 패스워드 없어서 사용자 아이디랑 JOIN -->
+    <select id="selectEmpInfoLogin" resultType="EmpInfoVO">
+         SELECT  a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+		          a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		          CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
+	                 (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
+                  ELSE 
+	                     ''
+	              END as FLOOR_INFO
+	   	  FROM 	TB_EMPINFO a , TB_USERINFO b
+	   	 WHERE a.EMPNO = b.USER_NO AND b.USER_ID = #{params.userId}
+	   	       AND b.USER_PASSWORD = #{params.userPassword}
+    </select>
     <select id="selectMeetinngUserList" resultType="EmpInfoVO">
          SELECT EMPNO, EMPNAME, DEPTNAME, DEPTCODE , EMPMAIL
          FROM TB_EMPINFO 

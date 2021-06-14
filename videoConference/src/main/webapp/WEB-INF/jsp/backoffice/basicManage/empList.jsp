@@ -108,12 +108,12 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "420px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert("error:" + error); 
     		        }, onPaging: function(pgButton){
@@ -282,7 +282,7 @@
     			   return;
     		   }
 		  }, fn_search : function(){
-			  $("#mainGrid").setGridParam({
+			   $("#mainGrid").setGridParam({
     	    	 datatype	: "json",
     	    	 postData	: JSON.stringify(  {
           			"pageIndex": 1,
@@ -291,9 +291,10 @@
          			"pageUnit":$('.ui-pg-selbox option:selected').val()
          		 }),
     	    	 loadComplete	: function(data) {
-    	    		 console.log(data);
+    	    		 $("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
+    	    		 
     	    	 }
-    	      }).trigger("reloadGrid");
+    	       }).trigger("reloadGrid");
 		  },  fn_avayaUpdate : function(){
 			    uniAjax("/backoffice/backoffice/avayaUpdate.do", null, 
 			     			function(result) {
@@ -327,36 +328,6 @@
 				  $("#tb_managerInfo").show();
 				  $("#dv_empInfo").hide(); 
 			  }
-		  }, fn_empSearch : function(){
-			  //직원 조회
-			  var params = {"searchCondition" : $("#emSearchCondition").val(), "searchKeyword" : $("#emSearchKeyword").val(), "mode" : "pop" };
-			  uniAjax("/backoffice/orgManage/empListAjax.do", params, 
-		     			function(result) {
-				               if (result.status == "LOGIN FAIL"){
-						    	   alert(result.message);
-		  						   location.href="/backoffice/login.do";
-		  					   }else if (result.status == "SUCCESS"){
-								   $("#tb_empList > tbody").empty();
-								   var obj = result.resultlist;
-								   var shtml = ""
-								   for (var i in obj){
-									   shtml= "<tr onclick=\"jqGridFunc.fn_empChoice('"+obj[i].deptname+"','"+obj[i].empname+"','"+obj[i].empno+"','"+obj[i].empid+"','"+obj[i].empmail+"','"+obj[i].deptcode+"','"+obj[i].emptelphone+"')\">"
-										    + " <td>" + obj[i].deptname +"</td>"
-										    + " <td>" + obj[i].empname +"</td>"
-										    + " <td>" + obj[i].empno +"</td>"
-									        + "</tr>";
-									   console.log(shtml);
-									   $("#tb_empList > tbody").append(shtml);
-		  						       sHtml = "";  
-								   }
-							   }else {
-									alert("업데이트 도중 문제가 발생 하였습니다.");
-							   }	
-						 },
-						 function(request){
-							    alert("Error:" +request.status );	       						
-						 }    		
-		     );
 		  }, fn_empChoice : function (deptname, empname, empno, empid, empmail, deptcode, emptelphone){
 			  $("#deptName").removeAttr();
 			  $("#adminName").removeAttr();
@@ -409,13 +380,12 @@
 		                	</th>
 		                	<td>
 		                		<select name="searchCondition"  id="searchCondition">
-											<option  value="0">전체</option>
-											<option value="1">회의실명</option>
-											<option value="2">비품명</option>
-											<option value="3">회사명</option>
+											<option  value="ALL">전체</option>
+											<option value="ADMIN_ID">아이디</option>
+											<option value="ADMIN_NM">이름</option>
 								</select>
 								<input class="nameB" type="text" name="searchKeyword" id="searchKeyword" />      
-								 <a href="javascript:jqGridFunc.sfn_search();"><span class="lightgrayBtn">조회</span></a>      
+								 <a href="javascript:jqGridFunc.fn_search();"><span class="lightgrayBtn">조회</span></a>      
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="#" onclick="jqGridFunc.fn_empInfo('Ins','0')"><span class="blueBtn">등록</span></a>

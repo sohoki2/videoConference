@@ -10,18 +10,50 @@ function any_empt_line_id(frm_nm, alert_message){
 }
 function any_empt_line_span(frm_nm, alert_message){
      if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
-		  alert(alert_message);
-		  $('#'+frm_nm).focus();
-		  return false;
+		 $("#sp_message").html(alert_message);
+  		 $("#btn_result").trigger("click");
+		 $('#'+frm_nm).focus();
+		 return false;
 	 }else{
          return true;
 	 }
 }
-
+//return 값 받아 오기 
+function uniAjaxReturn(url, param){
+    var returnVal = "";
+	$.ajax({
+		        type : 'POST',
+		        url : url,
+		        async: false,
+		        beforeSend:function(jxFax, settings){
+	        	   jxFax.setRequestHeader('AJAX', true);
+	        	   //$('.loadingDiv').show();
+	            }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : JSON.stringify(param)
+		    }).done(function(result){
+		           if (result.status == "LOGIN FAIL"){
+			    	   alert(result.meesage);
+					   location.href="/web/Login";
+				   }else if (result.status == "SUCCESS"){
+				       returnVal = result;
+				   }else {
+				       alert(result.meesage); 
+				   }
+		       }
+		    ).fail(function(request){
+		          alert("Error:" +request.status );
+		       }
+	);
+	return returnVal;
+}
 function uniAjax(url, param, done_callback, fail_callback){
 	var jxFax =  $.ajax({
 		        type : 'POST',
 		        url : url,
+		        async: false,
 		        beforeSend:function(jxFax, settings){
 	        	   jxFax.setRequestHeader('AJAX', true);
 	        	   //$('.loadingDiv').show();
@@ -33,6 +65,7 @@ function uniAjax(url, param, done_callback, fail_callback){
 		    }).done(done_callback).fail(fail_callback);
 	return jxFax;
 }
+
 function fn_uniCheck(url, params, _field){
     uniAjax(url, params, 
 			  function(result) {
@@ -95,17 +128,18 @@ function NVL(reqValue){
 }
 //체크 박스 체크 여부
 function checkbox_val(message, checkboxNm){
-			var checkboxvalue = "";
-			var check_length = $("input:checkbox[name="+checkboxNm+"]:checked").length;
-			if (check_length <1){
-				alert(message);
-				return false;
-			}else {
-				$("input:checkbox[name="+checkboxNm+"]:checked").each(function(){
-					checkboxvalue = checkboxvalue+","+ $(this).val();
-				});	
-			}
-			return checkboxvalue.substring(1);
+		 var checkboxvalue = "";
+		 var check_length = $("input:checkbox[name="+checkboxNm+"]:checked").length;
+		 if (check_length <1){
+		    $("#sp_message").html(message);
+	        $("#btn_result").trigger("click");
+			return false;
+		 }else {
+			$("input:checkbox[name="+checkboxNm+"]:checked").each(function(){
+				checkboxvalue = checkboxvalue+","+ $(this).val();
+			});	
+		 }
+		 return checkboxvalue.substring(1);
 }
 //특정 길이 대체 문자
 function stringLength (str, strlength, replaceTxt){
@@ -160,6 +194,16 @@ function fn_floorSearch(floorSeq , _action_url){
 		$("#floorSeq").val(floorSeq);
 		var call_script = eval("window."+_action_url+"();"); 		
  }
+ //his 화면 정리 
+ function fn_hisInfo(){
+    need_close();
+    if ($("#hid_history").val() != "")
+       var call_script = eval("window."+$("#hid_history").val()+"();"); 
+
+}
+ 
+ 
+ 
  
 function toilet_men() {
   document.getElementById("toilet_men1").style.display = "block";
@@ -717,6 +761,9 @@ toggle between hiding and showing the dropdown content */
 function myFunction() {
     document.getElementById("myDropdown").classList.toggle("show");
 }
+
+
+//날짜 비교
 function dateDiff(_date1, _date2) {
     var diffDate_1 = _date1 instanceof Date ? _date1 : new Date(_date1);
     var diffDate_2 = _date2 instanceof Date ? _date2 : new Date(_date2);
@@ -726,8 +773,6 @@ function dateDiff(_date1, _date2) {
  
     var diff = diffDate_2.getTime() - diffDate_1.getTime();
     diff = Math.ceil(diff / (1000 * 3600 * 24));
-//    diff = (diff / (1000 * 3600 * 24));
- 
     return diff;
 }
 

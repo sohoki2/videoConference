@@ -31,10 +31,10 @@
 <body>
 <form:form name="regist" commandName="regist" method="post">
 <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}" />
-<input type="hidden" name="centerId" id="centerId" value="${regist.centerId}" />
+<input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.centerId}" />
 <input type="hidden" name="partSeq" id="partSeq" />
-<input type="hidden" name="seatId" id="seatId" />
-<input type="hidden" name="seatConfirmgubun" id="seatConfirmgubun" />
+
+<input type="hidden" name="itemGubun" id="itemGubun" value="ITEM_GUBUN_2"/>
 
          <!--//header 추가-->
         <c:import url="/web/inc/top_inc.do" />
@@ -85,7 +85,7 @@
                         <select id='resEndtime' style="width:100px;height:30px;"></select>
                    </div>
                    <div class="float_left">
-                        <a href="#" onClick="res.fn_seatState()" class="seat_fast" style="height: 32px;">검색</a>
+                        <a href="#" onClick="res.fn_floorInfo()" class="seat_fast" style="height: 32px;">검색</a>
                     </div>
                     <div class="infoContents float_left">
                         <span class="posSeatU">예약가능</span>
@@ -118,7 +118,7 @@
         <!--에약완료팝업-->
         
         <div id='seat_fastR_popup' class="needpopup opened">
-           <h2 class="pop_tit">예약 정보</h2>
+            <h2 class="pop_tit">예약 정보</h2>
             <ul class="form">
               <li>
                                    좌석 명 <span class="blueFont" id="p_seatNm">4F 01</span> 번 좌석
@@ -130,73 +130,71 @@
             </ul>
             <div class="clear"></div>
             <div class="footerBtn">
-              <a href="#" onClick="res.fn_resSave()" class="blueBtn">예약</a>
-              <a href="" onClick="res.fn_reset()" class="grayBtn">닫기</a>
+              <a href="#" onClick="fn_ResSave('seatInfo')" class="blueBtn" style="width:150px;padding: 15px 20px;">예약</a>
+              <a href="#" onClick="need_close();res.fn_rightView()" class="blueBtn" style="width:150px;padding: 15px 20px;" id="btn_other">다른 시간 예약</a>
+              <a href="#" onClick="need_close();res.fn_reset()" class="grayBtn" style="width:150px;padding: 15px 20px;">닫기</a>
             </div>
             <div class="clear"></div>
+            <!--  영상 회의 관련 내용 -->
+            
         </div>
         
         <!--//팝업-->
         
 
-        <!--// 시간선택 슬라이드 -->
-        <div class="back" id="mySidetime">
-		                <div class="sidenav" id="mySidenav1">
-		                    <a href="javascript:void(0)" class="closebtn" onclick="res.fn_reset();closeTime();">&times;</a>
-		                    <div class="seat_info">
-		                                            좌석 명 <span class="blueFont" id="sp_seatNm"> </span> 번 좌석
-		                    </div>
-		                    <div class="select_time">
-		                        <p>* 예약을 원하는 시작 시간과 종료 시간을 선택해주세요 *</p>
-		                        <div class="sel_box">
-		                        <div class="sel_inner_box">
-		                             <div class="menu_box">
-		                                <ul class="sel_list etrans">
-		                                    <li class="sel_list_time">
-		                                        <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
-		                                        <label for="ex_chk01">종일 </label>
-		                                        <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
-		                                    </li>
-		                                    <li class="sel_list_time">
-		                                        <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
-		                                        <label for="ex_chk01">오전</label>
-		                                        <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
-		                                    </li>
-		                                    <li class="sel_list_time">
-		                                        <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
-		                                        <label for="ex_chk01">오후</label>
-		                                        <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
-		                                    </li>
-		                                    <li class="sel_list_txt">
-		                                    </li>
-		                                </ul>
-		                            </div> 
-		                     </div>  
-		                     <div class="sel_inner_box" id="reserve_list">
-		                     </div>       
-		            </div>
-		            <div class="pop_meeting_btn">
-		                <a href="#" onClick="res.reserve_meeting()" class="blueBtn meeting_btn" data-needpopup-show="#seat_fastR_popup">좌석예약</a>
-		            </div>
-                    </div>
-                <div class="backShadow"></div>
-            </div>
-            <!--시간선택 슬라이드 //-->
-
-        <!--예약 완료 팝업//-->
-        
-        <button id="btn_Res" type="button" style="display:none" data-needpopup-show='#seat_fastR_popup'>예약 팝업</button>
-        <c:import url="/web/inc/unimessage.do" />
-        
-        <script>  
+    <!--// 시간선택 슬라이드 -->
+    <div class="back" id="mySidetime">
+         <div class="sidenav" id="mySidenav1">
+                  <a href="javascript:void(0)" class="closebtn" onclick="res.fn_reset();closeTime();">&times;</a>
+                  <div class="seat_info">
+                                          좌석 명 <span class="blueFont" id="sp_seatNm"> </span> 번 좌석
+                  </div>
+                  <div class="select_time">
+                      <p>* 예약을 원하는 시작 시간과 종료 시간을 선택해주세요 *</p>
+                      <div class="sel_box">
+                      <div class="sel_inner_box">
+                           <div class="menu_box">
+                              <!-- <ul class="sel_list etrans">
+                                  <li class="sel_list_time">
+                                      <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
+                                      <label for="ex_chk01">종일 </label>
+                                      <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
+                                  </li>
+                                  <li class="sel_list_time">
+                                      <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
+                                      <label for="ex_chk01">오전</label>
+                                      <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
+                                  </li>
+                                  <li class="sel_list_time">
+                                      <input type="checkbox" disabled="disabled" id="ex_chk01" name="check_reserve_time" class="checkBox" value="0800|1800">
+                                      <label for="ex_chk01">오후</label>
+                                      <input type="hidden" id="show_time" name="show_time" value="08:00~18:00">
+                                  </li>
+                                  <li class="sel_list_txt">
+                                  </li>
+                              </ul> -->
+                          </div> 
+                   </div>  
+                   <div class="sel_inner_box" id="reserve_list">
+                   </div>       
+              </div>
+	          <div class="pop_meeting_btn">
+	              <a href="#" onClick="res.reserve_meeting()" class="blueBtn meeting_btn">좌석예약</a>
+	          </div>
+          </div>
+        <div class="backShadow"></div>
+     </div>
+     <!--시간선택 슬라이드 //-->
+     <c:import url="/web/inc/unimessage.do" />
+     <script>  
          $( function() {
 	       	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
 	       	 res.fn_seatTimeCombo();
-         });
+	     });
          var res = {
         		fn_userSearch : function (){
         			//사용자 검색 
-        		}, fn_seatState : function(){
+        		}, fn_floorInfo : function(){
         			var url = "/backoffice/resManage/seatStateInfo.do";
         			var params = {"swcResday" : $("#searchResStartday").val(), 
 		  					      "floorSeq" : $("#floorSeq").val(), 
@@ -227,7 +225,7 @@
     		 				    			   }
     		 				    			   totalSeat = parseInt(totalSeat) + 1;
     		 				    			   var classinfo = (obj[i].state_info === 'Y' ) ? "seatUse" : "none";  
-    		 				    			   var script =  "res.fn_openTime('"+ obj[i].seat_id +"', '"+classinfo+"', '"+obj[i].seat_gubun+"','"+ obj[i].seat_name+"','"+ obj[i].seat_confirmgubun+"'  );"; 
+    		 				    			   var script =  "res.fn_openTime('"+ obj[i].seat_id +"', '"+classinfo+"', '"+obj[i].seat_gubun+"','"+ obj[i].seat_name+"','"+ obj[i].seat_confirmgubun+"','"+ obj[i].res_reqday+"');"; 
     		 				    			   shtml += '<li id="s'+NVL(obj[i].seat_name) +'" onClick="'+script+ '" class="'+classinfo+'" seat-id="'+ obj[i].seat_id +'" name="'+obj[i].seat_id +'" >'+ NVL(obj[i].seat_name) +'</li>';
   	 									   }
   	 									   $('#area_Map').html(shtml);
@@ -247,114 +245,41 @@
     		 					    $("#btn_needPopHide").trigger("click");
     		 				    }    		
     		        );
-        			
         		}, fn_seatTimeCombo : function(){
-         		   //빠른검색
-         		   var params = {"searchResStartday" : $("#searchResStartday").val(), "floorSeq" : $("#floorSeq").val()};
-         		   var url = "/web/resSeatTime.do";
-         		   uniAjax(url, params, 
-         		 			function(result) {
-         					       if (result.status == "LOGIN FAIL"){
-         					    	    alert(result.message);
-         									location.href="/web/Login.do";
-         							   }else if (result.status == "SUCCESS"){
-         								    //테이블 정리 하기
-         									var objS = result.resStartTime;
-         									if (objS.length > 0 ){
-         										$("#resStarttime option").remove();
-         										for (var i in objS){
-         										    try{
-         												$("#resStarttime").append("<option value='"+objS[i].codeNm.replace(":","") +"'>"+objS[i].codeNm+"</option>");
-         											}catch(err){
-         												console.log(err);
-         											}
-         		  						        }
-         										$("#resStarttime option:eq(0)").prop("selected", true);
-         									}
-         									var objE = result.resEndTime;
-         									if (objE.length > 0 ){
-         										$("#resEndtime option").remove();
- 	        		  							for (var i in  objE){
- 	        		  								try{
- 	        		  									$("#resEndtime").append("<option value="+objE[i].codeNm.replace(":","")+">"+objE[i].codeDc+"</option>");
- 	        		  								}catch(err){
- 	        		  									console.log(err);
- 	        		  								}
- 	        		  						    }
- 	        		  							$("#resEndtime option:eq(0)").prop("selected", true);
-         									}
-         									res.fn_seatState();
-         							   }
-         					    },
-         					    function(request){
-         						    alert("Error:" +request.status );	       						
-         					    }    		
-         		     );
-         		}, fn_openTime : function(seat_id, classinfo, seatGubun, seat_name,seat_confirmgubun){
+        			if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+        			
+        			
+        			var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': '0'};
+       	       	    fn_swcTimeUni(params, "SWC_GUBUN_4", 0, "res.fn_floorInfo");
+        		}, fn_openTime : function(seat_id, classinfo, seatGubun, seat_name,seat_confirmgubun, res_reqday){
+        			res.fn_reset();
+        			$("#itemId").val(seat_id);
+    				$("#p_seatNm").text(seat_name);
+    				$("#seatConfirmgubun").val(seat_confirmgubun);
+    				$("#resReqday").val(res_reqday);
+    				$("#sp_seatNm").text(seat_name);
         			if (seatGubun == "SEAT_GUBUN_2" && classinfo == "seatUse") {
         				//스마트워크 좌석 예약
-        				$("#seatId").val(seat_id);
-        				$("#p_seatNm").text(seat_name);
+        				$("#btn_other").show();
         				$("#sp_resDay").text($("#searchResStartday").val());
         				$("#sp_resTimeS").text( $("#resStarttime option:selected").text());
         				$("#sp_resTimeE").text( $("#resEndtime option:selected").text())
-        				$("#seatConfirmgubun").val(seat_confirmgubun);
-        				
-        				$("#btn_Res").trigger("click");
+        				//history 내용 없음
+        				$("#hid_history").val("");
+        				$("#btn_SeatRes").trigger("click");
         			} else if (seatGubun == "SEAT_GUBUN_2" && classinfo == "none") {	
-        				res.fn_rightView(seat_id, seat_name,seat_confirmgubun);
+        				res.fn_rightView();
         				//오른쪽 화면 보여주기 
         			}else {
         				//당일 좌석제 
         			}
-        		},fn_resSave : function(){
-	        		 var params = {'mode': "Ins", 'itemId': $("#seatId").val(), 'itemGubun':'ITEM_GUBUN_2', 'resTitle' : "좌석예약: " + $("#p_seatNm").text(),
-		        		               'resPassword' : "Y", 
-		        		               'resStartday' : $("#searchResStartday").val(),
-		        				       'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
-		        				       'proxyUserId' : "", 'resGubun' : "SWC_GUBUN_4",
-		        				       'useYn' : "Y", 'centerId': $("#centerId").val(),
-		        				       'proxyYn' : "Y",  'meetingSeq' : "", 
-		        				       'seatConfirmgubun': $("#seatConfirmgubun").val(),
-		        				       'resAttendlist' : "",
-		        				       'conNumber' : "", 'conPin' : "",
-		        				       'conVirtualPin' : "", 'conAllowstream' : "N" ,
-		        				       'conBlackdial' :  "N" , 'conSendnoti' :  "N",
-		        				       'resEqupcheck' : "RES_EQUPCHECK_1", 
-		        				       'sendMessage' : "N",
-		        				       'floorSeq' : $("#floorSeq").val()
-		        		              };
-	        		
-	        		 //값 수정 
-	        		 uniAjax("/web/resReservertionUpdate.do", params, 
-	        	  			function(result) {
-	        					       if (result.status == "LOGIN FAIL"){
-	        							    alert(result.message);
-	        								location.href="/web/Login.do";
-	        						   }else{
-	        						        need_close();
-	        							    $("#sp_message").text(result.message);
-	        							    $("#btn_result").trigger("click");
-	        							    res.fn_reset();
-	        							    res.fn_seatState();		
-	        							    closeTime();
-	        						   }
-	        						  
-	        				},
-	        			    function(request){
-	        				     alert("Error:" +request.status );	       						
-	        			    }    		
-	        	      );
         		}, fn_reset : function(){
-        			 $("#seatId").val("");
+        			 $("#itemId").val("");
         			 $("#seatConfirmgubun").val("");
-        		}, fn_rightView : function(seat_id, seat_name, seat_confirmgubun){
-        			 $("#seatId").val(seat_id);
-        			 $("#sp_seatNm").text(seat_name);
-        			 $("#seatConfirmgubun").val(seat_confirmgubun);
-    				 //ajax로 시간바 가지고 오기
-    				 var url = "/web/selectTimeInfo.do";
-    				 var params = {"itemId" : seat_id, "searchResStartday" : $("#searchResStartday").val()};
+        			 $("#resReqday").val("");
+        		}, fn_rightView : function(){
+        			 var url = "/web/selectTimeInfo.do";
+    				 var params = {"itemId" : $("#itemId").val(), "searchResStartday" : $("#searchResStartday").val()};
     				 uniAjax(url, params, 
     		      			function(result) {
     		 				      if (result.status == "SUCCESS"){
@@ -365,7 +290,6 @@
    		 				    		      $("#reserve_list").empty();
     		 				    		  for (var i in result.resultlist){
     		 				    			  if ( parseInt(obj[i].res_seq) >  -1){
-    		 				    				  
     		 				    				  shtml= "<div class=\"menu_box\">"
              		                                  + " <ul class=\"sel_list etrans\">"
              		                                  + "   <li class=\"sel_list_time\">"+ obj[i].swc_times+"~"+obj[i].swc_timee+"</li>"
@@ -374,7 +298,7 @@
              		                                	 shtml +=   " <label for=\"ex_chk04\">선택이 가능합니다</label>"	  
              		                                	       + "    <input type=\"checkbox\" id=\"show_time\" name=\"show_time\"  value="+obj[i].swc_time+">";
              		                                  }else {
-             		                                	 shtml +=   " <label for=\"ex_chk04\">예약된 좌석 입니다.</label>"	  
+             		                                	 shtml +=   " <label for=\"ex_chk04\"><a href=''>예약된 좌석 입니다.</a></label>"	  
              		                                	       + "    "; 
              		                                  }
              		                                
@@ -398,16 +322,21 @@
         			$("#p_seatNm").text($("#sp_seatNm").text());
     				$("#sp_resDay").text($("#searchResStartday").val());
     				var checkItem = checkbox_val("체크된 값이 없습니다", "show_time");
-    				const tempToArray = checkItem.split(',')
-    				var minVal = Math.min.apply(null, tempToArray);
-    				var maxVal = Math.max.apply(null, tempToArray);
+    				if (checkItem != false){
+    					const tempToArray = checkItem.split(',')
+        				var minVal = Math.min.apply(null, tempToArray);
+        				var maxVal = Math.max.apply(null, tempToArray);
+        				$("#resStarttime").val(stringLength(String(minVal), "4", "0"));
+        				$("#resEndtime").val(stringLength(String(maxVal), "4", "0"));
+        				$("#sp_resTimeS").text( $("#resStarttime option:selected").text());
+        				$("#sp_resTimeE").text( $("#resEndtime option:selected").text());
+        				//다른 시간 버특 hide
+        				$("#hid_history").val("res.fn_rightView");
+        				$("#btn_other").hide();
+        				$("#btn_SeatRes").trigger("click");
+        				
+    				}
     				
-    				
-    				$("#resStarttime").val(stringLength(String(minVal), "4", "0"));
-    				$("#resEndtime").val(stringLength(String(maxVal), "4", "0"));
-    				$("#sp_resTimeS").text( $("#resStarttime option:selected").text());
-    				$("#sp_resTimeE").text( $("#resEndtime option:selected").text())
-    				$("#btn_Res").trigger("click");
         		}
         		
             } 
@@ -415,8 +344,6 @@
 
          <script type="text/javascript">
               var el = document.querySelector('div.pinch-zoom');
-              console.log(el);
-              //console.log(e0);
               new PinchZoom.default(el, {});
         </script>
 </form:form>

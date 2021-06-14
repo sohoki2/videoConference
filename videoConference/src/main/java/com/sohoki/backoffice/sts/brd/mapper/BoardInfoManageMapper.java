@@ -16,14 +16,6 @@ public interface BoardInfoManageMapper {
 	
     public List<Map<String, Object>> selectBoardMainManageListByPagination() throws Exception;
     
-    public List<Map<String, Object>> selectIndexBoardTitle()throws Exception;
-    
-    public List<Map<String, Object>> selectBoardMainManageListByPagination1() throws Exception;
-    
-    public List<Map<String, Object>> selectBoardMainManageListByPagination2() throws Exception;
-    
-    public List<Map<String, Object>> selectBoardMainManageListByPagination3() throws Exception;
-  
     public Map<String, Object> selectBoardManageView(String boardSeq) throws Exception;
 	
     public int insertBoardManage(BoardInfo vo) throws Exception;

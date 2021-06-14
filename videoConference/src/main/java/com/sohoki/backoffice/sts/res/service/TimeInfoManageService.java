@@ -14,9 +14,7 @@ public interface TimeInfoManageService {
 	    List<Map<String, Object>> selectSTimeInfoBarList(Map<String, Object>  searchVO) throws Exception;
 		//장기 예약 
 		List<TimeInfo> selectLTimeInfoBarList(TimeInfoVO searchVO) throws Exception;
-	    //키오스크
-		List<TimeInfo> selectSTimeInfoBarListKiosk(TimeInfoVO searchVO) throws Exception;
-		//좌석 검색 
+	    //좌석 검색 
 		List <Map<String, Object>> selectSeatSearchResult(Map<String, Object> params)throws Exception;
 		//좌석 현황 
 		List <Map<String, Object>> selectSeatStateInfo(Map<String, Object> params) throws Exception;

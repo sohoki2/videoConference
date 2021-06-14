@@ -42,5 +42,6 @@ public class OfficeSeatInfo {
 	private String payCost = "";
 	private String seatConfirmgubun = "";
 	private String seatFixGubun = "";
+	private String resReqday = "";
 }
 

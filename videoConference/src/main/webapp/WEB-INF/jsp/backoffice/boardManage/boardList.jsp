@@ -272,7 +272,9 @@
 					    },
 					    colModel :  [
 					    	    	{ label: 'board_seq', key: true, name:'board_seq',       index:'board_seq',      align:'center', hidden:true},
-					            	{ label: '제목', name:'board_title',       index:'board_title',      align:'center', width:'10%'},
+					            	{ label: '제목', name:'board_title',       index:'board_title',      align:'center', width:'20%'},
+					            	{ label: '미리보기', name:'board_title',       index:'board_title',      align:'center', width:'10%'
+					            	  , formatter:jqGridFunc.boardPreviewBtn	},
 						            { label: '작성자', name:'user_nm',      index:'user_nm',      align:'center', width:'10%'},
 						            { label: '조회수', name:'board_visited',      index:'board_visited',      align:'center', width:'10%'},
 					                { label: '최종 수정자', name:'user_nm', index:'user_nm',     align:'center', width:'10%'},
@@ -312,6 +314,10 @@
 					        
 					    }
 				 });
+			 }, boardPreviewBtn : function (cellvalue, options, rowObject){
+				 return "<a href='javascript:jqGridFunc.boardPreview(\""+rowObject.board_seq+"\");'>미리보기</a>";
+			 }, boardPreview : function (boardSeq){
+				 
 			 }
 	     
 	 }
@@ -348,7 +354,9 @@
 			            );
 			        }else {
 			        	$("#btnUpdate").text("등록");
+			        	var boardGubun = $("#boardGubun").val();
 			        	$('input[name^=board]').val("");
+			        	$("#boardGubun").val(boardGubun);
 			        	toggleDefault("boardNoticeUseyn");
 			        	toggleDefault("boardViewYn");
 			        }
@@ -362,7 +370,10 @@
 		     			  
 		     			  var sHTML = oEditors.getById["ir1"].getIR();
      			          $("#boardContent").val(sHTML); 
-     			        
+     			          alert( $("#boardGubun").val());
+     			          
+     			          
+     			          
 		     			  var formData = new FormData();
 		     			  formData.append('mode' , $("#mode").val());
 		     			  formData.append('boardFile01', $('#boardFile01')[0].files[0]);
@@ -377,10 +388,10 @@
 		     			  formData.append('boardViewYn' , fn_emptyReplace($("#boardViewYn").val(),"N"));
 		     			  uniAjaxMutipart("/backoffice/boardManage/boardUpdate.do", formData, 
 	     						function(result) {
-		     				           alert("result:" + result);
+		     				           //alert("result:" + result);
 	     						       //결과값 추후 확인 하기 	
 	     		    	               if (result.status == "SUCCESS"){
-	     		    	            	  //jqGridFunc.fn_search();
+	     		    	            	  jqGridFunc.fn_search();
 	     		    	               }else if (result.status == "LOGIN FAIL"){
 	     									document.location.href="/backoffice/login.do";
 	     				               }else {
@@ -392,7 +403,7 @@
 	     							    alert("Error:" +request.status );	       						
 	     						 }    		
 		     			  );
-		     		    	
+		     			  
 		             } 
 		     },rowBtn : function (cellvalue, options, rowObject){
 	             if (rowObject.board_seq != "")

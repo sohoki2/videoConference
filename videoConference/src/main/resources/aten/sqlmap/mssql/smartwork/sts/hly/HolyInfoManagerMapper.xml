@@ -5,12 +5,12 @@
    <select id="selectHolyInfoManageListByPagination" resultType="lmap">     	      
 		 	SELECT	* 
 			FROM 		( SELECT	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
-			                        ROW_NUMBER() OVER (ORDER BY HOLY_DAY DESC) AS RNUM, 
+			                        ROW_NUMBER() OVER (ORDER BY HOLY_DAY ASC) AS RNUM, 
 									TB.* 
 					          FROM 	(	
 					                 SELECT a.HOLY_DAY, a.HOLY_TITLE, a.HOLY_USEYN,
-					                        a.REG_DATE, a.REG_ID, a.UPDATE_ID
-					                        FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE, 
+					                        a.REG_DATE, a.REG_ID, a.UPDATE_ID,
+					                        FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE
 							         FROM  TB_HOLYINFO a
 							         WHERE 	1=1
 					                       <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
@@ -21,9 +21,9 @@
 								             AND a.HOLY_DAY between #{params.searchStartDay} and #{params.searchEndDay}
 								           </if>
 								     ) TB 
-					        ) 
+					        ) TA
 		WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
-	    ORDER BY TB.HOLY_DAY ASC 
+	    ORDER BY TA.HOLY_DAY ASC 
    </select>
 
    <select id="selectHolyInfoManageView" resultType="HolyworkInfoVO">

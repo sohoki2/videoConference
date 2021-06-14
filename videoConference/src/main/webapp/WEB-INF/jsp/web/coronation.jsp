@@ -40,6 +40,7 @@
 <input type="hidden" id="roomType" name="roomType" />
 <input type="hidden" id="hid_attendList" name="hid_attendList">
 <input type="hidden" id="hid_equipList" name="hid_equipList">
+<input type="hidden" id="itemGubun" name="itemGubun" value="ITEM_GUBUN_3">
 
 
         <c:import url="/web/inc/top_inc.do" />
@@ -70,7 +71,7 @@
                     <a href="/web/meetingDay.do" class="resource">회의실예약</a>
                   </div>
                   <div class="dateBox float_left">
-                      <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch">
+                      <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}" onChange="res.fn_floorInfo()">
                       <div class="dateIcon" onClick="res.fn_floorInfo()">
                         <a class="dateBtn">검색</a>
                       </div>
@@ -392,8 +393,6 @@
             									}
             									//회의실 구분
             									fn_ResGubunCombo("resGubun", result.seatInfo.room_type, null);
-            									$("#resGubun").val(result.seatInfo.room_type);
-            									
             									$("#resStarttime").val(swcTime);
             								    if (resSeq != "0"){
             								    	$("#resEndtime").val();

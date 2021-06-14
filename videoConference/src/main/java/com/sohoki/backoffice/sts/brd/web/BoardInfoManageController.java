@@ -112,7 +112,7 @@ public class BoardInfoManageController {
 				  LOGGER.info("getContextPath:" + request.getHeader("REFERER")); 
 				  
 				  
-				  if (!request.getHeader("REFERER").contains("/web/notice.do")) {
+				  if (!request.getHeader("REFERER").contains("/web")) {
 					  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 				      if(!isAuthenticated) {
 							model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
@@ -135,10 +135,11 @@ public class BoardInfoManageController {
 				  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 				  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 				  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
-				  searchVO.put("adminYn", "1");
 				  
 				  //공지사항의 경우, 공지기한이 지난 게시물은 board_notice_useyn을 N으로 변경
 				  boardInfoService.updateBoardNoticeUseYn();
+				  
+				  LOGGER.debug("searchVO" + searchVO.get("adminYn"));
 				  
 				  List<Map<String, Object>> list =  boardInfoService.selectBoardManageListByPagination(searchVO) ;
 				  int totCnt = list.size() > 0 ?  Integer.valueOf( list.get(0).get("total_record_count").toString()) : 0;
@@ -157,6 +158,28 @@ public class BoardInfoManageController {
 			return model;	
 		}
 		@NoLogging
+		@RequestMapping (value="boardVisited.do")
+		public ModelAndView selectBoardVisited(@ModelAttribute("loginVO") AdminLoginVO loginVO
+													 	  , @RequestBody Map<String,Object>  boardInfo
+											              , HttpServletRequest request
+											   			  , BindingResult bindingResult ) throws Exception{	
+			
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+			
+			try{
+				LOGGER.debug("boardInfo:" + boardInfo.get("boardSeq"));
+				
+				boardInfoService.updateBoardVisitedManage(boardInfo.get("boardSeq").toString() );
+			    model.addObject(Globals.STATUS_REGINFO, boardInfoService.selectBoardManageView(boardInfo.get("boardSeq").toString()));
+			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    
+			}catch(Exception e){
+				LOGGER.info("e:"+ e.toString());	
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			}
+			return model;
+		}
+		@NoLogging
 		@RequestMapping (value="boardView.do")
 		public ModelAndView selectBoardViewInfoManageDetail(@ModelAttribute("loginVO") AdminLoginVO loginVO
 													 	  , @RequestBody Map<String,Object>  boardInfo
@@ -172,10 +195,6 @@ public class BoardInfoManageController {
 						model.setViewName("/backoffice/login");
 						return model;
 			    }
-			    //패스로 확인 하기 
-			    if (boardInfo.get("boardVisited").toString().equals("0"))
-				   boardInfoService.updateBoardVisitedManage(boardInfo.get("boardSeq").toString() );
-			    
 			    model.addObject(Globals.STATUS_REGINFO, boardInfoService.selectBoardManageView(boardInfo.get("boardSeq").toString()));
 			    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			    

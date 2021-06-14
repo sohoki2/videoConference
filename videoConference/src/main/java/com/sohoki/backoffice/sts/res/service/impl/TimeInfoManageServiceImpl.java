@@ -64,14 +64,6 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		// TODO Auto-generated method stub
 		return timeMapper.resTimeReset(vo);
 	}
-
-	@Override
-	public List<TimeInfo> selectSTimeInfoBarListKiosk(TimeInfoVO searchVO)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return timeMapper.selectSTimeInfoBarListKiosk(searchVO);
-	}
-
 	@Override
 	public String selectTimeUp(String endTime) throws Exception {
 		// TODO Auto-generated method stub

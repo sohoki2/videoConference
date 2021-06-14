@@ -108,8 +108,8 @@ public class HolyworkInfoManageController {
 		    
 		    String searchStartDay = util.NVL(searchVO.get("searchStartDay"), util.reqDay(0)) ;
 	    	String searchEndDay = util.NVL(searchVO.get("searchEndDay"), util.reqDay(120)) ;
-	    	
-	    	
+	    	searchVO.put("searchStartDay", searchStartDay);
+	    	searchVO.put("searchEndDay", searchEndDay);
 			List<Map<String, Object>> list = holyDayService.selectHolyInfoManageListByPagination(searchVO);
 	        int totCnt =  list.size() > 0 ? Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
 	   

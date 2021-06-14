@@ -34,7 +34,7 @@
 </head>
 <body>
 <form:form name="regist" commandName="regist" method="post" >
- <input type="hidden" id="swcSeq" name="swcSeq" value="${regist.swcSeq }">
+ <input type="hidden" id="meetingId" name=meetingId value="${regist.meetingId }">
  <input type="hidden" id="resSeq" name="resSeq"  >
  <input type="hidden" id="userId" name="userId"  >
  <input type="hidden" id="mode" name="mode"  >
@@ -48,7 +48,7 @@
         <header id="header">
             <div class="leftBox">
                 <h1 class="logo"><img src="/img/logo.png" alt="Kbank" /></h1>
-                <span id="sp_swcName">${regist.seatName}</span>
+                <span id="sp_swcName">${regist.meeting_name}</span>
             </div>
             <div class="rightBox">
                 <span class="day"><span id="sp_dayInfo"></span> </span>
@@ -226,21 +226,6 @@
             <a href="javascript:;" class="greenBtn">확인</a>
         </div>
     </div>
-    <!-- 회의실 예약 실패 
-    <div data-popup="focusRoom" class="popup focusPop">
-        <div class="popup_con">
-            <span class="button b-close">&times;</span>
-            <div class="top">
-                <p>27F 001R</p><span>10:30 ~ 11:00</span>
-            </div>
-            <div class="con">
-                <p class="fail_icon">예약할 수 없습니다.</p>
-                <span>다른 임직원이 예약을 먼저 확정했습니다.</span>
-            </div>
-            <a href="javascript:;" class="greenBtn">확인</a>
-        </div>
-    </div> -->
-    <!-- 예약 취소 -->
     <div data-popup="cancel" class="popup notiPop">
         <div class="popup_con">
             <span class="button b-close">&times;</span>
@@ -323,7 +308,7 @@
         		meetingInfo : function(){
         			var params = {'secSeq' : $("#swcSeq").val() }; 
                 	apiExecute(
-        		  			   "POST",  "/front/resInfo/resPadInfoAjax.do?swcSeq="+$("#swcSeq").val(), params, null,				
+        		  			   "POST",  "/web/resPadInfoAjax.do?swcSeq="+$("#swcSeq").val(), params, null,				
         		  				function(result) {							
         		  						if (result != null) {	
         		  						
@@ -419,7 +404,7 @@
         		}, fn_MeetingState : function (state){
         			//입실 하기 
         			    var params = {'resSeq' : $("#resSeq").val(), 'resState': state };
-        				uniAjax("/front/resInfo/resPadStateAjax.do", params, 
+        				uniAjax("/web/resPadStateAjax.do", params, 
         			 			function(result) {
         					           if (result.status == "SUCCESS"){
         									    //테이블 정리 하기
@@ -443,7 +428,7 @@
         		},  fn_login : function(){
         			//사용자 로그인
         			var params = {'userId' : $("#userId").val(), 'mode': $("#mode").val(), 'resSeq' : $("#resSeq").val()  };
-    				uniAjax("/front/resInfo/resLoginCheckAjax.do", params, 
+    				uniAjax("/web/resLoginCheckAjax.do", params, 
     			 			function(result) {
     					           if (result.status == "SUCCESS"){
     									    //테이블 정리 하기

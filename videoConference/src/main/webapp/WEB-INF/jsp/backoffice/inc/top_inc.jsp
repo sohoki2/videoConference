@@ -24,7 +24,7 @@ if(loginVO == null ){
                         if (loginVO.getAuthorCode().equals("ROLE_ADMIN")  ){
                         %>  
                         <li class="dropdown">
-                            <a href="/backoffice/basicManage/empList.do" class="dropbtn">자원 관리</a>
+                            <a href="/backoffice/basicManage/centerList.do" class="dropbtn">자원 관리</a>
                             <ul class="dropdown-content">
                                 <li><a href="/backoffice/basicManage/centerList.do">회의실분류관리</a></li>
                                 <li><a href="/backoffice/basicManage/officeSeatList.do">좌석관리</a></li>
@@ -36,7 +36,7 @@ if(loginVO == null ){
                             </ul>
                       </li>
                       <li class="dropdown">
-                          <a href="/backoffice/companyManage/companyList.do" class="dropbtn">시스템관리</a>
+                          <a href="/backoffice/basicManage/managerList.do" class="dropbtn">시스템관리</a>
                           <ul class="dropdown-content">
                               <li><a href="/backoffice/basicManage/codeList.do">코드관리</a></li>
                               <li><a href="/backoffice/orgManage/empList.do">인사관리</a></li>
@@ -51,6 +51,7 @@ if(loginVO == null ){
                           <ul class="dropdown-content">
                               <li><a href="/backoffice/companyManage/companyList.do">입주사관리</a></li>
                               <li><a href="/backoffice/companyManage/userList.do">사용자관리</a></li>
+                              <li><a href="/backoffice/companyManage/userList.do">일반사용자현황</a></li>
                               <li><a href="/backoffice/companyManage/tennList.do">크레딧 관리</a></li>
                           </ul>
                       </li>
@@ -66,13 +67,8 @@ if(loginVO == null ){
                         }
                       %>
                       <li class="dropdown">
-                            <a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_1" class="dropbtn">예약관리</a>
-                            <ul class="dropdown-content">
-                                <li><a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_3">회의실 승인관리</a></li>
-                                <li><a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_3">좌석 예약관리</a></li>
-                            </ul>
+                         <a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_1" class="dropbtn">예약관리</a>
                       </li>
-					  
                     </ul>
                 </nav>
                 <p>                                   

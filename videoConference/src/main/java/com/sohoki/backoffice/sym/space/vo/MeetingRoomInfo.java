@@ -51,4 +51,5 @@ public class MeetingRoomInfo {
 	private String userId = "";
 	private String meetingTop = "";
 	private String meetingLeft = "";
+	private String resReqday = "";
 }

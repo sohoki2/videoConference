@@ -49,6 +49,48 @@ var backoffice_common = {
 			  var _url = "/backoffice/basicManage/floorListAjax.do";
 			  var _params = {"centerId" : $("#centerId").val(), "floorUseyn": "Y"};
 		      fn_comboListPost(span_id, comboboxId,_url, _params, "", "120px", floorSeq);  
-	 }        
+	 } , fn_adminForm : function(gubun){
+	        if (gubun == "admin"){
+	            $("#tb_formInfo").hide();
+	            $("#tb_searchform").show();
+	        }else{
+	            $("#tb_formInfo").show();
+	            $("#tb_searchform").hide();
+	        }
+	 
+	 },  fn_empSearch : function(){
+			  //직원 조회
+			  var params = {"searchCondition" : $("#emSearchCondition").val(), "searchKeyword" : $("#emSearchKeyword").val(), "mode" : "pop" };
+			  uniAjax("/backoffice/orgManage/empListAjax.do", params, 
+		     			function(result) {
+				               if (result.status == "LOGIN FAIL"){
+						    	   alert(result.message);
+		  						   location.href="/backoffice/login.do";
+		  					   }else if (result.status == "SUCCESS"){
+								   $("#tb_searchform > tbody").empty();
+								   var obj = result.resultlist;
+								   var shtml = ""
+								   for (var i in obj){
+									   shtml= "<tr onclick=\"backoffice_common.fn_empChoice('meetingAdminid','"+obj[i].empno+"','sp_empView','"+obj[i].empname+"')\">"
+										    + " <td>" + obj[i].deptname +"</td>"
+										    + " <td>" + obj[i].empname +"</td>"
+										    + " <td>" + obj[i].empno +"</td>"
+									        + "</tr>";
+									   $("#tb_searchform > tbody").append(shtml);
+		  						       sHtml = "";  
+								   }
+							   }else {
+									alert("업데이트 도중 문제가 발생 하였습니다.");
+							   }	
+						 },
+						 function(request){
+							    alert("Error:" +request.status );	       						
+						 }    		
+		     );    
+	}, fn_empChoice : function (_returnFrom, _returnVal, _returnView, _viewNm){
+	    $("#"+_returnFrom).val(_returnVal);
+	    $("#"+_returnView).text(_viewNm);
+	    backoffice_common.fn_adminForm('form');
+	} 
 }
 

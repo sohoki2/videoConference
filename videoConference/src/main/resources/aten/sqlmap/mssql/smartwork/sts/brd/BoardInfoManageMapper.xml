@@ -20,11 +20,12 @@
 											END 		user_nm
 											, (SELECT DEPTNAME FROM tb_empInfo WHERE EMPNO = a.BOARD_REG_ID) deptname
 											, a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN, a.BOARD_TOP_SEQ
+											, a.BOARD_CONTENT
 									FROM  tb_board a
 									WHERE a.BOARD_GUBUN = #{params.boardGubun}
 									<if test="params.boardGubun== 'NOT'">
 						            	<choose>
-						            		<when test="params.adminYn == 0">
+						            		<when test="params.adminYn == 'user'">
 						            			<![CDATA[
 			            			             AND  a.BOARD_SEQ NOT IN	
 			            			              (SELECT BOARD_SEQ 
@@ -82,28 +83,6 @@
 			      </otherwise>
 			  </choose>			  
      </select> 
-     <select id="selectIndexBoardTitle" resultType="lmap">
-        SELECT * FROM (
-	        SELECT  SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, 
-	                ROW_NUMBER() OVER (ORDER BY BOARD_SEQ DESC) AS RNUM, 
-	                TB.* 
-	        FROM 
-			        (SELECT a.BOARD_SEQ
-			                , a.BOARD_TITLE
-			                , Convert(varchar(10), a.BOARD_REGDATE, 120) boardRegdate 
-			                , (SELECT DEPTNAME FROM tb_empInfo WHERE EMPNO = a.BOARD_REG_ID) deptname
-			                , a.BOARD_REG_ID 
-			                , a.BOARD_VISITED
-			                , a.BOARD_NOTICE_USEYN
-			                , a.BOARD_TOP_SEQ
-			         FROM tb_board a
-			         WHERE  a.BOARD_GUBUN = 'NOT' 
-			                    AND CONVERT(VARCHAR(8), GETDATE(), 112)  BETWEEN a.BOARD_NOTICE_STARTDAY and  a.BOARD_NOTICE_ENDDAY
-			        ) TB
-        ) TA
-        WHERE RNUM  BETWEEN  1 AND 5
-        ORDER BY TA.BOARD_SEQ
-     </select>  
      <select id="selectBoardMainManageListByPagination"  resultType="lmap">
 		 <![CDATA[
 		 	SELECT * FROM ( 
@@ -148,80 +127,7 @@
      
      
      
-     <select id="selectBoardMainManageListByPagination1"  resultType="lmap">
-		 <![CDATA[
-		 	SELECT * FROM ( SELECT  TB.* FROM (
-		    SELECT a.BOARD_SEQ,  a.BOARD_TITLE, 	SUBSTRING(DATE_FORMAT( a.BOARD_REGDATE, '%Y-%m-%d'), 0,10) boardRegdate ,
-		               CASE a.BOARD_GUBUN when 'QNA' then 
-			                 (SELECT b.EMPNAME FROM tb_empInfo b where b.EMPNO = a.BOARD_REG_ID) 
-			           ELSE 
-			                  (SELECT c.ADMIN_NAME FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID) 
-			           END userNm,
-			           CASE a.BOARD_GUBUN when 'QNA' then 
-			                 (SELECT  FN_ORGNM(b.CD_DEPT) FROM tb_empInfo b WHERE b.EMPNO = a.BOARD_REG_ID ) 
-			           ELSE '' end orgName, a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN,
-			           CASE a.BOARD_GUBUN when 'QNA' then 'Q&A' WHEN 'FAQ' then 'FAQ'
-			           ELSE '공지사항' end boardGubunTitle
-		    FROM  tb_board a 
-		    WHERE 1=1  and    BOARD_GUBUN = 'QNA' 		     
-		    ORDER BY BOARD_SEQ  DESC
-	        ) TB ) LIMIT 1, 1
-	        ]]>         		 	    
-     </select> 
-     <select id="selectBoardMainManageListByPagination2"  resultType="lmap">
-		 <![CDATA[
-		 	SELECT * FROM ( SELECT  TB.* FROM (
-				    SELECT a.BOARD_SEQ,  a.BOARD_TITLE, 	 DATE_FORMAT(a.BOARD_REGDATE , '%Y-%m-%d') boardRegdate ,
-				           
-				              CASE a.BOARD_GUBUN when 'QNA' then 
-					                 (SELECT b.EMPNAME FROM tb_empInfo b WHERE EMPNO = a.BOARD_REG_ID) 
-					            ELSE 
-					                 (SELECT c.ADMIN_NAME FROM tb_admin c WHERE c.ADMIN_ID = a.BOARD_REG_ID) 
-					            END userNm,
-					            CASE a.BOARD_GUBUN WHEN 'QNA' THEN 
-					                 (SELECT  FN_ORGNM(b.CD_DEPT) from tb_empInfo b where b.EMPNO = a.BOARD_REG_ID ) 
-					            ELSE '' 
-					            END orgName, 
-					            a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN,
-					            CASE a.BOARD_GUBUN 
-					                    WHEN 'QNA' THEN 'Q&A'
-					                    WHEN 'FAQ' then 'FAQ'
-					                    ELSE '공지사항' 
-					             END boardGubunTitle
-				    FROM  tb_board a 
-				        WHERE 1=1  and    BOARD_GUBUN = 'FAQ'       		     
-				        ORDER BY BOARD_SEQ  DESC
-			        ) TB 
-	        ) 
-	        WHERE RNUM  BETWEEN 1 AND 1
-	        ]]>         		 	    
-     </select> 
-     <select id="selectBoardMainManageListByPagination3"  resultType="lmap">
-		 <![CDATA[
-		 	SELECT * FROM ( SELECT  TB.* FROM (
-		    SELECT a.BOARD_SEQ,  a.BOARD_TITLE, 	DATE_FORMAT(a.BOARD_REGDATE , '%Y-%m-%d') boardRegdate ,
-			            CASE a.BOARD_GUBUN WHEN 'QNA' then 
-				             (SELECT b.EMPNAME from tb_empInfo b where USER_ID = a.BOARD_REG_ID) 
-				         ELSE 
-				             (SELECT c.ADMIN_NAME from tb_admin c where c.ADMIN_ID = a.BOARD_REG_ID) 
-				         END userNm,
-				         CASE a.BOARD_GUBUN WHEN 'QNA' then 
-				             (SELECT  FN_ORGNM(b.DEPT_ID) from tb_empInfo b where b.USER_ID = a.BOARD_REG_ID ) 
-				         ELSE '' 
-				         END orgName, a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN,
-				         CASE a.BOARD_GUBUN 
-				                 WHEN 'QNA' then 'Q&A'
-				                 WHEN 'FAQ' then 'FAQ'
-				                 ELSE '공지사항' 
-				         END boardGubunTitle
-		    FROM  tb_board a 
-		        WHERE 1=1  and    BOARD_GUBUN = 'NOT'  		     
-		        ORDER BY BOARD_SEQ  DESC
-	        ) TB ) TA
-	        LIMIT 1
-	        ]]>         		 	    
-     </select>  
-   
+     
     <select id="selectBoardManageView"  resultType="lmap">
     <![CDATA[
           SELECT a.BOARD_SEQ

@@ -36,7 +36,12 @@
 							 </if>
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.authorCode)">
 							    <if test="params.authorCode == 'ROLE_USER'">
-							    AND FLOOR_SEQ in (SELECT strValue FROM dbo.UF_SPLICT( #{params.floorInfo}) )
+							    AND b.FLOOR_SEQ IN ( SELECT strVALUE 
+					                                    FROM dbo.UF_SPLICT(
+					                                         ( SELECT COM_PLAY_FLOOR 
+					                                           FROM TB_COMPANYINFO 
+					                                           WHERE COM_CODE = #{params.comCode}) , ',')
+					                                )
 							    </if>
 							 </if>
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloor)">

@@ -173,7 +173,7 @@
     <select id="selectIndexList" resultType="lmap">
 		    SELECT  c.RES_TITLE,  c.RES_STARTDAY,
                     dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStartTimeT ,  
-                    dbo.FN_TIMESPLIT(FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndTimeT , 
+                    dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndTimeT , 
                     c.RES_STARTTIME, c.RES_ENDTIME, TA.MEETING_ID, c.RES_ATTENDLIST,
 			        CASE WHEN (TA.RES_SEQ > 0) THEN 
 			             dbo.FN_ATTENTLIST(c.RES_ATTENDLIST)
@@ -189,11 +189,13 @@
                           )
 			        ELSE 
 			          ''
-			        END  EMPNAME, c.IN_TIME, c.OT_TIME
-            FROM  ( SELECT b.MEETING_USEYN, a.RES_SEQ , a.TIME_SEQ, b.MEETING_NAME , a.SWC_TIME, a.CENTER_ID, a.MEETING_ID, 
-                           b.MEETING_CONFIRMGUBUN, b.MEETING_EQUPGUBUN
-					FROM TB_SWCTIME a, TB_MEETING_ROOM b
+			        END  EMPNAME, c.IN_TIME, c.OT_TIME, TA.MEETING_ORDER, TA.FLOOR_INFO
+            FROM  ( SELECT b.MEETING_USEYN, a.RES_SEQ , a.TIME_SEQ, b.MEETING_NAME , a.SWC_TIME, a.CENTER_ID, b.MEETING_ID, 
+                            b.MEETING_CONFIRMGUBUN, b.MEETING_EQUPGUBUN, b.MEETING_ORDER, cast(replace( c.FLOOR_INFO, 'CENTER_FLOOR_', '') as int)  FLOOR_INFO
+					FROM TB_SWCTIME a, TB_MEETING_ROOM b, TB_FLOORINFO c
 					WHERE a.ITEM_ID = b.MEETING_ID
+					      AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2')
+					      AND b.FLOOR_SEQ = c.FLOOR_SEQ
 		                  <choose>
 		                    <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchMeetingid)">
 		                           AND a.MEETING_ID= #{params.searchMeetingid}
@@ -206,17 +208,32 @@
 		                                           AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, 30, GETDATE()), 114), 1,5), ':','') 
 					        </otherwise>
 		                  </choose>
+		                  
+		                  
 					      AND a.SWC_RESDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
 					      <if test="@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSeatSeq)">
 					      AND b.MEETING_USEYN ='Y' and b.MEETING_MAINVIEW = 'Y'
 					      </if>
-					      <if test="params.searchFloorSeq != null">
-					      AND  
+					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
+					      AND b.CENTER_ID = #{params.centerId}
 					      </if>
-				          ORDER BY b.CENTER_ID ASC, b.MEETING_ORDER ASC
+					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.authorCode)">
+					         <choose>
+					            <when test="params.authorCode == 'ROLE_USER'">
+					               AND b.FLOOR_SEQ IN ( SELECT strVALUE 
+					                                    FROM dbo.UF_SPLICT(
+					                                         ( SELECT COM_PLAY_FLOOR 
+					                                           FROM TB_COMPANYINFO 
+					                                           WHERE COM_CODE = #{params.comCode}) , ',')
+					                                   )
+					            </when>
+					         </choose>
+					      </if>
+				         
 			      ) TA
 			LEFT OUTER JOIN TB_SWCRESERVATION  AS c 
 			     ON TA.RES_SEQ = c.RES_SEQ 
+			ORDER BY TA.CENTER_ID ASC, TA.FLOOR_INFO asc,  TA.MEETING_ORDER ASC
     </select>
     
     <select id="selectResManageView" resultType="lmap">
@@ -226,12 +243,12 @@
     <select id="selectCancelReason" resultType="ResInfoVO">
 		SELECT	a.RES_SEQ
 				, a.CANCEL_REASON
-		        , FN_DETAILCODENM(RESERVATION_REASON) AS reservationReason 
+		        , dbo.FN_DETAILCODENM(RESERVATION_REASON) AS reservationReason 
 		        , a.RESERVATION_REASON_DETAIL
 		        , CASE a.COWORKER_YN WHEN '1' THEN 
 		             CASE a.PROXY_YN WHEN 'P' THEN 
-		                (SELECT EMPNAME FROM tb_empInfo WHERE EMPNO =a.proxy_user_id) 
-				     ELSE (SELECT EMPNAME FROM tb_empInfo WHERE  EMPNO = a.USER_ID) 
+		                (SELECT EMPNAME FROM TB_EMPINFO WHERE EMPNO =a.proxy_user_id) 
+				     ELSE (SELECT EMPNAME FROM TB_EMPINFO WHERE  EMPNO = a.USER_ID) 
 				     END 
 				  ELSE a.OUT_USER_NM
 				  END userName, 
@@ -387,12 +404,12 @@
 	<select id="selectKioskCalendarList"  resultType="lmap">
 	
 	    SELECT RES_TITLE,  FN_ATTENTLIST(a.RES_ATTENDLIST), 
-				       CONCAT(DATE_FORMAT (a.RES_STARTDAY,  '%Y-%m-%d')   ,'T', fn_TimeSplit(a.RES_STARTTIME), ':00') RES_STARTTIME , 
-                       CONCAT(DATE_FORMAT (a.RES_STARTDAY,  '%Y-%m-%d')  ,'T', fn_TimeSplit(FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
-				       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
-				       a.RES_SEQ 
+		       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00') RES_STARTTIME , 
+               CONCAT(CONVERT (DATE, a.RES_STARTDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
+		       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
+		       a.RES_SEQ 
 		FROM TB_SWCRESERVATION a , TB_EMPINFO   b
-		WHERE MEETING_ID  = #{swcseq} 
+		WHERE MEETING_ID  = #{meetingId} 
               AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
               AND  RES_ENDTIME >= REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','') 
               AND a.USER_ID = b.EMPNO 
@@ -409,9 +426,7 @@
                                         UPDATE_DATE, UPDATE_ID, USE_YN, RES_TITLE, RES_PASSWORD, MEETING_SEQ, RES_ATTENDLIST,
                                         CONFERENCE_ID, CON_NUMBER, CON_PIN, 
                                         CON_VIRTUAL_PIN, CON_ALLOWSTREAM, CON_BLACKDIAL, CON_SENDNOTI, RES_EQUPINFO, RES_EQUPCHECK, 
-                                        TENN_CNT, FLOOR_SEQ, SEND_MESSAGE , RES_PERSON
-                                        
-                                        )
+                                        TENN_CNT, FLOOR_SEQ, SEND_MESSAGE , RES_PERSON)
          VALUES ( #{itemId}, #{itemGubun},  #{centerId}, #{resGubun, jdbcType=VARCHAR}, #{userId}
 			     , #{resStartday, jdbcType=VARCHAR} , #{resEndday, jdbcType=VARCHAR } , #{resStarttime, jdbcType=VARCHAR} , #{resEndtime, jdbcType=VARCHAR}, GETDATE()
 			     , 'PROCESS_GUBUN_1', #{reservationReason, jdbcType=VARCHAR}

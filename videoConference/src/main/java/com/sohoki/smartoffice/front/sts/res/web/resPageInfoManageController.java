@@ -816,7 +816,7 @@ public class resPageInfoManageController {
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			model.addObject(Globals.JSON_RETURN_RESULTLISR, resService.selectIndexList(resInfo));
 			//신규 수정 
-			model.addObject("boardList", boardInfoService.selectIndexBoardTitle());
+			//model.addObject("boardList", boardInfoService.selectIndexBoardTitle());
 			
 		}catch(Exception e){
 			LOGGER.error("selectResInfo ERROR:" + e.toString());
@@ -927,7 +927,7 @@ public class resPageInfoManageController {
         		if (resultVO != null && resultVO.getEmpno() != null ) {
     	        	Map<String, Object> resInfo = new HashMap<String, Object>();
         			model.addObject(Globals.JSON_RETURN_RESULTLISR, resService.selectIndexList(resInfo));
-        			model.addObject("boardList", boardInfoService.selectIndexBoardTitle());
+        			//model.addObject("boardList", boardInfoService.selectIndexBoardTitle());
         			       			
         			//
     	        	// 2. spring security 연동        

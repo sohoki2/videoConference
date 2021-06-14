@@ -115,7 +115,6 @@
         <script>  
             $( function() {
             	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
-            	 
             });
             function fn_meeingList(){
             	 $("form[name=regist]").attr("action", "/web/meetingList.do").submit();

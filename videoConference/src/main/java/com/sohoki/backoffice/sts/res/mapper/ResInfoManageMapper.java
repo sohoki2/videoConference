@@ -27,7 +27,7 @@ public interface ResInfoManageMapper {
     //메일 보내는 구문 
     public List <ResInfoVO> selectMessagentList();
     
-    public List<Map<String, Object>> selectKioskCalendarList(String swcSeq);
+    public List<Map<String, Object>> selectKioskCalendarList(String meetingId);
     
     public Map<String, Object> selectResManageView(String resSeq);
 	

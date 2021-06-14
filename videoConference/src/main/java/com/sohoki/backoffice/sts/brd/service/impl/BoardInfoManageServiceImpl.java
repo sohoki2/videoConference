@@ -32,38 +32,12 @@ public class BoardInfoManageServiceImpl extends EgovAbstractServiceImpl implemen
 		return boardMapper.selectBoardMainManageListByPagination();
 	}
 
-	@Override
-	public List<Map<String, Object>> selectBoardMainManageListByPagination1()
-			throws Exception {
-		// TODO Auto-generated method stub
-		return boardMapper.selectBoardMainManageListByPagination1();
-	}
-
-	@Override
-	public List<Map<String, Object>> selectBoardMainManageListByPagination2()
-			throws Exception {
-		// TODO Auto-generated method stub
-		return boardMapper.selectBoardMainManageListByPagination2();
-	}
-
-	@Override
-	public List<Map<String, Object>> selectBoardMainManageListByPagination3()
-			throws Exception {
-		// TODO Auto-generated method stub
-		return boardMapper.selectBoardMainManageListByPagination3();
-	}
-
+	
 	@Override
 	public Map<String, Object> selectBoardManageView(String boardSeq) throws Exception {
 		// TODO Auto-generated method stub
 		return boardMapper.selectBoardManageView(boardSeq);
 	}
-	@Override
-	public List<Map<String, Object>> selectIndexBoardTitle() throws Exception {
-		// TODO Auto-generated method stub
-		return boardMapper.selectIndexBoardTitle();
-	}
-
 	
 	@Override
 	public int updateBoardManage(BoardInfo vo) throws Exception {

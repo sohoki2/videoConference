@@ -339,9 +339,9 @@
 			                    <input type="radio" id="searchDayGubun" name="searchDayGubun" value="RES_STARTDAY"   />
 			                    <label>예약일 </label> 
 			                	&nbsp;&nbsp;&nbsp;&nbsp;
-			                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" readonly="true"  />
+			                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" />
 			                     ~
-			                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" readonly="true" />
+			                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" />
 	                		</td>
 		                	<th style="width:90px;">검색어</th>
 		                	<td colspan="5"  style="text-align:left;padding-left: 20px;">
@@ -490,6 +490,12 @@
 						   <th>일자</th>
 						   <td><span id="sp_resStartday"></span>  </td>
 						 </tr>
+						 <tr id="tr_coro">
+						   <th>사용목적</th>
+						   <td><span id="sp_remark"></span></td>
+						   <th>행사규모</th>
+						   <td><span id="sp_person"></span>  </td>
+						 </tr>
 						 <tr>
 						   <th>예약 구분</th>
 						   <td><span id="sp_resGubunTxt"></span></td>
@@ -557,6 +563,13 @@
 	 							var resdayinfo = (obj.item_gubun === "ITEM_GUBUN_3") ? obj.resstartday +"일 " + obj.resstarttime + " 부터 ~" + obj.resendday +"일 " + obj.resendtime  + "까지"
                                                                                       : obj.resstartday +"일 " + obj.resstarttime + "~" + obj.resendtime ;
 
+	 							if (obj.item_gubun === "ITEM_GUBUN_3"){
+	 								$("#sp_remark").html(obj.res_remark);
+	 								$("#sp_person").html(obj.res_person);
+	 								$("#tr_coro").show();
+	 							}else {
+	 								$("#tr_coro").hide();
+	 							}
 	 							$("#sp_resStartday").html(resdayinfo);
 	 							$("#sp_resGubunTxt").html(obj.resgubuntxt);
 	 							$("#sp_empname").html(obj.empname);

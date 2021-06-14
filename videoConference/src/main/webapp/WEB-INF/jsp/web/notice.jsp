@@ -36,7 +36,7 @@
 <input type="hidden" name="pageIndex" id="pageIndex" value="${regist.pageIndex }" />
 <input type="hidden" name="pageSize" id="pageSize"  value="${regist.pageSize }" />
 <input type="hidden" name="pageUnit" id="pageUnit"  value="${regist.pageUnit }"/>
-
+<input type="hidden" name="boardSeq" id="boardSeq"/>
  <!--//header 추가-->
             <c:import url="/web/inc/top_inc.do" />
             <!--header 추가//-->
@@ -80,15 +80,19 @@
         <script src="/front_res/js/needpopup.min.js"></script>
         <script type="text/javascript">
 	        $( function() {
-			    	$("#boardGubun").val("res");
+			    	$("#boardGubun").val("NOT");
 			    	fn_noticeList();
+			    	var boardSeq = "${regist.boardSeq }";
+			    	if (boardSeq != "")
+			    		fn_noticView(boardSeq);
+			    	
 			});
 	        function fn_noticeList(){
 	        	var gubun = $("#boardGubun").val();
 	        	var url =  "/backoffice/boardManage/boardListAjax.do";
 	        	var params = { 
 			    	    		"pageIndex": $("#pageIndex").val(),
-			    	    		"boardGubun": "Not",
+			    	    		"boardGubun": "NOT",
 			    	    		"searchKeyword" : $("#searchKeyword").val(),
 			         			"pageUnit": $("#pageUnit").val()
 	     		}; 
@@ -111,13 +115,13 @@
 					                            +"    <td>"+a+"</td>"
 					                            +"    <td>"+obj[i].board_title+"</td>"
 					                            +"    <td>"+obj[i].user_nm+"</td>"
-					                            +"    <td>"+obj[i].board_visited+"</td>"
-					                            +"    <td>"+obj[i].board_update_date.substring(0,10)+"</td>";
-					                           	+" </tr>";
+					                            +"    <td><span id='sp_Visited"+obj[i].board_seq+"'>"+obj[i].board_visited+"</span></td>"
+					                            +"    <td>"+obj[i].board_update_date.substring(0,10)+"</td>"
+					                           	+" </tr>"
+					                           	+" <tr id='tr_"+obj[i].board_seq+"' style='display:none;' name='tr_content'><td colspan='5' id='td_"+obj[i].board_seq+"' style='text-align:left;padding-left:120px;'></td></tr>"
 		   								  a = parseInt(a)+1;
 		   							   }
 		   							   $("#tb_notice > tbody").append(sHtml);
-		   							   
 		   							   //페이지 설정 
 		   							   var pageObj = result.paginationInfo
 		  						       var pageHtml = ajaxPaging(pageObj.currentPageNo, pageObj.firstPageNo, pageObj.recordCountPerPage, 
@@ -133,6 +137,27 @@
 		 					    $("#btn_needPopHide").trigger("click");
 		 				    }    		
 		        );
+	        }
+	        function fn_noticView(boardSeq){
+	        	//상세 내용 보기
+	        	
+	        	$("#tb_notice").find("[name=tr_content]").hide();
+	        	
+	        	
+	        	if ($("#boardSeq").val() == boardSeq){
+	        		$("#boardSeq").val("");
+	        	}else {
+	        		//보드 업데이트 시키기 
+	        		
+	        		var url = "/backoffice/boardManage/boardVisited.do";
+	        		var params = {'boardSeq' : boardSeq};
+	        		var result = uniAjaxReturn(url, params);
+	        		$("#sp_Visited"+boardSeq).html(result.regist.board_visited);
+	        		$("#tr_"+boardSeq).show();
+	        		$("#td_"+boardSeq).html(result.regist.board_content);
+	        		$("#boardSeq").val(boardSeq);
+	        	}
+	        	
 	        }
             needPopup.config.custom = {
                 'removerPlace': 'outside',

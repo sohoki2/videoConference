@@ -291,9 +291,6 @@ public class ResBackInfoManageController {
 		  ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		  
 		  try{
-			  //지도 이미지
-			  //System.out.println("floorSeq" + params.get("floorSeq"));
-			  
 			  if (params.get("resStarttime") == null ) {
 				  params.put("resStarttime", "0800");
 			  }
@@ -302,8 +299,7 @@ public class ResBackInfoManageController {
 			  }
 			  
 			  if (params.get("floorSeq") != null ) {
-				     //System.out.println("partSeq" + params.get("partSeq"));
-			    	 Map<String, Object> mapInfo = params.get("partSeq") == null ? floorService.selectFloorInfoManageDetail(params.get("floorSeq").toString()) : partService.selectFloorPartInfoManageDetail(params.get("partSeq").toString());
+					 Map<String, Object> mapInfo = params.get("partSeq") == null ? floorService.selectFloorInfoManageDetail(params.get("floorSeq").toString()) : partService.selectFloorPartInfoManageDetail(params.get("partSeq").toString());
 			    	 model.addObject("seatMapInfo", mapInfo);
 			  }
 	  		  model.addObject(Globals.JSON_RETURN_RESULTLISR, timeService.selectSeatStateInfo(params));

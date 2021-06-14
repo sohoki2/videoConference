@@ -67,6 +67,8 @@ public class Globals {
 	public static final String STATUS_MESSAGE = "message";
 	public static final String STATUS_SUCCESS = "SUCCESS";
 	public static final String STATUS_FAIL = "FAIL";
+	public static final String STATUS_FAILLACK = "FAILLACK";
+	
 	public static final String STATUS_UNIQUE = "UNIQUE";
 	public static final String STATUS_NTUNIQUE = "UNIQUE FAIL";
 	public static final String STATUS_LOGINFAIL = "LOGIN FAIL";

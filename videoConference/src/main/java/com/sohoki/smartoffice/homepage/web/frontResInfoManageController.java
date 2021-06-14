@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,12 +164,12 @@ public class frontResInfoManageController {
 			String userIp = EgovClntInfo.getClntIP(request);
 			
 		
-			EmpInfoVO resultVO = empService.selectEmpInfoDetailNo(empno);;  
+			EmpInfoVO resultVO = empService.selectEmpInfoDetailNo(empno); 
     		if (resultVO != null && resultVO.getEmpno() != null ) {
 
 	        	request.getSession().setAttribute("empInfoVO", resultVO);
-	        	mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-	        	mav.setViewName("/web/index");
+	        	//mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+	        	mav.setViewName("redirect:/web/index.do");
 	        } else {
 	        	mav.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 				mav.addObject(Globals.STATUS_MESSAGE, "잘못된 사번 입니다.");
@@ -226,8 +227,8 @@ public class frontResInfoManageController {
 			    		                    , BindingResult bindingResult) throws Exception {
 		ModelAndView mav = new ModelAndView(Globals.JSONVIEW);
 		try {
-			 request.getSession().setAttribute("userinfo", null);  
-			 mav.setViewName("redirect:/backoffice/login.do");
+			 request.getSession().setAttribute("empInfoVO", null);  
+			 mav.setViewName("redirect:/web/login.do");
 		}catch(Exception e) {
 			 LOGGER.error("actionLogoutProcess error:" + e.toString());
 		}
@@ -301,17 +302,32 @@ public class frontResInfoManageController {
 					            , BindingResult bindingResult) throws Exception{				
 		ModelAndView model = new ModelAndView();
 		
-		String empno = (String) request.getSession().getAttribute("empInfoVO");
-		String url = "/web/index";
 		
-		if (empno ==  null) {
-			url = "/web/login";
-		}
-		LOGGER.debug("url:" + url);
+		empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		String url = "/web/index";
+	  	if (empInfoVO.getEmpno() ==  null) {
+	  		url = "/web/login";
+	  	}else {
+	  		//공지 및 
+	  		
+	  		HashMap<String, Object> params = new HashMap<String, Object>();
+	  		if (util.NVL( params.get("centerId"), "").equals("") )
+		  		params.put("centerId", "C21052601");
+	  		params.put("authorCode", empInfoVO.getAuthorCode());
+	  		params.put("comCode", empInfoVO.getComCode());
+	  		
+	  		LOGGER.debug("centerId" +  params.get("centerId"));
+			model.addObject(Globals.JSON_RETURN_RESULTLISR, resService.selectIndexList(params));
+			model.addObject(Globals.JSON_RETURN_RESULT,  params);
+		  	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	
+		  	
+	  	}
 		model.setViewName(url);
 		return model;		
 	}
 	//회의실 예약 부터 시작
+	
 	@RequestMapping(value="meetingDay.do")	
 	public ModelAndView webMeetingInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
 			                           , HttpServletRequest request
@@ -332,16 +348,24 @@ public class frontResInfoManageController {
 			  	reginfo.put("centerId", params.get("centerId").toString());
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	params.put("searchFloor", "MEETING");
+			  	params.put("authorCode", empInfoVO.getAuthorCode());
+			  	params.put("comCode", empInfoVO.getComCode());
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-			  	String floorSeq = floorList.get(0).get("floor_seq").toString();
-			  	model.addObject("floorinfo", floorList);
-			  	//기초 정리 하기 
-			  	String searchDay = util.reqDay(0);
-			  	reginfo.put("floorSeq", floorSeq);
-			  	reginfo.put("centerId", params.get("centerId").toString());
-			  	reginfo.put("searchResStartday", searchDay);
-			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	if (floorList.size() > 0) {
+			  		String floorSeq = floorList.get(0).get("floor_seq").toString();
+				  	model.addObject("floorinfo", floorList);
+				  	//기초 정리 하기 
+				  	String searchDay = util.reqDay(0);
+				  	reginfo.put("floorSeq", floorSeq);
+				  	reginfo.put("centerId", params.get("centerId").toString());
+				  	reginfo.put("searchResStartday", searchDay);
+				  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	}else {
+			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+			  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+			  	}
+			  	
 		  	}
 		  	model.setViewName(url);
 	    }catch(Exception e) {
@@ -500,9 +524,21 @@ public class frontResInfoManageController {
 				}
 			}else {
 				
+				//좌석 일반 공용으로 쓸려고 만듬 
+				LOGGER.debug("resStartDay:" + searchVO.getResStartday());
+				String resStartDay = util.NVL(searchVO.getResStartday(), util.reqDay(0)) ;
+				LOGGER.debug("resStartDay:" + resStartDay);
+				
+				String nowData  = resStartDay.equals( util.reqDay(0)) ?  LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"))  : "0800";
+				searchVO.setResStarttime(util.NVL(searchVO.getResStarttime(), nowData));
+						          
+				
+				
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("code", "SWC_TIME");
-				params.put("nowData", searchVO.getResStarttime());
+				params.put("nowData", nowData);
+				
+				
 				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
 				if (searchVO.getSearchRoomType().equals("SWC_GUBUN_3")) {
 					params.put("nowData", "0800");
@@ -510,9 +546,9 @@ public class frontResInfoManageController {
 				}else {
 					model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
 				}
-				
-				
-				model.addObject("seatInfo", meetingService.selectMeetingRoomDetailInfoManage(searchVO.getItemId() ));
+				//좌석 예약 일때는 ITEM 값 없음 
+				if (!searchVO.getItemId().equals(""))
+				  model.addObject("seatInfo", meetingService.selectMeetingRoomDetailInfoManage(searchVO.getItemId() ));
 			}
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);	
 			
@@ -628,30 +664,37 @@ public class frontResInfoManageController {
 			  	params.put("searchFloor", "MEETING");
 			  	
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	 //권한 설정 
+			  	params.put("authorCode", empInfoVO.getAuthorCode());
+			  	params.put("comCode", empInfoVO.getComCode());
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-			  	if (searchVO.getFloorSeq().equals(""))
-			  		searchVO.setFloorSeq(floorList.get(0).get("floor_seq").toString());
-			  	  
-			  	model.addObject("floorinfo", floorList);
-			  	//기초 정리 하기 
-			  	reginfo.put("floorSeq", searchVO.getFloorSeq());
-			  	reginfo.put("centerId", params.get("centerId").toString());
-			  	
-			  	
-			  	model.addObject("selectMonthList", resService.selectCalenderInfo());
-			  	String searchTxt =  searchVO.getSearchCalenderTitle().equals("") ? LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) : searchVO.getSearchCalenderTitle();
-			  	searchVO.setSearchCalenderTitle(searchTxt);
-			  	searchVO.setFloorSeq(searchVO.getFloorSeq());
-				List<ResInfoVO> calenderList =  resService.selectCalenderMeetingState(searchVO);
-				
-				
-				int firstDay = Integer.parseInt(calenderList.get(0).getWeekTxt())-1;
-				model.addObject("calenderInfo",  calenderList);
-				model.addObject("frDay",  firstDay);
-				
-				model.addObject(Globals.STATUS_REGINFO,  searchVO);
-				
+			  	if (floorList.size() > 0) {
+			  		if (searchVO.getFloorSeq().equals(""))
+				  		searchVO.setFloorSeq(floorList.get(0).get("floor_seq").toString());
+				  	  
+				  	model.addObject("floorinfo", floorList);
+				  	//기초 정리 하기 
+				  	reginfo.put("floorSeq", searchVO.getFloorSeq());
+				  	reginfo.put("centerId", params.get("centerId").toString());
+				  	
+				  	
+				  	model.addObject("selectMonthList", resService.selectCalenderInfo());
+				  	String searchTxt =  searchVO.getSearchCalenderTitle().equals("") ? LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) : searchVO.getSearchCalenderTitle();
+				  	searchVO.setSearchCalenderTitle(searchTxt);
+				  	searchVO.setFloorSeq(searchVO.getFloorSeq());
+					List<ResInfoVO> calenderList =  resService.selectCalenderMeetingState(searchVO);
+					
+					
+					int firstDay = Integer.parseInt(calenderList.get(0).getWeekTxt())-1;
+					model.addObject("calenderInfo",  calenderList);
+					model.addObject("frDay",  firstDay);
+					
+					model.addObject(Globals.STATUS_REGINFO,  searchVO);
+			  	}else {
+			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+			  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+			  	}
 		  	}		
 		}catch(Exception e){
 	    	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
@@ -728,36 +771,41 @@ public class frontResInfoManageController {
 		  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
 		  	reginfo.put("centerId", params.get("centerId").toString());
 		  	params.put("searchFloor", "MEETING");
+		  	params.put("authorCode", empInfoVO.getAuthorCode());
+		  	params.put("comCode", empInfoVO.getComCode());
 		  	
 		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-		  	model.addObject("floorinfo", floorList);
+		  	if (floorList.size() > 0) {
+		  		model.addObject("floorinfo", floorList);
+			  	
+			  	String floorSeq =  searchVO.getFloorSeq().equals("") ?  floorList.get(0).get("floor_seq").toString() : searchVO.getFloorSeq();
+			  	searchVO.setFloorSeq(floorSeq);
+			  	
+			  	String searchResStartday = searchVO.getSearchResStartday().equals("") ?    util.reqDay(0): searchVO.getSearchResStartday();
+			  	searchVO.setSearchResStartday(searchResStartday);
+			  	
+			  	
+				params.put("firstIndex", Integer.valueOf( paginationInfo.getFirstRecordIndex()));
+				params.put("lastRecordIndex", Integer.valueOf(paginationInfo.getLastRecordIndex()));
+				params.put("recordCountPerPage", Integer.valueOf( paginationInfo.getRecordCountPerPage()));
+				params.put("searchResStartday",  searchResStartday);
+				params.put("itemGubun", "ITEM_GUBUN_1");
+				params.put("resGubun", "SWC_GUBUN_1");
+				params.put("searchFloorSeq", floorSeq);
+				
+				
+		    	List<Map<String, Object>> reslist = resService.selectResManageListByPagination(params);
+		  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+			    model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+			    model.addObject(Globals.STATUS_REGINFO, searchVO);
+			    paginationInfo.setTotalRecordCount(totCnt);
+			    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
+		  	}else {
+		  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+		  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+		  	}
 		  	
-		  	String floorSeq =  searchVO.getFloorSeq().equals("") ?  floorList.get(0).get("floor_seq").toString() : searchVO.getFloorSeq();
-		  	searchVO.setFloorSeq(floorSeq);
-		  	
-		  	String searchResStartday = searchVO.getSearchResStartday().equals("") ?    util.reqDay(0): searchVO.getSearchResStartday();
-		  	searchVO.setSearchResStartday(searchResStartday);
-		  	
-		  	
-			params.put("firstIndex", Integer.valueOf( paginationInfo.getFirstRecordIndex()));
-			params.put("lastRecordIndex", Integer.valueOf(paginationInfo.getLastRecordIndex()));
-			params.put("recordCountPerPage", Integer.valueOf( paginationInfo.getRecordCountPerPage()));
-			params.put("searchResStartday",  searchResStartday);
-			
-			//params.put("searchStartDay", LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-			//params.put("searchEndDay", "20301231");
-			params.put("itemGubun", "ITEM_GUBUN_1");
-			params.put("resGubun", "SWC_GUBUN_1");
-			params.put("searchFloorSeq", floorSeq);
-			
-			
-	    	List<Map<String, Object>> reslist = resService.selectResManageListByPagination(params);
-	  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
-		    model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
-		    model.addObject(Globals.STATUS_REGINFO, searchVO);
-		    paginationInfo.setTotalRecordCount(totCnt);
-		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
-		    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
 		     
 		     
 	    }catch(Exception e){
@@ -785,7 +833,7 @@ public class frontResInfoManageController {
 				model.setViewName("/web/login");
 				return model;
 			}
-			LOGGER.debug("---------------------------------------------------");
+			
 			Map<String, Object> params = new HashMap<String, Object>();
 			if (util.NVL( params.get("centerId"), "").equals("") )
 		  		params.put("centerId", "C21052601");
@@ -793,16 +841,22 @@ public class frontResInfoManageController {
 		  	reginfo.put("centerId", params.get("centerId").toString());
 		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 		  	params.put("searchFloor", "SEAT");
-		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-		  	String floorSeq = floorList.get(0).get("floor_seq").toString();
-		  	model.addObject("floorinfo", floorList);
-		    
-		  	String searchDay = util.reqDay(0);
+		  	params.put("authorCode", user.getAuthorCode());
+		  	params.put("comCode", user.getComCode());
 		  	
-		  	reginfo.put("floorSeq", floorSeq);
-		  	reginfo.put("centerId", params.get("centerId").toString());
-		  	reginfo.put("searchResStartday", searchDay);
-		  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
+		  	if (floorList.size() > 0) {
+		  	  	String floorSeq = floorList.get(0).get("floor_seq").toString();
+			  	model.addObject("floorinfo", floorList);
+			  	String searchDay = util.reqDay(0);
+			  	reginfo.put("floorSeq", floorSeq);
+			  	reginfo.put("centerId", params.get("centerId").toString());
+			  	reginfo.put("searchResStartday", searchDay);
+			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+		  	}else {
+		  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+		  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+		  	}
 		  	
 		     
 	    }catch(Exception e){
@@ -1115,9 +1169,9 @@ public class frontResInfoManageController {
 	}
 	@RequestMapping(value="notice.do")
 	public ModelAndView selectNotice(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
-                                         , HttpServletResponse response
-			    		                 , HttpServletRequest request
-			    		                 , BindingResult bindingResult) throws Exception {
+                                     , HttpServletResponse response
+			    		             , HttpServletRequest request
+			    		             , BindingResult bindingResult) throws Exception {
 		
 		
 		ModelAndView model = new ModelAndView();
@@ -1129,12 +1183,13 @@ public class frontResInfoManageController {
 		  	if (empInfoVO.getEmpno() ==  null) {
 		  		url = "/web/login";
 		  	}else {
+		  		String boardSeq = request.getParameter("board_seq");
 		  		HashMap<String, Object> searchVO = new HashMap<String, Object>();
 		  		int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
 				searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 			    searchVO.put("pageUnit", pageUnit);
 			    searchVO.put("pageIndex", 1);
-			  
+			    searchVO.put("boardSeq", boardSeq);
 			    model.addObject(Globals.STATUS_REGINFO, searchVO);
 		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		  	}
@@ -1169,16 +1224,23 @@ public class frontResInfoManageController {
 			  	reginfo.put("centerId", params.get("centerId").toString());
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	params.put("searchFloor", "CORN");
-			  	
+			  	//권한 설정 
+			  	params.put("authorCode", empInfoVO.getAuthorCode());
+			  	params.put("comCode", empInfoVO.getComCode());
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
-			  	String floorSeq = floorList.get(0).get("floor_seq").toString();
-			  	model.addObject("floorinfo", floorList);
-			  	//기초 정리 하기 
-			  	String searchDay = util.reqDay(0);
-			  	reginfo.put("floorSeq", floorSeq);
-			  	reginfo.put("centerId", params.get("centerId").toString());
-			  	reginfo.put("searchResStartday", searchDay);
-			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	if (floorList.size() > 0) {
+			  		String floorSeq = floorList.get(0).get("floor_seq").toString();
+				  	model.addObject("floorinfo", floorList);
+				  	//기초 정리 하기 
+				  	String searchDay = util.reqDay(0);
+				  	reginfo.put("floorSeq", floorSeq);
+				  	reginfo.put("centerId", params.get("centerId").toString());
+				  	reginfo.put("searchResStartday", searchDay);
+				  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	}else {
+			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+			  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+			  	}
 		  	}
 		  	model.setViewName(url);
 	    }catch(Exception e) {
@@ -1190,6 +1252,289 @@ public class frontResInfoManageController {
 	    }
 	    return model;
 	
+		
+	}
+	//kiosk정리 하기 
+	@RequestMapping(value="resPadInfo.do")
+	public ModelAndView selecKioskPop (@ModelAttribute("ResInfoVO")  ResInfoVO resSearch
+                                       , @RequestParam("meetingId") String meetingId
+									   , HttpServletRequest request
+									   , BindingResult bindingResult	) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/web/kiosk/meetingR");
+		try{
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			model.addObject("regist", meetingService.selectMeetingRoomDetailInfoManage(meetingId));
+			//신규 수정 
+			
+		}catch(Exception e){
+			LOGGER.error("selectResInfo ERROR:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
+		
+	}
+	@RequestMapping(value="resPadInfoAjax.do")
+	public ModelAndView selecKioskPopAjax (@RequestBody Map<String, Object> resSearch
+                                           , @RequestParam("swcSeq") String swcSeq
+										   , HttpServletRequest request
+										   , BindingResult bindingResult	) throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try{
+			
+			resSearch.put("meetingId", swcSeq);
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			
+			
+			List<Map<String, Object>> resInfos =  resService.selectIndexList(resSearch);
+			model.addObject(Globals.JSON_RETURN_RESULTLISR , resInfos);
+			//
+			//신규 수정 
+			
+			String searchDay = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			
+			model.addObject("dayInfo",    searchDay.substring(0,10));
+			model.addObject("timeInfo",    searchDay.substring(11,19));
+			
+			
+			/*
+			String searchDay = util.NVL(params.get("searchResStartday"), "").equals("")  ? util.reqDay(0)  : params.get("searchResStartday").toString();
+		  	//기초 데이터 넣기 
+		  	params.put("searchResStartday", searchDay);
+		  	
+		  	List<Map<String, Object>> seatListVOs = meetingService.selectMeetingRoomEmptyManageList(params);
+			for (Map<String, Object>  seatinfoVO : seatListVOs) {
+				Map<String, Object> searchTime = new HashMap<String, Object>();
+				searchTime.put("itemId", seatinfoVO.get("meeting_id").toString());
+				searchTime.put("swcResday", searchDay);
+				List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(searchTime);						
+				seatinfoVO.put("timeInfo", timeInfos);
+			}
+			*/
+			
+			
+			List<Map<String, Object>> timeLists = resService.selectKioskCalendarList(swcSeq);
+			JSONArray resTime = new JSONArray();
+			for (Map<String, Object> timeList : timeLists){
+				Map<String, Object> searchTime = new HashMap<String, Object>();
+				searchTime.put("title", timeList.get("res_title").toString() );
+				searchTime.put("start", timeList.get("res_starttime").toString());
+				searchTime.put("end", timeList.get("res_endtime").toString());
+				Map<String, Object> searchTime_sub = new HashMap<String, Object>();
+				searchTime_sub.put("author",  timeList.get("empname").toString() );
+				searchTime_sub.put("id",  timeList.get("res_seq").toString() );
+				searchTime.put("extendedProps", searchTime_sub);
+				searchTime.put("color", "#F2F2F2");
+				searchTime.put("textColor", "#808080");		
+				resTime.add(searchTime);
+			}
+			
+			model.addObject("resTime", resTime);
+			int i = 0;
+			/* 참석자는 사용 안함
+			for (Map<String, Object>  resInfo :   resInfos ){
+				if (! util.NVL(resInfo.get("resattendlist"), "").equals("")  && i ==0){
+					List<String> empNoList =  Arrays.asList(resInfo.get("resattendlist").toString().split("\\s*,\\s*"));
+					LOGGER.debug("empNoList:" + empNoList.size());
+					model.addObject("resUserList", empInfo.selectMeetinngUserList(empNoList));					
+				}	
+				i++;
+			}
+			*/
+			
+		}catch(Exception e){
+			LOGGER.error("selectResInfo ERROR:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
+	}
+	@RequestMapping(value="resPadStateAjax.do")
+	public ModelAndView kioskInOtStateChnage (@RequestBody  ResInfoVO resinfo
+											  , HttpServletRequest request
+											  , BindingResult bindingResult	) throws Exception {
+				ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+				try{
+					LOGGER.debug("==================================================");
+					int ret = resService.resStateChagenCheck(resinfo);
+					if (ret > 0){
+						model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+					}else {
+					    model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+						throw new Exception(); 
+					}		
+				}catch(Exception e){
+					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+				}
+				return model;
+	}
+	@RequestMapping(value="resLoginCheckAjax.do")
+	public ModelAndView kioskLoginCheck (@RequestBody  ResInfoVO resinfo
+										 , HttpServletRequest request
+										 , BindingResult bindingResult	) throws Exception {
+		
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+	    try{
+			
+			LOGGER.debug("sso 로그인");
+			if (resinfo.getMode().equals("R")){
+				//예약 일때 
+				EmpInfoVO empInfoVO = new EmpInfoVO();
+				empInfoVO.setEmpid(resinfo.getUserId()); 
+				if(empInfoVO.getEmpid() != null && empInfoVO.getEmpid() != ""){
+	    			//로그인 수정 
+					EmpInfoVO resultVO = empService.selectEmpInfoDetailNo(empInfoVO.getEmpid());
+					//EmpInfo resultVO = empInfo.selectSmartOfficeLoginAction(empInfoVO.getEmpid());        
+	        		if (resultVO != null && resultVO.getEmpno() != null ) {
+	    	        	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+	    	        	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+	    	        } else {
+	    	        	LOGGER.debug("로그인 실패");
+	    	        	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+	    	        	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+		 	        }
+	        	}else{
+	        		model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+	    	    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);		
+	    	    	
+	        	}
+			}else {
+				//취소 일때 취소도 같이 적용 할지 체크 
+				Map<String, Object> info =  resService.selectResManageView(resinfo.getResSeq());
+				
+				if (info.get("user_id").toString().equals(resinfo.getUserId())){
+					resinfo.setReservProcessGubun("PROCESS_GUBUN_6");
+					resinfo.setCancelCode("CANCEL_CODE_3");
+					resinfo.setCancelReason("현장 예약 취소");
+					int ret = resService.updateResManageChange(resinfo);
+					
+					if (ret > 0){
+						model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+						model.addObject(Globals.STATUS_MESSAGE,   "정상적으로 처리 되었습니다.");
+					}else {
+						throw new Exception();
+					}
+				}else {
+					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				}
+				
+				info = null;
+			}
+			
+		}catch(Exception e){
+			LOGGER.debug("error:" + e.toString());
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.request.msg"));
+	    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+		}
+		return model;
+			
+	}
+	@RequestMapping(value="resReservertionKioskUpdate.do")	
+	public ModelAndView resUpdateKioskInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+										    , @RequestBody ResInfoVO searchVO
+										    , HttpServletRequest request
+										    , BindingResult bindingResult	) throws Exception {
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try{
+			//SSO 관련 내용 넣기  
+	 		
+
+			//사용자 정버 넣기 
+			searchVO.setUserId( searchVO.getProxyUserId() );
+			int ret = resService.insertResManage(searchVO);
+			if (ret > 0){
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("sucess.common.reservation"));
+				
+			}else if (ret <0){
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.reservation"));	
+			}else {
+				throw new Exception();
+			}
+		}catch(Exception e){
+			LOGGER.debug("error:"+ e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	@RequestMapping(value="resMeetingInfoAjax.do")
+	public ModelAndView selectResMeetingInfoAjax(@RequestParam("resSeq") String resSeq	) throws Exception {
+		
+		     ModelAndView model = new ModelAndView(Globals.JSONVIEW);	
+		     try{
+		    	 model.addObject("resInfo", resService.selectResManageView(resSeq));
+		    	 model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		     }catch(Exception e){
+		    	 model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		     }
+		     return model;
+	}
+	@RequestMapping(value="resInfoAjax.do")
+	public ModelAndView selectResInfoAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+															  , @RequestBody ResInfoVO searchVO
+															  , HttpServletRequest request
+															  , BindingResult bindingResult	) throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);		
+		try{
+			
+			
+			
+			LOGGER.debug("===========================================================");
+			if (!searchVO.getResSeq().equals("0")){
+				
+				Map<String, Object> resInfo = resService.selectResManageView(searchVO.getResSeq());
+				
+				
+				model.addObject("resInfo", resInfo);
+				//참석자
+				/*
+				if (! util.NVL(resInfo.get("res_attendlist"), "").equals("")){
+					List<String> empNoList =  Arrays.asList(resInfo.get("res_attendlist").toString().split("\\s*,\\s*"));
+					LOGGER.debug("empNoList:" + empNoList.size());
+					model.addObject("resUserList", empInfo.selectMeetinngUserList(empNoList));
+				}
+				
+				//영상회의 이면 
+				if (resInfo.get("RES_GUBUN").toString().equals("SWC_GUBUN_2") && !util.NVL(resInfo.get("meeting_seq"), "").equals("")){
+					LOGGER.debug("resInfo.getMeetingSeq():" + resInfo.get("meeting_seq"));
+					List<String> swSeqList =   util.dotToList(resInfo.get("meeting_seq").toString() );
+					model.addObject("resRoomInfo", meetingService.selectConferenceList(swSeqList));
+				}
+				*/
+			}else {
+				LOGGER.debug("===========================================================1");
+				
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("code", "SWC_TIME");
+				params.put("nowData", searchVO.getResStarttime());
+				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				
+				params.put("code", "SWC_TIME");
+				params.remove("nowData");
+				params.put("overData", searchVO.getResEndtime());
+				model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				model.addObject("seatInfo", meetingService.selectMeetingRoomDetailInfoManage(searchVO.getItemId()));
+			}
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);	
+			
+		}catch(Exception e){
+			LOGGER.error("selectResInfo ERROR:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
 		
 	}
 	

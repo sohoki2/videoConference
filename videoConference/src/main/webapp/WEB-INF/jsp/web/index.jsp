@@ -27,9 +27,11 @@
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
+    
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>
 <body>
+<input type="hidden" id="searchResStartday" name="searchResStartday" />
  <div class="main_back">
             <!--//header 추가-->
             <c:import url="/web/inc/top_inc.do" />
@@ -52,74 +54,38 @@
                         <div class="swiper-wrapper">
                             <!-- meeting -->
                             <!-- //진행중인 회의가 3개 미만일 경우-->
-                            <div class="swiper-slide">
-                                <div class="slider_box">
-                                    <p class="slide_tit">LOUNGE A</p>
-                                    <p class="meeting_noti">지금 바로 회의를 시작 해보세요</p>                                    
-                                </div>
-                                <div class="meeting_btn">
-                                    <div class="padding_box">
-                                        <a href="" class="booking_btn" data-needpopup-show="#reserve_popup">예약하기</a>    
-                                    </div>                                    
-                                </div>
-                            </div>
-                            <!-- //진행중인 회의가 3개 미만일 경우-->
-                            <!--// meeting -->
-                            <!-- meeting -->
-                            <div class="swiper-slide">
-                                <div class="slider_box">
-                                    <p class="slide_tit meeting_ing">LOUNGE B</p>
-                                    <a href="" class="view_pop">
-                                      <span>회의제목입니다</span>
-                                      <br/>
-                                      서울관광플라자 소속
-                                      <br/>
-                                      홍길동
-                                    </a>                                    
-                                </div>
-                                <div class="meeting_btn">
-                                    <div class="padding_box">
-                                        <a class="start_btn popup_view" data-needpopup-show="#start">참여하기</a>
-                                        <a href="" class="booking_btn" data-needpopup-show="#reserve">세부확인</a>    
-                                    </div>                                    
-                                </div>
-                            </div>
-                            <!--// meeting -->
-                            <!-- meeting -->
-                            <div class="swiper-slide">
-                                <div class="slider_box">
-                                    <p class="slide_tit meeting_ing">LOUNGE C</p>
-                                    <a href="" class="view_pop">
-                                      <span>회의제목입니다</span>
-                                      <br/>
-                                      서울관광플라자 소속
-                                      <br/>
-                                      홍길동
-                                    </a>                                          
-                                </div>
-                                <div class="meeting_btn">
-                                    <div class="padding_box">
-                                        <a class="start_btn popup_view" data-needpopup-show="#start">참여하기</a>
-                                        <a href="" class="booking_btn" data-needpopup-show="#reserve">세부확인</a>    
-                                    </div>                                    
-                                </div>
-                            </div>
-                            <!--// meeting -->                            
-                            <!-- meeting -->
-                            <div class="swiper-slide">
-                                <div class="slider_box">
-                                    <p class="slide_tit meeting_ing">LOUNGE D</p>
-                                    <p class="meeting_noti">화상회의 진행중 입니다</p>
-                                    <a href="" class="view_pop">참여정보(8/10) 자세히보기</a>                                    
-                                </div>
-                                <div class="meeting_btn">
-                                    <div class="padding_box">
-                                        <a href="" class="start_btn">참여하기</a>
-                                        <a href="" class="booking_btn">예약하기</a>    
-                                    </div>                                    
-                                </div>
-                            </div>
-                            <!--// meeting -->
+                            <c:forEach items="${resultlist }" var="resInfo" varStatus="status">
+                                <c:choose>
+                                   <c:when test="${resInfo.res_seq eq '0'}">
+                                      <div class="swiper-slide">
+                                            <div class="slider_box">
+			                                    <p class="slide_tit meeting_loading">${resInfo.meeting_name }</p>
+			                                    <p class="meeting_noti">지금 바로 회의를 시작 해보세요</p>                                   
+			                                </div>
+			                                <div class="meeting_btn">
+			                                    <div class="padding_box">
+			                                        <a href="#" data-needpopup-show='#app_meeting' onclick="fn_resInfo('${resInfo.meeting_id}','${resInfo.time_seq }','${resInfo.swc_time}','${resInfo.meeting_name}','0','${resInfo.meeting_confirmgubun}' , '${resInfo.meeting_equpgubun}');" class="booking_btn">예약하기</a>    
+			                                    </div>                                    
+			                                </div>
+			                            </div>
+                                   </c:when>
+                                   <c:otherwise>
+                                        <div class="swiper-slide">
+			                                <div class="slider_box">
+			                                    <p class="slide_tit meeting_ing">${resInfo.meeting_name }</p>
+			                                    <p class="meeting_noti">회의 진행중 입니다</p>
+			                                     ${resInfo.res_title }                                    
+			                                </div>
+			                                <div class="meeting_btn">
+			                                    <div class="padding_box">
+			                                        <a href="#" onclick="fn_resView('${resInfo.res_seq}')" class="booking_btn">자세히보기</a>  
+			                                    </div>                                    
+			                                </div>
+			                            </div>
+                                   </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                            
                         </div>                 
                     </div>
                 </div>                    
@@ -127,164 +93,24 @@
             </div>
             <!--contents//-->
             <!--  공지 사항 시작 -->
-            <div class="main-noti">
+            <div class="main-noti" id="dv_noyice">
                     <div class="main-noti-con contents">
-                        <h3 class="font18"><a href="javascript:">공지사항</a></h3>
-                        <a href="javascript:">
-                            <span class="noti_tit">스마트회의 예약 시스템 사용방법 안내 </span>
-                            <span>2019.11.25</span>
-                        </a>
+                        <h3 class="font18"><a href="/web/notice.do">공지사항</a></h3>
+                        <span id="sp_notice"></span>
+                       
                     </div>
                 </div>
            
            </div>
             <!--  공지 사항 끝 -->
-        <!-- 참여하기인증 팝업 -->
-    <div id='start' class="needpopup main_pop">
-        <div class="box_padding">
-            <h2 class="pop_tit">시스템기획팀회의</h2>  
-            <div class="form">
-                <div class="pop_con">
-                    <div class="box_2">
-                        <input type="text" name="" placeholder="비밀번호를 입력하세요.">
-                    </div>                    
-                </div>   
-            </div>
-            <div class="footerBtn">
-                <button class="blueBtn">참여하기</button>
-                <button class="grayBtn">취소</button>
-            </div>
-            <div class="clear"></div>
-        </div>            
-    </div>
-
-<!--//예약신청 팝업-->
-        <div id="reserve_popup" class="needpopup">
-            <h5 class="pop_tit">예약신청</h5>
-            <ul class="form">
-              <li>
-                <p class="pop_text">회의실 선택</p>
-                <select>
-                  <option>회의실A-01 [3크레딧]</option>
-                  <option>회의실A-02 [5크레딧]</option>
-                  <option>회의실A-03 [8크레딧]</option>
-                  <option>회의실A-04 [7크레딧]</option>
-                  <option>회의실A-05 [10크레딧]</option>
-                </select>
-              </li>
-              <li>
-                <p class="pop_text">회의 시간 선택</p>
-                <span>2021년05월10일</span>
-                <select class="startTime">
-                  <option>08:00</option>
-                  <option>08:30</option>
-                  <option>09:00</option>
-                  <option>09:30</option>
-                  <option>10:00</option>
-                  <option>10:30</option>
-                  <option>11:00</option>
-                  <option>11:30</option>
-                  <option>12:00</option>
-                  <option>12:30</option>
-                  <option>13:00</option>
-                  <option>13:30</option>
-                  <option>14:00</option>
-                  <option>14:30</option>
-                  <option>15:00</option>
-                  <option>15:30</option>
-                  <option>16:00</option>
-                  <option>16:30</option>
-                  <option>17:00</option>
-                  <option>17:30</option>
-                  <option>18:00</option>
-                </select>
-                ~
-                <select class="endTime">
-                  <option>08:00</option>
-                  <option>08:30</option>
-                  <option>09:00</option>
-                  <option>09:30</option>
-                  <option>10:00</option>
-                  <option>10:30</option>
-                  <option>11:00</option>
-                  <option>11:30</option>
-                  <option>12:00</option>
-                  <option>12:30</option>
-                  <option>13:00</option>
-                  <option>13:30</option>
-                  <option>14:00</option>
-                  <option>14:30</option>
-                  <option>15:00</option>
-                  <option>15:30</option>
-                  <option>16:00</option>
-                  <option>16:30</option>
-                  <option>17:00</option>
-                  <option>17:30</option>
-                  <option>18:00</option>
-                </select>
-              </li>
-              <li><input type="text" placeholder="제목" name=""></li>
-              <li><input type="checkbox"> 카카오톡 알림 발송</li>
-            </ul>
-            <div class="clear"></div>
-            <div class="footerBtn">
-              <button class="blueBtn" data-needpopup-show="#ok_reserve">최종예약</button>
-              <button class="grayBtn">취소</button>
-            </div>
-            <div class="clear"></div>
-        </div>
-        <!--예약 팝업-//->    
-
-        <!--//세부확인 팝업-->
-        <div id="reserve" class="needpopup">
-          <h2 class="pop_tit">회의 상세정보</h2>
-            <ul class="form">
-              <li>
-                <p class="pop_text">회의실A-01</p>
-              </li>
-              <li>
-                <span>2021년05월10일</span>
-                <span>08:00</span> ~ <span>18:00</span>
-              </li>
-              <li>회의제목입니다</li>
-            </ul>
-            <div class="clear"></div>
-            <div class="footerBtn">
-              <button class="blueBtn">확인</button>
-              <button class="grayBtn">닫기</button>
-            </div>
-            <div class="clear"></div>
-        </div>
-        <!--세부확인 팝업//-->    
-
-        <!--//예약하기 최종예약-->
-        <div id="ok_reserve" class="needpopup opened" style="display: block;">
-            <p>
-                예약이 완료 되었습니다
-            </p>
-         </div>
-      <!--//예약하기 최종예약-->
-
-        <!--//로그아웃 팝업-->
-        <div id="logout_pop" class="needpopup">
-          <p>
-              로그아웃이 완료 되었습니다
-           </p>
-        </div>
-        <!--로그아웃 팝업-//->   
-
-        <!--//퇴실 팝업-->
-        <div id="exit_pop" class="needpopup">
-          <p>
-              퇴실이 완료 되었습니다
-           </p>
-        </div>
-        <!--퇴실 팝업-//->   
-
+        
 
          <!-- Swiper JS -->
          <script src="/front_res/js/swiper.js"></script>
          <script>
+	        $( function() {
+	        	fn_noticeList();
+	        });
             var swiper = new Swiper('.swiper-container', {
               slidesPerView: 3,
               spaceBetween: 30,
@@ -302,20 +128,53 @@
                   },
                 },
             });
+            function fn_noticView(boardSeq){
+            	document.location.href='/web/notice.do?board_seq='+boardSeq;
+            }
+            function fn_noticeList(){
+	        	var url =  "/backoffice/boardManage/boardListAjax.do";
+	        	var params = { 
+			    	    		"pageIndex": "1",
+			    	    		"boardGubun": "NOT",
+			    	    		"adminYn" : "user",
+			    	    		"searchKeyword" : $("#searchKeyword").val(),
+			         			"pageUnit": $("#pageUnit").val()
+	     		}; 
+		    	uniAjax(url, params, 
+		      			function(result) {
+		 				       if (result.status == "LOGIN FAIL"){
+		 				    	   alert(result.meesage);
+		   						   location.href="/web/Login";
+		   					   }else if (result.status == "SUCCESS"){
+		   						   //총 게시물 정리 하기
+		   						   $("#sp_notice").empty();
+		   						   if (result.resultlist.length > 0){
+		   							  
+		   							   var obj = result.resultlist;
+		   							   var costInfo  = "";
+		   							   var a = "1";
+		   							  
+		   							   var sHtml ="<MARQUEE width='650' height='30'>";
+		   							   for (var i in result.resultlist ){
+		   								  sHtml	+="<a href='#' onClick='fn_noticView(\""+obj[i].board_seq+"\")'>"
+					                            +"    <span class=\"noti_tit\">"+obj[i].board_title+"</span>"
+					                            +"    <span>"+obj[i].board_update_date.substring(0,10)+"</span>";
+					                           	+" </a>";
+		   							   }
+		   							   sHtml	+="</MARQUEE>";
+		   							   $("#sp_notice").append(sHtml);
+		   							  
+		   						   }
+	
+		   					   }
+		 				    },
+		 				    function(request){
+		 					    alert("Error:" +request.status );	   
+		 					    $("#btn_needPopHide").trigger("click");
+		 				    }    		
+		        );
+	        }
         </script>
-        <script src="/front_res/js/needpopup.min.js"></script>
-        <script>  
-            needPopup.config.custom = {
-                'removerPlace': 'outside',
-                'closeOnOutside': false,
-                onShow: function() {
-                    console.log('needPopup is shown');
-                },
-                onHide: function() {
-                    console.log('needPopup is hidden');
-                }
-            };
-            needPopup.init();
-        </script>
+        <c:import url="/web/inc/unimessage.do" />
 </body>
 </html>

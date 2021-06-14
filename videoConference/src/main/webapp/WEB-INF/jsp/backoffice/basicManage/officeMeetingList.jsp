@@ -97,6 +97,7 @@
 	    			                  sortable : false,	formatter:jqGridFunc.classinfo},
 	    			                { label: '메일 전송 여부', name:'mail_sendcheck',       index:'mail_sendcheck',      align:'center', width:'12%'},
 	    			                { label: 'SMS 전송 여부', name:'sms_sendcheck',       index:'seat_order',      align:'center', width:'12%'},
+	    			                { label: '사전예약일', name:'res_reqday',       index:'res_reqday',      align:'center', width:'10%'},
 	    			                { label: '수정자', name:'update_id',      index:'update_id',     align:'center', width:'14%'},
 	    			                { label: '수정 일자', name:'update_date', index:'update_date', align:'center', width:'12%', 
 	    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
@@ -241,6 +242,7 @@
 						    		   $("#maxCnt").val( obj.max_cnt);
 						    		   $("#meetingOrder").val( obj.meeting_order);
 						    		   $("#meetingAdminid").val( obj.meeting_adminid);
+						    		   $("#resReqday").val( obj.res_reqday);
 						    		   toggleClick("meetingUseyn", obj.meeting_useyn);
 						    		   toggleClick("meetingConfirmgubun", obj.meeting_confirmgubun);
 						    		   toggleClick("meetingMainview", obj.meeting_mainview);
@@ -263,6 +265,8 @@
 						    		   $("#userFirstNm").val( obj.user_first_nm);
 						    		   $("#userLastNm").val( obj.user_last_nm);
 						    		   $("#userEmail").val( obj.user_email);
+						    		   //여기 수정 
+						    		   $("#sp_empView").html($("#sp_empView").html() + obj.seat_admin_txt);
 						    		   
 		       					   }else{
 		       						   alert(result.meesage);
@@ -291,6 +295,10 @@
 			    if (any_empt_line_id("floorSeq", "층수을 선택해주세요.") == false) return;
 		    	if (any_empt_line_id("meetingName", "회의실명 입력해 주세요.") == false) return;
 		    	if (any_empt_line_id("roomType", "회의실 종류를 선택해 주세요.") == false) return;
+		    	if (fn_emptyReplace($("#meetingConfirmgubun").val(),"N") == "Y"){
+		    		if (any_empt_line_id("meetingAdminid", "관리자를 선택해 주세요.") == false) return;
+		    	}
+		    	
 		    	//확인 
 		    	  var formData = new FormData();
 	     			  formData.append('meetingImg1', $('#meetingImg1')[0].files[0]);
@@ -327,6 +335,7 @@
 	     			  formData.append('userFirstNm' , $("#userFirstNm").val());
 	     			  formData.append('userLastNm' , $("#userLastNm").val());
 	     			  formData.append('userEmail' , $("#userEmail").val());
+	     			  formData.append('resReqday' ,fn_emptyReplace( $("#resReqday").val(),"0"));
 	     			  formData.append('mode' , $("#mode").val());
      			  
      			  
@@ -393,7 +402,7 @@
 	     }, fn_AyavaView : function(){
 	    	 $("#roomType").val() == "SWC_GUBUN_2" ? $(".avayaView").show() : $(".avayaView").hide();
 	     }, fn_adminChoic : function (empId){
-	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "[관리자 선택]" : "";
+	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "<a href='javascript:backoffice_common.fn_adminForm(&#34;admin&#34;)'>[관리자 선택]</a>" : "";
 	    	 $("#sp_empView").html(empTxt);
 	     }
     }
@@ -408,7 +417,6 @@
 <input type="hidden" name="pageIndex" id="pageIndex" >
 <input type="hidden" name="mode" id="mode" >
 <input type="hidden" name="meetingId" id="meetingId" >
-<input type="hidden" name="meetingAdminid" id="meetingAdminid" >
 
 
 <div class="Aconbox">
@@ -478,7 +486,7 @@
             <!--// 팝업 필드박스-->
             <div class="pop_box100">
                 <div class="padding15">
-	                   <table class="pop_table thStyle">
+	                   <table class="pop_table thStyle" id="tb_formInfo">
 		                <tbody>
 		                    <tr>
 		                        <th style="width:180px"><span class="redText">*</span>구역 선택</th>
@@ -507,10 +515,8 @@
 				                         </c:forEach>
 		                            </select>
 		                        </td>
-		                        
 		                    </tr>
 		                    <tr>
-		                        
 		                        <th><span class="redText">*</span> 유료구분</th>
 		                        <td style="text-align:left" colspan="3">
 		                            <select id="payClassification" style="width:120px" onChange="jqGridFunc.fn_payClassGubun('0','0')">
@@ -543,11 +549,14 @@
 		                        </td>
 		                        <th><span class="redText">*</span>관리자 승인여부</th>
 		                        <td style="text-align:left">
+		                              <input type="hidden" name="meetingAdminid" id="meetingAdminid" />
 		                              <label class="switch">                                               
 				                    	<input type="checkbox" id="meetingConfirmgubun" onclick="toggleValue(this);jqGridFunc.fn_adminChoic('')" value="Y">
 					                    <span class="slider round"></span> 
 				                      </label> 
 				                      <span id="sp_empView" />
+				                      
+				                      
 		                        </td>
 		                    </tr>
 		                    <tr>
@@ -559,7 +568,7 @@
 					                    <span class="slider round"></span> 
 				                    </label>                
 		                        </td>
-		                         <th><span class="redText">*</span>예약 페이지 노출</th>
+		                        <th><span class="redText">*</span>예약 페이지 노출</th>
 		                        <td style="text-align:left">
 				                    <label class="switch">                                               
 				                    	<input type="checkbox" id="meetingView" onclick="toggleValue(this)" value="Y">
@@ -569,11 +578,15 @@
 		                    </tr>
 		                    <tr>
 		                        <th><span class="redText">*</span>장비 사용여부</th>
-		                        <td style="text-align:left" colspan="3">
+		                        <td style="text-align:left">
 		                              <label class="switch">                                               
 				                    	<input type="checkbox" id="meetingEqupgubun" onclick="toggleValue(this)" value="Y">
 					                    <span class="slider round"></span> 
 				                     </label>
+		                        </td>
+		                        <th><span class="redText">*</span>사전 예약일</th>
+		                        <td style="text-align:left">
+				                    <input type="number" name="resReqday" id="resReqday" onkeypress="only_num();"  style="width:100px;"/>일전
 		                        </td>
 		                    </tr>
 		                    <tr>
@@ -689,6 +702,35 @@
 		                    </tr>
 		                </tbody>
 		            </table>
+		            
+		            
+		            
+		            <table class="pop_table thStyle" id="tb_searchform">
+                        <thead>
+                           <tr>
+                              <td colspan="2">
+                                <select name="emSearchCondition"  id="emSearchCondition" style="width:150px;">
+											<option value="empname">아이디/이름</option>
+								</select>
+	                           
+	                             <input class="nameB" type="text" name="emSearchKeyword" id="emSearchKeyword" />      
+								 
+							   </td>
+							   <td>
+							   <a href="javascript:backoffice_common.fn_empSearch();"><span class="lightgrayBtn">조회</a>  
+							   <a href="#" onClick="backoffice_common.fn_adminForm('form')" class='lightgrayBtn'>닫기</a>
+							   </td>
+                           </tr>
+                           <tr>
+                              <th>부서</th>
+                              <th>이름</th>
+                              <th>사번</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    
                 </div>                
             </div>
         </div>

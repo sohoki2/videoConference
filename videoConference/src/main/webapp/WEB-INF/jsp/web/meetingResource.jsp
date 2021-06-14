@@ -50,7 +50,6 @@
 	                    <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
 	                       <a href="#" onClick="res.fn_floorSearch(${floorList.floor_seq })" name="btn_floor" id="btn_${floorList.floor_seq }" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
 	                    </c:forEach>
-	                    
 	                </div>               
 	                <div class="clear"></div>
 	            </div>

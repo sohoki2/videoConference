@@ -13,14 +13,6 @@ public interface BoardInfoManageService {
 	
     List<Map<String, Object>> selectBoardMainManageListByPagination() throws Exception;
     
-    List<Map<String, Object>> selectIndexBoardTitle()throws Exception;
-    
-    List<Map<String, Object>> selectBoardMainManageListByPagination1() throws Exception;
-    
-    List<Map<String, Object>> selectBoardMainManageListByPagination2() throws Exception;
-    
-    List<Map<String, Object>> selectBoardMainManageListByPagination3() throws Exception;
-    
     Map<String, Object> selectBoardManageView(String boardSeq) throws Exception;
 	
     int updateBoardManage(BoardInfo vo) throws Exception;

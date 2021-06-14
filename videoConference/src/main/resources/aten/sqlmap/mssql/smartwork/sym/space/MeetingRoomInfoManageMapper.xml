@@ -16,13 +16,14 @@
 		                                     , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
 		                                     , a.MEETING_VIEW , a.MEETING_ORDER
 		                                     , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.MEETING_MAINVIEW
-											 , CASE WHEN LEN(a.MEETING_ADMINID) >5 THEN 
-											     dbo.FN_ATTENTLIST(SUBSTRING(a.MEETING_ADMINID, 0, 2))
+											 , CASE WHEN LEN(a.MEETING_ADMINID) > 2 THEN 
+											     dbo.FN_ATTENTLIST(a.MEETING_ADMINID)
 											   ELSE
 											    ''
 											   END AS SEAT_ADMINI_TXT, a.MEETING_TOP, a.MEETING_LEFT
 											 , dbo.FN_DETAILCODENM(a.PAY_CLASSIFICATION) AS PAY_CLASSIFICATION_TXT, a.PAY_CLASSIFICATION
-											 , dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, c.FLOOR_INFO		
+											 , dbo.FN_DETAILCODENM(a.PAY_GUBUN) AS PAY_GUBUN_TXT, a.PAY_GUBUN, a.PAY_COST, c.FLOOR_INFO	
+											 , a.RES_REQDAY	
 				                       FROM TB_MEETING_ROOM a ,TB_CENTERINFO b, TB_FLOORINFO c
 				                       WHERE a.CENTER_ID = b.CENTER_ID 
 				                             AND a.FLOOR_SEQ = c.FLOOR_SEQ
@@ -72,7 +73,7 @@
 		        a.MEETING_ID, a.MEETING_NAME, a.MEETINGROOM_REMARK, a.CENTER_ID, a.MEETING_USEYN,
 		        b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID,
 		        dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ISNULL(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, 
-		        ISNULL(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN
+		        ISNULL(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN,   ISNULL(a.RES_REQDAY, '0') RES_REQDAY
 		FROM 	TB_MEETING_ROOM a , TB_CENTERINFO b, TB_FLOORINFO c
 		WHERE a.CENTER_ID = b.CENTER_ID 
 		      AND a.FLOOR_SEQ = c.FLOOR_SEQ
@@ -169,13 +170,13 @@
                 , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS roomTypeTxt
                 , a.MEETING_VIEW, a.MEETING_ORDER, a.MEETING_EQUPGUBUN
                 , a.MEETING_CONFIRMGUBUN , a.MEETING_ADMINID
-                , CASE WHEN LEN(a.MEETING_ADMINID) >5 THEN 
-				     dbo.FN_ATTENTLIST(SUBSTRING(a.MEETING_ADMINID,0, 2))
+                , CASE WHEN LEN(a.MEETING_ADMINID) > 3 THEN 
+				     dbo.FN_ATTENTLIST(a.MEETING_ADMINID)
 				  ELSE
 				    ''
-				  END AS seat_admini_Txt
+				  END AS seat_admin_Txt
                 , a.MAIL_SENDCHECK, a.SMS_SENDCHECK, a.RES_MESSAGE_MAIL, a.RES_MESSAGE_SMS, a.CAN_MESSAGE_MAIL, a.CAN_MESSAGE_SMS
-                , a.PAY_CLASSIFICATION, a.PAY_GUBUN, a.PAY_COST
+                , a.PAY_CLASSIFICATION, a.PAY_GUBUN, a.PAY_COST, a.RES_REQDAY
 				, CASE a.MAIL_SENDCHECK WHEN 'Y' THEN  dbo.FN_MESSAGETITLE( a.RES_MESSAGE_MAIL )
 					   ELSE '메세지 없음' 
 				    END resMessageMailTxt
@@ -242,7 +243,7 @@
 	                                  USER_FIRST_NM, USER_LAST_NM, USER_EMAIL, MEETING_VIEW, MEETING_ORDER, 
 	                                  MAIL_SENDCHECK, SMS_SENDCHECK, MEETING_MAINVIEW,
 	                                  RES_MESSAGE_MAIL, RES_MESSAGE_SMS, CAN_MESSAGE_MAIL, CAN_MESSAGE_SMS,
-	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST
+	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, RES_REQDAY
 	                               )
 	      VALUES (#{meetingId}, #{meetingName}, #{centerId}, #{floorSeq}, #{partSeq}, #{roomType}, #{maxCnt}, #{meetingUseyn}, #{meetingEqupgubun,jdbcType=VARCHAR }
 			      , GETDATE(), #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
@@ -252,7 +253,7 @@
 			      , #{userFirstNm, jdbcType=VARCHAR}, #{userLastNm, jdbcType=VARCHAR} , #{userEmail, jdbcType=VARCHAR}, #{meetingView, jdbcType=VARCHAR}, #{meetingOrder, jdbcType=VARCHAR}
 			      , #{mailSendcheck, jdbcType=VARCHAR}, #{smsSendcheck, jdbcType=VARCHAR}, #{meetingMainview, jdbcType=VARCHAR}
 			      , #{resMessageMail, jdbcType=VARCHAR}, #{resMessageSms, jdbcType=VARCHAR}, #{canMessageMail, jdbcType=VARCHAR}, #{canMessageSms, jdbcType=VARCHAR}
-	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}
+	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}, #{resReqday, jdbcType=VARCHAR}
 	      );
 	      UPDATE TB_FLOORINFO SET MEET_CNT = MEET_CNT + 1
 		  WHERE FLOOR_SEQ = #{floorSeq};
@@ -312,6 +313,7 @@
 									 , PAY_CLASSIFICATION  = #{payClassification, jdbcType=VARCHAR}
 									 , PAY_GUBUN  = #{payGubun, jdbcType=VARCHAR}
 									 , PAY_COST  = #{payCost, jdbcType=VARCHAR}
+									 , RES_REQDAY = #{resReqday, jdbcType=VARCHAR} 
 	      WHERE MEETING_ID = #{meetingId}
    </update>
    <delete id="deleteMeetingRoomManage">

@@ -92,8 +92,9 @@
 	    			                { label: '좌석 Left', name:'seat_left',        index:'seat_left',       align:'center', width:'12%'},
 	    			                { label: '고정석여부', name:'seat_fix_useryn',  index:'seat_fix_useryn',  align:'center', width:'12%' , 
 	    			                  formatter:jqGridFunc.fixGubun },
-	    			                { label: '부서명', name:'org_cd',       index:'org_cd',      align:'center', width:'12%'},
-	    			                { label: '정렬순서', name:'seat_order',       index:'seat_order',      align:'center', width:'12%'},
+	    			                { label: '부서명', name:'org_cd',       index:'org_cd',      align:'center', width:'10%'},
+	    			                { label: '정렬순서', name:'seat_order',       index:'seat_order',      align:'center', width:'10%'},
+	    			                { label: '사전예약일', name:'res_reqday',       index:'res_reqday',      align:'center', width:'10%'},
 	    			                { label: '수정자', name:'update_id',      index:'update_id',     align:'center', width:'14%'},
 	    			                { label: '수정 일자', name:'update_date', index:'update_date', align:'center', width:'12%', 
 	    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
@@ -232,6 +233,7 @@
 						    		   $("#orgCd").val(obj.org_cd);
 						    		   $("#seatFixGubun").val(obj.seat_fix_gubun);
 						    		   $("#seatFixUserId").val(obj.seat_fix_user_id);
+						    		   $('#resReqday').val(obj.res_reqday);
 						    		   if (obj.empname !== "")
 						    			   $("#sp_fixUser").html(obj.empname);
 						    		   
@@ -253,6 +255,7 @@
 		        	$('input:text[name^=seat]').val("");
 		        	$("#centerId").val("");
 		        	$("#orgCd").val("");
+		        	$('#resReqday').val("")
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
 		        	toggleDefault("seatFixUseryn");
@@ -290,6 +293,7 @@
 				    			 'seatNumber' :  $('#seatNumber').val(),
 				    			 'seatFixGubun' :  $('#seatFixGubun').val(),
 				    			 'seatFixUserId' :  $('#seatFixUserId').val(),
+				    			 'resReqday' :  $('#resReqday').val(),
 				    			 'mode' : $("#mode").val()
 		    	               }; 
 		    	uniAjax(url, params, 
@@ -535,6 +539,10 @@
 		                       </td>
 		                       <th><span class="redText">좌석 기본번호</th>
 		                       <td><input type="text" name="seatNumber" id="seatNumber" class="input_noti" size="10"/></td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">사전예약일수</th>
+		                       <td><input type="number" name="resReqday" id="resReqday" class="input_noti" size="10"/></td>
 		                    </tr>
 		                 </tbody>
                     </table>

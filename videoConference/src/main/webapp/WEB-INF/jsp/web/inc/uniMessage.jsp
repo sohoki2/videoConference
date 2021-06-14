@@ -1,12 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <div id="ok_reserve" class="needpopup opened">
-     <span id="sp_message"></span>
-     <a href="#" class="needpopup_remover"></a>
+        <ul class="form">
+          <li>
+            <span id="sp_message"></span>
+          </li>
+        </ul>
+        <div class="clear"></div>
+        <div class="footerBtn">
+          <a href="#" onClick="fn_hisInfo()" class="grayBtn">확인</a>
+        </div>
+        <div class="clear"></div>  
 </div>
-
-
-
+<input type="hidden" id="page_result" name="page_result" /> 
+<!--  애러 발생시 이전 스크립트로 전환 -->
+<input type="hidden" id="hid_history" name="hid_history" /> 
 <div id="dv_meetingInfo" class="needpopup">
       <h2 class="pop_tit">회의 상세정보</h2>
         <ul class="form">
@@ -41,19 +49,32 @@
               <option value="SWC_GUBUN_1">일반 회의실</option>
               <option value="SWC_GUBUN_2">영상 회의실</option>
         </select>
-        
+        <input type="hidden" id="mode" name="mode" />
+        <input type="hidden" id="itemId" name="itemId" />
         <input type="radio" name="resPassword" value="Y" id="resPassword_1"><span id="sp_01">공개</span>
         <input type="radio" name="resPassword" value="N" id="resPassword_2"><span id="sp_02">비공개</span>
+        <input type="hidden" id="conPin" name="conPin"/>
+        <input type="hidden" id="conVirtualPin" name="conVirtualPin"/>
+        <input type="hidden" id="conAllowstream" name="conAllowstream"/>
+        <input type="hidden" id="conBlackdial" name="conBlackdial"/>
+        <input type="hidden" id="conSendnoti" name="conSendnoti"/>
+        <input type="hidden" id="resEqupcheck" name="resEqupcheck"/>
+        <input type="hidden" id="proxyUserId" name="proxyUserId"/>
+        <input type="hidden" name="proxyYn" id="proxyYn">
+        <input type="hidden" name="seatConfirmgubun" id="seatConfirmgubun">
+        <input type="hidden" name="hid_attendList" id="hid_attendList">
+        <input type="hidden" id="hid_equipList" name="hid_equipList">
+        <input type="hidden" id="resStartday" name="resStartday" />
+        <a href="#" onclick="fn_userPop('P')">참가대상</a>
+        <input type="hidden" name="resReqday" id="resReqday" />
         
-         <a href="#" onclick="fn_userPop('P')">참가대상</a>
-         <span id="meegintRoomInfo"></span>
+        
+        <span id="meegintRoomInfo"></span>
+         
       </li>
       <li>
         <p class="pop_text">회의 시간 선택</p>
         <!--  기본값 -->
-        <input type="hidden" name="proxyYn" id="proxyYn">
-        <input type="hidden" name="seatConfirmgubun" id="seatConfirmgubun">
-        
         <span id="sp_ResDay" style="margin-right: 20px;"></span>
         <select id='resStarttime' style="width:120px;"></select>
         ~
@@ -74,11 +95,25 @@
   
      
 <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
+<button type="button" id="btn_resultCk" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>
 <button type="button" id="btn_meeting" style="display:none" data-needpopup-show='#app_meeting'>예약 화면 보여주기</button>
+<button type="button" id="btn_SeatRes" style="display:none" data-needpopup-show='#seat_fastR_popup'>좌석예약 보여주기</button>
 
+
+
+<script src="/front_res/js/com_resInfo.js"></script>
 <script src="/front_res/js/needpopup.min.js"></script>
 <script type="text/javascript">
+	$( function() {
+		 var state = "${status}";
+	   	 if (state == "FAILLACK"){
+	   		 alert("적용되는 시설물이 없습니다");
+	   		 location.href= "/web/index.do";
+	   	 }
+		
+		
+	});
 	function need_close(){
 		needPopup.hide();
 	}

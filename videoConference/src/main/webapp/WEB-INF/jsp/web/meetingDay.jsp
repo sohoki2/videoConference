@@ -36,11 +36,7 @@
 <form:form name="regist" commandName="regist" method="post">
 <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
 <input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
-<input type="hidden" id="mode" name="mode" />
-<input type="hidden" id="resStartday" name="resStartday" />
-<input type="hidden" id="itemId" name="itemId" />
-<input type="hidden" id="hid_attendList" name="hid_attendList">
-<input type="hidden" id="hid_equipList" name="hid_equipList">
+<input type="hidden" id="itemGubun" name="itemGubun" value="ITEM_GUBUN_1">
 
         <c:import url="/web/inc/top_inc.do" />
         <!--header 추가//-->
@@ -70,7 +66,7 @@
                     <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                   </div>
                   <div class="dateBox float_left">
-                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday">
+                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday"  value="${regist.searchResStartday}" onChange="res.fn_floorInfo()">
                       <div class="dateIcon" onClick="res.fn_floorInfo()">
                         <a href="" class="dateBtn">검색</a>
                       </div>
@@ -126,7 +122,7 @@
         <c:import url="/web/inc/unimessage.do" />
         <script>  
             $( function() {
-            	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
+            	 $("#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
             	 res.fn_floorInfo();
             });
            
@@ -163,6 +159,7 @@
             	  									if (seatinfo.timeinfo.length < 20){
             	  										setHtml += "<td colspan='20' style='text-aling:center;'>예약 불가</td>";
             	  									}else {
+            	  										console.log("seatinfo.res_reqday:" + seatinfo.res_reqday)
             	  										for (var a  in seatinfo.timeinfo){
             		  										var timeInfo = seatinfo.timeinfo[a];
             		  										var classInfo = "";
@@ -174,7 +171,7 @@
             		  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
             		  											setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
             		  										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
-            		  											setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;);'></td>";
+            		  											setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.res_reqday +"&#39;);'></td>";
             		  										}
             		  									}
             	  									}
