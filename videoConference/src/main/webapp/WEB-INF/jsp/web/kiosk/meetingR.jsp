@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -13,28 +12,32 @@
     <title><spring:message code="URL.TITLE" /></title>
     <link rel="stylesheet" href="/css/kiosk/paragraph.css">
     <link rel="stylesheet" href="/css/kiosk/reset.css">
+    <link rel="stylesheet" href="/front_res/css/popup.css"/>
+    <link rel='stylesheet' href='/front_res/css/smart.css'/>
+    <link rel='stylesheet' href='/front_res/css/main.css'/>
+    <link rel='stylesheet' href='/front_res/css/day_main.css'/>
+    <link rel='stylesheet' href='/front_res/css/time_main.css'/>
+    <link rel='stylesheet' href='/front_res/css/list_main.css' />
     
-    <script type="text/javascript" src="/js/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="/js/bpopup.js"></script>
-    <link rel="stylesheet" href="/css/kiosk/popup.css">
+    <script src="/front_res/js/jquery-2.2.4.min.js"></script>
+    <script src="/front_res/js/packages/main.js"></script>
+    <script src="/js/bpopup.js"  type="text/javascript" />
+    
     <!-- 캘린더 관련 -->
-    <link href='/css/kiosk/smart.css' rel='stylesheet' />
-    <link href='/js/packages/main.css' rel='stylesheet' />
-    <link href='/js/packages/day_main.css' rel='stylesheet' />
-    <link href='/js/packages/time_main.css' rel='stylesheet' />
-    <link href='/js/packages/list_main.css' rel='stylesheet' />
-    <script src='/js/packages/main.js'></script>
-    <script src='/js/packages/day_main.js'></script>
-    <script src='/js/packages/time_main.js'></script>
     
-     <script type="text/javascript" src="/js/common.js"></script>
-     <script type="text/javascript" src="/js/com_resInfo.js"></script>
+   
+    
+    <script type="text/javascript" src="/front_res/js/packages/day_main.js"></script>
+    <script type="text/javascript" src="/front_res/js/packages/time_main.js"></script>
+    
+    <script type="text/javascript" src="/front_res/js/common.js"></script>
+    <script type="text/javascript" src="/front_res/js/com_resInfo.js"></script>
 
     
 </head>
 <body>
 <form:form name="regist" commandName="regist" method="post" >
- <input type="hidden" id="meetingId" name=meetingId value="${regist.meetingId }">
+ <input type="hidden" id="meetingId" name=meetingId value="${regist.meeting_id }">
  <input type="hidden" id="resSeq" name="resSeq"  >
  <input type="hidden" id="userId" name="userId"  >
  <input type="hidden" id="mode" name="mode"  >
@@ -306,101 +309,90 @@
         
         var meetingR = {
         		meetingInfo : function(){
-        			var params = {'secSeq' : $("#swcSeq").val() }; 
-                	apiExecute(
-        		  			   "POST",  "/web/resPadInfoAjax.do?swcSeq="+$("#swcSeq").val(), params, null,				
-        		  				function(result) {							
-        		  						if (result != null) {	
-        		  						
-        		  							if (result.status == "SUCCESS"){
-        			  								  
-        			  								if (result.resultlist.length > 0 ){
-        			  									
-        			  									
-        			  									for (var i = 0; i < 1; i ++ ){
-        			  									    var obj = result.resultlist;
-        			  									    
-        			  									  $("#centerId").val(obj[i].centerId);
-     				  							    	  $("#timeSeq").val(obj[i].timeSeq);
-     				  							    	  $("#swcTime").val(obj[i].swcTime);
-     				  							    	  
-     				  							    	  $("#sp_swcName").html(obj[i].seatName);
-     				  							    	
-        			  									    if (obj[i].resSeq != "0"){
-        			  									    	$("#sp_title").html(obj[i].resTitle );
-            				  							    	$("#dv_time").html( obj[i].resStartTimeT+"~"+ obj[i].resEndTimeT)
-            				  							    	$("#sp_userInfo").html(obj[i].attendListTxt);
-            				  							    	$("#resSeq").val(obj[i].resSeq);
-            				  							    	
-            				  							    	
-            				  							    	
-            				  							    	//인사 정보 확인
-            				  							    	var sHtml = "<ul>";
-            				  							    	if (obj[i].empname != ""){
-            				  							    		var empInfo = obj[i].empname.split('|');
-            				  							    		sHtml += "<li><p>"+empInfo[0]+"</p><br><span>"+empInfo[1]+"</span><em>예약자</em></li>";
-            				  							    		if (result.resUserList != undefined){
-            				  							    			for (var a =0; a < result.resUserList.length; a++ ){
-                				  							    			var resUser = result.resUserList;
-                				  							    			sHtml += "  <li><p>"+resUser[a].empname +"</p><br><span>"+resUser[a].deptname +"</span></li>";
-                				  							    		}	
-            				  							    		}
-            				  					               }
-            				  							    	sHtml += "</ul>";
-            				  							    	$("#sp_resListPop").html(sHtml);
-            				  							    	
-            				  							   
-            				  							    	if (obj[i].inTime != ""  &&  obj[i].otTime == "" ){
-            				  							    		
-            				  							    		 //회의중
-            				  							    		  $("#p_stateInfo").html("회의 중");
-            				  							    		 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("OT")').text("퇴실");
-            				  							    	}else if  (obj[i].inTime == "") {
-            				  							    		
-            				  							    	}else if (obj[i].otTime != "" ){
-            				  							    		$("#a_stateChange").hide();
-            				  							    		 $("#p_stateInfo").html("회의 종료");
-            				  							    	}
-	            				  							  	$("#resMeetingInfoE").hide();
-	            			  									$("#resMeetingInfoR").show();
-        			  									    }else {
-        			  									    	 
-        			  									    	$("#resMeetingInfoE").show();
-                			  									$("#resMeetingInfoR").hide();
-        			  									    }
-        			  									 
-        			  								   }
-        			  									//
-        			  								}else {
-        			  									$("#resMeetingInfoE").show();
-        			  									$("#resMeetingInfoR").hide();
-        			  									
-        			  								}
-        		  								   $("#sp_dayInfo").html(result.dayInfo);
-        		  								   $("#resStartday").val(result.dayInfo);
-        		  								   // 신규 추가 
-        		  								   if (  parseInt( result.timeInfo.substring(0,5).replaceAll(":","") ) > 2000  ||  parseInt( result.timeInfo.substring(0,5).replaceAll(":","") ) < 800){
-        		  									   $("#a_btn_res").hide();
-        		  								   }else {
-        		  									   $("#a_btn_res").show();
-        		  								   }
-        		  								    
-        		  							       $("#sp_timeInfo").html(result.timeInfo);
-        		  							       //우측 장에 리스트 표시
-        		  							      
-        		  							       calView( result.resTime  );
-        		  							}else {
-        		  								 meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
-        		  							}
-        		  						}else {
-        		  							 meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
-        		  						}
-        		  					},
-        		  				null,
-        		  				null
-        		  		);   
-                	   //1분 마다 리로드 
-                	    window.setTimeout("meetingR.meetingInfo()", 3000);
+        			var url = "/web/resPadInfoAjax.do?meetingId="+$("#meetingId").val();
+        			
+        			uniAjaxSerial(url, null, 
+    		      			function(result) {
+    		 				       // 결과 시작 
+			        				if (result.status == "SUCCESS"){
+										  if (result.resultlist.length > 0 ){
+											
+											for (var i in result.resultlist){
+											     var obj = result.resultlist;
+											     //alert(obj[i].centerId);
+											     
+												 $("#centerId").val(obj[i].center_id);
+										    	 $("#timeSeq").val(obj[i].time_seq);
+										    	 $("#swcTime").val(obj[i].swc_time);
+										    	 $("#sp_swcName").html(obj[i].meeting_name);
+									    	
+											     if (obj[i].res_seq != "0"){
+											    	$("#sp_title").html(obj[i].res_title );
+			  							    	 $("#dv_time").html( obj[i].resStartTimeT+"~"+ obj[i].resEndTimeT)
+			  							    	 $("#sp_userInfo").html(obj[i].attendlisttxt);
+			  							    	 $("#resSeq").val(obj[i].res_seq);
+			  							    	
+			  							    	 //인사 정보 확인
+			  							    	 var sHtml = "<ul>";
+			  							    	 if (obj[i].empname != ""){
+			  							    		var empInfo = obj[i].empname.split('|');
+			  							    		sHtml += "<li><p>"+empInfo[0]+"</p><br><span>"+empInfo[1]+"</span><em>예약자</em></li>";
+			  							    		if (result.resUserList != undefined){
+			  							    			for (var a =0; a < result.resUserList.length; a++ ){
+				  							    			var resUser = result.resUserList;
+				  							    			sHtml += "  <li><p>"+resUser[a].empname +"</p><br><span>"+resUser[a].deptname +"</span></li>";
+				  							    		}	
+			  							    		}
+			  					                 }
+			  							    	 sHtml += "</ul>";
+			  							    	 $("#sp_resListPop").html(sHtml);
+			  							    	 if (obj[i].in_time != ""  &&  obj[i].ot_time == "" ){
+			  							    		  $("#p_stateInfo").html("회의 중");
+			  							    		 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("OT")').text("퇴실");
+			  							    	 }else if  (obj[i].in_time == "") {
+			  							    		
+			  							    	 }else if (obj[i].ot_time != "" ){
+			  							    		 $("#a_stateChange").hide();
+			  							    		 $("#p_stateInfo").html("회의 종료");
+			  							    	 }
+				  							  	     $("#resMeetingInfoE").hide();
+			  									     $("#resMeetingInfoR").show();
+											     }else {
+											    	$("#resMeetingInfoE").show();
+			  									    $("#resMeetingInfoR").hide();
+											    }
+											 
+										   }
+											//
+										}else {
+											$("#resMeetingInfoE").show();
+											$("#resMeetingInfoR").hide();
+											
+										}
+									   $("#sp_dayInfo").html(result.dayInfo);
+									   $("#resStartday").val(result.dayInfo);
+									   // 신규 추가 
+									   if (  parseInt( result.timeInfo.substring(0,5).replaceAll(":","") ) > 2000  ||  parseInt( result.timeInfo.substring(0,5).replaceAll(":","") ) < 800){
+										   $("#a_btn_res").hide();
+									   }else {
+										   $("#a_btn_res").show();
+									   }
+									    
+								       $("#sp_timeInfo").html(result.timeInfo);//날짜 
+								       
+								       calView( result.resTime  );
+									}else {
+										 meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
+									}
+    		 				       
+    		 				       //결과 끝 
+    		 				    },
+    		 				    function(request){
+    		 				    	meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
+    		 				    }    		
+    		            );
+        			   //1분 마다 리로드 
+                	   //window.setTimeout("meetingR.meetingInfo()", 3000);
         		}, fn_MeetingState : function (state){
         			//입실 하기 
         			    var params = {'resSeq' : $("#resSeq").val(), 'resState': state };
@@ -452,7 +444,7 @@
     			     );	
         			
         		}, fn_meetReservation : function (){
-        			var equipType01 = "N";
+        			 var equipType01 = "N";
         			 var equipType02 = "N";
         			 var resEqupcheck = "";
         		     //예약 화면 닫기 하기 
@@ -480,7 +472,7 @@
             			
             			 //값 수정 
             			 
-            			 uniAjax("/front/resInfo/resReservertionKioskUpdate.do", params, 
+            			 uniAjax("/web/resReservertionKioskUpdate.do", params, 
             		  			function(result) {
             						       if (result.status == "SUCCESS"){
             						    	    meetingR.meetingInfo();
@@ -600,15 +592,14 @@
        
     </script>
     <script>
-    
            function calView(eventList ) {
         	    $("#calendar").empty();
-               var calendarEl = document.getElementById('calendar');
-               var calendar = new FullCalendar.Calendar(calendarEl, {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
                    plugins: ['interaction', 'timeGrid'],
                    defaultView: 'timeGridDay',
-                   minTime: $('#swcTime').val().substring(0,2)+":" +  $('#swcTime').val().substring(2,4)+":00",
-                   maxTime: "20:00:00",
+                   minTime: $('#swcTime').val().substring(0,2)+":" + $('#swcTime').val().substring(2,4)+":00",
+                   maxTime: "19:00:00",
                    header: false,
                    columnHeader: false,
                    defaultDate:   $("#resStartday").val(), 

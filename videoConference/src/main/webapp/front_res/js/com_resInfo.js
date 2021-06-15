@@ -605,7 +605,7 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
         $("#resReqday").val(res_reqday);
         $("#mode").val("Ins");
 		$("#res_swcName").text(swcName);
-		$("#resTitle").val();
+		$("#resTitle").val("");
 		var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
 		$("#sp_ResDay").text(day_convert(resDay));
 		$("#resStartday").val(resDay);
@@ -910,7 +910,7 @@ function fn_ResSave(){
 					   	    if (result.status == "SUCCESS"){
 					   	       $("#hid_history").val("");
 					   	    }
-						    $("#sp_message").text(result.message);
+					   	    $("#sp_message").text(result.message);
 						    $("#btn_result").trigger("click");
 						    
 						    if (fn_domNullReplace($("#paeGubun").val() , "") == "Index"){
@@ -953,4 +953,36 @@ function fn_paramReset(){
 		 $("#conAllowstream").val("N");
 		 $("#conBlackdial").val("N");
 		 $("#conSendnoti").val("N");
+}
+function fn_resCancel(resSeq, reservProcessGubun){
+	
+	$("#resSeq").val(resSeq);
+	$("#reservProcessGubun").val(reservProcessGubun);
+	
+}
+function fn_resCancelUpdate(){
+	if (any_empt_line_id("cancelCode", '취소 유형을 선택해 주세요.') == false) return;
+	if (any_empt_line_id("cancelReason", '취소 사유를 입력해 주세요.') == false) return;
+	var params = {'resSeq': $("#resSeq").val(), 'reservProcessGubun': $("#reservProcessGubun").val(), 
+			      'cancelCode' : $("#cancelCode").val(), 'cancelReason' : $("#cancelReason").val() };
+	uniAjax("/web/resUpdate.do", params, 
+ 			function(result) {
+			       if (result.status == "LOGIN FAIL"){
+	    	         alert(result.message);
+					 location.href="/web/Login.do";
+				   }else {
+				     if (result.status == "SUCCESS"){
+				         $("#sp_nowtenn").text(result.cominfo.tenn_info);
+				         $("#sp_totaltenn").text(result.cominfo.tenn_total_info);
+				     }
+					 need_close();
+				     $("#sp_message").text(result.message);
+					 $("#btn_result").trigger("click");
+				     fn_bookingList();   
+				   }
+			    },
+			    function(request){
+				    alert("Error:" +request.status );	       						
+			    }    		
+     );
 }

@@ -416,9 +416,9 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	}
 	
 	@Override
-	public List<Map<String, Object>> selectKioskCalendarList(String swcSeq) {
+	public List<Map<String, Object>> selectKioskCalendarList(String meetingId) {
 		// TODO Auto-generated method stub
-		return resMapper.selectKioskCalendarList(swcSeq);
+		return resMapper.selectKioskCalendarList(meetingId);
 	}
 
 	@Override

@@ -245,13 +245,12 @@ public class frontResInfoManageController {
 	
 	@RequestMapping(value="Logout.do")
 	public ModelAndView actionLogoutProcess(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
-			                                , @RequestBody Map<String, Object> params 
-			    		                    , HttpServletRequest request
+			                                , HttpServletRequest request
 			    		                    , BindingResult bindingResult) throws Exception {
 		ModelAndView mav = new ModelAndView(Globals.JSONVIEW);
 		try {
 			 request.getSession().setAttribute("empInfoVO", null);  
-			 mav.setViewName("redirect:/web/login.do");
+			 mav.setViewName("redirect:/web/Login.do");
 		}catch(Exception e) {
 			 LOGGER.error("actionLogoutProcess error:" + e.toString());
 		}
@@ -606,9 +605,10 @@ public class frontResInfoManageController {
 			// 테스트로 해서 사용자 정보 넣기 
 			
 			searchVO.setUserId( user.getEmpno() );
-			
+			LOGGER.debug("------------------------------------------------------------------" + user.getAuthorCode());
+			LOGGER.debug("------------------------------------------------------------------" + user.getEmpno());
 			//크레딧 정보 사용 여부 확인 
-			if (empInfoVO.getAuthorCode().equals("ROLE_USER")) {
+			if (user.getAuthorCode().equals("ROLE_USER")) {
 				String tennInfo = util.NVL(resService.selectTennInfo(searchVO), "");
 				if (tennInfo.indexOf("|")> 0 && tennInfo.length()> 2) {
 					String tennInfosp[] =  tennInfo.split("\\|");
@@ -891,13 +891,6 @@ public class frontResInfoManageController {
 	    return model;
 		
 	}
-	@NoLogging
-	@RequestMapping(value="test.do")
-	public ModelAndView webTest() throws Exception{		
-		ModelAndView model = new ModelAndView();
-		model.setViewName("/web/seatTest");
-		return model;
-	}
 	@RequestMapping (value="selectTimeInfo.do")
 	public ModelAndView selectTimeInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
 							            , @RequestBody Map<String,Object>  resSearch
@@ -1043,6 +1036,15 @@ public class frontResInfoManageController {
 			
 			int ret = resService.updateResManageChange(searchVO);
 			if (ret > 0){
+				Map<String, Object> cominfo = new HashMap<String, Object>();
+				LOGGER.debug("getAuthorCode" + empInfoVO.getAuthorCode());
+			    if (user.getAuthorCode().equals("ROLE_USER")) {
+			    	cominfo = companyService.selectCompanyInfoManageDetail(user.getComCode().toString());
+			    }else {
+			    	cominfo.put("tenn_info", 0);
+			    	cominfo.put("tenn_total_info", 0);
+			    }
+			    model.addObject(Globals.STATUS_COMINFO, cominfo);
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_MESSAGE,   "정상적으로 처리 되었습니다.");
 			}else {
@@ -1050,10 +1052,9 @@ public class frontResInfoManageController {
 			}
 			
 		}catch(Exception e){
-			
 			LOGGER.error("resUpdateInfo ERROR:" + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
-			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
 		}
 		return model;
 	}
@@ -1080,6 +1081,7 @@ public class frontResInfoManageController {
 			    searchVO.put("pageIndex", 1);
 			    empInfoVO = empService.selectEmpInfoDetailNo(empInfoVO.getEmpno().toString());
 			    Map<String, Object> cominfo = new HashMap<String, Object>();
+			    LOGGER.debug("getAuthorCode" + empInfoVO.getAuthorCode());
 			    if (empInfoVO.getAuthorCode().equals("ROLE_USER")) {
 			    	cominfo = companyService.selectCompanyInfoManageDetail(empInfoVO.getComCode().toString());
 			    }else {
@@ -1103,8 +1105,9 @@ public class frontResInfoManageController {
 	}
 	@RequestMapping(value="myTennAjax.do")
 	public ModelAndView webTennAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
-						                 , HttpServletRequest request
-						                 , BindingResult bindingResult) throws Exception{		
+			                        , @RequestBody Map<String, Object> searchVO 
+						            , HttpServletRequest request
+						            , BindingResult bindingResult) throws Exception{		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try {
 	    	
@@ -1113,25 +1116,18 @@ public class frontResInfoManageController {
 		  	if (empInfoVO.getEmpno() ==  null) {
 		  		url = "/web/login";
 		  	}else {
-		  		 
-		  		 
-		  		
-		  		 HashMap<String, Object> searchVO = new HashMap<String, Object>();
-		  		 
-			     searchVO.put("empno", empInfoVO.getEmpno());
+		  		 searchVO.put("empno", empInfoVO.getEmpno());
 			     searchVO.put("searchTenn", "tenn");
-			     
 			     PaginationInfo paginationInfo = new PaginationInfo();
-				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndex"), "1")));
 				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
 				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
-				 
 				 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 				 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
 				 searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+				 searchVO.put("mode", "mode");
 				 
-				 
-		  		 List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
+		  		 List<Map<String, Object>> reslist = tennService.selectTennantSubInfoManageListByPagination(searchVO);
 		  		 int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
 			     model.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
 			     model.addObject(Globals.STATUS_REGINFO, searchVO);
@@ -1293,7 +1289,7 @@ public class frontResInfoManageController {
 		try{
 			
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-			model.addObject("regist", meetingService.selectMeetingRoomDetailInfoManage(meetingId));
+			model.addObject(Globals.STATUS_REGINFO, meetingService.selectMeetingRoomDetailInfoManage(meetingId));
 			//신규 수정 
 			
 		}catch(Exception e){
@@ -1305,18 +1301,16 @@ public class frontResInfoManageController {
 		
 	}
 	@RequestMapping(value="resPadInfoAjax.do")
-	public ModelAndView selecKioskPopAjax (@RequestBody Map<String, Object> resSearch
-                                           , @RequestParam("swcSeq") String swcSeq
-										   , HttpServletRequest request
-										   , BindingResult bindingResult	) throws Exception {
+	public ModelAndView selecKioskPopAjax (@RequestParam("meetingId") String meetingId
+										   , HttpServletRequest request) throws Exception {
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try{
 			
-			resSearch.put("meetingId", swcSeq);
+			HashMap<String, Object> resSearch = new HashMap<String, Object>();
+			
+			resSearch.put("meetingId", meetingId);
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-			
-			
 			List<Map<String, Object>> resInfos =  resService.selectIndexList(resSearch);
 			model.addObject(Globals.JSON_RETURN_RESULTLISR , resInfos);
 			//
@@ -1328,39 +1322,42 @@ public class frontResInfoManageController {
 			model.addObject("timeInfo",    searchDay.substring(11,19));
 			
 			
+			
+			List<Map<String, Object>> timeLists = resService.selectKioskCalendarList(meetingId);
+			LOGGER.debug("-----------------------------   size:" + timeLists.size());
+			
 			/*
-			String searchDay = util.NVL(params.get("searchResStartday"), "").equals("")  ? util.reqDay(0)  : params.get("searchResStartday").toString();
-		  	//기초 데이터 넣기 
-		  	params.put("searchResStartday", searchDay);
-		  	
-		  	List<Map<String, Object>> seatListVOs = meetingService.selectMeetingRoomEmptyManageList(params);
-			for (Map<String, Object>  seatinfoVO : seatListVOs) {
-				Map<String, Object> searchTime = new HashMap<String, Object>();
-				searchTime.put("itemId", seatinfoVO.get("meeting_id").toString());
-				searchTime.put("swcResday", searchDay);
-				List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(searchTime);						
-				seatinfoVO.put("timeInfo", timeInfos);
-			}
-			*/
-			
-			
-			List<Map<String, Object>> timeLists = resService.selectKioskCalendarList(swcSeq);
-			JSONArray resTime = new JSONArray();
+			 * JSONArray resTime = new JSONArray(); for (Map<String, Object> timeList :
+			 * timeLists){ LOGGER.debug("-------------------------------------------------"
+			 * + timeList.get("res_title").toString()); Map<String, Object> searchTime = new
+			 * HashMap<String, Object>(); searchTime.put("title",
+			 * timeList.get("res_title").toString() ); searchTime.put("start",
+			 * timeList.get("res_starttime").toString()); searchTime.put("end",
+			 * timeList.get("res_endtime").toString()); Map<String, Object> searchTime_sub =
+			 * new HashMap<String, Object>(); searchTime_sub.put("author",
+			 * timeList.get("empname").toString() ); searchTime_sub.put("id",
+			 * timeList.get("res_seq").toString() ); searchTime.put("extendedProps",
+			 * searchTime_sub); searchTime.put("color", "#F2F2F2");
+			 * searchTime.put("textColor", "#808080"); resTime.add(searchTime); }
+			 */
+			JSONArray jsonArr1 = new JSONArray();
+			JSONObject jsonobj = new JSONObject();
+			JSONObject jsonobj_sub = new JSONObject();
 			for (Map<String, Object> timeList : timeLists){
-				Map<String, Object> searchTime = new HashMap<String, Object>();
-				searchTime.put("title", timeList.get("res_title").toString() );
-				searchTime.put("start", timeList.get("res_starttime").toString());
-				searchTime.put("end", timeList.get("res_endtime").toString());
-				Map<String, Object> searchTime_sub = new HashMap<String, Object>();
-				searchTime_sub.put("author",  timeList.get("empname").toString() );
-				searchTime_sub.put("id",  timeList.get("res_seq").toString() );
-				searchTime.put("extendedProps", searchTime_sub);
-				searchTime.put("color", "#F2F2F2");
-				searchTime.put("textColor", "#808080");		
-				resTime.add(searchTime);
+				jsonobj.put("title", timeList.get("res_title").toString() );
+				jsonobj.put("start", timeList.get("res_starttime").toString());
+				jsonobj.put("end", timeList.get("res_endtime").toString());
+				jsonobj_sub.put("author",  timeList.get("empname").toString() );
+				jsonobj_sub.put("id",  timeList.get("res_seq").toString() );
+				jsonobj.put("extendedProps", jsonobj_sub);
+				jsonobj.put("color", "#F2F2F2");
+				jsonobj.put("textColor", "#808080");			
+				jsonArr1.add(jsonobj);
 			}
 			
-			model.addObject("resTime", resTime);
+			model.addObject("resTime", jsonArr1);
+			
+			//model.addObject("resTime", resTime);
 			int i = 0;
 			/* 참석자는 사용 안함
 			for (Map<String, Object>  resInfo :   resInfos ){
@@ -1374,6 +1371,8 @@ public class frontResInfoManageController {
 			*/
 			
 		}catch(Exception e){
+			
+			
 			LOGGER.error("selectResInfo ERROR:" + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));

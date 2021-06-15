@@ -10,7 +10,8 @@
 						       TENN_REC_NOW_CNT, TENN_REC_END, TENN_REMARK,  	
 						       FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') USER_UPDATE, UPDATE_ID
 						FROM  TB_COMPAY_TENNANT a, TB_COMPANYINFO b
-					    WHERE a.COM_CODE = b.COM_CODE       
+					    WHERE a.COM_CODE = b.COM_CODE    
+					             
 					          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							    AND b.COM_NAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
 							  </if>
@@ -29,8 +30,7 @@
 	           <otherwise>
 	              ORDER BY TB.TENN_SEQ  DESC
 	           </otherwise>
-	        </choose>
-	        		 	    
+	        </choose>	    
     </select>
     
     <select id="selectTennantSubInfoManageListByPagination"  resultType="lmap">
@@ -52,7 +52,10 @@
 							        ELSE 
 							        (SELECT SEAT_NAME FROM tb_seatinfo WHERE tb_seatinfo.SEAT_ID = c.ITEM_ID)
 							   END AS ITEM_NAME, 
-							   FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') REG_DATE
+							   FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') REG_DATE,
+							   c.RES_STARTDAY, c.RES_ENDDAY,
+							   dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndtime
+							   
 					    FROM  TB_COMPAY_TENNANT_HISTORY a, LETTCCMMNDETAILCODE b, 
 					          TB_SWCRESERVATION c, TB_COMPANYINFO d
 					    WHERE a.TENN_PLAY_GUBUN = b.CODE       
@@ -69,6 +72,9 @@
 							  </if>
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
 							      AND c.FLOOR_SEQ = #{params.searchFloorSeq}
+							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.empno)">
+							      AND a.USER_NO = #{params.empno}
 							  </if>
 	        ) TB  
 	        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.mode)">
@@ -153,7 +159,7 @@
 		                                 , UPDATE_ID = #{tenn.userId,jdbcType=VARCHAR}
 	       WHERE TENN_SEQ = #{tenn.tennSeq}   ;
 	       INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
-	       VALUE (#{tenn.tennSeq}, #{tenn.comCode} , #{tenn.userId,jdbcType=VARCHAR}, getdate(), #{tenn.tennCnt}, 'TENN_PLAY_GUBUN_2', 'Y', #{tenn.resSeq});
+	       VALUES (#{tenn.tennSeq}, #{tenn.comCode} , #{tenn.userId,jdbcType=VARCHAR}, getdate(), #{tenn.tennCnt}, 'TENN_PLAY_GUBUN_2', 'Y', #{tenn.resSeq});
 	         
     </update> 
     <update id="updateRetireTennantInfoManage" >
@@ -171,8 +177,8 @@
 				FROM TB_COMPAY_TENNANT_HISTORY WHERE RES_SEQ =  #{tenn.resSeq};
 				
 				UPDATE TB_COMPAY_TENNANT
-				SET a.TENN_REC_PLAY_CNT = a.TENN_REC_PLAY_CNT - b.TENN_CNT
-				    , a.TENN_REC_NOW_CNT = a.TENN_REC_NOW_CNT + b.TENN_CNT
+				SET TENN_REC_PLAY_CNT = a.TENN_REC_PLAY_CNT - b.TENN_CNT
+				    , TENN_REC_NOW_CNT = a.TENN_REC_NOW_CNT + b.TENN_CNT
 				    , UPDATE_DATE = getdate()
 					, UPDATE_ID = #{tenn.updateId,jdbcType=VARCHAR}
 				from TB_COMPAY_TENNANT a, TB_COMPAY_TENNANT_HISTORY b
@@ -181,6 +187,8 @@
 				      AND b.TENN_PLAY_GUBUN = 'TENN_PLAY_GUBUN_2'
 				      AND b.RES_SEQ =  #{tenn.resSeq};
 		</if>    
+		
+		UPDATE TB_SWCINFO SET COM_TITLE = COM_TITLE;
     </update>
 
 

@@ -49,6 +49,22 @@ function uniAjaxReturn(url, param){
 	);
 	return returnVal;
 }
+function uniAjaxSerial(url, param, done_callback, fail_callback){
+	var jxFax =  $.ajax({
+		        type : 'GET',
+		        url : url,
+		        beforeSend : function(jqXHR, settings) {
+			       jqXHR.setRequestHeader('AJAX', true);
+			       //$('.loadingDiv').show();
+		        }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : param,
+		    }).done(done_callback).fail(fail_callback);
+	
+    return jxFax;
+}
 function uniAjax(url, param, done_callback, fail_callback){
 	var jxFax =  $.ajax({
 		        type : 'POST',

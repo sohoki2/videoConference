@@ -112,7 +112,28 @@
      <div class="clear"></div>
  </div>
  <!--//탈퇴 팝업-->
-             
+
+<!--  예약 취소 팝업 -->
+ <div id="cancle_popup" class="needpopup main_pop opened">
+     <div class="box_padding">
+         <h2 class="pop_tit">예약취소</h2>  
+         <div class="form">
+             <div class="pop_con">
+                 <div class="box_2">
+                     <textarea id="cancelReason" style="width:95%;"></textarea>
+                 </div>                    
+             </div>   
+         </div>
+         <div class="footerBtn">
+             <a href="#" onClick="fn_resCancelUpdate()" class="blueBtn" >예약취소</a>
+             <a href="#" onClick="need_close()" class="grayBtn">취소</a>
+         </div>
+         <div class="clear"></div>
+     </div>            
+     <a href="#" class="needpopup_remover"></a>
+</div>
+<!--  예약 취소 팝업  끝 부분-->    
+                 
 <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_resultCk" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>

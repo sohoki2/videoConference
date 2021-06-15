@@ -404,13 +404,13 @@
 	</select>
 	<select id="selectKioskCalendarList"  resultType="lmap">
 	
-	    SELECT RES_TITLE,  FN_ATTENTLIST(a.RES_ATTENDLIST), 
+	    SELECT RES_TITLE,  dbo.FN_ATTENTLIST(a.RES_ATTENDLIST), 
 		       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00') RES_STARTTIME , 
                CONCAT(CONVERT (DATE, a.RES_STARTDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
 		       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
 		       a.RES_SEQ 
 		FROM TB_SWCRESERVATION a , TB_EMPINFO   b
-		WHERE MEETING_ID  = #{meetingId} 
+		WHERE ITEM_ID  = #{meetingId} 
               AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
               AND  RES_ENDTIME >= REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','') 
               AND a.USER_ID = b.EMPNO 

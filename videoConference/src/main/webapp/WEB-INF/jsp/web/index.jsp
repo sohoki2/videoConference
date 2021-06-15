@@ -27,6 +27,7 @@
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
+    <script src="/js/main.js"></script>
     
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>

@@ -77,8 +77,8 @@
                     <div class="float_left">
                         <h5>잔여 크레딧</h5>    
                         <div class="res">
-                        <span class="blueFont">${cominfo.tenn_info }</span>
-                        / ${cominfo.tenn_total_info }
+                        <span class="blueFont" id="sp_nowtenn">${cominfo.tenn_info }</span>
+                        /<span id="sp_totaltenn">${cominfo.tenn_total_info }</span>
                     </div>
                     </div>
                     <div class="clear"></div>
@@ -131,7 +131,7 @@
 
         <!--needpopup script-->
         
-        <script src="/front_res/js/needpopup.min.js"></script>
+        <c:import url="/web/inc/unimessage.do" />
         
         <script type="text/javascript">
 		    $( function() {
@@ -187,17 +187,29 @@
 		   										   "<a href='' onClick='fn_resCancel(&#39;"+ obj[i].res_seq+"&#39;,&#39;PROCESS_GUBUN_6&#39;)' class='cancleBtn active' data-needpopup-show='#cancle_popup'>예약취소</a>" :
 		   										   "취소완료";
 		   								  
-		   								  sHtml	+="<tr>"
-					                            +"    <td>"+a+"</td>"
-					                            +"    <td>"+obj[i].item_gubun+"</td>"
-					                            +"    <td>"+obj[i].res_title+"</td>"
-					                            +"    <td>"+obj[i].resstartday+"</td>"
-					                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"
-					                            +"    <td>"+obj[i].tenn_cnt+"</td>";
-					                            if (gubun == "res"){
-					                            	sHtml+="    <td>"+costInfo+"</td>";
-					                            }	
-					                            sHtml += "</tr>";
+	   									  if (gubun == "res"){
+	   										 sHtml	+="<tr>"
+						                            +"    <td>"+a+"</td>"
+						                            +"    <td>"+obj[i].item_gubun+"</td>"
+						                            +"    <td>"+obj[i].res_title+"</td>"
+						                            +"    <td>"+obj[i].resstartday+"</td>"
+						                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"
+						                            +"    <td>"+obj[i].tenn_cnt+"</td>"
+						                            +"    <td>"+costInfo+"</td>"
+						                            + "</tr>";
+				                          }else {
+				                        	  sHtml	+="<tr>"
+						                            +"    <td>"+a+"</td>"
+						                            +"    <td>"+obj[i].code_nm+"</td>"
+						                            +"    <td>"+obj[i].res_title+"</td>"
+						                            +"    <td>"+obj[i].res_startday+"</td>"
+						                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"
+						                            +"    <td>"+obj[i].tenn_cnt+"</td>";
+						                          
+						                            sHtml += "</tr>";
+				                          }	
+		   										
+		   								 
 		   								  a = parseInt(a)+1;
 		   							   }
 		   							   $("#tb_booking > tbody").append(sHtml);
@@ -225,48 +237,10 @@
 	        }
 	        function ajaxPageChange(pageNo) {
 	       	   $(":hidden[name=pageIndex]").val(pageNo);
+	       	   
 	           fn_bookingList();
 	   	    }
-	        function fn_resCancel(resSeq, reservProcessGubun){
-	        	
-	        	$("#resSeq").val(resSeq);
-	        	$("#reservProcessGubun").val(reservProcessGubun);
-	        	
-	        }
-	        function fn_resUpdate(){
-	        	if (any_empt_line_id("cancelCode", '취소 유형을 선택해 주세요.') == false) return;
-	        	if (any_empt_line_id("cancelReason", '취소 사유를 입력해 주세요.') == false) return;
-	        	var params = {'resSeq': $("#resSeq").val(), 'reservProcessGubun': $("#reservProcessGubun").val(), 
-	        			           'cancelCode' : $("#cancelCode").val(), 'cancelReason' : $("#cancelReason").val() };
-	        	uniAjax("/web/resUpdate.do", params, 
-	         			function(result) {
-	        			       if (result.status == "LOGIN FAIL"){
-	        			    	        alert(result.message);
-	        							location.href="/web/Login.do";
-	        					   }else if (result.status == "SUCCESS"){
-	        						    //테이블 정리 하기
-	        						    need_close();
-	        							$("#sp_message").text(result.message);
-	        							$("#btn_result").trigger("click");
-	        						    fn_bookingList();
-	        					   }
-	        			    },
-	        			    function(request){
-	        				    alert("Error:" +request.status );	       						
-	        			    }    		
-	             );
-	        }
-            needPopup.config.custom = {
-                'removerPlace': 'outside',
-                'closeOnOutside': false,
-                onShow: function() {
-                    console.log('needPopup is shown');
-                },
-                onHide: function() {
-                    console.log('needPopup is hidden');
-                }
-            };
-            needPopup.init();
+	        
         </script>
 </form:form>
 </body>
