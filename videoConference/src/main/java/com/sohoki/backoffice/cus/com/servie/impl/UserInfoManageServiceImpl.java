@@ -141,4 +141,10 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		return userMapper.selectUserLogin(params);
 	}
 
+	@Override
+	public int updatePasswordChange(UserInfo vo) throws Exception {
+		// TODO Auto-generated method stub
+		return userMapper.updatePasswordChange(vo);
+	}
+
 }

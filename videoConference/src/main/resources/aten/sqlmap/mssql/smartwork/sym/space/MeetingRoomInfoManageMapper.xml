@@ -73,7 +73,7 @@
 		        a.MEETING_ID, a.MEETING_NAME, a.MEETINGROOM_REMARK, a.CENTER_ID, a.MEETING_USEYN,
 		        b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID,
 		        dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT, ISNULL(a.MEETINGROOM_REMARK, '') MEETINGROOM_REMARK, 
-		        ISNULL(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN,   ISNULL(a.RES_REQDAY, '0') RES_REQDAY
+		        ISNULL(a.MEETING_EQUPGUBUN, '')  MEETING_EQUPGUBUN,   ISNULL(a.RES_REQDAY, '0') RES_REQDAY,
 		FROM 	TB_MEETING_ROOM a , TB_CENTERINFO b, TB_FLOORINFO c
 		WHERE a.CENTER_ID = b.CENTER_ID 
 		      AND a.FLOOR_SEQ = c.FLOOR_SEQ
@@ -161,6 +161,7 @@
    <!-- selectSeatManageView -->
    <select id="selectMeetingRoomDetailInfoManage" resultType="lmap">
 	     SELECT	a.MEETING_ID , a.CENTER_ID, a.PART_SEQ, a.FLOOR_SEQ, b.CENTER_NM, a.MEETING_NAME, a.AVAYA_CONFI_ID
+	            , a.MEETING_IMG3, a.MEETING_FILE01, a.MEETING_FILE02
 				, a.MEETINGROOM_REMARK, a.MAX_CNT, a.ROOM_TYPE, a.MEETING_USEYN, a.MEETING_MAINVIEW
 				, a.AVAYA_CONFI_ID, a.AVAYA_ROOMCODE   
 				, a.MEETING_IMG1, a.MEETING_IMG2
@@ -237,23 +238,25 @@
          
 	      INSERT INTO TB_MEETING_ROOM(MEETING_ID, MEETING_NAME,  CENTER_ID, FLOOR_SEQ, PART_SEQ, ROOM_TYPE, MAX_CNT, MEETING_USEYN, MEETING_EQUPGUBUN,
 	                                  REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID, AVAYA_CONFI_ID, 
-	                                  MEETING_IMG1, MEETING_IMG2, 
+	                                  MEETING_IMG1, MEETING_IMG2,  MEETING_IMG3, 
 	                                  MEETINGROOM_REMARK, MEETING_CONFIRMGUBUN, MEETING_ADMINID,
 	                                  AVAYA_USERID, TERMINAL_ID, END_NAME, TERMINAL_NUMBER, TERMINAL_TEL,
 	                                  USER_FIRST_NM, USER_LAST_NM, USER_EMAIL, MEETING_VIEW, MEETING_ORDER, 
 	                                  MAIL_SENDCHECK, SMS_SENDCHECK, MEETING_MAINVIEW,
 	                                  RES_MESSAGE_MAIL, RES_MESSAGE_SMS, CAN_MESSAGE_MAIL, CAN_MESSAGE_SMS,
-	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, RES_REQDAY
+	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, RES_REQDAY,
+	                                  MEETING_FILE01, MEETING_FILE02
 	                               )
 	      VALUES (#{meetingId}, #{meetingName}, #{centerId}, #{floorSeq}, #{partSeq}, #{roomType}, #{maxCnt}, #{meetingUseyn}, #{meetingEqupgubun,jdbcType=VARCHAR }
 			      , GETDATE(), #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
-			      , #{meetingImg1, jdbcType=VARCHAR}, #{meetingImg2, jdbcType=VARCHAR}
+			      , #{meetingImg1, jdbcType=VARCHAR}, #{meetingImg2, jdbcType=VARCHAR}, #{meetingImg3, jdbcType=VARCHAR}
 			      , #{meetingroomRemark, jdbcType=VARCHAR}, #{meetingConfirmgubun, jdbcType=VARCHAR}, #{meetingAdminid, jdbcType=VARCHAR}
 			      , #{avayaUserid, jdbcType=VARCHAR}, #{terminalId, jdbcType=VARCHAR}, #{endName, jdbcType=VARCHAR}, #{terminalNumber, jdbcType=VARCHAR} , #{terminalTel, jdbcType=VARCHAR}
 			      , #{userFirstNm, jdbcType=VARCHAR}, #{userLastNm, jdbcType=VARCHAR} , #{userEmail, jdbcType=VARCHAR}, #{meetingView, jdbcType=VARCHAR}, #{meetingOrder, jdbcType=VARCHAR}
 			      , #{mailSendcheck, jdbcType=VARCHAR}, #{smsSendcheck, jdbcType=VARCHAR}, #{meetingMainview, jdbcType=VARCHAR}
 			      , #{resMessageMail, jdbcType=VARCHAR}, #{resMessageSms, jdbcType=VARCHAR}, #{canMessageMail, jdbcType=VARCHAR}, #{canMessageSms, jdbcType=VARCHAR}
 	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}, #{resReqday, jdbcType=VARCHAR}
+	              , #{meetingFile01, jdbcType=VARCHAR} , #{meetingFile02, jdbcType=VARCHAR} 
 	      );
 	      UPDATE TB_FLOORINFO SET MEET_CNT = MEET_CNT + 1
 		  WHERE FLOOR_SEQ = #{floorSeq};
@@ -270,6 +273,8 @@
                                     , TERMINAL_NUMBER  = #{terminalNumber, jdbcType=VARCHAR}   
          WHERE AVAYA_USERID  = #{avayaUserid}
    </update>
+   
+   
    <update id="updateMeetingRoomManage">
 	      UPDATE TB_MEETING_ROOM SET MEETING_NAME = #{meetingName}
 		                             , CENTER_ID = #{centerId}
@@ -287,6 +292,15 @@
 									 </if>
 									 <if test="meetingImg2 != ''">
 									 ,MEETING_IMG2 = #{meetingImg2}
+									 </if>
+									 <if test="meetingImg3 != ''">
+									 ,MEETING_IMG3 = #{meetingImg3}
+									 </if>
+									 <if test="meetingFile01 != ''">
+									 ,MEETING_FILE01 = #{meetingFile01}
+									 </if>
+									 <if test="meetingFile02 != ''">
+									 ,MEETING_FILE02 = #{meetingFile02}
 									 </if>
 									 , MEETINGROOM_REMARK =  #{meetingroomRemark, jdbcType=VARCHAR}
 									 , MEETING_CONFIRMGUBUN  = #{meetingConfirmgubun, jdbcType=VARCHAR}

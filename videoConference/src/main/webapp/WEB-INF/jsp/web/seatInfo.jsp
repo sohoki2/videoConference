@@ -188,7 +188,7 @@
      <c:import url="/web/inc/unimessage.do" />
      <script>  
          $( function() {
-	       	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
+        	 $("#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
 	       	 res.fn_seatTimeCombo();
 	     });
          var res = {
@@ -247,10 +247,9 @@
     		        );
         		}, fn_seatTimeCombo : function(){
         			if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
-        			
-        			
         			var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': '0'};
        	       	    fn_swcTimeUni(params, "SWC_GUBUN_4", 0, "res.fn_floorInfo");
+       	       	    
         		}, fn_openTime : function(seat_id, classinfo, seatGubun, seat_name,seat_confirmgubun, res_reqday){
         			res.fn_reset();
         			$("#itemId").val(seat_id);
@@ -258,7 +257,8 @@
     				$("#seatConfirmgubun").val(seat_confirmgubun);
     				$("#resReqday").val(res_reqday);
     				$("#sp_seatNm").text(seat_name);
-        			if (seatGubun == "SEAT_GUBUN_2" && classinfo == "seatUse") {
+    				$("#resStartday").val($("#searchResStartday").val());
+    				if (seatGubun == "SEAT_GUBUN_2" && classinfo == "seatUse") {
         				//스마트워크 좌석 예약
         				$("#btn_other").show();
         				$("#sp_resDay").text($("#searchResStartday").val());
@@ -320,7 +320,7 @@
         		}, reserve_meeting : function (){
         			//우축 메뉴 클릭으로 해서 예약 하기 
         			$("#p_seatNm").text($("#sp_seatNm").text());
-    				$("#sp_resDay").text($("#searchResStartday").val());
+    				$("#sp_resDay").text($("#resStartday").val());
     				var checkItem = checkbox_val("체크된 값이 없습니다", "show_time");
     				if (checkItem != false){
     					const tempToArray = checkItem.split(',')

@@ -151,16 +151,23 @@
 							<p>Business area</p>
 							<div class="btn_bot">
 								<a href="javascript:search()" class="defaultBtn">검색</a>
-								<a href="" class="defaultBtn">초기화</a>
+								<!-- <a href="" class="defaultBtn">초기화</a> -->
 							</div>
 						</div>
 						<table class="search_tab">
 							<tbody>
 								<tr>
 									<th>층</th>
-									<td><select class="" id="floor_id" name="floor_id"></select></td>
+									<td><select class="" id="searchfloorId" name="searchfloorId" onChange="fn_partInfo()">
+									        <option value="">검색 층수</option>
+					                        <c:forEach items="${floorListSeq}" var="floorList">
+					                            <option value="${floorList.floor_seq}">${floorList.floor_name}</option>
+					                        </c:forEach>
+									     
+									    </select>
+									</td>
 									<th>구역</th>
-									<td><select class="" id="area_id" name="area_id"></select></td>
+									<td><select class="" id="area_id" name="area_id" style="display:none"></select></td>
 								</tr>
 							</tbody>
 						</table>
@@ -708,6 +715,7 @@
 	       		  //좌석 설정 
 	       		  $("#viewMode").val(mode);
 	       		  $("#floorSeq").val(floorSeq);
+	       		  $("#searchfloorId").val(floorSeq);
 	       		  if (partSeq != "0")
 	       			  $("#partSeq").val(partSeq);  
 	       		     // 좌석 등록 되어 있는지 아닌지 
@@ -958,6 +966,11 @@
    
  <script type="text/javascript">
      var menuRight = document.getElementById('cbp-spmenu-s2')
+     
+     function fn_partInfo(){
+    	 //구역 확인 한 다음 있는지 처리 
+    	 
+     }
      function fn_GuiSearch(){
     	  var url = "";
     	  var title = "";
@@ -983,84 +996,84 @@
 					    	        location.href="/backoffice/login.do";
 							   }else if (result.status == "SUCCESS"){
 								    //테이블 정리 하기
- 								 if(result.seatMapInfo != null){
- 									var img=   $("#partSeq").val() != "" ? result.seatMapInfo.part_map1 : result.seatMapInfo.floor_map;
+								    if(result.seatMapInfo != null){
+	 									var img=   $("#partSeq").val() != "" ? result.seatMapInfo.part_map1 : result.seatMapInfo.floor_map;
+	 									$('.mapArea').css({"background":"#fff url(/upload/"+img+")", 'background-repeat' : 'no-repeat', 'background-position':' center'});
+	 								}else{
+	 									$('.mapArea').css({"background":"#fff url()", 'background-repeat' : 'no-repeat', 'background-position':' center'});
+	 								}
  								
- 									$('.mapArea').css({"background":"#fff url(/upload/"+img+")", 'background-repeat' : 'no-repeat', 'background-position':' center'});
- 								 }else{
- 									$('.mapArea').css({"background":"#fff url()", 'background-repeat' : 'no-repeat', 'background-position':' center'});
- 								 }
- 								
- 								 if(result.resultlist.length > 0){
- 									var shtml = '';
- 									var obj = result.resultlist;
- 									
- 									if ($("#viewMode").val() == "S" ){
- 										for (var i in result.resultlist) {
- 	 										shtml += '<li id="s'+CommonJsUtil.NVL(obj[i].seat_name) +'" class="seat" seat-id="'+ obj[i].seat_id +'" name="'+obj[i].seat_id +'" >'+ CommonJsUtil.NVL(obj[i].seat_name) +'</li>';
- 	 									}
- 	 									$('#seat_list').html(shtml);
- 	 									for (var i in result.resultlist) {
- 	 										$('.mapArea ul li#s' + CommonJsUtil.NVL(obj[i].seat_name) ).css({"top" : CommonJsUtil.NVL(obj[i].seat_top)+"px", "left" : CommonJsUtil.NVL(obj[i].seat_left)+"px"});
- 	 									}
- 	 									$('.seat').dragmove();
- 	 									$("#seat_resultList > tbody").empty();
- 	 									if(result.resultlist.length > 0 ){
- 	 										var obj = result.resultlist;
- 	 										var shtml = "";
- 				  							for ( var i in obj) {
- 				  								shtml += "<tr>"
- 				  								      +  "   <td>"  + obj[i].seat_name +""
- 				  								      +  "   <input type='hidden' id='seat_id' name='seat_id' value='"+ obj[i].seat_id + "'></td>"
- 				  								      +  "   <td><a href='javascript:top_up(&#34;" + obj[i].seat_id + "&#34;)' class='up'></a>"
- 				  								      +  "   <input type='text' id='top_"+obj[i].seat_id+"' name='top_"+obj[i].seat_id+"' value='"+obj[i].seat_top +"' onchange='top_chage(&#34;"+obj[i].seat_id +"&#34;, this.value)'>"
- 				  								      +  "   <a href='javascript:top_down(&#34;" + obj[i].seat_id + "&#34;)' class='down'></a></td>"
- 				  								      +  "   <td><a href='javascript:left_up(&#34;" + obj[i].seat_id + "&#34;)' class='leftB'></a>"
- 				  								      +  "   <input type='text' id='left_"+obj[i].seat_id+"' name='left_"+obj[i].seat_id+"' value='"+ obj[i].seat_left +"' onchange='left_chage(&#34;"+obj[i].seat_id+"&#34, this.value)'>"
- 				  								      +  "   <a href='javascript:left_down(&#34;" + obj[i].seat_id  + "&#34;)' class='rightB'></a></td>"
- 				  								      +  "</tr>";
- 				  								$("#seat_resultList > tbody").append(shtml);
- 				  								shtml = "";
- 				  							}
- 				  							
- 			  						    }
- 									}else {
- 										for (var i in result.resultlist) {
- 	 										shtml += '<li id="s'+CommonJsUtil.NVL(obj[i].meeting_name) +'" class="seat" seat-id="'+ obj[i].meeting_id +'" name="'+obj[i].meeting_id +'" >'+ CommonJsUtil.NVL(obj[i].meeting_name) +'</li>';
- 	 									}
- 	 									$('#seat_list').html(shtml);
- 	 									for (var i in result.resultlist) {
- 	 										$('.mapArea ul li#s' + CommonJsUtil.NVL(obj[i].meeting_name) ).css({"top" : CommonJsUtil.NVL(obj[i].meeting_top)+"px", "left" : CommonJsUtil.NVL(obj[i].meeting_left)+"px"});
- 	 									}
- 	 									$('.seat').dragmove();
- 	 									$("#seat_resultList > tbody").empty();
- 	 									if(result.resultlist.length > 0 ){
- 	 										var obj = result.resultlist;
- 	 										var shtml = "";
- 				  							for ( var i in obj) {
- 				  								shtml += "<tr>"
- 				  								      +  "   <td>"  + obj[i].meeting_name +""
- 				  								      +  "   <input type='hidden' id='seat_id' name='seat_id' value='"+ obj[i].meeting_id + "'></td>"
- 				  								      +  "   <td><a href='javascript:top_up(&#34;" + obj[i].meeting_id + "&#34;)' class='up'></a>"
- 				  								      +  "   <input type='text' id='top_"+obj[i].meeting_id+"' name='top_"+obj[i].meeting_id+"' value='"+obj[i].meeting_top +"' onchange='top_chage(&#34;"+obj[i].meeting_id +"&#34;, this.value)'>"
- 				  								      +  "   <a href='javascript:top_down(&#34;" + obj[i].meeting_id + "&#34;)' class='down'></a></td>"
- 				  								      +  "   <td><a href='javascript:left_up(&#34;" + obj[i].meeting_id + "&#34;)' class='leftB'></a>"
- 				  								      +  "   <input type='text' id='left_"+obj[i].meeting_id+"' name='left_"+obj[i].meeting_id+"' value='"+ obj[i].meeting_left +"' onchange='left_chage(&#34;"+obj[i].meeting_id+"&#34, this.value)'>"
- 				  								      +  "   <a href='javascript:left_down(&#34;" + obj[i].meeting_id  + "&#34;)' class='rightB'></a></td>"
- 				  								      +  "</tr>";
- 				  								$("#seat_resultList > tbody").append(shtml);
- 				  								shtml = "";
- 				  							}
- 				  							
- 			  						    }
- 									}
- 									
- 								}else{
- 									$('#seat_list').html('');""
- 								}
-							   }else {
-								    alert(result.message);
-							   }
+	 								if(result.resultlist.length > 0){
+	 									var shtml = '';
+	 									var obj = result.resultlist;
+	 									
+	 									if ($("#viewMode").val() == "S" ){
+	 										for (var i in result.resultlist) {
+	 	 										shtml += '<li id="s'+trim(CommonJsUtil.NVL(obj[i].seat_name)) +'" class="seat" seat-id="'+ obj[i].seat_id +'" name="'+obj[i].seat_id +'" >'+ CommonJsUtil.NVL(obj[i].seat_name) +'</li>';
+	 	 									}
+	 	 									$('#seat_list').html(shtml);
+	 	 									for (var i in result.resultlist) {
+	 	 										$('.mapArea ul li#s' + trim(CommonJsUtil.NVL(obj[i].seat_name))).css({"top" : CommonJsUtil.NVL(obj[i].seat_top)+"px", "left" : CommonJsUtil.NVL(obj[i].seat_left)+"px"});
+	 	 									}
+	 	 									$('.seat').dragmove();
+	 	 									$("#seat_resultList > tbody").empty();
+	 	 									if(result.resultlist.length > 0 ){
+	 	 										var obj = result.resultlist;
+	 	 										var shtml = "";
+	 				  							for ( var i in obj) {
+	 				  								shtml += "<tr>"
+	 				  								      +  "   <td>"  + obj[i].seat_name +""
+	 				  								      +  "   <input type='hidden' id='seat_id' name='seat_id' value='"+ obj[i].seat_id + "'></td>"
+	 				  								      +  "   <td><a href='javascript:top_up(&#34;" + obj[i].seat_id + "&#34;)' class='up'></a>"
+	 				  								      +  "   <input type='text' id='top_"+obj[i].seat_id+"' name='top_"+obj[i].seat_id+"' value='"+obj[i].seat_top +"' onchange='top_chage(&#34;"+obj[i].seat_id +"&#34;, this.value)'>"
+	 				  								      +  "   <a href='javascript:top_down(&#34;" + obj[i].seat_id + "&#34;)' class='down'></a></td>"
+	 				  								      +  "   <td><a href='javascript:left_up(&#34;" + obj[i].seat_id + "&#34;)' class='leftB'></a>"
+	 				  								      +  "   <input type='text' id='left_"+obj[i].seat_id+"' name='left_"+obj[i].seat_id+"' value='"+ obj[i].seat_left +"' onchange='left_chage(&#34;"+obj[i].seat_id+"&#34, this.value)'>"
+	 				  								      +  "   <a href='javascript:left_down(&#34;" + obj[i].seat_id  + "&#34;)' class='rightB'></a></td>"
+	 				  								      +  "</tr>";
+	 				  								$("#seat_resultList > tbody").append(shtml);
+	 				  								shtml = "";
+	 				  							}
+	 				  							
+	 			  						    }
+	 									}else {
+	 										for (var i in result.resultlist) {
+	 	 										shtml += '<li id="s'+ trim(CommonJsUtil.NVL(obj[i].meeting_name)) +'" class="seat" seat-id="'+ obj[i].meeting_id +'" name="'+obj[i].meeting_id +'" >'+ CommonJsUtil.NVL(obj[i].meeting_name) +'</li>';
+	 	 									}
+	 	 									$('#seat_list').html(shtml);
+	 	 									for (var i in result.resultlist) {
+	 	 										$('.mapArea ul li#s' + trim(CommonJsUtil.NVL(obj[i].meeting_name))).css({"top" : CommonJsUtil.NVL(obj[i].meeting_top)+"px", "left" : CommonJsUtil.NVL(obj[i].meeting_left)+"px"});
+	 	 									}
+	 	 									$('.seat').dragmove();
+	 	 									$("#seat_resultList > tbody").empty();
+	 	 									if(result.resultlist.length > 0 ){
+	 	 										var obj = result.resultlist;
+	 	 										var shtml = "";
+	 				  							for ( var i in obj) {
+	 				  								shtml += "<tr>"
+	 				  								      +  "   <td>"  + obj[i].meeting_name +""
+	 				  								      +  "   <input type='hidden' id='seat_id' name='seat_id' value='"+ obj[i].meeting_id + "'></td>"
+	 				  								      +  "   <td><a href='javascript:top_up(&#34;" + obj[i].meeting_id + "&#34;)' class='up'></a>"
+	 				  								      +  "   <input type='text' id='top_"+obj[i].meeting_id+"' name='top_"+obj[i].meeting_id+"' value='"+obj[i].meeting_top +"' onchange='top_chage(&#34;"+obj[i].meeting_id +"&#34;, this.value)'>"
+	 				  								      +  "   <a href='javascript:top_down(&#34;" + obj[i].meeting_id + "&#34;)' class='down'></a></td>"
+	 				  								      +  "   <td><a href='javascript:left_up(&#34;" + obj[i].meeting_id + "&#34;)' class='leftB'></a>"
+	 				  								      +  "   <input type='text' id='left_"+obj[i].meeting_id+"' name='left_"+obj[i].meeting_id+"' value='"+ obj[i].meeting_left +"' onchange='left_chage(&#34;"+obj[i].meeting_id+"&#34, this.value)'>"
+	 				  								      +  "   <a href='javascript:left_down(&#34;" + obj[i].meeting_id  + "&#34;)' class='rightB'></a></td>"
+	 				  								      +  "</tr>";
+	 				  								
+	 				  								$("#seat_resultList > tbody").append(shtml);
+	 				  								shtml = "";
+	 				  							}
+	 				  							
+	 			  						    }
+	 									}
+	 									
+	 								}else{
+	 									$('#seat_list').html('');""
+	 								}
+								   }else {
+									    alert(result.message);
+								   }
 					    },
 					    function(request){
 						    alert("Error:" +request.status );	       						

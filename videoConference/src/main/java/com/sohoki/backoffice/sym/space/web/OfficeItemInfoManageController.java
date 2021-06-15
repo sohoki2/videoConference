@@ -366,8 +366,8 @@ public class OfficeItemInfoManageController {
 		    paginationInfo.setTotalRecordCount(totCnt);
 		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 		    //지도 이미지 
-		    if (searchVO.get("floorSeq") != null ) {
-		    	 Map<String, Object> mapInfo = searchVO.get("partSeq") != null ? floorService.selectFloorInfoManageDetail(searchVO.get("floorSeq").toString()) : partService.selectFloorPartInfoManageDetail(searchVO.get("partSeq").toString());
+		    if (searchVO.get("searchFloorSeq") != null ) {
+		    	 Map<String, Object> mapInfo = searchVO.get("searchPartSeq") != null ? floorService.selectFloorInfoManageDetail(searchVO.get("searchFloorSeq").toString()) : partService.selectFloorPartInfoManageDetail(searchVO.get("searchPartSeq").toString());
 		    	 model.addObject("seatMapInfo", mapInfo);
 		    }
 		    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -426,7 +426,9 @@ public class OfficeItemInfoManageController {
 			
 			vo.setMeetingImg1( uploadFile.uploadFileNm(mRequest.getFiles("meetingImg1"), propertiesService.getString("Globals.filePath")));
 			vo.setMeetingImg2( uploadFile.uploadFileNm(mRequest.getFiles("meetingImg2"), propertiesService.getString("Globals.filePath")));
-			
+			vo.setMeetingImg3( uploadFile.uploadFileNm(mRequest.getFiles("meetingImg3"), propertiesService.getString("Globals.filePath")));
+			vo.setMeetingFile01( uploadFile.uploadFileNm(mRequest.getFiles("meetingFile1"), propertiesService.getString("Globals.filePath")));
+			vo.setMeetingFile02( uploadFile.uploadFileNm(mRequest.getFiles("meetingFile2"), propertiesService.getString("Globals.filePath")));
 			
 			model.addObject(Globals.STATUS_REGINFO , vo);
 			String meesage = vo.getMode().equals("Ins") ? "sucess.common.insert" : "sucess.common.update" ;

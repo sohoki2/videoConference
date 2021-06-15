@@ -480,7 +480,7 @@ var CommonAjax = {
 			        contentType : "application/json; charset=utf-8",
 			        data : _data
 			    }).done(done_callback).fail(fail_callback);
-    return jxFax;
+        return jxFax;
 	}
 }
 
@@ -699,7 +699,7 @@ function jqGridCheckValue(){
 function fn_userSearch(){
     var url = ($("#searchUserGubun").val() === "G") ? "/backoffice/orgManage/empListAjax.do" : "/backoffice/companyManage/userListAjax.do";
     if (any_empt_line_id("searchUserKeyword", "검색어를 입력해 주세요.") == false) return;
-    var params = {"searchCondition" : "empname", "searchKeyword" : $("#searchUserKeyword").val()};
+    var params = {"searchKeyword" : $("#searchUserKeyword").val()};
     uniAjax(url, params, 
 		      			function(result) {
 		 				       if (result.status == "LOGIN FAIL"){
@@ -712,21 +712,13 @@ function fn_userSearch(){
 		   						   if (obj.length > 0){
 		   						      var html = "";
 		   						      for (var i in obj){
-		   						          if ($("#searchUserGubun").val() === "G"){
-		   						             html  = "<tr onClick='fn_useChoice(\"G\", \""+ obj[i].empno +"\", \""+ obj[i].empname +"\")'>"
-		   						                   + "   <td>" + obj[i].com_name + "</td>"
-		   						                   + "   <td>" + obj[i].empno + "</td>"
-		   						                   + "   <td>" + obj[i].empname + "</td>"
-		   						                   + "   <td>" + obj[i].emptelphone + "</td>"
-		   						                   + " </tr>";
-		   						          }else {
-		   						             html  = "<tr onClick='fn_useChoice(\"C\", \""+ obj[i].user_no +"\", \""+ obj[i].user_name +"\")'>"
-		   						                   + "  <td>" + obj[i].com_name + "</td>"
-		   						                   + "  <td>" + obj[i].user_no + "</td>"
-		   						                   + "  <td>" + obj[i].user_name + "</td>"
-		   						                   + "  <td>" + obj[i].user_cellphone + "</td>"
-		   						                   + "</tr>";
-		   						          }
+		   						          
+	   						              html  = "<tr onClick='fn_useChoice(\""+$("#searchUserGubun").val()+"\", \""+ obj[i].empno +"\", \""+ obj[i].empname +"\")'>"
+	   						                    + "   <td>" + obj[i].com_name + "</td>"
+	   						                    + "   <td>" + obj[i].empno + "</td>"
+	   						                    + "   <td>" + obj[i].empname + "</td>"
+	   						                    + "   <td>" + obj[i].emptelphone + "</td>"
+	   						                    + " </tr>";		   						          
 		   						          $("#tb_userInfo > tbody").append(html);
 		   						          html = "";
 		   						      }
@@ -1221,8 +1213,10 @@ var regex2 = /^(?:(\d{4})(\d{2})(\d{2}))|^(?:(\d{2})(\d{2})(\d{2}))/g;
    alert("값이 형식에 맞지 않습니다.");
    return false;
   }
- }
-
+}
+function need_close(){
+     	needPopup.hide();
+}
 function resetForm(f){
 	$el = $(f);
 	$('input:text', $el).val('');

@@ -28,6 +28,7 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.org.vo.OrgInfo;
 import com.sohoki.backoffice.cus.org.vo.SwcInfo;
+import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import com.sohoki.backoffice.uat.uia.vo.AdminInfo;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
@@ -72,7 +73,8 @@ public class EmpInfoManageController {
 		@Autowired
 		private UniSelectInfoManageService  uniService;
 		
-		
+		@Autowired
+		private EgovCcmCmmnDetailCodeManageService cmmnDetailService;
 		
 		@RequestMapping(value="empSearchList.do")
 		public ModelAndView  selectEmpinfoSearchList(@ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
@@ -91,7 +93,9 @@ public class EmpInfoManageController {
 			
 			model.addObject(Globals.STATUS_REGINFO , info);
 			
-			
+			model.addObject("empstate", cmmnDetailService.selectCmmnDetailCombo("USER_STATE"));
+			model.addObject("preworkstate", cmmnDetailService.selectCmmnDetailCombo("WORK_INFO"));
+			model.addObject("nowworkstate", cmmnDetailService.selectCmmnDetailCombo("WORK_INFO"));
 			return model;
 		}
 		@RequestMapping(value="empDetail.do")
@@ -118,7 +122,6 @@ public class EmpInfoManageController {
 			  
 			
 			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-			
 			try {
 				
 				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -154,9 +157,9 @@ public class EmpInfoManageController {
 				int totCnt = list.size() > 0 ?  Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
 				
 				model.addObject(Globals.JSON_RETURN_RESULTLISR,  list );
-				model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 			    model.addObject(Globals.PAGE_TOTALCNT, totCnt);
-			      
+			    paginationInfo.setTotalRecordCount(totCnt);
+			    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 	           
 			}catch(Exception e) {

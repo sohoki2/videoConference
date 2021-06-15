@@ -201,8 +201,31 @@ public class frontResInfoManageController {
 		try {
 			
 			vo.setComCode("C_00000004");
-			vo.setUserNo(vo.getUserId());
 			vo.setUserState("USER_STATE_1");
+			int ret = userService.updateUserInfoManage(vo);
+			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
+			if (ret >0){
+				model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE, message);
+			}else {
+				throw new Exception();
+			}
+		}catch(Exception e) {
+			LOGGER.debug("actionJoinProcess error:"  + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
+		}
+    	return model;	
+    }
+	@RequestMapping(value="passChange.do")
+	public ModelAndView userPassChange(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+		                              , @RequestBody UserInfo vo
+		    		                  , HttpServletRequest request
+		    		                  , BindingResult bindingResult) throws Exception {
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			
+			
 			int ret = userService.updateUserInfoManage(vo);
 			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
 			if (ret >0){
@@ -315,8 +338,10 @@ public class frontResInfoManageController {
 		  		params.put("centerId", "C21052601");
 	  		params.put("authorCode", empInfoVO.getAuthorCode());
 	  		params.put("comCode", empInfoVO.getComCode());
+	  		params.put("searchResStartday", util.reqDay(0));
 	  		
-	  		LOGGER.debug("centerId" +  params.get("centerId"));
+	  		//오늘날짜
+	  		LOGGER.debug("centerId" +  params.get("centerId") + params.get("searchResStartday"));
 			model.addObject(Globals.JSON_RETURN_RESULTLISR, resService.selectIndexList(params));
 			model.addObject(Globals.JSON_RETURN_RESULT,  params);
 		  	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -350,6 +375,9 @@ public class frontResInfoManageController {
 			  	params.put("searchFloor", "MEETING");
 			  	params.put("authorCode", empInfoVO.getAuthorCode());
 			  	params.put("comCode", empInfoVO.getComCode());
+			  	
+			  	reginfo.put("itemGubun", "ITEM_GUBUN_1");
+			  	reginfo.put("searchRoomType", "SWC_GUBUN_1");
 			  	
 			  	List<Map<String,Object>> floorList = floorService.selectFloorInfoManageListByPagination(params);
 			  	if (floorList.size() > 0) {
@@ -525,18 +553,14 @@ public class frontResInfoManageController {
 			}else {
 				
 				//좌석 일반 공용으로 쓸려고 만듬 
-				LOGGER.debug("resStartDay:" + searchVO.getResStartday());
 				String resStartDay = util.NVL(searchVO.getResStartday(), util.reqDay(0)) ;
-				LOGGER.debug("resStartDay:" + resStartDay);
-				
 				String nowData  = resStartDay.equals( util.reqDay(0)) ?  LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"))  : "0800";
 				searchVO.setResStarttime(util.NVL(searchVO.getResStarttime(), nowData));
-						          
 				
 				
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("code", "SWC_TIME");
-				params.put("nowData", nowData);
+				params.put("nowData", searchVO.getResStarttime());
 				
 				
 				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
@@ -1222,6 +1246,10 @@ public class frontResInfoManageController {
 			  		params.put("centerId", "C21052601");
 			  	HashMap<String, Object> reginfo = new HashMap<String, Object>();
 			  	reginfo.put("centerId", params.get("centerId").toString());
+			  	//추후 변경 예정 
+			  	reginfo.put("itemGubun", "ITEM_GUBUN_3");
+			  	reginfo.put("searchRoomType", "SWC_GUBUN_3");
+			  	
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	params.put("searchFloor", "CORN");
 			  	//권한 설정 

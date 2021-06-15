@@ -267,7 +267,7 @@
     							    	 alert(result.message);
     			  						 location.href="/backoffice/login.do";
     			  					   }else if (result.status == "SUCCESS"){
-    			  						 alert(result.message);
+    			  						 need_close();
     			  						 jqGridFunc.fn_search();
     			  					   }else {
     			  						 alert(result.message);
@@ -416,7 +416,7 @@
         <!-- pop contents-->   
         <div class="popCon">
             <!--// 팝업 필드박스-->
-             <table class="pop_table thStyle" id="tb_managerInfo">
+            <table class="pop_table thStyle" id="tb_managerInfo">
                 <tbody>
                     <tr>
                         <th><span class="redText">*</span>아이디</th>

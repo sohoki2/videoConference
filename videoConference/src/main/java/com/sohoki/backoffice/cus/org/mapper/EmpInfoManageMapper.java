@@ -24,5 +24,7 @@ public interface EmpInfoManageMapper {
 	
 	public int updateAvayaUserUpdate(EmpInfoVO vo);
 	
+	public int updateEmpinfoWorkTimeChange(EmpInfoVO vo);
+	
 	public int deleteEaiEmpTmp();
 }

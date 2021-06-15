@@ -24,6 +24,7 @@ public class MeetingRoomInfo {
 	private String meetingOrder = "";
 	private String meetingImg1 = "";
 	private String meetingImg2 = "";
+	private String meetingImg3 = "";
 	private String terminalNumber = "";
 	private String terminalId = "";
 	private String terminalTel = "";
@@ -52,4 +53,7 @@ public class MeetingRoomInfo {
 	private String meetingTop = "";
 	private String meetingLeft = "";
 	private String resReqday = "";
+	//첨부 파일 확인 
+	private String meetingFile01 = "";
+	private String meetingFile02 = "";
 }

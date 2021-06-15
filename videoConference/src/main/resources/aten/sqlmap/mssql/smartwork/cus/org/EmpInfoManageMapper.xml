@@ -7,22 +7,40 @@
 			    	 SELECT	SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT,
 			    	        ROW_NUMBER() OVER (ORDER BY TB.EMPNAME DESC) AS RNUM, 
 			    	        TB.EMPID, TB.EMPNO, TB.EMPNAME, TB.DEPTNAME, TB.DEPTCODE, TB.EMPGRAD, TB.EMPGRADCODE, TB.EMPJIKW, TB.EMPJIKWCODE,
-                            TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN
+                            TB.EMPHANDPHONE, TB.EMPTELPHONE, TB.EMPMAIL, TB.ADMIN_GUBUN,
+                            TB.EMP_STATE, TB.PRE_WORKINFO, TB.NOW_WORKINFO, TB.COM_NAME
 					  FROM		(SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE, a.EMPJIKW, a.EMPJIKWCODE,
-                                        a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN
-						         FROM   TB_EMPINFO a 
+                                        a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.ADMIN_GUBUN, 
+                                        dbo.FN_DETAILCODENM(a.EMP_STATE) EMP_STATE,
+                                        dbo.FN_DETAILCODENM(a.PRE_WORKINFO) PRE_WORKINFO,
+                                        dbo.FN_DETAILCODENM(a.NOW_WORKINFO) NOW_WORKINFO,
+                                        b.COM_TITLE AS COM_NAME
+                                        
+						         FROM   TB_EMPINFO a , TB_SWCINFO b
+						         
 								 WHERE  AUTHOR_CODE != 'ROLE_USER'
 					                   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 										  <choose>
 										    <when test="params.searchCondition == 'empname'">
 											    <![CDATA[
-											      AND ( a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
-											            OR a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
-											           )
+											      AND  a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											     ]]> 
+											</when>	
+											<when test="params.searchCondition == 'empid'">
+											    <![CDATA[
+											      AND  a.EMPID LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											     ]]> 
+											</when>	
+											<when test="params.searchCondition == 'empno'">
+											    <![CDATA[
+											      AND  a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
 											     ]]> 
 											</when>							
 											<otherwise>
-											      AND a.DEPTNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											      AND (a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											           OR a.EMPID LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											           OR a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+											           )
 											</otherwise>
 									      </choose>
 									  </if>	
@@ -92,32 +110,34 @@
                </foreach>
     </select>
     <select id="selectEmpInfoDetail" resultType="EmpInfoVO">
-	      SELECT  a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
+	     SELECT  a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
 		          a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		          a.EMP_STATE, a.PRE_WORKINFO, a.NOW_WORKINFO,
 		          CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
 	                 (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
                   ELSE 
 	                     ''
 	              END as FLOOR_INFO
-	   	  FROM 	TB_EMPINFO a 
+	   	 FROM 	TB_EMPINFO a 
 	   	 WHERE 1=1 AND a.EMPID = #{empid}
     </select>
     <select id="selectEmpInfoDetailNo" resultType="EmpInfoVO">
 	      SELECT a.EMPID, a.EMPNO, a.EMPNAME, a.DEPTNAME, a.DEPTCODE, a.EMPGRAD, a.EMPGRADCODE,
-		         a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE, a.EMP_STATE,
+		         a.EMPJIKW, a.EMPJIKWCODE, a.EMPHANDPHONE, a.EMPTELPHONE, a.EMPMAIL, a.AUTHOR_CODE, a.COM_CODE,
+		         a.EMP_STATE, a.PRE_WORKINFO, a.NOW_WORKINFO,
 		         CASE a.AUTHOR_CODE WHEN 'ROLE_USER' THEN 
 	                 (SELECT COM_PLAY_FLOOR FROM TB_COMPANYINFO c WHERE a.COM_CODE = c.COM_CODE)
                  ELSE 
 	                     ''
 	             END as FLOOR_INFO
 	   	  FROM 	TB_EMPINFO a 
-	   	 WHERE 1=1 AND a.EMPNO = #{empno}
+	   	  WHERE 1=1 AND a.EMPNO = #{empno}
     </select>
     
     <insert id="insertEmpInfo" >
   
           <selectKey resultType="int"  keyProperty="cnt" order="BEFORE">
-                SELECT IFNULL(COUNT(EMPNO),0)  as cnt
+                SELECT ISNULL(COUNT(EMPNO),0)  as cnt
                 FROM TB_EMPINFO 
                 WHERE EMPNO = #{empno}
           </selectKey>
@@ -134,21 +154,31 @@
                                               EMPHANDPHONE = #{emphandphone},
                                               EMPTELPHONE  = #{emptelphone},
                                               EMPMAIL = #{empmail},
-                                              UPDATE_DATE =  getdate()
+                                              UPDATE_DATE =  getdate(),
+                                              EMP_STATE = #{empState ,jdbcType=VARCHAR}, 
+                                              PRE_WORKINFO = #{preWorkinfo ,jdbcType=VARCHAR}, 
+                                              NOW_WORKINFO = #{nowWorkinfo ,jdbcType=VARCHAR}
                      WHERE EMPNO = #{empno}
                 </when>
                 <otherwise>
                         INSERT INTO TB_EMPINFO(EMPID, EMPNO, EMPNAME, DEPTNAME, DEPTCODE, EMPGRAD, EMPGRADCODE,
-                                                           EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE) 
+                                               EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE
+                                               EMP_STATE, PRE_WORKINFO, NOW_WORKINFO, AUTHOR_CODE
+                                               ) 
                         VALUES(#{empid}, #{empno}, #{empname}, #{deptname}, #{deptcode}, #{empgrad}, #{empgradcode},
-                                   #{empjikw}, #{empjikwcode}, #{emphandphone}, #{emptelphone}, #{empmail} , getdate()
-                                   )
+                               #{empjikw}, #{empjikwcode}, #{emphandphone}, #{emptelphone}, #{empmail} , getdate(),
+                               #{empState ,jdbcType=VARCHAR}, #{preWorkinfo ,jdbcType=VARCHAR}, #{nowWorkinfo ,jdbcType=VARCHAR}, 'ROLE_MANAGE'
+                               )
                 </otherwise>
          </choose>
     </insert>
+    <update id="updateEmpinfoWorkTimeChange">
+         UPDATE TB_EMPINFO SET PRE_WOOKINFO = NOW_WOOKINFO, NOW_WOOKINFO = #{nowWookinfo}
+         WHERE EMPNO = #{empNo}
+    </update>
     <update id="updateAvayaUserUpdate">
          UPDATE TB_EMPINFO SET AVAYA_USERID =#{avayaUserid}
-         WHERE EMPNO = #{noEmp}
+         WHERE EMPNO = #{empNo}
     </update>
     
     <delete id="deleteEaiEmpTmp">

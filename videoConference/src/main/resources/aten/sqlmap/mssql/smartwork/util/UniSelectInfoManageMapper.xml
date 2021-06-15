@@ -29,10 +29,9 @@
     </select>
     <select id="selectFieldStatement" resultType="lmap">
         { call SP_UNISELECT(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
-                           #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
-                           #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                            #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
+                            #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
                            )
         }
-    </select>
-   
+    </select>   
 </mapper>

@@ -20,6 +20,8 @@ public interface UserInfoManageService {
 	Map<String, Object> selectUserLogin(@Param("params") Map<String, Object> params) throws Exception;
 		
 	int updateUserInfoManage(UserInfo vo) throws Exception;
+	//패스워드 변경 
+	int updatePasswordChange(UserInfo vo) throws Exception;
 	
 	int excelUpload(HttpServletRequest request) throws Exception;
 	

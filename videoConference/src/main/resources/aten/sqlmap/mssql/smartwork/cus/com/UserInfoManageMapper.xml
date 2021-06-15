@@ -149,7 +149,13 @@
                                 , UPDATE_DATE = GETDATE()
 	    WHERE EMPNO = #{userNo} ;
     </update> 
-    
+    <update id="updatePasswordChange">
+         { call sp_UserPassChange(#{userNo ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                                  , #{nowPassword ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                                  , #{newPassword ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                                  , #{Result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
+         }    
+    </update>
     <delete id="deleteUserInfoManage">
         <choose>
             <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(comCode)">

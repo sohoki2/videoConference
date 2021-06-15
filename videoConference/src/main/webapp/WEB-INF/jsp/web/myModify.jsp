@@ -43,34 +43,6 @@
 
         <div class="contents joinCon">
             <div class="joinArea">
-                <table id="tb_modify">
-                    <tbody>
-                        <tr>
-                            <th>이름</th>
-                            <td><input type="text" name="userName" id="userName" value="${userinfo.empname }">
-                            <input type="hidden" name="userId" id="userId" value="${userinfo.empid}"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>이메일</th>
-                            <td><input type="text" name="userEmail" id="userEmail" value=${userinfo.empmail }></td>
-                        </tr>
-                        <tr>
-                            <th>휴대전화</th>
-                            <td>
-                                
-                                <section>
-                                    <input type="text" name="userCellphone" id="userCellphone" placeholder="전화번호 입력" value="${userinfo.emphandphone }">
-                                    <button>인증번호 받기</button>
-                                </section>
-                                <input type="text" name="" placeholder="인증번호를 입력하세요.">
-                                <button type="button" class="darkBtn joinBtn" id="btn_passch" onClick="fn_passChange()">비밀번호 변경</button>
-                                <button type="button" class="darkBtn joinBtn" data-needpopup-show="#secession">회원탈퇴</button>
-                                <button type="button" class="modiBtn" onClick="fn_modify()">수정하기</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
                 <table  id="tb_passwd" style="width:100%">
                     <tbody>
                         <tr>
@@ -87,48 +59,48 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <a href="fn_passChange()"  class="darkBtn joinBtn" >비밀번호 변경</a>
+                                <button type="button" class="darkBtn joinBtn" id="btn_passch" onClick="fn_passChange()">비밀번호 변경</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <table id="tb_modify">
+                    <tbody>
+                        <tr>
+                            <th>이름</th>
+                            <td><input type="text" name="userName" id="userName" value="${userinfo.empname }">
+                            <input type="hidden" name="userId" id="userId" value="${userinfo.empid}"/>
+                            <input type="hidden" name="userNo" id="userNo" value="${userinfo.empno}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>이메일</th>
+                            <td><input type="text" name="userEmail" id="userEmail" value=${userinfo.empmail }></td>
+                        </tr>
+                        <tr>
+                            <th>휴대전화</th>
+                            <td>
+                                
+                                <section>
+                                    <input type="text" name="userCellphone" id="userCellphone" placeholder="전화번호 입력" value="${userinfo.emphandphone }">
+                                    <button>인증번호 받기</button>
+                                </section>
+                                <input type="text" name="" placeholder="인증번호를 입력하세요.">
+                                <button type="button" class="darkBtn joinBtn" id="btn_passch" onClick="fn_formPass()">비밀번호 변경</button>
+                                <button type="button" class="darkBtn joinBtn" data-needpopup-show="#secession">회원탈퇴</button>
+                                <button type="button" class="modiBtn" onClick="fn_modify()">수정하기</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+               
             </div>
         </div>
-        <!--//탈퇴 팝업-->
-        <div id="secession" class="needpopup">
-            <h5 class="pop_tit">회원탈퇴</h5>
-            <ul class="form">
-              <li>
-                <p>
-                                    회원 탈퇴 즉시 개인정보는 삭제 되며 기존 예약 결과 조회등이 불가능합니다
-                </p>
-              </li>
-            </ul>
-            <div class="footerBtn">
-              <button class="blueBtn" onClick="fn_secession()" data-needpopup-show="#secession_ok">확인</button>
-              <button class="grayBtn">취소</button>
-            </div>
-            <div class="clear"></div>
-        </div>
-        <!--//탈퇴 팝업-->
+       
 
-        <!--//탈퇴완료 팝업-->
-        <div id="secession_ok" class="needpopup">
-            <p>
-                회원 탈퇴가 완료 되었습니다<br/>
-                개인정보는 즉시 삭제됩니다
-            </p>
-        </div>
-        <!--//탈퇴완료 팝업-->
-
-        <!--//수정 팝업-->
-        <div id="agreeN_popup" class="needpopup">
-            <p><span id="sp_message"></span></p>
-        </div>
-        <!--//수정 팝업-->
-        <button type="button" id="btn_message" style="display:none" data-needpopup-show='#agreeN_popup'>확인1</button>
+        
         <!--//needpopup script-->
-        <script src="/front_res/js/needpopup.min.js"></script>
+        <c:import url="/web/inc/unimessage.do" />
         <script>  
 	        $( function() {
 	        	$("#tb_modify").show();
@@ -140,6 +112,7 @@
       		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
       		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
 	      		var param = {"userId" : $("#userId").val(),
+	      				     "userNo" : $("#userNo").val(),
 		     		     	 "userName" : $("#userName").val(),
 		     		     	 "userCellphone" : $("#userCellphone").val(),
 		     		     	 "userEmail" : $("#userEmail").val(),
@@ -168,12 +141,36 @@
             	
             }
             function fn_formPass(){
-            	
-            }
-            function fn_passChange(){
-            	//비밀 번호 변경 
             	$("#tb_modify").hide();
             	$("#tb_passwd").show();
+            }
+            function fn_passChange(){
+            	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
+            	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
+            	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
+            	if ( $.trim($('#newPassword1').val()) !=   $.trim($('#newPassword2').val())  ){
+      			   $("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
+         		       $("#btn_message").trigger("click");
+      			   return;
+      		    }
+            	if (confirm("변경 하시겠습니까?")== true){
+ 				   uniAjax("/web/JoinProcess.do", param, 
+ 			     			function(result) {
+ 							       if (result.status == "SUCCESS"){
+ 		                               //관련자 보여 주기 
+ 							    	   $("#sp_message").text(result.message);
+ 					   		           $("#btn_message").trigger("click");
+ 		                           }else {
+ 			  						  $("#sp_message").text(result.message);
+ 			  	    		          $("#btn_message").trigger("click");
+ 			  					   }
+ 							},
+ 							function(request){
+ 								    alert("Error:" +request.status );	       						
+ 							}    		
+ 			        );
+ 			    }
+            	 
             }
             function any_empt_line_span(frm_nm, alert_message){
 	       	     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){

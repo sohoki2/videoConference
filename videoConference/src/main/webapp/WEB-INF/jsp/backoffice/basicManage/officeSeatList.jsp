@@ -82,10 +82,11 @@
    		            },
     		        colModel :  [
 	    		 	                { label: 'seat_id', key: true, name:'seat_id',       index:'seat_id',      align:'center', hidden:true},
-	    		 	                { label: '지점명',  name:'center_nm',         index:'center_nm',        align:'left',   width:'12%'},
-	    		 	                { label: '층수',  name:'floor_name',         index:'floor_name',        align:'left',   width:'12%'},
-	    		 	                { label: '좌석명',  name:'seat_name',         index:'seat_name',        align:'left',   width:'12%'},
-	    		 	                { label: '좌석구분',  name:'code_nm',         index:'code_nm',        align:'left',   width:'12%'},
+	    		 	                { label: '지점명',  name:'center_nm',         index:'center_nm',        align:'left',   width:'10%'},
+	    		 	                { label: '층수',  name:'floor_name',         index:'floor_name',        align:'left',   width:'10%'},
+	    		 	                { label: '좌석명',  name:'seat_name',         index:'seat_name',        align:'left',   width:'10%'},
+	    		 	                { label: '좌석구분',  name:'code_nm',         index:'code_nm',        align:'left',   width:'10%'},
+	    		 	                { label: '관리자승인여부',  name:'seat_confirmgubun',   index:'seat_confirmgubun',        align:'left',   width:'10%'},
 	    		 	                { label: '비용 구분', name:'pay_classification',       index:'mail_sendcheck',      align:'center', width:'20%', 
 		    			                  sortable : false,	formatter:jqGridFunc.classinfo},
 	    			                { label: '좌석 Top', name:'seat_top',          index:'seat_top',        align:'center', width:'12%'},
@@ -182,7 +183,7 @@
            	    return rowObject.seat_fix_useryn == "Y" ? "고정석: [" +  CommonJsUtil.NVL(rowObject.user_name) + "]": "일반";
      	    },refreshGrid : function(){
      	    	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	        }, fn_delCheck  : function(){                        
+	        },fn_delCheck  : function(){                        
 		    	 var ids = $('#mainGrid').jqGrid('getGridParam','selarrrow'); //체크된 row id들을 배열로 반환
 		    	 if (ids.length < 1) {
 		    		 alert("선택한 값이 없습니다.");
@@ -195,7 +196,7 @@
 		    	 } 
 		    	 var params = {'seatId':SeatsArray.join(',')};
       		     fn_uniDelAction("/backoffice/basicManage/officeSeatDelete.do",params, "jqGridFunc.fn_search");
-		    }, delRow : function (seat_id){
+		    },delRow : function (seat_id){
 		    	if(seat_id != "") {
         		   var params = {'seatId':seat_id };
         		   fn_uniDelAction("/backoffice/basicManage/officeSeatDelete.do",params, "jqGridFunc.fn_search");
@@ -234,8 +235,12 @@
 						    		   $("#seatFixGubun").val(obj.seat_fix_gubun);
 						    		   $("#seatFixUserId").val(obj.seat_fix_user_id);
 						    		   $('#resReqday').val(obj.res_reqday);
-						    		   if (obj.empname !== "")
-						    			   $("#sp_fixUser").html(obj.empname);
+						    		   if (obj.empname !== ""){
+						    			   $("#sp_fixUser").html(obj.empname + "<a href='#' onClick='jqGridFunc.fn_seatChoic(\"S\")'>[변경]</a>");
+						    		   }else {
+						    			   $("#sp_fixUser").html("<a href='#' onClick='jqGridFunc.fn_seatChoic(\"S\")'>[선택]</a>");
+						    		   }
+						    			   
 						    		   
 						    		   toggleClick("seatFixUseryn", obj.seat_fix_useryn);
 						    		   toggleClick("seatUseyn", obj.seat_useyn);
@@ -355,7 +360,6 @@
              return costInfo;
         }, fn_seatChoic : function (viewGubun){
              //고정석 일때 사용자 정보 선택 
-             
              if (viewGubun === "S" && $("#seatFixUseryn").val() === "Y" ){
             	 $("#tb_seatInfo").hide();
                  $("#tb_userInfo").show();

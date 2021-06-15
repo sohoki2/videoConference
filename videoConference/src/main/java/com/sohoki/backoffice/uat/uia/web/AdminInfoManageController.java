@@ -146,10 +146,9 @@ public class AdminInfoManageController {
 			     }
 			     
 			     int pageUnit = searchVO.get("pageUnit") == null ?   propertiesService.getInt("pageUnit") : Integer.valueOf((String) searchVO.get("pageUnit"));
-				  
 				 searchVO.put("pageSize", propertiesService.getInt("pageSize"));
-				  
-			       /** pageing */       
+				 
+				 /** pageing */       
 			   	 PaginationInfo paginationInfo = new PaginationInfo();
 				 paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex"), "1") ) );
 				 paginationInfo.setRecordCountPerPage(pageUnit);
@@ -165,7 +164,7 @@ public class AdminInfoManageController {
 		         model.addObject(Globals.PAGE_TOTALCNT, totCnt);
 		         paginationInfo.setTotalRecordCount(totCnt);
 		         model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
-		         
+		         model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);	
 		        
 		   }catch (Exception e){
 			   StackTraceElement[] ste = e.getStackTrace();
@@ -213,7 +212,7 @@ public class AdminInfoManageController {
 		ModelAndView model = new ModelAndView();
 		
 		try{
-			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			 Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 		     if(!isAuthenticated) {
 		    	 model.addObject(Globals.STATUS_MESSAGE , egovMessageSource.getMessage("fail.common.login"));
 		    	 model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -236,7 +235,7 @@ public class AdminInfoManageController {
 		}catch (Exception e){
 			LOGGER.error("Exception:" + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.insert"));			
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));			
 		}
 		model.setViewName(Globals.JSONVIEW);
 		return model;

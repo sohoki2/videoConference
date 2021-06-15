@@ -83,7 +83,7 @@
 	       WHERE a.FLOOR_USEYN = 'Y'
 	             AND b.CODE = a.FLOOR_INFO
 	             AND a.CENTER_ID = #{centerId}
-	       ORDER BY  b.CODE_DC ASC
+	       ORDER BY  CAST (b.CODE_DC AS INT) ASC
     </select>
     <select id="selectFloorInfoManageDetail"  resultType="lmap">
            SELECT  a.FLOOR_SEQ, a.CENTER_ID, a.FLOOR_INFO, a.FLOOR_MAP, a.FLOOR_MAP1, a.FLOOR_NAME,

@@ -41,6 +41,7 @@
     <link rel="stylesheet" type="text/css" href="/css/toggle.css">
     <script type="text/javascript" src="/resources/jqgrid/src/i18n/grid.locale-kr.js"></script>
     <script type="text/javascript" src="/resources/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <script type="text/jscript" src="/js/SE/js/HuskyEZCreator.js" ></script>
     <style type="text/css">
    
      .ui-jqgrid .ui-jqgrid-htable th div{
@@ -216,6 +217,7 @@
         	    $("#btn_message").trigger("click");
 			    $("#mode").val(mode);
 		        $("#meetingId").val(meeting_id);
+		        backoffice_common.fn_adminForm("form");
 		        if (mode == "Edt"){
 		        	$("#btnUpdate").text("수정");
 		        	var params = {"meetingId" : meeting_id};
@@ -252,7 +254,7 @@
 						    		   toggleClick("smsSendcheck", obj.sms_sendcheck);
 						    		   jqGridFunc.fn_msgView("M", obj.mail_sendcheck);
 						    		   jqGridFunc.fn_msgView("S", obj.sms_sendcheck);
-						    		   $("#meetingroomRemark").val( obj.meetingroom_remark);
+						    		   $("#ir1").val(obj.meetingroom_remark);
 						    		   $("#resMessageMail").val( obj.res_message_mail);
 						    		   $("#canMessageMail").val( obj.can_message_mail);
 						    		   $("#resMessageSms").val( obj.res_message_sms);
@@ -300,46 +302,51 @@
 		    	}
 		    	
 		    	//확인 
-		    	  var formData = new FormData();
-	     			  formData.append('meetingImg1', $('#meetingImg1')[0].files[0]);
-	     			  formData.append('meetingImg2', $('#meetingImg2')[0].files[0]);
-	     			  formData.append('partSeq' , fn_emptyReplace($("#partSeq").val(),"0"));
-	     			  formData.append('floorSeq' , $("#floorSeq").val());
-	     			  formData.append('centerId' , $("#centerId").val());
-	     			  formData.append('meetingId' , $("#meetingId").val());
-	     			  formData.append('meetingName' , $("#meetingName").val());
-	     			  formData.append('roomType' , $("#roomType").val());
-	     			  formData.append('payClassification' , fn_emptyReplace($("#payClassification").val(),"PAY_CLASSIFICATION_2"));
-	     			  formData.append('payGubun' , fn_emptyReplace($("#payGubun").val(),""));
-	     			  formData.append('payCost' , fn_emptyReplace($("#payCost").val(),"0"));
-	     			  formData.append('maxCnt' , fn_emptyReplace($("#maxCnt").val(),"0"));
-	     			  formData.append('meetingOrder' , fn_emptyReplace($("#meetingOrder").val(),"999"));
-	     			  formData.append('meetingUseyn' , fn_emptyReplace($("#meetingUseyn").val(),"Y"));
-	     			  formData.append('meetingConfirmgubun' , fn_emptyReplace($("#meetingConfirmgubun").val(),"N"));
-	     			  formData.append('meetingAdminid' , fn_emptyReplace($("#meetingAdminid").val(),""));
-	     			  formData.append('meetingMainview' , $("#meetingMainview").val());
-	     			  formData.append('meetingView' , $("#meetingView").val());
-	     			  formData.append('meetingEqupgubun' , $("#meetingEqupgubun").val());
-	     			  formData.append('meetingroomRemark' , $("#meetingroomRemark").val());
-	     			  formData.append('mailSendcheck' , fn_emptyReplace($("#mailSendcheck").val(),"N"));
-	     			  formData.append('smsSendcheck' , fn_emptyReplace($("#smsSendcheck").val(),"N"));
-	     			  formData.append('resMessageMail' , fn_emptyReplace($("#resMessageMail").val(),"0"));
-	     			  formData.append('canMessageMail' , fn_emptyReplace($("#canMessageMail").val(),"0"));
-	     			  formData.append('resMessageSms' , fn_emptyReplace($("#resMessageSms").val(),"0"));
-	     			  formData.append('canMessageSms' , fn_emptyReplace($("#canMessageSms").val(),"0"));
-	     			  formData.append('avayaConfiId' , $("#avayaConfiId").val());
-	     			  formData.append('avayaUserid' , $("#avayaUserid").val());
-	     			  formData.append('terminalId' , $("#terminalId").val());
-	     			  formData.append('terminalNumber' , fn_emptyReplace($("#terminalNumber").val(),"0"));
-	     			  formData.append('terminalTel' , $("#terminalTel").val());
-	     			  formData.append('userFirstNm' , $("#userFirstNm").val());
-	     			  formData.append('userLastNm' , $("#userLastNm").val());
-	     			  formData.append('userEmail' , $("#userEmail").val());
-	     			  formData.append('resReqday' ,fn_emptyReplace( $("#resReqday").val(),"0"));
-	     			  formData.append('mode' , $("#mode").val());
+		    	var sHTML = oEditors.getById["ir1"].getIR();
+     			$("#meetingroomRemark").val(sHTML); 
+		    	var formData = new FormData();
+	     	 	    formData.append('meetingImg1', $('#meetingImg1')[0].files[0]);
+	     			formData.append('meetingImg2', $('#meetingImg2')[0].files[0]);
+	     			formData.append('meetingImg3', $('#meetingImg2')[0].files[0]);
+	     			formData.append('meetingFile01', $('#meetingFile01')[0].files[0]);
+	     			formData.append('meetingFile02', $('#meetingFile02')[0].files[0]);
+	     			formData.append('partSeq' , fn_emptyReplace($("#partSeq").val(),"0"));
+	     			formData.append('floorSeq' , $("#floorSeq").val());
+	     			formData.append('centerId' , $("#centerId").val());
+	     			formData.append('meetingId' , $("#meetingId").val());
+	     			formData.append('meetingName' , $("#meetingName").val());
+	     			formData.append('roomType' , $("#roomType").val());
+	     			formData.append('payClassification' , fn_emptyReplace($("#payClassification").val(),"PAY_CLASSIFICATION_2"));
+	     			formData.append('payGubun' , fn_emptyReplace($("#payGubun").val(),""));
+	     			formData.append('payCost' , fn_emptyReplace($("#payCost").val(),"0"));
+	     			formData.append('maxCnt' , fn_emptyReplace($("#maxCnt").val(),"0"));
+	     			formData.append('meetingOrder' , fn_emptyReplace($("#meetingOrder").val(),"999"));
+	     			formData.append('meetingUseyn' , fn_emptyReplace($("#meetingUseyn").val(),"Y"));
+	     			formData.append('meetingConfirmgubun' , fn_emptyReplace($("#meetingConfirmgubun").val(),"N"));
+	     			formData.append('meetingAdminid' , fn_emptyReplace($("#meetingAdminid").val(),""));
+	     			formData.append('meetingMainview' , $("#meetingMainview").val());
+	     			formData.append('meetingView' , $("#meetingView").val());
+	     			formData.append('meetingEqupgubun' , $("#meetingEqupgubun").val());
+	     			formData.append('meetingroomRemark' , $("#meetingroomRemark").val());
+	     			formData.append('mailSendcheck' , fn_emptyReplace($("#mailSendcheck").val(),"N"));
+	     			formData.append('smsSendcheck' , fn_emptyReplace($("#smsSendcheck").val(),"N"));
+	     			formData.append('resMessageMail' , fn_emptyReplace($("#resMessageMail").val(),"0"));
+	     			formData.append('canMessageMail' , fn_emptyReplace($("#canMessageMail").val(),"0"));
+	     			formData.append('resMessageSms' , fn_emptyReplace($("#resMessageSms").val(),"0"));
+	     			formData.append('canMessageSms' , fn_emptyReplace($("#canMessageSms").val(),"0"));
+	     			formData.append('avayaConfiId' , $("#avayaConfiId").val());
+	     			formData.append('avayaUserid' , $("#avayaUserid").val());
+	     			formData.append('terminalId' , $("#terminalId").val());
+	     			formData.append('terminalNumber' , fn_emptyReplace($("#terminalNumber").val(),"0"));
+	     			formData.append('terminalTel' , $("#terminalTel").val());
+	     			formData.append('userFirstNm' , $("#userFirstNm").val());
+	     			formData.append('userLastNm' , $("#userLastNm").val());
+	     			formData.append('userEmail' , $("#userEmail").val());
+	     			formData.append('resReqday' ,fn_emptyReplace( $("#resReqday").val(),"0"));
+	     			formData.append('mode' , $("#mode").val());
      			  
      			  
-     		      uniAjaxMutipart("/backoffice/basicManage/officeMeetingUpdate.do", formData, 
+     		        uniAjaxMutipart("/backoffice/basicManage/officeMeetingUpdate.do", formData, 
      						function(result) {
      						       //결과값 추후 확인 하기 	
      						       if (result.status == "SUCCESS"){
@@ -590,20 +597,30 @@
 		                        </td>
 		                    </tr>
 		                    <tr>
-		                        <th><span class="redText">*</span>회의실  이미지1</th>
+		                        <th><span class="redText">*</span>이미지1</th>
 		                        <td style="text-align:left">
 		                         <input name="meetingImg1" id="meetingImg1" type="file"  size="20"/>  
 		                        </td>
-		                        <th><span class="redText">*</span>회의실  이미지2</th>
+		                        <th><span class="redText">*</span>이미지2</th>
 		                        <td style="text-align:left">
 		                        <input name="meetingImg2" id="meetingImg2" type="file"  size="20"/>
 		                        </td>
 		                    </tr>
 		                    
 							<tr>
-		                        <th><span class="redText">*</span>회의실 설명</th>
+							    <th><span class="redText">*</span>이미지3</th>
 		                        <td style="text-align:left" colspan="3">
-		                            <input type="text" name="meetingroomRemark" size="120" maxlength="1000" id="meetingroomRemark" />
+		                         <input name="meetingImg3" id="meetingImg3" type="file"  size="20"/>  
+		                        </td>
+		                    </tr>
+		                    <tr>
+		                        <th><span class="redText">*</span>첨부파일1</th>
+		                        <td style="text-align:left">
+		                             <input name="meetingFile01" id="meetingFile01" type="file"  size="20"/>
+		                        </td>
+		                        <th><span class="redText">*</span>첨부파일2</th>
+		                        <td style="text-align:left">
+		                             <input name="meetingFile02" id="meetingFile02" type="file"  size="20"/>
 		                        </td>
 		                    </tr>
 		                    <tr>
@@ -621,6 +638,15 @@
 					                    <span class="slider round"></span> 
 				                      </label>
 		                        </td>
+		                    </tr>
+		                    <tr>
+		                        <th colspan="4">회의실 상세 설명</th>
+		                    </tr>
+		                    <tr>
+		                       <td colspan="4">
+		                       <textarea name="ir1" id="ir1" style="width:700px; height:20px; display:none;"></textarea>
+		                       <input type="hidden" name="meetingroomRemark" id="meetingroomRemark" />
+		                       </td>
 		                    </tr>
 		                    <tr id="tr_resMial">
 		                        <th><span class="redText">*</span>예약 메세지</th>
@@ -747,7 +773,22 @@
  </form:form>
  <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
  <c:import url="/backoffice/inc/uni_pop.do" />
-	    
+<script>
+var oEditors = [];
+nhn.husky.EZCreator.createInIFrame({
+    oAppRef: oEditors,
+    elPlaceHolder: "ir1",                        
+    sSkinURI: "/js/SE/SmartEditor2Skin.html",
+    htParams: { 
+   	 bUseToolbar: true,
+        fOnBeforeUnload: function () { },
+        //boolean 
+        fOnAppLoad: function () { }
+        //예제 코드
+    },
+    fCreator: "createSEditor2"
+});
+</script>	    
 </div>
 </body>
 </html>

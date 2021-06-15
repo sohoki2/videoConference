@@ -16,7 +16,7 @@
 <!--  애러 발생시 이전 스크립트로 전환 -->
 <input type="hidden" id="hid_history" name="hid_history" /> 
 <div id="dv_meetingInfo" class="needpopup">
-      <h2 class="pop_tit">회의 상세정보</h2>
+      <h2 class="pop_tit"><span id="sp_meetingTitle">회의 상세정보</span></h2>
         <ul class="form">
           <li>
             <p class="pop_text"><span id="sp_roomNm"></span>회의실A-01</p>
@@ -41,7 +41,6 @@
     <ul class="form">
       <li>
         <p class="pop_text">회의실: <span id="res_swcName"></span></p>
-        
       </li>
       <li style="display:none">
         <select id='resGubun' name="resGubun" onChange="fn_MeetingCheck()">
@@ -49,7 +48,13 @@
               <option value="SWC_GUBUN_1">일반 회의실</option>
               <option value="SWC_GUBUN_2">영상 회의실</option>
         </select>
+        <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
+		<input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
+		<input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
+		<input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
+		
         <input type="hidden" id="mode" name="mode" />
+        <input type="hidden" id="roomType" name="roomType"/>
         <input type="hidden" id="itemId" name="itemId" />
         <input type="radio" name="resPassword" value="Y" id="resPassword_1"><span id="sp_01">공개</span>
         <input type="radio" name="resPassword" value="N" id="resPassword_2"><span id="sp_02">비공개</span>
@@ -67,10 +72,7 @@
         <input type="hidden" id="resStartday" name="resStartday" />
         <a href="#" onclick="fn_userPop('P')">참가대상</a>
         <input type="hidden" name="resReqday" id="resReqday" />
-        
-        
         <span id="meegintRoomInfo"></span>
-         
       </li>
       <li>
         <p class="pop_text">회의 시간 선택</p>
@@ -85,7 +87,7 @@
     </ul>
     <div class="clear"></div>
     <div class="footerBtn">
-      <button class="blueBtn" onclick="fn_ResSave();">예약</button>
+      <button type="button" class="blueBtn" onclick="fn_ResSave();">예약</button>
       <button type="button" onClick="need_close();" class="grayBtn">취소</button>
     </div>
     <div class="clear"></div>
@@ -93,7 +95,24 @@
  <!--//예약신청 팝업 끝-->
   
   
-     
+ <!--//탈퇴 팝업-->
+ <div id="secession" class="needpopup">
+     <h5 class="pop_tit">회원탈퇴</h5>
+     <ul class="form">
+       <li>
+         <p>
+                             회원 탈퇴 즉시 개인정보는 삭제 되며 기존 예약 결과 조회등이 불가능합니다
+         </p>
+       </li>
+     </ul>
+     <div class="footerBtn">
+       <button type="button" class="blueBtn" onClick="fn_secession()">확인</button>
+       <button type="button" onClick="need_close()" class="grayBtn">취소</button>
+     </div>
+     <div class="clear"></div>
+ </div>
+ <!--//탈퇴 팝업-->
+             
 <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_resultCk" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>
@@ -107,7 +126,7 @@
 <script type="text/javascript">
 	$( function() {
 		 var state = "${status}";
-	   	 if (state == "FAILLACK"){
+		 if (state == "FAILLACK"){
 	   		 alert("적용되는 시설물이 없습니다");
 	   		 location.href= "/web/index.do";
 	   	 }

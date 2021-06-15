@@ -519,13 +519,13 @@ function fn_EquipCheck(){
 	var equipCheck = "";
 	if ($("#resEqupcheck").val() == "RES_EQUPCHECK_2"){
 		equipCheck = "<table border=0><tr><td>"
-		                  + "빔프로젝트:<input type='radio' id='equip_type01' name='equip_type01' value='Y' checked>사용"
-		                  + "<input type='radio' id='equip_type01' name='equip_type01' value='N'>미사용"
-		                  +"</td><td><td style='width:50px;'></td>"
-		                  + "마이크:<input type='radio' id='equip_type02' name='equip_type02' value='Y' checked>사용"
-		                  + "<input type='radio' id='equip_type02' name='equip_type02' value='N'>미사용"
-		                  +"</td><tr>"
-		                  + "</table>";
+                   + "빔프로젝트:<input type='radio' id='equip_type01' name='equip_type01' value='Y' checked>사용"
+                   + "<input type='radio' id='equip_type01' name='equip_type01' value='N'>미사용"
+                   +"</td><td><td style='width:50px;'></td>"
+                   + "마이크:<input type='radio' id='equip_type02' name='equip_type02' value='Y' checked>사용"
+                   + "<input type='radio' id='equip_type02' name='equip_type02' value='N'>미사용"
+                   +"</td><tr>"
+                   + "</table>";
 	}else {
        equipCheck = "";
 	}
@@ -606,9 +606,9 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
         $("#mode").val("Ins");
 		$("#res_swcName").text(swcName);
 		$("#resTitle").val();
-		var resDay = ($("#resStartday").val() == "") ? today_get() : $("#searchResStartday").val();
+		var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
 		$("#sp_ResDay").text(day_convert(resDay));
-		$("#searchResStartday").val(resDay);
+		$("#resStartday").val(resDay);
 		$("#itemId").val(itemId);
 		$("#useYn").val("Y");
         $("#sp_meetingAttendList").html("");
@@ -619,6 +619,7 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
         $("#hid_equipList").val("");
    	    $("#sp_equipRoomInfo").html("");
    	    $("#resEqupcheck").val("");
+       
 
 		$("#div_meeting1").hide();
 	    $("#div_meeting2").hide();
@@ -634,9 +635,9 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
 		$("#mode").val("Edt");
 	}
 	
-	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId};
+	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
+	fn_swcTimeUni(params, $("#searchRoomType").val(), 0, null);
 	
-	fn_swcTimeUni(params, "SWC_GUBUN_1", 0, null);
     //var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId};	       	    
 	//fn_swcTime(swcTime, resSeq, itemId);
 }
@@ -699,11 +700,13 @@ function fn_swcTime(swcTime, resSeq, itemId){
 			    }    		
      );
 }
+/*
 function fn_indexInfo(itemId, timeSeq, swcTime, swcName, resSeq, centerId, seatConfirmgubun ,seatEqupgubun){
 	$("#mode").val("Ins");
 	$("#res_swcName").text(swcName);
-	var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
-	$("#searchResStartday").val(resDay);
+	var resDay = ($("#resStartDay").val() == "") ? today_get() : $("#resStartDay").val();
+	$("#resStartDay").val(resDay);
+	alert($("#resStartDay").val());
 	
 	$("#sp_ResDay").text(day_convert(resDay) + "");
 	$("#itemId").val(itemId);
@@ -724,6 +727,7 @@ function fn_indexInfo(itemId, timeSeq, swcTime, swcName, resSeq, centerId, seatC
     
     fn_swcTime(swcTime, resSeq, itemId);
 }
+*/
 
 function fn_resCancel(){	
 	 $("#itemId").val("");
@@ -781,10 +785,70 @@ function fn_resView(resSeq){
              );
         	$("#btn_meetingInfo").trigger("click");
 }
+//하루 단위 예약 (회의실)
+function fn_floorMeetingInfo() {
+     if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+	 var params = {'searchCenterId' : $("#searchCenterId").val(), 
+			      'searchFloorseq' :  $("#floorSeq").val(),
+			      'searchResStartday' : $("#searchResStartday").val(), 
+			      'searchRoomType' : $("#searchRoomType").val(),
+			      'searchSeatView': 'Y' 
+     }; 
+     
+     
+	 var url = "/web/meetingDayAjax.do";
+	 uniAjax(url, params, 
+     			function(result) {
+				       if (result.status == "LOGIN FAIL"){
+				    	   alert(result.meesage);
+  						   location.href="/web/Login.do";
+  					   }else if (result.status == "SUCCESS"){
+  						    $("#searchResStartday").val(result.result.searchResStartday);
+  						    $("#searchCenterId").val(result.result.searchCenterId);
+  						    var setHtml = "";
+							$("#tb_seatTimeInfo > tbody").empty(); 
+							for (var i in result.seatInfo){
+								var seatinfo = result.seatInfo[i];
+								setHtml += "<tr id='swcSeq_"+seatinfo.meeting_id +"' style='height:50px;'>";
+								setHtml += "<th style='padding-left: 20px;' title='"+seatinfo.meetingroom_remark+"' class='fixed_th'>"+seatinfo.meeting_name+"</th>";
+								if (seatinfo.timeinfo.length < 20){
+									setHtml += "<td colspan='20' style='text-aling:center;'>예약 불가</td>";
+								}else {
+									//console.log("seatinfo.res_reqday:" + seatinfo.res_reqday)
+									for (var a  in seatinfo.timeinfo){
+  										var timeInfo = seatinfo.timeinfo[a];
+  										var classInfo = "";
+  										//색갈 넣기 및 예약자 클릭 관련 내용 넣기 \
+  										if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
+  											setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
+  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
+  											setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
+  											setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+  										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
+  											setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.res_reqday +"&#39;);'></td>";
+  										}
+  									}
+								}
+								//centerId 값 넣기 
+								setHtml += "</tr>";
+								$("#tb_seatTimeInfo >  tbody:last").append(setHtml);
+								setHtml = "";
+								if ($("#searchCenterId").val(seatinfo.center_id));
+  					      }
+  					   }
+				},
+			    function(request){
+				    alert("Error:" +request.status );	       						
+			    }    		
+    );    
+
+
+}
 
 
 
-function fn_ResSave(resGubun){
+function fn_ResSave(){
 	 
 	 var resEqupcheck = "";
 	 //장기 예약 할떄도 처리 준비 하기 
@@ -813,6 +877,8 @@ function fn_ResSave(resGubun){
 	         $("#meetingSeq").val("");
 	 }
 	 var resTitle =  ($("#itemGubun").val() == "ITEM_GUBUN_2") ? "좌석예약: " + $("#p_seatNm").text() : $("#resTitle").val();
+	
+	 
 	 
 	 var params = {'mode': fn_domNullReplace($("#mode").val(), "Ins"), 'itemId': $("#itemId").val(), 'itemGubun':$("#itemGubun").val(), 
 	               'resTitle' : resTitle, 'resPassword' : fn_domNullReplace( $(":radio[name='resPassword']:checked").val() ,'Y'), 
@@ -830,7 +896,8 @@ function fn_ResSave(resGubun){
 			       'sendMessage' : fn_domNullReplace($("input:checkbox[name='sendMessage']:checked").val() ,'N'),
 			       'floorSeq' : $("#floorSeq").val(), 'resRemark' :fn_domNullReplace( $("#resRemark").val(), ""), 'resPerson' : fn_domNullReplace($("#resPerson").val(), "0")
 	              };
-	
+	 //console.log(params);
+	 
 	 //값 수정 
 	 
 	 uniAjax("/web/resReservertionUpdate.do", params, 
@@ -846,12 +913,18 @@ function fn_ResSave(resGubun){
 						    $("#sp_message").text(result.message);
 						    $("#btn_result").trigger("click");
 						    
-						    if (resGubun == "Index"){
+						    if (fn_domNullReplace($("#paeGubun").val() , "") == "Index"){
 						        fn_resCancel();
 						        document.location.reload();
 						    }else  {
-						        res.fn_floorInfo();	
-						        closeTime();	
+						        //좌석 예약 일반 예약 구분 하기 
+						        if ($("#itemGubun").val() == "ITEM_GUBUN_2"){
+						           res.fn_floorInfo();	
+						           closeTime(); 
+						        }else {
+						           fn_floorMeetingInfo($("#resGubun").val());
+						        }
+						        	
 						    }
 						   	   
 					   }
@@ -860,7 +933,8 @@ function fn_ResSave(resGubun){
 		    function(request){
 			     alert("Error:" +request.status );	       						
 		    }    		
-      );      
+      ); 
+         
 }
 
 function fn_paramReset(){

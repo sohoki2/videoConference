@@ -31,7 +31,9 @@
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>
 <body>
-<input type="hidden" id="searchResStartday" name="searchResStartday" />
+<form:form name="regist" commandName="regist" method="post">
+<input type="hidden" id="itemGubun" name="itemGubun" value="ITEM_GUBUN_1">
+<input type="hidden" id="paeGubun" name="paeGubun" value="index">
  <div class="main_back">
             <!--//header 추가-->
             <c:import url="/web/inc/top_inc.do" />
@@ -64,7 +66,7 @@
 			                                </div>
 			                                <div class="meeting_btn">
 			                                    <div class="padding_box">
-			                                        <a href="#" data-needpopup-show='#app_meeting' onclick="fn_resInfo('${resInfo.meeting_id}','${resInfo.time_seq }','${resInfo.swc_time}','${resInfo.meeting_name}','0','${resInfo.meeting_confirmgubun}' , '${resInfo.meeting_equpgubun}');" class="booking_btn">예약하기</a>    
+			                                        <a href="#" data-needpopup-show='#app_meeting' onclick="fn_resInfo('${resInfo.meeting_id}','${resInfo.time_seq }','${resInfo.swc_time}','${resInfo.meeting_name}','0','${resInfo.meeting_confirmgubun}' , '${resInfo.meeting_equpgubun}', '${resInfo.res_reqday}');fn_indexView();" class="booking_btn">예약하기</a>    
 			                                    </div>                                    
 			                                </div>
 			                            </div>
@@ -109,7 +111,7 @@
          <script src="/front_res/js/swiper.js"></script>
          <script>
 	        $( function() {
-	        	fn_noticeList();
+	        	 fn_noticeList();
 	        });
             var swiper = new Swiper('.swiper-container', {
               slidesPerView: 3,
@@ -130,6 +132,9 @@
             });
             function fn_noticView(boardSeq){
             	document.location.href='/web/notice.do?board_seq='+boardSeq;
+            }
+            function fn_indexView(){
+            	
             }
             function fn_noticeList(){
 	        	var url =  "/backoffice/boardManage/boardListAjax.do";
@@ -176,5 +181,6 @@
 	        }
         </script>
         <c:import url="/web/inc/unimessage.do" />
+</form:form>
 </body>
 </html>

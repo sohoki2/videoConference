@@ -33,16 +33,16 @@
 </head>
 <body>
 <form:form name="regist" commandName="regist" method="post">
-<input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
-<input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
-<input type="hidden" id="mode" name="mode" />
-<input type="hidden" id="itemId" name="itemId" />
-<input type="hidden" id="roomType" name="roomType" />
-<input type="hidden" id="hid_attendList" name="hid_attendList">
-<input type="hidden" id="hid_equipList" name="hid_equipList">
-<input type="hidden" id="itemGubun" name="itemGubun" value="ITEM_GUBUN_3">
 
-
+        <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
+		<input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
+		<input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
+		<input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
+        <input type="hidden" name="hid_attendList" id="hid_attendList">
+        <input type="hidden" id="hid_equipList" name="hid_equipList">	
+        
+        
+        
         <c:import url="/web/inc/top_inc.do" />
         <!--header 추가//-->
         <!--// left menu -->
@@ -53,7 +53,7 @@
             <div class="contents">
                 <div class="flooreArea float_left" id="dv_floor">
                     <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                       <a href="#" onClick="fn_floorSearch(${floorList.floor_seq }, 'res.fn_floorInfo()')" name="btn_floor" id="btn_${floorList.floor_seq}" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
+                       <a href="#" onClick="fn_floorSearch(${floorList.floor_seq }, 'fn_floorMeetingInfo()')" name="btn_floor" id="btn_${floorList.floor_seq}" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
                     </c:forEach>
                     
                 </div>               
@@ -160,6 +160,13 @@
           <span id="res_swcName"></span>
           <!--  영상 회의 관련 내용 -->
           <div style="display:none">
+          
+          <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
+		  <input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
+		  <input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
+		  <input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
+		
+		
           <select id="resGubun"></select>
           <input type="radio" id="resPassword" name="resPassword" value="Y">공개
           <input type="radio" id="resPassword" name="resPassword" value="N">비공개
@@ -179,7 +186,7 @@
         </li>
         <li class="w50_cor">
           <p class="pop_text">사용자</p>
-          
+         
         </li>
         <li class="w50_cor">
           <p class="pop_text">이메일</p>
@@ -258,7 +265,13 @@
             	 $( "#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
             	 $( "#resStartday").datepicker({ dateFormat: 'yymmdd' });
             	 $( "#resEndday").datepicker({ dateFormat: 'yymmdd' });
-            	 res.fn_floorInfo();
+            	 fn_floorMeetingInfo();
+            	 var state = "${status}";
+        		 if (state == "FAILLACK"){
+        	   		 alert("적용되는 시설물이 없습니다");
+        	   		 location.href= "/web/index.do";
+        	   	 }
+        		
             });
            
             var res = {
@@ -324,7 +337,7 @@
             							    alert("Error:" +request.status );	       						
             						    }    		
             		    );
-            		}, fn_resInfo : function (itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun, seatEqupgubun, roomType){
+            		}, fn_resInfo : function (itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun, seatEqupgubun){
             			if (resSeq == "0"){
             				$("#mode").val("Ins");
             				$("#res_swcName").text(swcName);
@@ -342,15 +355,11 @@
             		        $("#hid_equipList").val("");
             		   	    $("#sp_equipRoomInfo").html("");
             		   	    $("#resEqupcheck").val("");
-            		   	    $("#roomType").val(roomType);
-            		   	 
-            				$("#div_meeting1").hide();
+            		   		$("#div_meeting1").hide();
             			    $("#div_meeting2").hide();
-            			
-            		        if (seatEqupgubun == "Y"){
+            			    if (seatEqupgubun == "Y"){
             		        	$("#div_equipRoomInfo").show();
             		           // $("#resEqupcheck").html("");
-            		         
             		        }else {
             		        	$("#div_equipRoomInfo").hide();
             		        }
@@ -358,8 +367,10 @@
             				$("#mode").val("Edt");
             			}
             			res.fn_swcTime(swcTime, resSeq, itemId, roomType);
-            		}, fn_swcTime : function (swcTime, resSeq, itemId, roomType){
-            			var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId, 'searchRoomType' : 'SWC_GUBUN_3'};
+            			//fn_swcTimeUni
+            			
+            		}, fn_swcTime : function (swcTime, resSeq, itemId ){
+            			var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
             			uniAjax("/web/resInfo.do", params, 
             		 			function(result) {
             					       if (result.status == "LOGIN FAIL"){
@@ -409,6 +420,9 @@
             		     );
             		}, fn_ResSave : function(){
             			 var resEqupcheck = "";
+            			 
+            			 
+            			 
             			 // 회의실 일떄 -> ITEM_GUBUN_1 로 정의 추후 변경 예정 
 	           			 if (res.fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
 	           			 if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.',"sp_errorMessage") == false) return;
@@ -473,8 +487,7 @@
 	            		    $("#btn_result").trigger("click");
 	            			return false;
 	            		}
-            			
-            	}
+            		}
             }
          </script>
          <script type="text/javascript">

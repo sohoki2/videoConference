@@ -24,5 +24,7 @@ public interface UserInfoManageMapper {
 	
 	public int updateUserInfoManage(UserInfo vo);
 	
+	public int updatePasswordChange(UserInfo vo);
+	
 	public int deleteUserInfoManage(@Param("userNo") String userNo , @Param("comCode") String comCode);
 }
