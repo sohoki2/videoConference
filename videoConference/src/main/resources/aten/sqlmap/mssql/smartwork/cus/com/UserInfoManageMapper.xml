@@ -149,11 +149,11 @@
                                 , UPDATE_DATE = GETDATE()
 	    WHERE EMPNO = #{userNo} ;
     </update> 
-    <update id="updatePasswordChange">
+    <update id="updatePasswordChange" statementType="CALLABLE">
          { call sp_UserPassChange(#{userNo ,mode=IN, jdbcType=VARCHAR, javaType=string}
                                   , #{nowPassword ,mode=IN, jdbcType=VARCHAR, javaType=string}
                                   , #{newPassword ,mode=IN, jdbcType=VARCHAR, javaType=string}
-                                  , #{Result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
+                                  , #{result ,mode=OUT, jdbcType=INTEGER, javaType=int} )   
          }    
     </update>
     <delete id="deleteUserInfoManage">

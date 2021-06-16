@@ -106,7 +106,7 @@
        </li>
      </ul>
      <div class="footerBtn">
-       <button type="button" class="blueBtn" onClick="fn_secession()">확인</button>
+       <button type="button" onClick="fn_secession()" class="blueBtn" onClick="fn_secession()">확인</button>
        <button type="button" onClick="need_close()" class="grayBtn">취소</button>
      </div>
      <div class="clear"></div>
@@ -135,6 +135,7 @@
 <!--  예약 취소 팝업  끝 부분-->    
                  
 <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
+
 <button type="button" id="btn_resultCk" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>
 <button type="button" id="btn_meeting" style="display:none" data-needpopup-show='#app_meeting'>예약 화면 보여주기</button>

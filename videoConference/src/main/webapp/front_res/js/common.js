@@ -11,8 +11,8 @@ function any_empt_line_id(frm_nm, alert_message){
 function any_empt_line_span(frm_nm, alert_message){
      if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
 		 $("#sp_message").html(alert_message);
-  		 $("#btn_result").trigger("click");
-		 $('#'+frm_nm).focus();
+		 $("#btn_result").trigger("click");
+  		 $('#'+frm_nm).focus();
 		 return false;
 	 }else{
          return true;
@@ -123,6 +123,24 @@ function yesterDayConfirm(res_day, alert_message){
     	return true;
     }
 }
+//요청일로 부터 비교 하기 
+function dateAdd(reqDay){
+	var now = new Date();
+	now.setDate(now.getDate()+ parseInt(reqDay));
+    var req_day = fnLPAD(String(now.getDate()), "0", 2); //일자를 구함
+    var req_month = fnLPAD(String((now.getMonth() + 1)), "0", 2); // 월(month)을 구함    
+    var req_year = String(now.getFullYear()); //년(year)을 구함
+    var reqDay = req_year + req_month + req_day;
+    return reqDay;
+}
+function dateCheck (_date, _addDay, alert_message){
+   if (parseInt(_date) < dateAdd(_addDay)){
+    	alert(alert_message);
+    	return false;
+    }else {
+    	return true;
+    }
+}
 function fnLPAD(val, set, cnt) {
     if (!set || !cnt || val.length >= cnt) {
         return val;
@@ -209,91 +227,19 @@ function fn_floorSearch(floorSeq , _action_url){
 		$("#btn_"+floorSeq).attr('class', 'active');
 		$("#floorSeq").val(floorSeq);
 		var call_script = eval("window."+_action_url+"();"); 		
- }
- //his 화면 정리 
- function fn_hisInfo(){
+}
+//his 화면 정리 
+function fn_hisInfo(){
     need_close();
     if ($("#hid_history").val() != "")
        var call_script = eval("window."+$("#hid_history").val()+"();"); 
-
 }
+//공백 제거
+function trim(str){
+	return str.replace(/ /gi, "");
+} 
  
  
- 
- 
-function toilet_men() {
-  document.getElementById("toilet_men1").style.display = "block";
-  document.getElementById("toilet_men2").style.display = "block";
-  document.getElementById("toilet_girl").style.display = "none";
-  document.getElementById("toilet_ele").style.display = "none";
-  document.getElementById("toilet_locker1").style.display = "none";
-  document.getElementById("toilet_locker2").style.display = "none";
-  document.getElementById("toilet_cafe1").style.display = "none";
-  document.getElementById("toilet_cafe2").style.display = "none";
-  document.getElementById("toilet_meetinglounge1").style.display = "none";
-  document.getElementById("toilet_meetinglounge2").style.display = "none";
-  document.getElementById("toilet_meetinglounge3").style.display = "none";
-}
-//facility icon effect
-function toilet_girl() {
-  document.getElementById("toilet_girl").style.display = "block";
-
-  document.getElementById("toilet_men1").style.display = "none";
-  document.getElementById("toilet_men2").style.display = "none";
-  document.getElementById("toilet_ele").style.display = "none";
-  document.getElementById("toilet_locker1").style.display = "none";
-  document.getElementById("toilet_locker2").style.display = "none";
-  document.getElementById("toilet_cafe1").style.display = "none";
-  document.getElementById("toilet_cafe2").style.display = "none";
-  document.getElementById("toilet_meetinglounge1").style.display = "none";
-  document.getElementById("toilet_meetinglounge2").style.display = "none";
-  document.getElementById("toilet_meetinglounge3").style.display = "none";
-}
-//facility icon effect
-function toilet_ele() {
-  document.getElementById("toilet_ele").style.display = "block";
-
-  document.getElementById("toilet_men1").style.display = "none";
-  document.getElementById("toilet_men2").style.display = "none";
-  document.getElementById("toilet_girl").style.display = "none";
-  document.getElementById("toilet_locker1").style.display = "none";
-  document.getElementById("toilet_locker2").style.display = "none";
-  document.getElementById("toilet_cafe1").style.display = "none";
-  document.getElementById("toilet_cafe2").style.display = "none";
-  document.getElementById("toilet_meetinglounge1").style.display = "none";
-  document.getElementById("toilet_meetinglounge2").style.display = "none";
-  document.getElementById("toilet_meetinglounge3").style.display = "none";
-}
-//facility icon effect
-function toilet_locker() {
-  document.getElementById("toilet_locker1").style.display = "block";
-  document.getElementById("toilet_locker2").style.display = "block";
-  
-  document.getElementById("toilet_men1").style.display = "none";
-  document.getElementById("toilet_men2").style.display = "none";
-  document.getElementById("toilet_girl").style.display = "none";
-  document.getElementById("toilet_ele").style.display = "none";
-  document.getElementById("toilet_cafe1").style.display = "none";
-  document.getElementById("toilet_cafe2").style.display = "none";
-  document.getElementById("toilet_meetinglounge1").style.display = "none";
-  document.getElementById("toilet_meetinglounge2").style.display = "none";
-  document.getElementById("toilet_meetinglounge3").style.display = "none";
-}
-//facility icon effect
-function toilet_cafe() {
-  document.getElementById("toilet_cafe1").style.display = "block";
-  document.getElementById("toilet_cafe2").style.display = "block";
-
-  document.getElementById("toilet_men1").style.display = "none";
-  document.getElementById("toilet_men2").style.display = "none";
-  document.getElementById("toilet_girl").style.display = "none";
-  document.getElementById("toilet_ele").style.display = "none";
-  document.getElementById("toilet_locker1").style.display = "none";
-  document.getElementById("toilet_locker2").style.display = "none";
-  document.getElementById("toilet_meetinglounge1").style.display = "none";
-  document.getElementById("toilet_meetinglounge2").style.display = "none";
-  document.getElementById("toilet_meetinglounge3").style.display = "none";
-}
 //facility icon effect
 function toilet_meetinglounge() {
   document.getElementById("toilet_meetinglounge1").style.display = "block";

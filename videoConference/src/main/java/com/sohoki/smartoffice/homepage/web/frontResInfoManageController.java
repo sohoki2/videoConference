@@ -225,15 +225,28 @@ public class frontResInfoManageController {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try {
 			
+			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			String url = "/web/index";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		
+		  		
+		  		
+		  		vo.setUserNo(empInfoVO.getEmpno());
+		  		userService.updatePasswordChange(vo);
+		  		
+				if (vo.getResult() >0){
+					model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
+					model.addObject(Globals.STATUS_MESSAGE, "정상적으로 변경 되었습니다.");
+				}else if (vo.getResult()== -1){
+					model.addObject(Globals.STATUS  , Globals.STATUS_FAIL);
+					model.addObject(Globals.STATUS_MESSAGE, "기존 패스워드가 일치 하지 않습니다");
+				}else {
+					throw new Exception();
+				}
+		  	}
 			
-			int ret = userService.updateUserInfoManage(vo);
-			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
-			if (ret >0){
-				model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
-				model.addObject(Globals.STATUS_MESSAGE, message);
-			}else {
-				throw new Exception();
-			}
 		}catch(Exception e) {
 			LOGGER.debug("actionJoinProcess error:"  + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -242,6 +255,36 @@ public class frontResInfoManageController {
     	return model;	
     }
 	
+	//회원 탈퇴
+	@RequestMapping(value="withdrawal.do")
+	public ModelAndView actionWithdrawalProcess(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                                    , HttpServletRequest request
+			    		                        , BindingResult bindingResult) throws Exception {
+		ModelAndView mav = new ModelAndView(Globals.JSONVIEW);
+		try {
+			
+			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			String url = "/web/index";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		
+		  		int ret = userService.deleteUserInfoManage(empInfoVO.getEmpno(), null);
+		  		if (ret >0){
+		  			request.getSession().setAttribute("empInfoVO", null);  
+		  			mav.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
+		  			mav.addObject(Globals.STATUS_MESSAGE, "정상적으로 회원 탈퇴 되셨습니다.");
+				}else {
+					throw new Exception();
+				}
+		  	}
+		}catch(Exception e) {
+			LOGGER.debug("actionJoinProcess error:"  + e.toString());
+			mav.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			mav.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
+		}
+    	return mav;	
+    }
 	
 	@RequestMapping(value="Logout.do")
 	public ModelAndView actionLogoutProcess(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 

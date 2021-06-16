@@ -236,7 +236,9 @@
 			     ON TA.RES_SEQ = c.RES_SEQ 
 			ORDER BY TA.CENTER_ID ASC, TA.FLOOR_INFO asc,  TA.MEETING_ORDER ASC
     </select>
-    
+    <select id="selectNameplate" resultType="lmap">
+         { call SP_EMPSEATINFO( )   }
+    </select>
     <select id="selectResManageView" resultType="lmap">
           { call SP_RESINFO(#{resSeq ,mode=IN, jdbcType=VARCHAR, javaType=string} )   }
     </select>

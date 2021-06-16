@@ -26,5 +26,9 @@ public class UserInfo {
 	private String authorCode = "";
 	private String userPassword = "";
 	
+	private String nowPassword = "";
+	private String newPassword = "";
+	private int result = 0;
+	
 	
 }

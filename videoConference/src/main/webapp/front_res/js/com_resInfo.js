@@ -600,13 +600,16 @@ function fn_swcTimeUni(params, resGubun, resSeq, _callFunction){
 //팝업
 function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun, seatEqupgubun, res_reqday){
     if (resSeq == "0"){
-    
+        //날짜 검색 먼저 하기
+        
         $("#hid_history").val("fn_resFormShow");
         $("#resReqday").val(res_reqday);
         $("#mode").val("Ins");
 		$("#res_swcName").text(swcName);
 		$("#resTitle").val("");
 		var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
+		if (dateCheck(resDay, res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다")  == false) { return; }
+		
 		$("#sp_ResDay").text(day_convert(resDay));
 		$("#resStartday").val(resDay);
 		$("#itemId").val(itemId);
@@ -631,6 +634,9 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
         }else {
         	$("#div_equipRoomInfo").hide();
         }
+        //화면 클릭 
+        $("#btn_meeting").trigger("click");
+        //좌석 클릭 
 	}else {
 		$("#mode").val("Edt");
 	}
@@ -826,7 +832,8 @@ function fn_floorMeetingInfo() {
   										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
   											setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
   										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
-  											setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.res_reqday +"&#39;);'></td>";
+  											//setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.res_reqday +"&#39;);'></td>";
+  											setHtml += "<td id='"+timeInfo.time_seq+"' class='popup_view' onclick='fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.res_reqday +"&#39;);'></td>";
   										}
   									}
 								}
@@ -870,16 +877,12 @@ function fn_ResSave(){
 		 if ($("#resEqupcheck").val() == "장비 사용여부"){
 	         resEqupcheck = "RES_EQUPCHECK_1";
 		 }else {
-			 //여기 부분에 값 넣기 
 			 resEqupcheck = $("#resEqupcheck").val();
 		 }
 		 if ($("#meetingSeq").val() == "on")
 	         $("#meetingSeq").val("");
 	 }
 	 var resTitle =  ($("#itemGubun").val() == "ITEM_GUBUN_2") ? "좌석예약: " + $("#p_seatNm").text() : $("#resTitle").val();
-	
-	 
-	 
 	 var params = {'mode': fn_domNullReplace($("#mode").val(), "Ins"), 'itemId': $("#itemId").val(), 'itemGubun':$("#itemGubun").val(), 
 	               'resTitle' : resTitle, 'resPassword' : fn_domNullReplace( $(":radio[name='resPassword']:checked").val() ,'Y'), 
 	               'resStartday' : $("#resStartday").val(), 'resEndday' : fn_domNullReplace( $("#resEndday").val(), ""),
@@ -960,6 +963,9 @@ function fn_resCancel(resSeq, reservProcessGubun){
 	$("#reservProcessGubun").val(reservProcessGubun);
 	
 }
+function fn_index(){
+    location.href="/web/Login.do";
+}
 function fn_resCancelUpdate(){
 	if (any_empt_line_id("cancelCode", '취소 유형을 선택해 주세요.') == false) return;
 	if (any_empt_line_id("cancelReason", '취소 사유를 입력해 주세요.') == false) return;
@@ -986,3 +992,85 @@ function fn_resCancelUpdate(){
 			    }    		
      );
 }
+//회원 정보 수정 
+function fn_modify(){
+            	//회원 정보 수정 
+            	if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
+      		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
+      		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
+	      		var param = {"userId" : $("#userId").val(),
+	      				     "userNo" : $("#userNo").val(),
+		     		     	 "userName" : $("#userName").val(),
+		     		     	 "userCellphone" : $("#userCellphone").val(),
+		     		     	 "userEmail" : $("#userEmail").val(),
+		     		     	 "mode" :  "Edt"
+			                }
+				
+			    if (confirm("변경 하시겠습니까?")== true){
+				   uniAjax("/web/JoinProcess.do", param, 
+			     			function(result) {
+							       if (result.status == "SUCCESS"){
+		                               //관련자 보여 주기 
+							    	   $("#sp_message").text(result.message);
+					   		           $("#btn_message").trigger("click");
+		                           }else {
+			  						  $("#sp_message").text(result.message);
+			  	    		          $("#btn_message").trigger("click");
+			  					   }
+							},
+							function(request){
+								    alert("Error:" +request.status );	       						
+							}    		
+			        );
+			    }
+            }
+            function fn_secession(){
+            	uniAjax("/web/withdrawal.do", null, 
+		     			function(result) {
+       			           $("#sp_message").text(result.message);
+  	    		           $("#btn_result").trigger("click");
+  	    		           if(result.status == "SUCCESS"){
+  	    		        	 $("#hid_history").val("fn_index");
+  	    		           }
+						},
+						function(request){
+							    alert("Error:" +request.status );	       						
+						}    		
+			    );
+            }
+            
+            function fn_formPass(showGubun){
+            	if (showGubun== "Mod"){
+            		$("#tb_modify").show();
+                	$("#tb_passwd").hide();
+            	}else {
+            		$("#tb_modify").hide();
+                	$("#tb_passwd").show();
+            	}
+            }
+            function fn_passChange(){
+            	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
+            	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
+            	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
+            	if (trim($("#newPassword1").val()) !=   trim($("#newPassword2").val())  ){
+            		$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
+         		    $("#btn_result").trigger("click");
+      			    return;
+      		    }
+            	if (confirm("변경 하시겠습니까?")== true){
+            		var param = {'nowPassword': $("#nowPassword").val(),'newPassword': $("#newPassword1").val()};
+            		uniAjax("/web/passChange.do", param, 
+ 			     			function(result) {
+            			           $("#sp_message").text(result.message);
+		  	    		           $("#btn_result").trigger("click");
+		  	    		           if(result.status == "SUCCESS"){
+		  	    		        	 $("#tb_modify").show();
+		  	    	            	 $("#tb_passwd").hide();
+		  	    		           }
+ 							},
+ 							function(request){
+ 								    alert("Error:" +request.status );	       						
+ 							}    		
+ 			        );
+ 			    }
+            }

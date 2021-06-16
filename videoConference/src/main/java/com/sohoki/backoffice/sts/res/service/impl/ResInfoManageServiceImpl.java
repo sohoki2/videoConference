@@ -432,5 +432,11 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		// TODO Auto-generated method stub
 		return resMapper.selectCalenderMeetingState(searchVO);
 	}
+    //전자 명패
+	@Override
+	public List<Map<String, Object>> selectNameplate() throws Exception {
+		// TODO Auto-generated method stub
+		return resMapper.selectNameplate();
+	}
 	  
 }

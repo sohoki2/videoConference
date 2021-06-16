@@ -247,16 +247,25 @@ function today_get(){
     return today;
 }
 
-function tomorrow_get(){
+function dateAdd(reqDay){
 	var now = new Date();
-	now.setDate(now.getDate()+1);
-    var tomorrow_day = fnLPAD(String(now.getDate()), "0", 2); //일자를 구함
-    var tomorrow_month = fnLPAD(String((now.getMonth() + 1)), "0", 2); // 월(month)을 구함    
-    var tomorrow_year = String(now.getFullYear()); //년(year)을 구함
-    var tomorrow = tomorrow_year + tomorrow_month + tomorrow_day;
-    
-    return tomorrow;
+	now.setDate(now.getDate()+ parseInt(reqDay));
+    var req_day = fnLPAD(String(now.getDate()), "0", 2); //일자를 구함
+    var req_month = fnLPAD(String((now.getMonth() + 1)), "0", 2); // 월(month)을 구함    
+    var req_year = String(now.getFullYear()); //년(year)을 구함
+    var reqDay = req_year + req_month + req_day;
+    return reqDay;
 }
+function dateCheck (_date, _addDay, alert_message){
+   if (parseInt(_date) < dateAdd(reqDay)){
+    	alert(alert_message);
+    	return false;
+    }else {
+    	return true;
+    }
+}
+
+
 //공백 제거
 function trim(str){
 	return str.replace(/ /gi, "");

@@ -21,7 +21,9 @@ public interface ResInfoManageService {
     
     List <ResInfoVO> selectMessagentList()throws Exception;
     
-    List<Map<String, Object>> selectKioskCalendarList(String swcSeq);
+    List<Map<String, Object>> selectKioskCalendarList(String swcSeq) throws Exception;
+    //전자 명패 리스트
+    List<Map<String, Object>> selectNameplate() throws Exception;
     
     Map<String, Object> selectResManageView(String resSeq) throws Exception;
 	//테넌트 확인
@@ -29,7 +31,6 @@ public interface ResInfoManageService {
     
     int resEquipStateChange (ResInfoVO vo) throws Exception;
     //최초 입력
-    
 	int insertResManage(ResInfoVO vo) throws Exception;
 	// 예약 수정 변경 
     int updateResManageChange(ResInfo vo) throws Exception;

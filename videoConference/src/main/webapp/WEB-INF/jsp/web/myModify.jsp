@@ -26,7 +26,7 @@
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/common.js"></script>
     <script src="/front_res/js/jquery-ui.min.js"></script>
-    <script src="/front_res/js/common.js"></script>
+    <script src="/front_res/js/com_resInfo.js"></script>
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
 </head>
 <body>
@@ -51,11 +51,11 @@
                         </tr>
                         <tr>
                             <th>신규 비밀번호 </th>
-                            <td><input type="password" name="newPassword1" d="newPassword1"></td>
+                            <td><input type="password" name="newPassword1" id="newPassword1"></td>
                         </tr>
                         <tr>
                             <th>신규 비밀번호 재확인</th>
-                            <td><input type="password" name="newPassword2" d="newPassword2"></td>
+                            <td><input type="password" name="newPassword2" id="newPassword2"></td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -103,96 +103,9 @@
         <c:import url="/web/inc/unimessage.do" />
         <script>  
 	        $( function() {
-	        	$("#tb_modify").show();
-            	$("#tb_passwd").hide();
+	        	fn_formPass('Mod');
 		    }); 
-            function fn_modify(){
-            	//회원 정보 수정 
-            	if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
-      		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
-      		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
-	      		var param = {"userId" : $("#userId").val(),
-	      				     "userNo" : $("#userNo").val(),
-		     		     	 "userName" : $("#userName").val(),
-		     		     	 "userCellphone" : $("#userCellphone").val(),
-		     		     	 "userEmail" : $("#userEmail").val(),
-		     		     	 "mode" :  "Edt"
-			                }
-				
-			    if (confirm("변경 하시겠습니까?")== true){
-				   uniAjax("/web/JoinProcess.do", param, 
-			     			function(result) {
-							       if (result.status == "SUCCESS"){
-		                               //관련자 보여 주기 
-							    	   $("#sp_message").text(result.message);
-					   		           $("#btn_message").trigger("click");
-		                           }else {
-			  						  $("#sp_message").text(result.message);
-			  	    		          $("#btn_message").trigger("click");
-			  					   }
-							},
-							function(request){
-								    alert("Error:" +request.status );	       						
-							}    		
-			        );
-			    }
-            }
-            function fn_secession(){
-            	
-            }
-            function fn_formPass(){
-            	$("#tb_modify").hide();
-            	$("#tb_passwd").show();
-            }
-            function fn_passChange(){
-            	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
-            	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
-            	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
-            	if ( $.trim($('#newPassword1').val()) !=   $.trim($('#newPassword2').val())  ){
-      			   $("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
-         		       $("#btn_message").trigger("click");
-      			   return;
-      		    }
-            	if (confirm("변경 하시겠습니까?")== true){
- 				   uniAjax("/web/JoinProcess.do", param, 
- 			     			function(result) {
- 							       if (result.status == "SUCCESS"){
- 		                               //관련자 보여 주기 
- 							    	   $("#sp_message").text(result.message);
- 					   		           $("#btn_message").trigger("click");
- 		                           }else {
- 			  						  $("#sp_message").text(result.message);
- 			  	    		          $("#btn_message").trigger("click");
- 			  					   }
- 							},
- 							function(request){
- 								    alert("Error:" +request.status );	       						
- 							}    		
- 			        );
- 			    }
-            	 
-            }
-            function any_empt_line_span(frm_nm, alert_message){
-	       	     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
-	       	    	  $("#sp_message").html(alert_message);
-	       	    	  $("#btn_message").trigger("click");
-	        		      $('#'+frm_nm).focus();
-	       			  return false;
-	       		 }else{
-	       	         return true;
-	       		 }
-	       	}
-            needPopup.config.custom = {
-                'removerPlace': 'outside',
-                'closeOnOutside': false,
-                onShow: function() {
-                    console.log('needPopup is shown');
-                },
-                onHide: function() {
-                    console.log('needPopup is hidden');
-                }
-            };
-            needPopup.init();
+            
         </script>
 </form:form>
 </body>

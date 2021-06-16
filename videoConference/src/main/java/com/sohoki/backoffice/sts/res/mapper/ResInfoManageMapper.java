@@ -28,6 +28,8 @@ public interface ResInfoManageMapper {
     public List <ResInfoVO> selectMessagentList();
     
     public List<Map<String, Object>> selectKioskCalendarList(String meetingId);
+    //전자 명패 정보
+    public List<Map<String, Object>> selectNameplate();
     
     public Map<String, Object> selectResManageView(String resSeq);
 	

@@ -150,7 +150,6 @@
 		    	}
 		    	fn_bookingList(gubun);
 		    }
-		    
 	        function fn_bookingList(){
 	        	var gubun = $("#boardGubun").val();
 	        	var url =  (gubun == "res") ? "/web/mybookingAjax.do" : "/web/myTennAjax.do";
@@ -158,7 +157,7 @@
 			    	    		"pageIndex": $("#pageIndex").val(),
 			    	    		"searchKeyword" : $("#searchKeyword").val(),
 			         			"pageUnit": $("#pageUnit").val()
-	     		}; 
+	     		              }; 
 		    	uniAjax(url, params, 
 		      			function(result) {
 		 				       if (result.status == "LOGIN FAIL"){
@@ -237,7 +236,6 @@
 	        }
 	        function ajaxPageChange(pageNo) {
 	       	   $(":hidden[name=pageIndex]").val(pageNo);
-	       	   
 	           fn_bookingList();
 	   	    }
 	        

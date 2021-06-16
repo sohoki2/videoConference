@@ -20,14 +20,14 @@
                         )
        }
     </delete>
-    <select id="selectIdDoubleCheck" resultType="java.lang.Integer">
+    <select id="selectIdDoubleCheck" resultType="java.lang.Integer" statementType="CALLABLE">
         { call SP_UNICHECK(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
                            #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
                            #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
                            )
         }
     </select>
-    <select id="selectFieldStatement" resultType="lmap">
+    <select id="selectFieldStatement" resultType="lmap" statementType="CALLABLE">
         { call SP_UNISELECT(#{isColumn ,mode=IN, jdbcType=VARCHAR, javaType=string} , 
                             #{isTable ,mode=IN, jdbcType=VARCHAR, javaType=string},
                             #{isCondition ,mode=IN, jdbcType=VARCHAR, javaType=string}
