@@ -118,8 +118,7 @@ public class CompanyInfoManageController {
 			  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 			  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 			  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
-			  
-			  
+			  searchVO.put("mode", "mode");
 			  
 			  List<Map<String, Object>> list = companyService.selectCompanyInfoManageListByPagination(searchVO);
 		      model.addObject(Globals.JSON_RETURN_RESULTLISR,  list );

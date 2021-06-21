@@ -34,14 +34,9 @@
 <body>
 <form:form name="regist" commandName="regist" method="post">
 
-        <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
-		<input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
-		<input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
-		<input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
-        <input type="hidden" name="hid_attendList" id="hid_attendList">
-        <input type="hidden" id="hid_equipList" name="hid_equipList">	
-        
-        
+        <input type="hidden" name="itemId" id="itemId" value="${regist.meeting_id}" />
+		<input type="hidden" name="resReqday" id="resReqday" />
+		<input type="hidden" name="hid_history" id="hid_history" />
         
         <c:import url="/web/inc/top_inc.do" />
         <!--header 추가//-->
@@ -49,39 +44,133 @@
         <c:import url="/web/inc/right_menu.do" />
         <!--left menu //-->
         <!--//floor Btn-->
-        <div id="allFloors">
+         <div id="allFloors">
             <div class="contents">
-                <div class="flooreArea float_left" id="dv_floor">
-                    <c:forEach items="${floorinfo }" var="floorList" varStatus="status">
-                       <a href="#" onClick="fn_floorSearch(${floorList.floor_seq }, 'fn_floorMeetingInfo()')" name="btn_floor" id="btn_${floorList.floor_seq}" class="<c:if test="${floorList.floor_seq  eq regist.floorSeq}" >active</c:if>">${floorList.floor_name }</a>
+                <div class="flooreArea coronArea float_left" id="dv_floor">
+                    <c:forEach items="${meetingList }" var="meetingList" varStatus="status">
+                       <a href="#" onClick="fn_meetingView('${meetingList.meeting_id }')" name="btn_floor" id="btn_${meetingList.meeting_id}" class="<c:if test="${meetingList.meeting_id  eq regist.meeting_id}" >active</c:if>">${meetingList.meeting_name }</a>
                     </c:forEach>
-                    
                 </div>               
                 <div class="clear"></div>
             </div>
         </div>
         <!--floor Btn//-->
-        
+        <!--//contents -->
+        <div class="contents coron" id="meeetingDetail">
+           <div class="line">
+           </div>
+           <div class="whiteBack coronBox">
+               <h5><span id="sp_roomTitle"></span></h5>
+               <div class="float_left imgArea">
+                 <!-- Swiper -->
+                  <div class="swiper-container gallery-top">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide"><img id="img_left01" name="img_left01" /></div>
+                      <div class="swiper-slide"><img id="img_left02" name="img_left02"/></div>
+                      <div class="swiper-slide"><img id="img_left03" name="img_left03"/></div>
+                    </div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-button-next swiper-button-white"></div>
+                    <div class="swiper-button-prev swiper-button-white"></div>
+                  </div>
+                  <div class="swiper-container gallery-thumbs">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide"><img id="img_bottom01" name="img_bottom01"/></div>
+                      <div class="swiper-slide"><img id="img_bottom02" name="img_bottom02"/></div>
+                      <div class="swiper-slide"><img id="img_bottom03" name="img_bottom03"/></div>
+                    </div>
+                  </div>
+                  <!-- Swiper -->
+                  <div class="notice">
+                     <p>> 유의사항</p>
+                     <div class="notice_list" >
+                     <span id="sp_remark"></span>
+                     </div>
+               </div>
+               </div>
+              
+               
+               <div class="float_right infoArea">
+                 <table>
+                   <tbody>
+                     <tr>
+                       <th>시설 소개글</th>
+                       <td id="td_meeting_remark01"></td>
+                     </tr>
+                      <tr>
+                       <th>위치</th>
+                       <td id="td_meeting_remark02"></td>
+                     </tr>
+                      <tr>
+                       <th>규모</th>
+                       <td id="td_meeting_remark03"></td>
+                     </tr>
+                      <tr>
+                       <th>이용시간</th>
+                       <td id="td_meeting_remark04"></td>
+                     </tr>
+                     <tr>
+                       <th>장비현황</th>
+                       <td id="td_meeting_remark05"></td>
+                     </tr>
+                      <tr>
+                       <th>시간당</th>
+                       <td id="td_meeting_remark06"></td>
+                     </tr>
+                      <tr>
+                       <th>일당(8H)</th>
+                       <td id="td_meeting_remark07"></td>
+                     </tr>
+                      <tr>
+                       <th>문의</th>
+                       <td id="td_meeting_remark08"></td>
+                     </tr>
+                      <tr>
+                       <th>첨부파일</th>
+                       <td id="td_meeting_file01"></td>
+                     </tr>
+                   </tbody>
+                 </table>
+                 <p>*개인 및 법인 유형에 따라 대관료가 상이하게 책정됩니다. (사전 문의필요)</p>
+                 <button type="button" class="blueBtn" onclick="res.fn_meetingViewGubun('Res');">대관 신청하기</button>
+               </div>
+               <div class="clear"></div>
+           </div>
+        </div>
+        <!--contetns//-->
         <!--//contents-->
-        <div class="contents coron">
+        <div class="contents coron cor_detail" id="meeetingRes"> 
            <div class="line">
             <!--//date picker-->
                 <div class="contents mobileM">
-                    <div class="float_right">
-                    <a href="/web/meetingDay.do" class="resource">회의실예약</a>
-                  </div>
-                  <div class="dateBox float_left">
-                      <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}" onChange="res.fn_floorInfo()">
-                      <div class="dateIcon" onClick="res.fn_floorInfo()">
-                        <a class="dateBtn">검색</a>
-                      </div>
-                      <div class="clear"></div>
-                   </div>
+                  <ul>
+                    <li class="float_left">
+                      <div class="dateBox">
+                        <span>시작 일시</span>
+                          <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}">
+                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo()">
+                            <a class="dateBtn">검색</a>
+                          </div>
+                       </div>
+                    </li>
+                    <li class="float_left">
+                      <div class="dateBox">
+                         <span>종료일시</span>
+                          <input type="text" id="searchResEndday" name="searchResEndday" class="inputSearch" value="${regist.searchResEndday}">
+                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo()">
+                            <a class="dateBtn">검색</a>
+                          </div>
+                       </div>
+                    </li>
+                    <li><a class="searchBtn" href="#" onClick="fn_floorMeetingIntervalInfo()">검색</a></li>
+                  </ul>
+                  <div class="clear"></div>
                 </div>
               <!--date picker//-->
            </div>
+           
            <div class="whiteBack meet">
-            <div class="infoContents float_left">
+                <div class="infoContents float_left">
                         <span class="usingSeat">예약완료</span>
                         <span class="posSeatD">예약검토</span>
                         <span class="posSeatU">대관요청</span>
@@ -147,100 +236,105 @@
         </div>
         <!--contetns//-->
         
-<div id="ok_reserve" class="needpopup opened">
-     <span id="sp_message"></span>
-     <a href="#" class="needpopup_remover"></a>
-</div>        
-<!--//대관 신청 팝업-->
-<div id="app_meeting" class="needpopup">
-      <h5 class="pop_tit">예약신청</h5>
-      <ul class="form">
-        <li>
-          <p class="pop_text">대관</p>
-          <span id="res_swcName"></span>
-          <!--  영상 회의 관련 내용 -->
-          <div style="display:none">
-          
-          <input type="hidden" name="floorSeq" id="floorSeq" value="${regist.floorSeq}">
-		  <input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
-		  <input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
-		  <input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
-		
-		
-          <select id="resGubun"></select>
-          <input type="radio" id="resPassword" name="resPassword" value="Y">공개
-          <input type="radio" id="resPassword" name="resPassword" value="N">비공개
-          <input type="hidden" id="conPin" name="conPin"/>
-          <input type="hidden" id="conVirtualPin" name="conVirtualPin"/>
-          <input type="hidden" id="conAllowstream" name="conAllowstream"/>
-          <input type="hidden" id="conBlackdial" name="conBlackdial"/>
-          <input type="hidden" id="conSendnoti" name="conSendnoti"/>
-          <input type="hidden" id="resEqupcheck" name="resEqupcheck"/>
-          <input type="hidden" id="proxyUserId" name="proxyUserId"/>
-          <input type="checkbox" id="sendMessage" name="sendMessage"> 
-          <input type="checkbox" id="proxyYn" name="proxyYn" value="Y"> <!--  대리 예약 관련 내용 --> 
-          <input type="hidden" id="seatConfirmgubun" name="seatConfirmgubun"> 
-          
-          </div>
-          <!--  영상 회의 관련 내용 -->
-        </li>
-        <li class="w50_cor">
-          <p class="pop_text">사용자</p>
-         
-        </li>
-        <li class="w50_cor">
-          <p class="pop_text">이메일</p>
-        </li>
-        <li>
-          <p class="pop_text">사용목적</p>
-          <input type="text" id="resRemark" name="resRemark">
-        </li>
-        <li>
-          <p class="pop_text">행사규모</p>
-          <input type="number" id="resPerson" name="resPerson">
-        </li>
-        <li>
-          <p class="pop_text">사용일시</p>
-          <input class="date_cor" type="text" id="resStartday" name="resStartday" class="inputSearch">
-          <select id='resStarttime' style="width:120px;"></select>
-          ~ 
-          <input class="date_cor" type="text" id="resEndday" name="resEndday" class="inputSearch">
-          <select id='resEndtime' style="width:120px;"></select>
-        </li>
-        <li><input type="text" placeholder="제목" name="resTitle" id="resTitle"></li>
-        <li>
-          <p class="pop_text">주의사항</p>
-          <div class="scroll">
-            1. 대관신청은 사용 시작일 기준 7일 전까지 완료되어야 합니다. <br/>
-            2. 실예약자 외 타인에게 대관을 양도할 수 없습니다.<br/>
-            3. 시설 이용 후 집기비품은 반드시 원상복구해야 합니다.<br/>
-            4. 시설 내 취식은 불가합니다.<br/>
-            5. 예약을 취소하거나 변경할 경우 반드시 담당자에게 연락하셔야 합니다.<br/>
-            6. 사용자의 과실/부주의로 파손, 분실 등이 발생할 경우 손해배상책임이 있습니다.<br/>
-            7. 개인정보 수집동의(아래)<br/>
-            ○ 목적: 시설 운영관리<br/>
-            ○ 보유항목: 이름, 소속, 전화번호, 이메일<br/>
-            ○ 개인정보 보유 및 이용기간: 신청일 기준 5년<br/>
-                                ※ 동의를 거부할 권리가 있으며 동의 거부 시 시설 이용이 제한됩니다.<br/>
-          </div>
-          <p class="pop_text margintop10"><input type="checkbox" id="agreeCheck" name="agreeCheck">동의합니다</p>
-          
-        </li>
-      </ul>
-      <div class="clear"></div>
-      <div class="footerBtn">
-        <a href="#" onClick="res.fn_ResSave()" class="blueBtn">대관신청</a>
-        <a href="#" onClick="need_close()" class="grayBtn">취소</a>
-      </div>
-      <div class="clear"></div>
-  </div>
-  
-  
-  <div id="ok_reserve" class="needpopup opened">
-     <span id="sp_message"></span>
-     <a href="#" class="needpopup_remover"></a>
-  </div>
-  <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
+		<!--//대관 신청 팝업-->
+		<div id="app_meeting" class="needpopup">
+		      <h5 class="pop_tit">예약신청</h5>
+		      <ul class="form">
+		        <li>
+		          <p class="pop_text">대관</p>
+		          <span id="res_swcName"></span>
+		          <!--  영상 회의 관련 내용 -->
+		          <div style="display:none">
+		          
+		          <input type="hidden" name="floorSeq" id="floorSeq" >
+				  <input type="hidden" name="searchCenterId" id="searchCenterId" value="${regist.searchCenterId}">
+				  <input type="hidden" id="itemGubun" name="itemGubun" value="${regist.itemGubun}" />
+				  <input type="hidden" id="searchRoomType" name="searchRoomType" value="${regist.searchRoomType}"/>
+				  <input type="hidden" name="hid_attendList" id="hid_attendList">
+                  <input type="hidden" id="hid_equipList" name="hid_equipList">	
+				
+		          <select id="resGubun"></select>
+		          <input type="radio" id="resPassword" name="resPassword" value="Y">공개
+		          <input type="radio" id="resPassword" name="resPassword" value="N">비공개
+		          <input type="hidden" id="conPin" name="conPin"/>
+		          <input type="hidden" id="conVirtualPin" name="conVirtualPin"/>
+		          <input type="hidden" id="conAllowstream" name="conAllowstream"/>
+		          <input type="hidden" id="conBlackdial" name="conBlackdial"/>
+		          <input type="hidden" id="conSendnoti" name="conSendnoti"/>
+		          <input type="hidden" id="resEqupcheck" name="resEqupcheck"/>
+		          <input type="hidden" id="proxyUserId" name="proxyUserId"/>
+		          <input type="checkbox" id="sendMessage" name="sendMessage"> 
+		          <input type="checkbox" id="proxyYn" name="proxyYn" value="Y"> <!--  대리 예약 관련 내용 --> 
+		          <input type="hidden" id="seatConfirmgubun" name="seatConfirmgubun"> 
+		          
+		          </div>
+		          <!--  영상 회의 관련 내용 -->
+		        </li>
+		        <li class="w50_cor">
+		          <p class="pop_text">사용자</p>
+		          <span id="sp_userId"></span>
+		        </li>
+		        <li class="w50_cor">
+		          <p class="pop_text">이메일</p>
+		          <span id="sp_userEmail"></span>
+		        </li>
+		        <li>
+		          <p class="pop_text">사용목적</p>
+		          <input type="text" id="resRemark" name="resRemark">
+		        </li>
+		        <li>
+		          <p class="pop_text">행사규모</p>
+		          <input type="number" id="resPerson" name="resPerson">
+		        </li>
+		        <li>
+		          <p class="pop_text">사용일시</p>
+		          <input class="date_cor" type="text" id="resStartday" name="resStartday" class="inputSearch" onChange="fn_ResDayCheck()" />
+		          <select id='resStarttime' style="width:120px;"></select>
+		          ~ 
+		          <input class="date_cor" type="text" id="resEndday" name="resEndday" class="inputSearch"  onChange="fn_ResDayCheck()"/>
+		          <select id='resEndtime' style="width:120px;"></select>
+		        </li>
+		        <li><input type="text" id="resTitle" name="resTitle" placeholder="제목"/></li>
+		        <li>
+		          <p class="pop_text">주의사항</p>
+		          <div class="scroll">
+		            1. 대관신청은 사용 시작일 기준 7일 전까지 완료되어야 합니다. <br/>
+		            2. 실예약자 외 타인에게 대관을 양도할 수 없습니다.<br/>
+		            3. 시설 이용 후 집기비품은 반드시 원상복구해야 합니다.<br/>
+		            4. 시설 내 취식은 불가합니다.<br/>
+		            5. 예약을 취소하거나 변경할 경우 반드시 담당자에게 연락하셔야 합니다.<br/>
+		            6. 사용자의 과실/부주의로 파손, 분실 등이 발생할 경우 손해배상책임이 있습니다.<br/>
+		            7. 개인정보 수집동의(아래)<br/>
+		            ○ 목적: 시설 운영관리<br/>
+		            ○ 보유항목: 이름, 소속, 전화번호, 이메일<br/>
+		            ○ 개인정보 보유 및 이용기간: 신청일 기준 5년<br/>
+		                                ※ 동의를 거부할 권리가 있으며 동의 거부 시 시설 이용이 제한됩니다.<br/>
+		          </div>
+		          <p class="pop_text margintop10"><input type="checkbox" id="agreeCheck" name="agreeCheck">동의합니다</p>
+		        </li>
+		      </ul>
+		      <div class="clear"></div>
+		      <div class="footerBtn">
+		        <a href="#" onClick="res.fn_ResSave()" class="blueBtn">대관신청</a>
+		        <a href="#" onClick="need_close()" class="grayBtn">취소</a>
+		      </div>
+		      <div class="clear"></div>
+       </div>
+       
+	   <div id="ok_reserve" class="needpopup opened">
+	        <ul class="form">
+	          <li>
+	            <span id="sp_message"></span>
+	          </li>
+	        </ul>
+	        <div class="clear"></div>
+	        <div class="footerBtn">
+	          <a href="#" onClick="fn_hisInfo()" class="grayBtn">확인</a>
+	        </div>
+	        <div class="clear"></div>  
+	   </div>
+       <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
+       <button type="button" id="btn_res" style="display:none" data-needpopup-show='#app_meeting'>예약 팝업 다시</button>
   <!--예약 팝업//-->           
         <script src="/front_res/js/needpopup.min.js"></script>
 		<script type="text/javascript">
@@ -259,180 +353,46 @@
 		    };
 		    needPopup.init();
 		</script>
-        <!--//pinch-zoom-->
+        
+        <script src="/front_res/js/swiper.min.js"></script>
         <script>  
             $( function() {
             	 $( "#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
+            	 $( "#searchResEndday").datepicker({ dateFormat: 'yymmdd' });
             	 $( "#resStartday").datepicker({ dateFormat: 'yymmdd' });
             	 $( "#resEndday").datepicker({ dateFormat: 'yymmdd' });
-            	 fn_floorMeetingInfo();
+            	 //fn_floorMeetingInfo();
             	 var state = "${status}";
         		 if (state == "FAILLACK"){
         	   		 alert("적용되는 시설물이 없습니다");
         	   		 location.href= "/web/index.do";
         	   	 }
-        		
+        		 //보여주기 
+        		 res.fn_meetingViewGubun("Detail");
+        		 
             });
-           
+            
             var res = {
-            		fn_floorInfo : function(){
-            			if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
-                    	
-                    	var params = {'searchCenterId' : $("#searchCenterId").val(), 
-                    			      'searchFloorseq' :  $("#floorSeq").val(),
-                    			      'searchResStartday' : $("#searchResStartday").val(), 
-                    			      'searchRoomType' : 'SWC_GUBUN_3',
-                    			      'searchSeatView': 'Y' 
-                        }; 
-                    	var url = "/web/meetingDayAjax.do";
-                    	uniAjax(url, params, 
-            		     			function(result) {
-            						       if (result.status == "LOGIN FAIL"){
-            						    	   alert(result.meesage);
-            		  						   location.href="/web/Login.do";
-            		  					   }else if (result.status == "SUCCESS"){
-            		  						    $("#searchResStartday").val(result.result.searchResStartday);
-            		  						    $("#searchCenterId").val(result.result.searchCenterId);
-            		  						    //버튼 정리 
-            		  						    
-            		  						    var setHtml = "";
-            	  								$("#tb_seatTimeInfo > tbody").empty(); 
-            	  								for (var i in result.seatInfo){
-            	  									//alert(i);
-            	  									var seatinfo = result.seatInfo[i];
-            	  									setHtml += "<tr id='swcSeq_"+seatinfo.meeting_id +"' style='height:50px;'>";
-            	  									setHtml += "<th style='padding-left: 20px;' title='"+seatinfo.meetingroom_remark+"' class='fixed_th'>"+seatinfo.meeting_name+"</th>";
-            	  									//alert(seatinfo.timeInfo);
-            	  									console.log(seatinfo.meeting_equpgubun);
-            	  									
-            	  									if (seatinfo.timeinfo.length < 20){
-            	  										setHtml += "<td colspan='20' style='text-aling:center;'>예약 불가</td>";
-            	  									}else {
-            	  										for (var a  in seatinfo.timeinfo){
-            		  										var timeInfo = seatinfo.timeinfo[a];
-            		  										var classInfo = "";
-            		  										//색갈 넣기 및 예약자 클릭 관련 내용 넣기 \
-            		  										if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
-            		  											setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
-            		  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
-            		  											setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
-            		  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
-            		  											setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
-            		  										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
-            		  											setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='res.fn_resInfo(&#39;"+seatinfo.meeting_id +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.room_type +"&#39;);'></td>";
-            		  										}
-            		  									}
-            	  									}
-            	  									
-            	  									//centerId 값 넣기 
-            	  									setHtml += "</tr>";
-            	  									$("#tb_seatTimeInfo >  tbody:last").append(setHtml);
-            	  									setHtml = "";
-            	  									
-            	  									if ($("#searchCenterId").val(seatinfo.center_id));
-            		  					      }
-            		  					   }
-            						    },
-            						    function(request){
-            							    alert("Error:" +request.status );	       						
-            						    }    		
-            		    );
-            		}, fn_resInfo : function (itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun, seatEqupgubun){
-            			if (resSeq == "0"){
-            				$("#mode").val("Ins");
-            				$("#res_swcName").text(swcName);
-            				$("#resTitle").val();
-            				var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
-            				$("#resStartday").val(resDay);
-            				$("#resEndday").val(resDay);
-            				$("#itemId").val(itemId);
-            				$("#useYn").val("Y");
-            		        $("#sp_meetingAttendList").html("");
-            		        $("#hid_attendList").val("");
-            		        $("#meetingSeq").val("");
-            		        $("#meegintRoomInfo").html("");
-            		        $("#seatConfirmgubun").val(seatConfirmgubun);
-            		        $("#hid_equipList").val("");
-            		   	    $("#sp_equipRoomInfo").html("");
-            		   	    $("#resEqupcheck").val("");
-            		   		$("#div_meeting1").hide();
-            			    $("#div_meeting2").hide();
-            			    if (seatEqupgubun == "Y"){
-            		        	$("#div_equipRoomInfo").show();
-            		           // $("#resEqupcheck").html("");
-            		        }else {
-            		        	$("#div_equipRoomInfo").hide();
-            		        }
-            			}else {
-            				$("#mode").val("Edt");
-            			}
-            			res.fn_swcTime(swcTime, resSeq, itemId, roomType);
-            			//fn_swcTimeUni
-            			
-            		}, fn_swcTime : function (swcTime, resSeq, itemId ){
-            			var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
-            			uniAjax("/web/resInfo.do", params, 
-            		 			function(result) {
-            					       if (result.status == "LOGIN FAIL"){
-            					    	    alert(result.message);
-            									location.href="/web/Login.do";
-            							   }else if (result.status == "SUCCESS"){
-            								    //테이블 정리 하기
-            									var objS = result.resStartTime;
-            									
-            									if (objS.length > 0 ){
-            										$("#resStarttime option").remove();
-            										for (var i in objS){
-            										    console.log(objS[i].codeNm);
-            											try{
-            												$("#resStarttime").append("<option value='"+objS[i].codeNm.replace(":","") +"'>"+objS[i].codeNm+"</option>");
-            											}catch(err){
-            												console.log(err);
-            											}
-            		  						    }
-            									}
-            									var objE = result.resEndTime;
-            									if (objE.length > 0 ){
-            										$("#resEndtime option").remove();
-            		  							for (var i in  objE){
-            		  								try{
-            		  									$("#resEndtime").append("<option value="+objE[i].codeNm.replace(":","")+">"+objE[i].codeDc+"</option>");
-            		  								}catch(err){
-            		  									console.log(err);
-            		  								}
-            		  						    }
-            									}
-            									//회의실 구분
-            									fn_ResGubunCombo("resGubun", result.seatInfo.room_type, null);
-            									$("#resStarttime").val(swcTime);
-            								    if (resSeq != "0"){
-            								    	$("#resEndtime").val();
-            								    }else {
-            								    	$("#resStarttime option:eq(0)").prop("selected", true);
-            								    	$("#resEndtime option:eq(0)").prop("selected", true);
-            								    }
-            								    	
-            							   }
-            					    },
-            					    function(request){
-            						    alert("Error:" +request.status );	       						
-            					    }    		
-            		     );
-            		}, fn_ResSave : function(){
+            		fn_ResSave : function(){
             			 var resEqupcheck = "";
             			 
-            			 
-            			 
-            			 // 회의실 일떄 -> ITEM_GUBUN_1 로 정의 추후 변경 예정 
-	           			 if (res.fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
-	           			 if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.',"sp_errorMessage") == false) return;
-	           			 if (any_empt_line_span("resStarttime", '회의 시작 시간을 선택해 주세요.', "sp_errorMessage") == false) return;
-	           			 if (any_empt_line_span("resEndtime", '회의 종료 시간을 선택해 주세요.', "sp_errorMessage") == false) return;
+            			 $("#hid_history").val("res_show");
+            			 if (fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
+            			 if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.') == false) return;
+            			 if (any_empt_line_span("resStarttime", '회의 시작 시간을 선택해 주세요.') == false) return;
+	           			 if (any_empt_line_span("resEndtime", '사용목적을 선택해 주세요.') == false) return;
+	           			 if (any_empt_line_span("resRemark", '회의 종료 시간을 입력해 주세요.') == false) return;
 	           			 if ($("#div_equipRoomInfo").is(":visible") == true){
-	           		           if (any_empt_line_span("resEqupcheck", '장비사용 여부를 선택해 주세요.', "sp_errorMessage") == false) return;
+	           		           if (any_empt_line_span("resEqupcheck", '장비사용 여부를 선택해 주세요.') == false) return;
 	           			 }
 	           			 if ($("#resGubun").val() == "SWC_GUBUN_2"  && $("#meetingSeq").val() == ""){
-	           				 $("#sp_errorMessage").html("영상회의를 진행할 회의실을 선택해 주세요.");	 
+	           				 $("#sp_message").html("영상회의를 진행할 회의실을 선택해 주세요.");	 
+	           				 $("#btn_result").trigger("click");
+	           				 return;
+	           			 }
+	           			 if ($("#resStartday").val() ==  $("#resEndday").val() && $("#resStarttime").val() > $("#resEndtime").val()){
+	           				 $("#sp_message").html("같은일자에 시작시간이 종료 시간보다 큽니다.");
+	           				 $("#btn_result").trigger("click");
 	           				 return;
 	           			 }
 	           			 if ($("#resEqupcheck").val() == "장비 사용여부"){
@@ -468,6 +428,9 @@
 	           									location.href="/web/Login.do";
 	           							   }else{
 	           								    need_close();
+	           								    if (result.status == "SUCCESS"){
+	           								    	$("#hid_history").val("");
+	           								    }
 	           								    $("#sp_message").text(result.message);
 	           								    $("#btn_result").trigger("click");
 	           								    fn_resCancel();
@@ -479,17 +442,119 @@
 	           					     alert("Error:" +request.status );	       						
 	           				    }    		
 	           		     );
-           		    }, fn_Check : function(_UniCheckFormNm, _btn_message){
-	            		if ($("#"+_UniCheckFormNm).is(":checked") == true){
-	            			return true;
-	            		}else {
-	            		    $("#sp_message").text(_btn_message);
-	            		    $("#btn_result").trigger("click");
-	            			return false;
-	            		}
-            		}
+           		    }, fn_meetingViewGubun : function (ViewGubun){
+            			if (ViewGubun == "Detail"){
+            				$("#meeetingDetail").show();
+            				$("#meeetingRes").hide();
+            				res.fn_meetingInfo();
+            			}else {
+            				$("#meeetingDetail").hide();
+            				$("#meeetingRes").show();
+            				fn_floorMeetingIntervalInfo();
+            			}
+            		}, fn_meetingInfo : function (){
+            			var url = "/web/meetingDetail.do";
+            			
+            			var params = {'meetingId': $("#itemId").val()};
+            			var result = uniAjaxReturnSerial(url, params);
+            			if (result.result != ""){
+            				var obj = result.regist;
+            				$("#resReqday").val(obj.res_reqday);
+            				$("#floorSeq").val(obj.floor_seq);
+            				$("#searchCenterId").val(obj.center_id);
+            				
+            				$("#sp_roomTitle").text(obj.meeting_name);
+            				
+            				$("#img_left01").attr("src", "/upload/"+ obj.meeting_img1);
+            				$("#img_left02").attr("src", "/upload/"+ obj.meeting_img2);
+            				$("#img_left03").attr("src", "/upload/"+ obj.meeting_img3);
+            				
+            				$("#img_bottom01").attr("src", "/upload/"+ obj.meeting_img1);
+            				$("#img_bottom02").attr("src", "/upload/"+ obj.meeting_img2);
+            				$("#img_bottom03").attr("src", "/upload/"+ obj.meeting_img3);
+            				$("#sp_remark").html(obj.meetingroom_remark);
+            				
+            				fn_trInnerTxt("td_meeting_remark01", obj.meeting_remark01);
+            				fn_trInnerTxt("td_meeting_remark02", obj.meeting_remark02);
+            				fn_trInnerTxt("td_meeting_remark03", obj.meeting_remark03);
+            				fn_trInnerTxt("td_meeting_remark04", obj.meeting_remark04);
+            				fn_trInnerTxt("td_meeting_remark05", obj.meeting_remark05);
+            				fn_trInnerTxt("td_meeting_remark06", obj.meeting_remark06);
+            				fn_trInnerTxt("td_meeting_remark07", obj.meeting_remark07);
+            				fn_trInnerTxt("td_meeting_remark08", obj.meeting_remark08);
+            				
+            				var empInfoVO = result.userinfo;
+            				$("#sp_userId").text(empInfoVO.empno);
+            				$("#sp_userEmail").text(empInfoVO.empmail);
+            				
+            				
+            				if (obj.meeting_file01 != "")
+            					$("#td_meeting_remark08")[0].innerHtml = "<a href='/upload/"+obj.meeting_file01+"' target='_blank'>"+ obj.meeting_file01+ "</a>";
+            				
+            				
+            				var galleryThumbs = new Swiper('.gallery-thumbs', {
+            		              spaceBetween: 1,
+            		              slidesPerView: 3,
+            		              loop: true,
+            		              freeMode: true,
+            		              loopedSlides: 3, //looped slides should be the same
+            		              watchSlidesVisibility: true,
+            		              watchSlidesProgress: true,
+            		        });
+            				
+            				var galleryTop = new Swiper('.gallery-top', {
+            		              spaceBetween: 1,
+            		              loop:true,
+            		              loopedSlides: 3, //looped slides should be the same
+            		              navigation: {
+            		                nextEl: '.swiper-button-next',
+            		                prevEl: '.swiper-button-prev',
+            		              },
+            		              thumbs: {
+            		                swiper: galleryThumbs,
+            		              },
+            		        });
+            				
+            				
+            				galleryTop.params.control = galleryThumbs;
+            				galleryThumbs.params.control = galleryTop;
+            				
+            				$("img[name=img_left01]").attr("src", "/upload/"+ obj.meeting_img1);
+            				$("img[name=img_left02]").attr("src", "/upload/"+ obj.meeting_img2);
+            				$("img[name=img_left03]").attr("src", "/upload/"+ obj.meeting_img3);
+            				
+            				$("img[name=img_bottom01]").attr("src", "/upload/"+ obj.meeting_img1);
+            				$("img[name=img_bottom02]").attr("src", "/upload/"+ obj.meeting_img2);
+            				$("img[name=img_bottom03]").attr("src", "/upload/"+ obj.meeting_img3);
+            		        
+            			}else {
+            				
+            			}
+            			
+            		} 
+            }
+            function res_show(){
+            	$("#btn_res").trigger("click");
+            }
+            function fn_meetingView(code){
+            	$("#dv_floor").find("[name=btn_floor]").attr('class', '');
+            	$("#btn_"+code).attr('class', 'active');
+            	$("#itemId").val(code);
+    			res.fn_meetingViewGubun("Detail");
+    		}
+            function fn_ResDayCheck(){
+            	//$("#hid_history").val("res_show"); //추후 막아 놓기 
+            	if (yesterDayConfirm($("#resStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+        		if (yesterDayConfirm($("#resEndday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+        		var res_reqday = $("#resReqday").val();		
+        		if (dateCheck($("#resStartday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+        		if (dateCheck($("#resEndday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+        		if (dateDiff($("#resStartday").val(), $("#resEndday").val(), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
+        		
             }
          </script>
+         <!-- Swiper JS -->
+         <!--//pinch-zoom-->
          <script type="text/javascript">
               var el = document.querySelector('div.pinch-zoom');
               new PinchZoom.default(el, {});

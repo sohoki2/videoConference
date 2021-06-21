@@ -332,6 +332,8 @@ public class OfficeItemInfoManageController {
 		  model.addObject("selectMail", msgService.selectMsgCombo("MSG_TYPE_1"));
 		  model.addObject("selectSms", msgService.selectMsgCombo("MSG_TYPE_2"));
 		  
+		  model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailCombo("SWC_GUBUN"));
+		  
 	      model.setViewName("/backoffice/basicManage/officeMeetingList");
 		  return model;	
 	}

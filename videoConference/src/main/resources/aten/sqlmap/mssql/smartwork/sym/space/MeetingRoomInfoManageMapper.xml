@@ -63,9 +63,24 @@
 											    AND a.MEETING_USEYN = #{params.searchMeetingUseyn}
 											 </if>
 							) TB 
-			) TA
-			WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
-			ORDER BY CAST(REPLACE(TA.FLOOR_INFO, 'CENTER_FLOOR_','') AS INT) ASC, TA.MEETING_ORDER ASC,  TA.MEETING_ID  DESC 
+		) TA
+		WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
+		ORDER BY CAST(REPLACE(TA.FLOOR_INFO, 'CENTER_FLOOR_','') AS INT) ASC, TA.MEETING_ORDER ASC,  TA.MEETING_ID  DESC 
+   </select>
+   
+   <select id="selectMeetingRoomTypeList" resultType="lmap">
+        SELECT a.MEETING_ID, a.MEETING_NAME,
+               b.CENTER_NM, c.FLOOR_NAME, ISNULL(a.RES_REQDAY, 0) RES_REQDAY
+        FROM TB_MEETING_ROOM a,TB_CENTERINFO b, TB_FLOORINFO c
+		WHERE a.CENTER_ID = b.CENTER_ID 
+			  AND a.FLOOR_SEQ = c.FLOOR_SEQ
+			  AND a.MEETING_USEYN = 'Y'
+              <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomType)">
+				AND a.ROOM_TYPE = #{params.searchRoomType}
+			  </if>	
+			  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchRoomView)">
+			    AND a.MEETING_VIEW = #{params.searchRoomView}
+			  </if>
    </select>
    <!-- selectSeatEmptyManageList 추후 프론트로 이동 -->
    <select id="selectMeetingRoomEmptyManageList" resultType="lmap">
@@ -164,13 +179,15 @@
 	            , a.MEETING_IMG3, a.MEETING_FILE01, a.MEETING_FILE02
 				, a.MEETINGROOM_REMARK, a.MAX_CNT, a.ROOM_TYPE, a.MEETING_USEYN, a.MEETING_MAINVIEW
 				, a.AVAYA_CONFI_ID, a.AVAYA_ROOMCODE   
-				, a.MEETING_IMG1, a.MEETING_IMG2
+				, a.MEETING_IMG1, a.MEETING_IMG2, a.MEETING_IMG3
 				, a.AVAYA_CONFI_ID, a.AVAYA_USERID
                 , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL
                 , a.USER_FIRST_NM, a.USER_LAST_NM, a.USER_EMAIL
                 , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS roomTypeTxt
                 , a.MEETING_VIEW, a.MEETING_ORDER, a.MEETING_EQUPGUBUN
                 , a.MEETING_CONFIRMGUBUN , a.MEETING_ADMINID
+                , MEETING_REMARK01, MEETING_REMARK02, MEETING_REMARK03, MEETING_REMARK04
+                , MEETING_REMARK05, MEETING_REMARK06, MEETING_REMARK07, MEETING_REMARK08
                 , CASE WHEN LEN(a.MEETING_ADMINID) > 3 THEN 
 				     dbo.FN_ATTENTLIST(a.MEETING_ADMINID)
 				  ELSE
@@ -245,7 +262,9 @@
 	                                  MAIL_SENDCHECK, SMS_SENDCHECK, MEETING_MAINVIEW,
 	                                  RES_MESSAGE_MAIL, RES_MESSAGE_SMS, CAN_MESSAGE_MAIL, CAN_MESSAGE_SMS,
 	                                  PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, RES_REQDAY,
-	                                  MEETING_FILE01, MEETING_FILE02
+	                                  MEETING_FILE01, MEETING_FILE02,
+	                                  MEETING_REMARK01, MEETING_REMARK02, MEETING_REMARK03, MEETING_REMARK04,
+	                                  MEETING_REMARK05, MEETING_REMARK06, MEETING_REMARK07, MEETING_REMARK08
 	                               )
 	      VALUES (#{meetingId}, #{meetingName}, #{centerId}, #{floorSeq}, #{partSeq}, #{roomType}, #{maxCnt}, #{meetingUseyn}, #{meetingEqupgubun,jdbcType=VARCHAR }
 			      , GETDATE(), #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR}, #{avayaConfiId, jdbcType=VARCHAR}
@@ -257,6 +276,8 @@
 			      , #{resMessageMail, jdbcType=VARCHAR}, #{resMessageSms, jdbcType=VARCHAR}, #{canMessageMail, jdbcType=VARCHAR}, #{canMessageSms, jdbcType=VARCHAR}
 	              , #{payClassification, jdbcType=VARCHAR}, #{payGubun, jdbcType=VARCHAR}, #{payCost, jdbcType=VARCHAR}, #{resReqday, jdbcType=VARCHAR}
 	              , #{meetingFile01, jdbcType=VARCHAR} , #{meetingFile02, jdbcType=VARCHAR} 
+	              , #{meetingRemark01, jdbcType=VARCHAR} , #{meetingRemark02, jdbcType=VARCHAR} , #{meetingRemark03, jdbcType=VARCHAR} , #{meetingRemark04, jdbcType=VARCHAR} 
+	              , #{meetingRemark05, jdbcType=VARCHAR} , #{meetingRemark06, jdbcType=VARCHAR} , #{meetingRemark07, jdbcType=VARCHAR} , #{meetingRemark08, jdbcType=VARCHAR} 
 	      );
 	      UPDATE TB_FLOORINFO SET MEET_CNT = MEET_CNT + 1
 		  WHERE FLOOR_SEQ = #{floorSeq};
@@ -328,6 +349,15 @@
 									 , PAY_GUBUN  = #{payGubun, jdbcType=VARCHAR}
 									 , PAY_COST  = #{payCost, jdbcType=VARCHAR}
 									 , RES_REQDAY = #{resReqday, jdbcType=VARCHAR} 
+									 , MEETING_REMARK01 = #{meetingRemark01, jdbcType=VARCHAR}
+									 , MEETING_REMARK02 = #{meetingRemark02, jdbcType=VARCHAR}
+									 , MEETING_REMARK03 = #{meetingRemark03, jdbcType=VARCHAR}
+									 , MEETING_REMARK04 = #{meetingRemark04, jdbcType=VARCHAR}
+									 , MEETING_REMARK05 = #{meetingRemark05, jdbcType=VARCHAR}
+									 , MEETING_REMARK06 = #{meetingRemark06, jdbcType=VARCHAR}
+									 , MEETING_REMARK07 = #{meetingRemark07, jdbcType=VARCHAR}
+									 , MEETING_REMARK08 = #{meetingRemark08, jdbcType=VARCHAR}
+									 
 	      WHERE MEETING_ID = #{meetingId}
    </update>
    <delete id="deleteMeetingRoomManage">

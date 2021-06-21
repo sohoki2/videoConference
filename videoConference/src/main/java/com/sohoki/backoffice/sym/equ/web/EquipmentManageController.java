@@ -8,27 +8,19 @@ import egovframework.com.cmm.AdminLoginVO;
 
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
-import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
 import com.sohoki.backoffice.sym.equ.vo.Equipment;
 import com.sohoki.backoffice.sym.equ.vo.EquipmentVO;
 import com.sohoki.backoffice.sym.equ.service.EquipmentManageService;
-import com.sohoki.backoffice.sym.sat.service.SeatInfoManageService;
-
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.service.Globals;
 import egovframework.let.utl.fcc.service.EgovStringUtil;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
-import egovframework.rte.fdl.idgnr.EgovIdGnrService;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -60,10 +52,6 @@ public class EquipmentManageController {
 	
 	@Autowired
 	private EgovCcmCmmnDetailCodeManageService cmmnDetailService;
-
-	@Autowired
-	private SeatInfoManageService seatService;
-	
 
 	
 	EgovStringUtil util = new EgovStringUtil();

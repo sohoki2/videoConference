@@ -51,7 +51,6 @@
 	 }
     </style>
     
-    
     <!-- bpopup 사용 -->
     <script type="text/javascript" src="/js/bpopup.js"></script>
     <link rel="stylesheet" href="/css/kiosk/popup.css">
@@ -100,7 +99,7 @@
 		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">크레딧 등록</a>
 		                		<a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a>
 		                		
-		                		<a data-popup-open="dv_seatSetting" style="display:none"  class="rightGBtn" id="btn_bpop" >좌석 세팅</a>
+		                		
 		                	</td>
 						</tr>
                     </table>
@@ -312,18 +311,27 @@
     </div>   
     
    <!-- 테넌트  설정  -->
-   <div data-popup="dv_seatSetting" class="popup focusPop">
-        <div class="popup_con">
-            <span class="button b-close">&times;</span>
-            <div class="top"  id="dv_Title">크레딧 등록</div>
+   <div id='dv_tennPopup' class="needpopup">
+        <div class="popHead" id="popTitle">
+            <h2>크레딧 등록</h2>
+        </div>
+        <div class="popCon">
             <div class="con">
-               <input type="number" name="tennRecCount" size="40" maxlength="80" id="tennRecCount"  onkeypress="only_num();" style="width:250px;"/> 
+               <div class="pop_box50">
+                  <div class="padding15">
+                    <input type="number" name="tennRecCount" size="40" id="tennRecCount"  onkeypress="only_num();" style="width:250px;"/>개 
+                   </div>
+               </div>
+               <div class="pop_box50">
+                   <div class="padding15">
+                     <a href="#" onClick="jqGridFunc.fn_tennUpdate()" class="redBtn">등록</a>
+                   </div>
+               </div>
             </div>
-            <a href="#" onClick="jqGridFunc.fn_tennUpdate()" class="greenBtn">확인</a>
+            
         </div>
    </div>
-   
-   <script src="/js/needpopup.js"></script> 
+   <c:import url="/backoffice/inc/uni_pop.do" />
    <script src="/js/jquery-ui.js"></script>
    <script type="text/javascript">
 		 $(document).ready(function() { 
@@ -331,7 +339,7 @@
 		 });
 		 //bpop 확인 하기 
 		 $('[data-popup-open]').bind('click', function () {
-		       var targeted_popup_class = jQuery(this).attr('data-popup-open');
+			   var targeted_popup_class = jQuery(this).attr('data-popup-open');
 		       $('[data-popup="' + targeted_popup_class + '"]').bPopup();
 		 });
 		 $('[data-popup-close]').on('click', function(e)  {
@@ -342,7 +350,6 @@
 		 });
 		 var tenn_array = new Array();
 	     var jqGridFunc  = {
-	    		
 	    		setGrid : function(gridOption){
 	    			 var grid = $('#'+gridOption);
 	    		    //ajax 관련 내용 정리 하기 
@@ -673,10 +680,13 @@
 				  userFunc.fn_userList(comCode);
 			  }, fn_tennUpdate : function (){
 				 //배열 값 정리 하기 
-				 if (confirm('저장 하시겠습니까?')){
+				 if (parseInt($("#tennRecCount").val() ) < 1) {
+					 alert("0이상의 갯수를 등록해 주세요");
+					 return;
+				 }
+				 if (confirm('등록 하시겠습니까?')){
 					 var tennArray = new Array();
 					 for (var i in tenn_array){
-						 
 						  var TennantInfo = new Object();
 						  TennantInfo.comCode = tenn_array[i];
 						  TennantInfo.tennRecCount = $("#tennRecCount").val();
@@ -684,6 +694,7 @@
 					 }
 					 var param =  new Object();
 			         param.data = tennArray;
+			         tenn_array = new Array();
 			         var url = "/backoffice/companyManage/tennUpdate.do";
 				     uniAjax(url, param, 
 		   		       	     function(result) {
@@ -692,7 +703,7 @@
 	   		  						   location.href="/backoffice/login.do";
 	   		  					   }else if (result.status == "SUCCESS"){
 		   		  					   alert('정상적으로 등록 되었습니다.');
-		   		  					   $('[data-popup="dv_seatSetting"]').fadeOut(1000).bPopup().close();
+		   		  					   need_close();
 		   		  					   jqGridFunc.fn_search();
 		   		  					   
 		   		  				   }
@@ -700,7 +711,8 @@
 	   						 function(request){
 	   							    alert("Error:" +request.status );	       						
 	   						 }    		
-		    		  );
+		    		 );
+				     
 				 }
 			  }, fn_tennPop : function (){
 				  getEquipArray("mainGrid", tenn_array);
@@ -761,7 +773,7 @@
 				   }
 				   
 			   },rowBtn: function (cellvalue, options, rowObject){
-	               if (rowObject.user_no != "")
+				   if (rowObject.user_no != "")
 	            	   return '<a href="javascript:userFunc.delRow(&#34;'+rowObject.user_no+'&#34;,&#34;'+rowObject.com_code+'&#34;);">삭제</a>';
 	           },delRow : function (user_no, comCode){
 	        	   if(user_no != "") {
@@ -833,27 +845,12 @@
 			      }).trigger("reloadGrid");
 			   }
 	   }
-	   function need_close(){
-	     	needPopup.hide();
-	   }
-	   
-	   needPopup.config.custom = {
-	          'removerPlace': 'outside',
-	          'closeOnOutside': false,
-	          onShow: function() {
-	 				console.log('needPopup is shown');
-	          },
-	          onHide: function() {
-	              console.log('needPopup is hidden');
-	          }
-	    };
-	    needPopup.init();
   </script>
 </form:form>
     <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
     <button id="btn_user" style="display:none" data-needpopup-show='#dv_userInfo'>확인2</button>
     <button id="btn_needPopHide" style="display:none" >hide</button>
-    
+    <button id="btn_bpop" style="display:none" data-needpopup-show='#dv_tennPopup'>크레딧 세팅</button>
 </div>
 </body>
 </html>

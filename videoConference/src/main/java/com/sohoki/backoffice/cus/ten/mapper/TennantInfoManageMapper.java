@@ -22,6 +22,8 @@ public interface TennantInfoManageMapper {
 		public Map<String, Object> selectTennantHistorylInfoManageDetail(String tennSeq);
 		
 		public int insertTennantInfoManage(TennantInfo vo);
+		//한달에 한번 크레딧 배포
+		public int insertTennantMonthManage();
 		
 		public int insertTennantInfoManages(List<TennantInfo> list);
 		

@@ -1099,8 +1099,6 @@
 			 $("#payCost").val("0");
 			 $("#payGubun").hide();
 			 $("#payCost").hide();
-			 
-			 
 			 $("#btn_bpop").trigger("click");  
 		 }
      }

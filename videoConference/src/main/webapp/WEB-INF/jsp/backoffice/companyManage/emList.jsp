@@ -346,30 +346,30 @@
                     <tr>
                         <th><span class="redText">*</span>부서</th>
                         <td style="text-align:left">
-                        	<input type="text" name="deptname" id="deptname"  size="30" style="width:340px;"/>
+                        	<input type="text" name="deptname" id="deptname"  size="30" style="width:200px;"/>
 				       	</td>
                        	<th><span class="redText">*</span>직급</th>
                         <td style="text-align:left">
-                            <input type="text" name="empgrad" id="empgrad" size="30" style="width:340px;"   />
+                            <input type="text" name="empgrad" id="empgrad" size="30" style="width:200px;"   />
                         </td>
                     </tr>
                     <tr>
                         <th><span class="redText">*</span>내선번호</th>
                         <td style="text-align:left">
-                            <input type="text" id="emptelphone" name="emptelphone"  title="내선번호" size="30" style="width:340px;" />
+                            <input type="text" id="emptelphone" name="emptelphone"  title="내선번호" size="30" style="width:200px;" />
                         </td>
                         <th><span class="redText">*</span>핸드폰</th>
                         <td style="text-align:left">
-                            <input type="text" name="emphandphone" id="emphandphone" title="핸드폰"  size="30" style="width:340px;"/>
+                            <input type="text" name="emphandphone" id="emphandphone" title="핸드폰"  size="30" style="width:200px;"/>
                         </td>
                     </tr>
                     <tr>
                         <th><span class="redText">*</span>이메일</th>
                         <td style="text-align:left">
-                        <input type="text" name="empmail" id="empmail" style="width:340px;" /></td>
+                        <input type="text" name="empmail" id="empmail" style="width:200px;" /></td>
                         <th><span class="redText">*</span>상태</th>
                         <td style="text-align:left">
-                            <select id="empState" name="empState" style="width:340px">
+                            <select id="empState" name="empState" style="width:200px">
                                  <option value=""> 선택</option>
 		                         <c:forEach items="${empstate}" var="state">
 		                            <option value="${state.code}">${state.codeNm}</option>
@@ -380,7 +380,7 @@
                     <tr>
                         <th><span class="redText">*</span>현 근무시간</th>
                         <td style="text-align:left">
-                            <select id="preWorkinfo" name="preWorkinfo" style="width:340px">
+                            <select id="preWorkinfo" name="preWorkinfo" style="width:200px">
                                  <option value=""> 선택</option>
 		                         <c:forEach items="${preworkstate}" var="pre">
 		                            <option value="${pre.code}">${pre.codeNm}</option>
@@ -389,7 +389,7 @@
                         </td>
                         <th><span class="redText">*</span>다음 근무 시간</th>
                         <td style="text-align:left">
-                            <select id="nowWorkinfo" name="nowWorkinfo" style="width:340px">
+                            <select id="nowWorkinfo" name="nowWorkinfo" style="width:200px">
                                  <option value=""> 선택</option>
 		                         <c:forEach items="${nowworkstate}" var="now">
 		                            <option value="${now.code}">${now.codeNm}</option>

@@ -974,7 +974,7 @@ span.date_icon {
 
 .whiteBack {
     background-color: white;
-    box-shadow: 0 2px 3px 1px rgb(207 207 207 / 32%);
+    box-shadow: 0 0 7px 2px rgb(207 207 207 / 28%);
     padding: 25px;
     height: auto;
     box-sizing: border-box;
@@ -1184,3 +1184,32 @@ a.user_logout {
     margin-top: 25px;
     height: 220px;
 }
+.imgArea{width: 510px;}
+    .swiper-container {
+      width: 100%;
+      height: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .swiper-slide {
+      background-size: cover;
+      background-position: center;
+    }
+    .swiper-slide img{width: 100%;}
+    .gallery-top {
+      height: 300px;
+      width: 100%;
+    }
+    .gallery-thumbs {
+      height: 99px;
+      box-sizing: border-box;
+    }
+    .gallery-thumbs .swiper-slide {
+      height: 100%;
+
+    }
+    .gallery-thumbs .swiper-slide.swiper-slide-thumb-active {
+      opacity: 1 !important;
+    }
+ .gallery-thumbs .swiper-slide{position: relative; ;min-height: 99px !important;height: 99px;opacity: 0.5;}
+ .cor_detail .infoContents{width: 100%;}

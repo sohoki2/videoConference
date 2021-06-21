@@ -56,6 +56,12 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 		// TODO Auto-generated method stub
 		return meetingMapper.selectMeetingRoomManageListByPagination(params);
 	}
+	//대관 시설 콤보 박스 
+	@Override
+	public List<Map<String, Object>> selectMeetingRoomTypeList(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return meetingMapper.selectMeetingRoomTypeList(params);
+	}
 
 	@Override
 	public List<Map<String, Object>> selectMeetingRoomEmptyManageList(Map<String, Object> params) throws Exception {
@@ -215,5 +221,7 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 		LOGGER.debug("size:" + meetinglist.size());
 		return meetingMapper.deleteMeetingRoomManage(meetinglist);
 	}
+
+	
 	
 }

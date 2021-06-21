@@ -116,6 +116,7 @@
         <!--예약 팝업//-->    
         <!--//needpopup script-->
         <c:import url="/web/inc/unimessage.do" />
+        
         <script>  
             $( function() {
             	 $("#searchResStartday").datepicker({ dateFormat: 'yymmdd' });

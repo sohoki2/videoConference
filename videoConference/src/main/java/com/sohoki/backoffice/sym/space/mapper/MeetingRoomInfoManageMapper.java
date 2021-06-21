@@ -16,6 +16,8 @@ public interface MeetingRoomInfoManageMapper {
 	
 	public List<Map<String, Object>> selectMeetingRoomManageListByPagination(@Param("params") Map<String, Object> params);
 	
+	public List<Map<String, Object>> selectMeetingRoomTypeList(@Param("params") Map<String, Object> params);
+	
 	public List<Map<String, Object>> selectMeetingRoomEmptyManageList(@Param("params") Map<String, Object> params);
 	
 	public List<Map<String, Object>> selectMeetingRoomEmptyIntervalStatus(@Param("params") Map<String, Object> params);

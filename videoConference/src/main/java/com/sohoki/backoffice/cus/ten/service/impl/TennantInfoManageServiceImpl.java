@@ -61,6 +61,8 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	@Override
 	public int insertTennantInfoManages(List<TennantInfo> list) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("------------------------------------------------------------------");
+		System.out.println(list.size());
 		return tennantMapper.insertTennantInfoManages(list);
 	}
 
@@ -127,6 +129,12 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			LOGGER.error("insertTennantPlauManages error:" + e.toString() + ":" + lineNumber );
 			return -1;
 		}
+	}
+
+	@Override
+	public int insertTennantMonthManage() {
+		// TODO Auto-generated method stub
+		return tennantMapper.insertTennantMonthManage();
 	}
 	
 

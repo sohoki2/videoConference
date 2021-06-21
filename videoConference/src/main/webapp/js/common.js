@@ -110,7 +110,6 @@ function yesterDayConfirm(res_day, alert_message){
 function fnIntervalCheck(stratVal, endVal, alertMessge){
     if (parseInt(stratVal) > parseInt(endVal)){
 		alert(alertMessge);
-		
 		return false;
 	}
 	return true;
@@ -219,7 +218,7 @@ function fn_returnVal(url, params, _action_url){
 }
 function fn_returnInfo(url, params){
     var returnVal = "";
-    uniAjax(url, params, 
+    uniAjaxAsync(url, params, 
 				  function(result) {
 					       if (result.status == "LOGIN FAIL"){
 							   location.href="/backoffice/login.do";
@@ -234,6 +233,26 @@ function fn_returnInfo(url, params){
 					    alert("Error:" +request.status );	       						
 				  }    		
 	);
+	return returnVal;
+}
+//
+function fn_returnInfoReg(url, params){
+    var returnVal = "";
+    uniAjaxAsync(url, params, 
+				  function(result) {
+					       if (result.status == "LOGIN FAIL"){
+							   location.href="/backoffice/login.do";
+						   }else if (result.status == "SUCCESS"){
+						       returnVal = result;
+						      
+						   }else {
+						      alert("장애가 발생 하였습니다.");
+						   }
+				  },
+				  function(request){
+					    alert("Error:" +request.status );	       						
+				  }    		
+	);	
 	return returnVal;
 }
 
@@ -258,6 +277,14 @@ function dateAdd(reqDay){
 }
 function dateCheck (_date, _addDay, alert_message){
    if (parseInt(_date) < dateAdd(reqDay)){
+    	alert(alert_message);
+    	return false;
+    }else {
+    	return true;
+    }
+}
+function dateIntervalCheck (_date1, _date2, alert_message){
+   if (parseInt(_date1) > parseInt(_date2)){
     	alert(alert_message);
     	return false;
     }else {
@@ -656,6 +683,22 @@ function uniAjax(url, param, done_callback, fail_callback){
 	var jxFax =  $.ajax({
 		        type : 'POST',
 		        url : url,
+		        beforeSend:function(jxFax, settings){
+	        	   jxFax.setRequestHeader('AJAX', true);
+	        	   //$('.loadingDiv').show();
+	            }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : JSON.stringify(param)
+		    }).done(done_callback).fail(fail_callback);
+	return jxFax;
+}
+function uniAjaxAsync(url, param, done_callback, fail_callback){
+	var jxFax =  $.ajax({
+		        type : 'POST',
+		        url : url,
+		        async: false,
 		        beforeSend:function(jxFax, settings){
 	        	   jxFax.setRequestHeader('AJAX', true);
 	        	   //$('.loadingDiv').show();

@@ -89,10 +89,10 @@
     
     <insert id="insertUserInfoManage" >
          INSERT INTO TB_USERINFO(USER_ID, USER_NAME, USER_NO, COM_CODE, USER_RANK, USER_POSITION, USER_EMAIL,
-							     USER_TEL, USER_STATE, USER_CELLPHONE, 
+							     USER_TEL, USER_STATE, USER_CELLPHONE, AUTHOR_CODE,
 							     USER_REGDATE, USER_REGID, USER_UPDATE, USER_UPDATEID, USER_PASSWORD)
          VALUES (#{userId ,jdbcType=VARCHAR}, #{userName}, #{userNo}, #{comCode}, #{userRank,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR},  #{userEmail,jdbcType=VARCHAR},  
-                 #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},
+                 #{userTel,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR},  #{userCellphone,jdbcType=VARCHAR},'ROLE_USER',
                  GETDATE(), #{updateId,jdbcType=VARCHAR},  GETDATE(), #{updateId,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR});
                  
          INSERT INTO TB_EMPINFO (EMPID, EMPNO, EMPNAME, COM_CODE,  EMPJIKW, EMPGRAD, EMPHANDPHONE, EMPTELPHONE, EMPMAIL,  AUTHOR_CODE, 

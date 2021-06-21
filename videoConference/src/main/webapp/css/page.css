@@ -1062,7 +1062,7 @@ table tr td > a{color:#616161;text-decoration: underline;}
 .width49{width:49% !important;}
 .needpopup .margin-top30{margin-top:0;}
 .needpopup .new_pager{margin-top:15px;}
-.pop_table input[type="text"], .pop_table select, .pop_table input[type="password"], .pop_table textarea{width:200px !important;border: 1px solid #b7b7b7;height: 30px;box-sizing: border-box;font-size: 14px;padding: 0 10px;}
+.pop_table input[type="text"], .pop_table select, .pop_table input[type="password"], .pop_table textarea{border: 1px solid #b7b7b7;height: 30px;box-sizing: border-box;font-size: 14px;padding: 0 10px;}
 .tableauto input{width:auto !important;}
 .marginbottom10{margin-bottom:10px;}
 .pop_table .auto100 .width100{width:100% !important;}

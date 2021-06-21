@@ -75,7 +75,7 @@
                         </tr>
                         <tr>
                             <th>이메일</th>
-                            <td><input type="text" name="userEmail" id="userEmail" value=${userinfo.empmail }></td>
+                            <td><input type="text" name="userEmail" id="userEmail" value="${userinfo.empmail}"></td>
                         </tr>
                         <tr>
                             <th>휴대전화</th>
@@ -86,9 +86,10 @@
                                     <button>인증번호 받기</button>
                                 </section>
                                 <input type="text" name="" placeholder="인증번호를 입력하세요.">
+                                <button type="button" class="modiBtn" onClick="fn_modify()">수정하기</button>
                                 <button type="button" class="darkBtn joinBtn" id="btn_passch" onClick="fn_formPass()">비밀번호 변경</button>
                                 <button type="button" class="darkBtn joinBtn" data-needpopup-show="#secession">회원탈퇴</button>
-                                <button type="button" class="modiBtn" onClick="fn_modify()">수정하기</button>
+                                
                             </td>
                         </tr>
                     </tbody>

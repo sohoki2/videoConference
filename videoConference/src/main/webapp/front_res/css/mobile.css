@@ -1042,7 +1042,7 @@ a.user_logout {
 }
 .scroll {width: 100%;position: relative;font-weight: 400;}
 .scroll > div{overflow-x: scroll;}
-.day_T{width: 755px;border-top:2px solid #4a4a4a;font-size: 1.2rem;overflow-x: scroll;}
+.day_T{min-width: 755px;width: 100%;border-top:2px solid #4a4a4a;font-size: 1.2rem;overflow-x: scroll;}
 .day_T thead tr{background-color:#f4f4f4;}
 .day_T thead tr th, .day_T thead tr td{padding: 10px 0;box-sizing:border-box;text-align: center;border-bottom: 1px solid #f4f4f4;height: auto;}
 .day_T tbody tr th, .day_T tbody tr td{box-sizing: border-box;border-bottom:1px solid #f4f4f4;}
@@ -1371,4 +1371,88 @@ a.resource {
     line-height: 35px;
     height: 35px;
     margin: 0;
+}
+#seat_fast_popup .inputSearch {
+    width: 100% !important;
+}
+#seat_fast_popup .startTime, #seat_fast_popup .endtime {
+    width: 47% !important;
+}
+
+#mySidetime .inputSearch {
+    width: 100% !important;
+}
+.coronBox .imgArea {
+    float: none;
+    width: 100%;
+}
+
+.coronBox .gallery-thumbs {
+    display: none;
+}
+
+.coronBox .gallery-top {
+    height: min-content;
+    position: relative;
+}
+
+.coronBox .swiper-slide img {
+    width: 100%;
+}
+
+.coronBox .swiper-button-prev, .coronBox .swiper-button-next {
+    display: block;
+    top: 95px;
+}
+
+.coronBox .infoArea {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.coronBox .infoArea table {
+    font-size: 1.4rem;
+}
+
+.coronBox .infoArea p {
+    font-size: 1.4rem;
+}
+
+.coronBox .infoArea button {
+    margin-bottom: 10px;
+    border-radius: 5px !important;
+}
+.coronArea {
+    width: 745px;
+}
+
+.coronArea  a {
+    height: 33px;
+    line-height: 33px;
+}
+.cor_detail ul {margin-top: 7px;position: relative;}
+
+li.float_left {
+    width: 45% !important;
+    float: none;
+}
+
+.cor_detail .dateBox {
+    width: 45%;
+}
+
+.cor_detail .datebox input[type="text"] {
+    width: 100% !important;
+}
+
+.cor_detail ul li:last-child {
+    right: 0;
+    position: absolute;
+    bottom: 3px;
+    width: 10%;
+    text-align: center;
+}
+
+.cor_detail .line {
+    height: 60px;
 }

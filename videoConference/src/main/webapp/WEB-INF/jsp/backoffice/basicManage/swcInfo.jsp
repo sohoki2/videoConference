@@ -63,9 +63,9 @@
 	                        <td style="text-align:left">
 	                        	<input type="text" name="comTitle" size="10" id="comTitle" value="${regist.comTitle }" style="width:260px;"/>
 	                        </td>
-	                        <th><span class="redText"></th>
+	                        <th><span class="redText">회원사 월별 크레딧 배포 수량</th>
 	                        <td style="text-align:left">
-	                        	
+	                        	<input type="number" name="tennMonthcnt" id="tennMonthcnt" value="${regist.tennMonthcnt }" onkeypress="only_num();"  style="width:100px;"/>
 	                        </td>
 	                    </tr>
 	                </tbody>
@@ -86,13 +86,15 @@
 		if (any_empt_line_id("startTime", "예약 시작  시간를 입력주세요.") == false) return;
 		if (any_empt_line_id("endTime", "예약 종료  시간를 입력주세요.") == false) return;
 		if (any_empt_line_id("comTitle", "회사명을 입력해주세요.") == false) return;
+		if (any_empt_line_id("tennMonthcnt", "월별 크레딧 배포 수량을 입력해 주세요.") == false) return;
 		
 		var url = "/backoffice/orgManage/swcInfoUpdate.do";
     	var params = {   'swcInterval' : $("#swcInterval").val(),
 		    		     'tennRetrieve' : $("#tennRetrieve").val(),
 		    		     'startTime' : fn_emptyReplace($("#startTime").val(),"08:00"),
 		    		     'endTime' : fn_emptyReplace($("#endTime").val(),"19:00"),
-		    			 'comTitle' : $("#comTitle").val()
+		    			 'comTitle' : $("#comTitle").val(),
+		    			 'tennMonthcnt' : $("#tennMonthcnt").val(),
     	               }; 
     	uniAjax(url, params, 
       			function(result) {

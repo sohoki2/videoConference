@@ -13,4 +13,5 @@ public class SwcInfo {
 	private String endTime = "";
 	private String tennRetrieve = "";
 	private String comTitle = "";
+	private String tennMonthcnt = "";
 }

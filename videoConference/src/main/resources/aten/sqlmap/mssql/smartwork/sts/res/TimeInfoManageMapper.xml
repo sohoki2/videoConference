@@ -3,7 +3,7 @@
 <mapper namespace="com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper">
     <!--  수정 신규 테이블에 맞게 변경 회의실만 -->
     <select id="selectSTimeInfoBarList" resultType="lmap">
-      <![CDATA[
+      
         SELECT a.TIME_SEQ, a.SWC_TIME,  dbo.fn_TimeSplit( a.SWC_TIME) SWC_TIMES,   dbo.fn_TimeSplit(dbo.FN_UPSTIMEDOWN(a.SWC_TIME)) SWC_TIMEE, 
                CASE WHEN a.SWC_RESDAY != CONVERT(VARCHAR(8), GETDATE(), 112) THEN RES_SEQ
         	        WHEN a.SWC_TIME > REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','')  THEN RES_SEQ
@@ -11,12 +11,19 @@
                ELSE -1
                END AS RES_SEQ,  a.APPRIVAL, a.USE_YN, a.ITEM_ID, a.SWC_RESDAY
 	    FROM TB_SWCTIME a
-	    WHERE a.SWC_RESDAY = #{params.swcResday} AND a.ITEM_ID = #{params.itemId} 
+	    WHERE a.ITEM_ID = #{params.itemId} 
+	          <choose>
+        		<when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.swcResEndday)">
+        			 AND SWC_RESDAY between  #{params.swcResday} AND #{params.swcResEndday}
+				</when>
+        		<otherwise>
+        			 AND a.SWC_RESDAY = #{params.swcResday}
+        		</otherwise>
+        	 </choose>
 	          AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
 	          AND a.SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY)
-	    ORDER BY SWC_TIME ASC
-	   ]]>
-    </select>
+	    ORDER BY SWC_RESDAY ASC, SWC_TIME ASC
+	</select>
     
     <select id="selectSeatSearchInfo" resultType="lmap">
         SELECT  b.SEAT_ID,  b.SEAT_NAME, a.RES_SEQ

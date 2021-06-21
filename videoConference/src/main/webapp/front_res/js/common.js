@@ -8,6 +8,15 @@ function any_empt_line_id(frm_nm, alert_message){
          return true;
 	 }
 }
+function fn_Check (_UniCheckFormNm, _btn_message){
+	if ($("#"+_UniCheckFormNm).is(":checked") == true){
+		return true;
+	}else {
+	    $("#sp_message").text(_btn_message);
+	    $("#btn_result").trigger("click");
+		return false;
+	}
+}
 function any_empt_line_span(frm_nm, alert_message){
      if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
 		 $("#sp_message").html(alert_message);
@@ -17,6 +26,15 @@ function any_empt_line_span(frm_nm, alert_message){
 	 }else{
          return true;
 	 }
+}
+function fn_trInnerTxt(td_id, td_message){
+  if (td_message == ""){
+     $("#"+td_id).parent().hide();
+  }else {
+     $("#"+td_id).parent().show();
+     $("#"+td_id)[0].innerText = td_message;
+  }
+
 }
 //return 값 받아 오기 
 function uniAjaxReturn(url, param){
@@ -45,9 +63,40 @@ function uniAjaxReturn(url, param){
 		       }
 		    ).fail(function(request){
 		          alert("Error:" +request.status );
-		       }
+		           }
 	);
 	return returnVal;
+}
+//return 값 받아 오기 
+function uniAjaxReturnSerial(url, param){
+    var returnVal = "";
+	var jxFax =  $.ajax({
+		        type : 'GET',
+		        url : url,
+		        async: false,
+		        beforeSend : function(jqXHR, settings) {
+			       jqXHR.setRequestHeader('AJAX', true);
+			       //$('.loadingDiv').show();
+		        }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : param,
+		    }).done(function(result){
+		           if (result.status == "LOGIN FAIL"){
+			    	   alert(result.meesage);
+					   location.href="/web/Login";
+				   }else if (result.status == "SUCCESS"){
+				       returnVal = result;
+				   }else {
+				       alert(result.meesage); 
+				   }
+		       }
+		    ).fail(function(request){
+		          alert("Error:" +request.status );
+		       }
+	);
+    return returnVal;
 }
 function uniAjaxSerial(url, param, done_callback, fail_callback){
 	var jxFax =  $.ajax({
@@ -117,7 +166,8 @@ function yesterDayConfirm(res_day, alert_message){
     var today = yearNow + monthNow + dateNow;
     
     if (parseInt(res_day) < today){
-    	alert(alert_message);
+    	$("#sp_message").html(alert_message);	 
+	    $("#btn_result").trigger("click");
     	return false;
     }else {
     	return true;
@@ -135,7 +185,17 @@ function dateAdd(reqDay){
 }
 function dateCheck (_date, _addDay, alert_message){
    if (parseInt(_date) < dateAdd(_addDay)){
-    	alert(alert_message);
+    	$("#sp_message").html(alert_message);	 
+	    $("#btn_result").trigger("click");
+    	return false;
+    }else {
+    	return true;
+    }
+}
+function dateDiff (_date, _addDay, alert_message){
+   if (parseInt(_date) > parseInt(_addDay)){
+    	$("#sp_message").html(alert_message);	 
+	    $("#btn_result").trigger("click");
     	return false;
     }else {
     	return true;

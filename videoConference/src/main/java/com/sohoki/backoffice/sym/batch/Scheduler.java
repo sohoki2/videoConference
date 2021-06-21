@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.sohoki.backoffice.cus.ten.mapper.TennantInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper;
+
 
 //spring 배치 서비스 정리 
 @Component
@@ -23,6 +25,12 @@ public class Scheduler {
 	@Autowired
 	private ResInfoManageMapper resMapper;
 	
+	@Autowired
+	private TennantInfoManageMapper tennantMapper;
+	/*
+	@Autowired
+	private ScheduleInfoManageMapper scheduleMapper;
+	*/
 	/*
 	 *  23:50 분 타임 스케줄러 생성
 	 * 
@@ -30,6 +38,8 @@ public class Scheduler {
 	private String serverInfo () {
 		return System.getProperty("spring.profiles.active");
 	}
+	
+	
 	@Scheduled(cron = "0 50 23 * * * ")
 	public void resTimeCreateStateSchede() throws Exception{
 		try{
@@ -64,6 +74,23 @@ public class Scheduler {
     	}
     	
 	}
-	
+	//매월 1일 크레딧 회사 적용
+	@Scheduled(cron = "0 0 * 1 * * ")
+    public void resTennchedule1Month() throws Exception{
+		//LOGGER.debug("profile:" + System.getProperty("spring.profiles.active"));
+    	try{
+    		// 10분 단위 취소 하기 
+    		//LOGGER.debug("============================ 10 분 마다 실행");
+    		int ret = 0;
+    		if ( "Active1".equals(serverInfo().toString()))
+    		    ret = tennantMapper.insertTennantMonthManage();
+    		
+    		//배치 스케줄 기록 
+    		
+    	}catch(Exception e){
+    		LOGGER.error("resRaiSchedule10Minute failed", e);
+    	}
+    	
+	}
 	
 }

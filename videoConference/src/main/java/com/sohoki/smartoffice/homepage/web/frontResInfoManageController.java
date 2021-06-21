@@ -1,5 +1,7 @@
 package com.sohoki.smartoffice.homepage.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -199,9 +202,11 @@ public class frontResInfoManageController {
 			    		                  , BindingResult bindingResult) throws Exception {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try {
-			
-			vo.setComCode("C_00000004");
-			vo.setUserState("USER_STATE_1");
+			//인터넷 가입 이면 확인
+			if (vo.getMode().equals("Ins")) {
+				vo.setComCode("C_00000004");
+				vo.setUserState("USER_STATE_1");
+			}
 			int ret = userService.updateUserInfoManage(vo);
 			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
 			if (ret >0){
@@ -1266,7 +1271,7 @@ public class frontResInfoManageController {
 	    }
 		return model;
     }
-	//회의실 예약 부터 시작
+	//대관 예약 부터 시작
 	@RequestMapping(value="coronation.do")	
 	public ModelAndView webCoronation(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
 			                           , HttpServletRequest request
@@ -1290,6 +1295,7 @@ public class frontResInfoManageController {
 			  	reginfo.put("searchRoomType", "SWC_GUBUN_3");
 			  	
 			  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	/*
 			  	params.put("searchFloor", "CORN");
 			  	//권한 설정 
 			  	params.put("authorCode", empInfoVO.getAuthorCode());
@@ -1308,6 +1314,36 @@ public class frontResInfoManageController {
 			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
 			  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
 			  	}
+			  	*/
+			  	params.put("searchRoomType", "SWC_GUBUN_3");
+			  	params.put("earchRoomView", "Y");
+			  	
+			  	List<Map<String,Object>> meetingList = meetingService.selectMeetingRoomTypeList(params);// .selectFloorInfoManageListByPagination(params);
+			  	if (meetingList.size() > 0) {
+			  		String meetingId = meetingList.get(0).get("meeting_id").toString();
+			  		String resReqday = meetingList.get(0).get("res_reqday").toString();
+			  		model.addObject("meetingList", meetingList);
+			  		reginfo.put("meeting_id", meetingId);
+			  		reginfo.put("searchResStartday", util.reqDay( Integer.parseInt(resReqday)));
+			  		reginfo.put("searchResEndday", util.reqDay( Integer.parseInt(resReqday)));
+			  		reginfo.put("centerId", params.get("centerId").toString());
+			  		
+			  		/*
+					params.put("code", "SWC_TIME");
+					params.put("nowData", "0800");
+					model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+					
+					params.put("code", "SWC_TIME");
+					params.remove("nowData");
+					params.put("overData", "0800");
+					model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+					*/
+			  		model.addObject(Globals.STATUS_REGINFO,  reginfo);
+			  	}else {
+			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
+			  		model.addObject(Globals.STATUS_MESSAGE, "적용되는 시설물이 없습니다.");
+			  	}
+			  	
 		  	}
 		  	model.setViewName(url);
 	    }catch(Exception e) {
@@ -1319,6 +1355,82 @@ public class frontResInfoManageController {
 	    }
 	    return model;
 	
+		
+	}
+	//장기 예약 
+	@RequestMapping(value="meetingIntervalResAjax.do")	
+	public ModelAndView meetingIntervalResAjaxInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                               , @RequestBody Map<String, Object> params
+				                           , HttpServletRequest request
+				                           , BindingResult bindingResult) throws Exception{				
+	    ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+	    try {
+	    	
+	    	empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  	String url = "/web/meetingDay";
+		  	if (empInfoVO.getEmpno() ==  null) {
+				model.addObject(Globals.STATUS_MESSAGE, "세션이 만료 되었습니다.");
+ 	    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
+ 	    		return model;	
+		  	}else {
+		  		
+		  		Map<String, Object> meetingInfo = meetingService.selectMeetingRoomDetailInfoManage(params.get("itemId").toString() );
+		  		String resReqday = meetingInfo.get("res_reqday").toString();
+		  		// 예약 일자가 이전 날짜로 왔을때 처리 하기 
+			  	String searchStartDay = util.NVL(params.get("searchResStartday"), "").equals("")  ? util.reqDay(Integer.parseInt(resReqday))  : params.get("searchResStartday").toString();
+			  	String searchEndDay = util.NVL(params.get("searchResEndday"), "").equals("")  ? util.reqDay(Integer.parseInt(resReqday))  : params.get("searchResEndday").toString();
+			  	//기초 데이터 넣기 
+			  	params.put("swcResday", searchStartDay);
+			  	params.put("swcResEndday", searchEndDay);
+			  	
+			  	List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(params);	
+			  	model.addObject("seatinfo", meetingInfo);
+				model.addObject("timeInfo", timeInfos);
+				model.addObject(Globals.JSON_RETURN_RESULT,  params);
+			  	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	}
+	    }catch(Exception e) {
+	    	StackTraceElement[] ste = e.getStackTrace();
+	      
+	        int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("error:" + e.toString() + ":" + lineNumber);
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, e.toString());
+			model.addObject("seatInfo", null);
+	    }
+	    return model;
+	
+		
+	}
+	@RequestMapping(value="meetingDetail.do")
+	public ModelAndView selecMeetingDetail (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+                                            , @RequestParam("meetingId") String meetingId
+									        , HttpServletRequest request
+									        , BindingResult bindingResult	) throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try{
+			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		  
+		  	if (empInfoVO.getEmpno() ==  null) {
+				model.addObject(Globals.STATUS_MESSAGE, "세션이 만료 되었습니다.");
+ 	    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
+ 	    		return model;	
+		  	}else {
+		  		//
+		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_USERINFO, empService.selectEmpInfoDetailNo(empInfoVO.getEmpno()));
+				model.addObject(Globals.STATUS_REGINFO, meetingService.selectMeetingRoomDetailInfoManage(meetingId));
+		  	}
+			
+			//신규 수정 
+			
+		}catch(Exception e){
+			LOGGER.error("selectResInfo ERROR:" + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+		}
+		return model;
 		
 	}
 	//kiosk정리 하기 

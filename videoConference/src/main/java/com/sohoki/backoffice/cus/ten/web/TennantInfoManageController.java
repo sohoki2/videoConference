@@ -89,8 +89,9 @@ public class TennantInfoManageController {
 				                           }
 			).collect(Collectors.toList());
 			//값 넣기 
-			
+			LOGGER.debug("Info"+  Infos.size() );
 			int ret = tennService.insertTennantInfoManages(Infos);
+			
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			model.addObject(Globals.JSON_RETURN_RESULT, ret);
 		}catch(Exception e){

@@ -35,7 +35,6 @@ import com.sohoki.backoffice.sts.brd.service.BoardInfoManageService;
 import com.sohoki.backoffice.sts.brd.vo.BoardInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
-import com.sohoki.backoffice.sym.cnt.vo.CenterInfo;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
 
 
@@ -135,8 +134,6 @@ public class BoardInfoManageController {
 				  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 				  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 				  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
-				  
-				  //공지사항의 경우, 공지기한이 지난 게시물은 board_notice_useyn을 N으로 변경
 				  boardInfoService.updateBoardNoticeUseYn();
 				  
 				  LOGGER.debug("searchVO" + searchVO.get("adminYn"));
@@ -251,7 +248,8 @@ public class BoardInfoManageController {
 				if(vo.getBoardGubun().equals("NOT") ||  vo.getBoardNoticeUseyn() != null ||  vo.getBoardNoticeUseyn().equals("Y")){
 						int top = boardInfoService.updateBoardTopSeq();
 				}
-				LOGGER.debug("--------------------------------------------------------1");
+				
+				
 				vo.setBoardFile01( uploadFile.uploadFileNm(mRequest.getFiles("boardFile01"), propertiesService.getString("Globals.filePath")));
 				vo.setBoardTopSeq("0");
 			 	String meesage = vo.getMode().equals("Ins") ?  "sucess.common.insert" :  "sucess.common.update";

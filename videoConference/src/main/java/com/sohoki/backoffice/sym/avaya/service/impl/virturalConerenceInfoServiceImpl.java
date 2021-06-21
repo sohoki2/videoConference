@@ -40,7 +40,6 @@ import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.avaya.service.virturalConerenceInfoService;
-import com.sohoki.backoffice.sym.sat.vo.SeatInfoVO;
 import com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper;
 import com.sohoki.backoffice.util.SmartUtil;
 

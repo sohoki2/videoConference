@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sohoki.backoffice.cus.org.mapper.SwcInfoManageMapper">
     <select id="selectSwcInfoManageService" resultType="SwcInfo">
-        SELECT SWC_INTERVAL, START_TIME, END_TIME, TENN_RETRIEVE, COM_TITLE
+        SELECT SWC_INTERVAL, START_TIME, END_TIME, TENN_RETRIEVE, COM_TITLE, TENN_MONTHCNT
         FROM TB_SWCINFO
     </select>
     <update id="updateSwcInfoManageService" >
@@ -11,6 +11,7 @@
                               , END_TIME = #{endTime,jdbcType=VARCHAR}
                               , TENN_RETRIEVE = #{tennRetrieve,jdbcType=VARCHAR}
                               , COM_TITLE = #{comTitle,jdbcType=VARCHAR}
+                              , TENN_MONTHCNT = #{tennMonthcnt,jdbcType=VARCHAR} 
     
     </update>
 </mapper>

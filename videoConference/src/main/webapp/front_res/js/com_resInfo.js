@@ -552,24 +552,23 @@ function fn_swcTimeUni(params, resGubun, resSeq, _callFunction){
 							if (objS.length > 0 ){
 								$("#resStarttime option").remove();
 								for (var i in objS){
-								    console.log(objS[i].codeNm);
-									try{
+								    try{
 										$("#resStarttime").append("<option value='"+objS[i].codeNm.replace(":","") +"'>"+objS[i].codeNm+"</option>");
 									}catch(err){
 										console.log(err);
 									}
-  						    }
+  						        }
 							}
 							var objE = result.resEndTime;
 							if (objE.length > 0 ){
 								$("#resEndtime option").remove();
-  							for (var i in  objE){
-  								try{
-  									$("#resEndtime").append("<option value="+objE[i].codeNm.replace(":","")+">"+objE[i].codeDc+"</option>");
-  								}catch(err){
-  									console.log(err);
-  								}
-  						    }
+	  							for (var i in  objE){
+	  								try{
+	  									$("#resEndtime").append("<option value="+objE[i].codeNm.replace(":","")+">"+objE[i].codeDc+"</option>");
+	  								}catch(err){
+	  									console.log(err);
+	  								}
+	  						    }
 							}
 							//회의실 구분
 							/*if (resGubun != "SWC_GUBUN_4"){
@@ -791,6 +790,48 @@ function fn_resView(resSeq){
              );
         	$("#btn_meetingInfo").trigger("click");
 }
+//회의실 상세 정보
+function fn_meetingShow(meetingId){
+    var url = "/web/meetingDetail.do";
+        			
+	var params = {'meetingId': meetingId};
+	var result = uniAjaxReturnSerial(url, params);
+	if (result.result != ""){
+		var obj = result.regist;
+		
+		$("#img_left01").attr("src", "/upload/"+ obj.meeting_img1);
+		$("#img_left02").attr("src", "/upload/"+ obj.meeting_img2);
+		$("#img_left03").attr("src", "/upload/"+ obj.meeting_img3);
+		
+		
+		$("#sp_roomTitle").text(obj.meeting_name);
+		$("#sp_remark").html(obj.meetingroom_remark);
+		$("#sp_personCnt").html(obj.max_cnt);
+		
+		var swiper = new Swiper('.swiper-container', {
+	      slidesPerView: 1,
+	      spaceBetween: 30,
+	      observer: true,
+	      observeParents: true,
+	      loop: true,
+	      pagination: {
+	        el: '.swiper-pagination',
+	        clickable: true,
+	      },
+	      navigation: {
+	        nextEl: '.swiper-button-next',
+	        prevEl: '.swiper-button-prev',
+	      },
+	    });
+		
+		
+		$("img[name=img_left01]").attr("src", "/upload/"+ obj.meeting_img1);
+		$("img[name=img_left02]").attr("src", "/upload/"+ obj.meeting_img2);
+		$("img[name=img_left03]").attr("src", "/upload/"+ obj.meeting_img3);
+
+	}
+
+}
 //하루 단위 예약 (회의실)
 function fn_floorMeetingInfo() {
      if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
@@ -816,7 +857,7 @@ function fn_floorMeetingInfo() {
 							for (var i in result.seatInfo){
 								var seatinfo = result.seatInfo[i];
 								setHtml += "<tr id='swcSeq_"+seatinfo.meeting_id +"' style='height:50px;'>";
-								setHtml += "<th style='padding-left: 20px;' title='"+seatinfo.meetingroom_remark+"' class='fixed_th'>"+seatinfo.meeting_name+"</th>";
+								setHtml += "<th style='padding-left: 20px;' title='"+seatinfo.meetingroom_remark+"' onClick='fn_meetingShow(&#39;"+seatinfo.meeting_id +"&#39;)' data-needpopup-show='#meet_detail' class='fixed_th'>"+seatinfo.meeting_name+"</th>";
 								if (seatinfo.timeinfo.length < 20){
 									setHtml += "<td colspan='20' style='text-aling:center;'>예약 불가</td>";
 								}else {
@@ -849,26 +890,117 @@ function fn_floorMeetingInfo() {
 				    alert("Error:" +request.status );	       						
 			    }    		
     );    
-
-
 }
-
-
+//장기 예약 리스트 
+function fn_floorMeetingIntervalInfo(){
+		if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+		if (yesterDayConfirm($("#searchResEndday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+		var res_reqday = $("#resReqday").val();		
+		if (dateCheck($("#searchResStartday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+		if (dateCheck($("#searchResEndday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+		if (dateDiff($("#searchResStartday").val(), $("#searchResEndday").val(), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
+		if (any_empt_line_span("itemId", "대관시설을 선택 하지 않았습니다." ) == false ) return;
+    	var params = {'searchCenterId' : $("#searchCenterId").val(), 
+    			      'itemId' :  $("#itemId").val(),
+    			      'searchResStartday' : $("#searchResStartday").val(), 
+    			      'searchResEndday' : $("#searchResEndday").val(), 
+    			      'searchSeatView': 'Y' 
+        }; 
+    	var url = "/web/meetingIntervalResAjax.do";
+    	uniAjax(url, params, 
+	     			function(result) {
+					       if (result.status == "LOGIN FAIL"){
+					    	   alert(result.meesage);
+	  						   location.href="/web/Login.do";
+	  					   }else if (result.status == "SUCCESS"){
+	  						    
+	  						    var setHtml = "";
+  								$("#tb_seatTimeInfo > tbody").empty(); 
+  								var resDay  = "";
+  								var seatinfo = result.seatinfo;
+  								for (var i in result.timeInfo){
+  									
+  									var timeInfo = result.timeInfo[i];
+  									
+  									if (resDay != timeInfo.swc_resday){
+  										//tr 생성후 리스트 넣기 
+  										if (i != 0)
+  										   setHtml += "</tr>";
+  										setHtml += "<tr style='height:50px;'>";
+	  									setHtml += "<th style='padding-left: 20px;' title='"+timeInfo.swc_resday+"' class='fixed_th'>"+timeInfo.swc_resday+"</th>";
+	  									resDay = timeInfo.swc_resday;
+  									}
+  									
+  									if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
+									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+									}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
+										setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resIntevalInfo(&#39;"+$("#itemId").val() +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+timeInfo.swc_resday+"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.room_type +"&#39;);'></td>";
+									}
+	  					        } 
+  								setHtml += "</tr>";
+								$("#tb_seatTimeInfo >  tbody:last").append(setHtml);
+								setHtml = "";
+								
+								//if ($("#searchCenterId").val(seatinfo.center_id));
+	  					   }
+					    },
+					    function(request){
+						    alert("Error:" +request.status );	       						
+					    }    		
+	    );
+}
+function fn_resIntevalInfo (itemId, timeSeq, swcTime, swc_resday,  swcName, resSeq, seatConfirmgubun, seatEqupgubun){
+	if (resSeq == "0"){
+		$("#mode").val("Ins");
+		$("#res_swcName").text(swcName);
+		$("#resTitle").val();
+		$("#resStartday").val(swc_resday);
+		$("#resEndday").val($("#searchResEndday").val());
+		$("#itemId").val(itemId);
+		$("#useYn").val("Y");
+        $("#sp_meetingAttendList").html("");
+        $("#hid_attendList").val("");
+        $("#meetingSeq").val("");
+        $("#meegintRoomInfo").html("");
+        $("#seatConfirmgubun").val(seatConfirmgubun);
+        $("#hid_equipList").val("");
+   	    $("#sp_equipRoomInfo").html("");
+   	    $("#resEqupcheck").val("");
+   		$("#div_meeting1").hide();
+	    $("#div_meeting2").hide();
+	    if (seatEqupgubun == "Y"){
+        	$("#div_equipRoomInfo").show();
+           // $("#resEqupcheck").html("");
+        }else {
+        	$("#div_equipRoomInfo").hide();
+        }
+	}else {
+		$("#mode").val("Edt");
+	}
+	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
+	fn_swcTimeUni(params, $("#searchRoomType").val(), 0, null);
+            			
+}
 
 function fn_ResSave(){
 	 
 	 var resEqupcheck = "";
 	 //장기 예약 할떄도 처리 준비 하기 
 	 if ( $("#itemGubun").val() == "ITEM_GUBUN_2"){
-	 
+	     $("#hid_history").val("res_show");
+	    
 	 }else {
-	     if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.',"sp_errorMessage") == false) return;
-		 if (any_empt_line_span("resStarttime", '회의 시작 시간을 선택해 주세요.', "sp_errorMessage") == false) return;
-		 if (any_empt_line_span("resEndtime", '회의 종료 시간을 선택해 주세요.', "sp_errorMessage") == false) return;
-		 if (fn_TimeCheck ( "resStarttime",  "resEndtime", "시작 시간이 종료 시간보다 빠릅니다" , "sp_errorMessage" ) == false) return;
-		 if (any_empt_line_span("resGubun", '회의 구분을 선택해 주세요.', "sp_errorMessage") == false) return;
+	     if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.') == false) return;
+		 if (any_empt_line_span("resStarttime", '회의 시작 시간을 선택해 주세요.') == false) return;
+		 if (any_empt_line_span("resEndtime", '회의 종료 시간을 선택해 주세요.') == false) return;
+		 if (fn_TimeCheck ( "resStarttime",  "resEndtime", "시작 시간이 종료 시간보다 빠릅니다" ) == false) return;
+		 if (any_empt_line_span("resGubun", '회의 구분을 선택해 주세요.') == false) return;
 		 if ($("#div_equipRoomInfo").is(":visible") == true){
-	           if (any_empt_line_span("resEqupcheck", '장비사용 여부를 선택해 주세요.', "sp_errorMessage") == false) return;
+	           if (any_empt_line_span("resEqupcheck", '장비사용 여부를 선택해 주세요.') == false) return;
 		 }
 		 if ($("#resGubun").val() == "SWC_GUBUN_2"  && $("#meetingSeq").val() == ""){
 			 $("#sp_errorMessage").html("영상회의를 진행할 회의실을 선택해 주세요.");	 
@@ -1012,10 +1144,10 @@ function fn_modify(){
 							       if (result.status == "SUCCESS"){
 		                               //관련자 보여 주기 
 							    	   $("#sp_message").text(result.message);
-					   		           $("#btn_message").trigger("click");
+					   		           $("#btn_result").trigger("click");
 		                           }else {
 			  						  $("#sp_message").text(result.message);
-			  	    		          $("#btn_message").trigger("click");
+			  	    		          $("#btn_result").trigger("click");
 			  					   }
 							},
 							function(request){

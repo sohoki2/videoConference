@@ -10,11 +10,13 @@ import com.sohoki.backoffice.sym.space.vo.MeetingRoomInfo;
 public interface MeetingRoomInfoManageService {
 
 	
-    List<Map<String, Object>> selectMeetingRoomManageListByPagination(@Param("params") Map<String, Object> params) throws Exception;
+    List<Map<String, Object>> selectMeetingRoomManageListByPagination(Map<String, Object> params) throws Exception;
     
-	List<Map<String, Object>> selectMeetingRoomEmptyManageList(@Param("params") Map<String, Object> params) throws Exception;
+    List<Map<String, Object>> selectMeetingRoomTypeList(Map<String, Object> params)throws Exception;
+    
+	List<Map<String, Object>> selectMeetingRoomEmptyManageList(Map<String, Object> params) throws Exception;
 	
-	List<Map<String, Object>> selectMeetingRoomEmptyIntervalStatus(@Param("params") Map<String, Object> params) throws Exception;
+	List<Map<String, Object>> selectMeetingRoomEmptyIntervalStatus(Map<String, Object> params) throws Exception;
 	
 	List<Map<String, Object>> selectMeetingRoomManageCombo(String centerId) throws Exception;
 	
@@ -22,7 +24,7 @@ public interface MeetingRoomInfoManageService {
 	
 	Map<String, Object> selectMeetingRoomDetailInfoManage(String meetingId) throws Exception;
 	
-	List<Map<String, Object>> selectMeetingRoomId(@Param("params") Map<String, Object> params) throws Exception;
+	List<Map<String, Object>> selectMeetingRoomId(Map<String, Object> params) throws Exception;
 
 	//회의실 담당자 메세지 전달 
     boolean sendMeetingEmpMessage(String meetingId, ResInfo info ) throws Exception;

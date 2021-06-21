@@ -39,6 +39,9 @@
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorSeq)">
 							    AND a.FLOOR_SEQ = #{params.searchFloorSeq}
 							  </if>
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.mode)">
+							    AND a.COM_CODE != 'C_00000004'
+							  </if>
 	        ) TB  
 	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}   
 	        ORDER BY TB.COM_CODE  DESC

@@ -117,12 +117,12 @@
 	                   <th>검색어</th>
 	                   <td>
 	                   	<select name="searchCondition"  id="searchCondition">
-	                   		        <option value="0">전체</option>
-									<option value="1">제목</option>
-									<option value="2">내용</option>
+	                   		        <option value="all">전체</option>
+									<option value="boardTitle">제목</option>
+									<option value="boardContent">내용</option>
 							</select>	
 							<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  class="margin-left10">
-							<a href="javascript:search_form();" ><span class="lightgrayBtn">조회</span></a>
+							<a href="javascript:boardinfo.fn_search();" ><span class="lightgrayBtn">조회</span></a>
 						</td>
 						<c:if test="${regist.boardGubun ne 'QNA'}" >
 	                    <td class="text-right">
@@ -184,15 +184,15 @@
 	                    <tr class="tableM">
 	                        <th><span class="redText">*</span>제목</th>
 	                        <td colspan="3">
-	                        <input type="text" name="boardTitle" id="boardTitle"  style="width:470px;" />
+	                        <input type="text" name="boardTitle" id="boardTitle" style="width:470px;" />
 	                        </td>
 	                    </tr>
 	                    <tr id="tr_not1">
                       		<th>공지기간</th>
 	                        <td style="text-align:left">
-	                        <input type="text"  name="boardNoticeStartday" size="10" maxlength="8" id="boardNoticeStartday" class="date-picker-input-type-text" />
-	                        ~ &nbsp;&nbsp;&nbsp;
-	                        <input type="text"  name="boardNoticeEndday" size="10" maxlength="8" id="boardNoticeEndday" class="date-picker-input-type-text" />	                        
+	                        <input type="text"  name="boardNoticeStartday" style="width:150px" maxlength="8" id="boardNoticeStartday" class="date-picker-input-type-text" />
+	                        ~
+	                        <input type="text"  name="boardNoticeEndday"  style="width:150px"  maxlength="8" id="boardNoticeEndday" class="date-picker-input-type-text" />	                        
 	                        </td>
                             <th><span class="redText">*</span>목록상단에고정</th>
 	                        <td style="text-align:left">
@@ -243,8 +243,64 @@
 </div>	
 
 <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
-	
-<script src="/js/needpopup.js"></script> 
+<button id="btn_boardPriview" style="display:none" data-needpopup-show='#board_preView'>preview</button>
+
+
+<div  id='board_preView' class="needpopup">
+<div class="pop_container">
+        <!--//팝업 타이틀-->
+        <div class="pop_header">
+            <div class="pop_contents">
+            <h2 style="margin-left:8px;"><span id="sp_preview"></span>
+             </h2>
+            </div>
+        </div>
+        <!--팝업타이틀//-->
+        <!--//팝업 내용-->
+        <div class="pop_contents">
+	        <div class="Swrap tableArea viewArea" style="margin:16px">
+                <div class="view_contents">
+	                <table class="margin-top30 backTable mattersArea">
+		                <tbody>
+		                    <tr class="tableM">
+		                        <th>제목</th>
+		                        <td colspan="3" class="preview_in_title"><span id="sp_boardTitle"></span></td>
+		                    </tr>
+		                    <!-- 
+		                    <tr>
+		                        <th>연락처</th>
+		                        <td style='text-align:left' class='preview_in_offiTelNo'></td>
+		                        <th>이메일</th>
+		                        <td style='text-align:left' class='preview_in_email'></td>
+		                    </tr>
+		                     -->
+	                        </tr>
+	                           <tr><th>공지기간</th>
+	                           <td style='text-align:left' colspan='3' class='preview_in_day'><span id="sp_interval"></span></td>
+	                        </tr>
+	                        <tr id="tr_boardFile">
+	                        	<th>첨부파일</th>
+	                        	<td style='text-align:left' colspan='3' class='preview_in_file'><span id="sp_boardFile"></span></td>
+	                        </tr>
+				     		<tr>
+				     			<th>내용</th>
+				     			<td colspan="3" class="preview_in_contents">
+				     			<span id="sp_boardContent"></span>
+				     			</td>
+				     		</tr>	                    
+		                </tbody>
+		            </table>
+            	</div>
+        	</div>
+       	</div>
+        <div class="footerBtn">
+            <a href="javascript:need_close();" class="grayBtn" style="margin-bottom:16px;">닫기</a>
+        </div>
+    </div>
+
+</div>	
+<c:import url="/backoffice/inc/uni_pop.do" />
+
 <script type="text/javascript">
 	 $(document).ready(function() { 
 		   jqGridFunc.setGrid("boardGrid");
@@ -275,7 +331,11 @@
 					            	{ label: '제목', name:'board_title',       index:'board_title',      align:'center', width:'20%'},
 					            	{ label: '미리보기', name:'board_title',       index:'board_title',      align:'center', width:'10%'
 					            	  , formatter:jqGridFunc.boardPreviewBtn	},
-						            { label: '작성자', name:'user_nm',      index:'user_nm',      align:'center', width:'10%'},
+					            	{ label: '공지기간', name:'board_notice_startday', index:'board_notice_startday',   align:'center', width:'10%'
+					            	  , formatter:jqGridFunc.boardNoticeDay	},
+					            	{ label: '상위고정', name:'board_notice_useyn',    index:'board_notice_useyn',      align:'center', width:'10%'},
+					            	{ label: '첨부파일', name:'board_file01', index:'board_file01', align:'center', width:'10%'},
+					            	{ label: '작성자', name:'user_nm',      index:'user_nm',      align:'center', width:'10%'},
 						            { label: '조회수', name:'board_visited',      index:'board_visited',      align:'center', width:'10%'},
 					                { label: '최종 수정자', name:'user_nm', index:'user_nm',     align:'center', width:'10%'},
 					                { label: '최종 수정 일자', name:'board_update_date', index:'board_update_date', align:'center', width:'12%', 
@@ -315,9 +375,10 @@
 					    }
 				 });
 			 }, boardPreviewBtn : function (cellvalue, options, rowObject){
-				 return "<a href='javascript:jqGridFunc.boardPreview(\""+rowObject.board_seq+"\");'>미리보기</a>";
-			 }, boardPreview : function (boardSeq){
-				 
+				 return "<a href='javascript:preview(\""+rowObject.board_seq+"\");'>미리보기</a>";
+			 }, boardNoticeDay :function (cellvalue, options, rowObject){
+				 if (rowObject.board_notice_startday!= "")
+				 return rowObject.board_notice_startday+"~"+rowObject.board_notice_endday;
 			 }
 	     
 	 }
@@ -362,17 +423,15 @@
 			        }
     		 },fn_CheckForm  : function (){
 				    if (any_empt_line_id("boardTitle", "제목을 입력해주세요.") == false) return;	
+				    //시작일 종요일 체크 
+				    if (dateIntervalCheck(fn_emptyReplace($("#boardNoticeStartday").val(),"0"), 
+				    		              fn_emptyReplace($("#boardNoticeEndday").val(),"0") , "시작일이 종료일 보다 앞서 있습니다.") == false) return;
 				    var commentTxt = ($("#mode").val() == "Ins") ? "등록 하시겠습니까?":"저장 하시겠습니까?";
 		     		
 		     		if (confirm(commentTxt)== true){
 		     			  //체크 박스 체그 값 알아오기 
-		     			  
-		     			  
 		     			  var sHTML = oEditors.getById["ir1"].getIR();
      			          $("#boardContent").val(sHTML); 
-     			          alert( $("#boardGubun").val());
-     			          
-     			          
      			          
 		     			  var formData = new FormData();
 		     			  formData.append('mode' , $("#mode").val());
@@ -391,7 +450,7 @@
 		     				           //alert("result:" + result);
 	     						       //결과값 추후 확인 하기 	
 	     		    	               if (result.status == "SUCCESS"){
-	     		    	            	  jqGridFunc.fn_search();
+	     		    	            	  boardinfo.fn_search();
 	     		    	               }else if (result.status == "LOGIN FAIL"){
 	     									document.location.href="/backoffice/login.do";
 	     				               }else {
@@ -414,9 +473,6 @@
 	          		 fn_uniDelAction("/backoffice/boardManage/boardDelete.do",params, "boardinfo.fn_search");
 	        	 }
 	    	 }, fn_boardFormCk : function (){
-	    		 console.log($("#boardGubun").val());
-	    		 
-	    		 
 	    		 if ($("#boardGubun").val() == "NOT"){
 	    			 $("#tr_faq").hide();
 	    			 $("#tr_not1").show();
@@ -430,6 +486,7 @@
 		    	    	 datatype	: "json",
 		    	    	 postData	: JSON.stringify(  {
 		    	    		"pageIndex": $("#pager .ui-pg-input").val(),
+		    	    		"boardGubun" : $("#boardGubun").val(),
 		    	    		"searchCondition" : $("#searchCondition").val(),
 		    	    		"searchKeyword" : $("#searchKeyword").val(),
 		         			"pageUnit":$('.ui-pg-selbox option:selected').val()
@@ -457,9 +514,6 @@
 		 },
 	     fCreator: "createSEditor2"
 	});
-	function search_form(){		  
-		  $("form[name=regist]").attr("action", "/backoffice/boardManage/boardList.do").submit();		  
-	}
 	$(function () {
         var clareCalendar = {
             monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
@@ -481,41 +535,35 @@
         $("img.ui-datepicker-trigger").attr("style", "margin-left:3px; vertical-align:middle; cursor:pointer;"); //이미지버튼 style적용
 	    $("#ui-datepicker-div").hide(); //자동으로 생성되는 div객체 숨김
 	});	
-	var previewWindow;
-	function preview(){
-		
+	function preview(boardSeq){
 		var popSpec = "";
-		if(pageStatus == "NOT"){
+		if($("#boardGubun").val() == "NOT"){
 			popSpec = "width=920,height=600,top=10,left=350,scrollbars=yes";
+			$("#sp_preview").text("공지사항");
 		} else {
 			popSpec = "width=920,height=480,top=10,left=350,scrollbars=yes";
+			$("#sp_preview").text("FAQ");
 		}
-		$("#preview_value_page").val(pageStatus);
-		$("#boardContent").val(oEditors.getById["ir1"].getIR());
-		$("#preview_value_userNm").val($(".preview_userNm").html());
-		$("#preview_value_offiTelNo").val($(".preview_offiTelNo").html());
-		$("#preview_value_email").val($(".preview_email").html());
-		$("#preview_value_useYn").val($(":input:radio[name=boardNoticeUseyn]:checked").val());		
-		if($("#preview_value_fileNm").val() == "N"){
-			$("#preview_value_fileNm").val($(".preview_fileNm").html());
-			
+		$("#board_preView").attr("style", popSpec);
+		
+		//관련 내용 넣기
+		var url = "/backoffice/boardManage/boardView.do";
+		var params = {'boardSeq': boardSeq};
+		var result = fn_returnInfoReg(url, params);
+		var obj = result.regist;
+		
+		$("#sp_boardTitle").text(obj.board_title);
+		$("#sp_interval").text(obj.board_notice_startday + "~" + obj.board_notice_endday);
+		if(obj.board_file01 != "") {
+			$("#tr_boardFile").show();
+			$("#sp_boardFile").text(obj.board_file01);
+		}else {
+			$("#tr_boardFile").hide();
+			$("#sp_boardFile").text("");
 		}
-		window.open("/backoffice/boardManage/boardPreview.do", "preview", popSpec);
+		$("#sp_boardContent").html(obj.board_content);
+		$("#btn_boardPriview").trigger("click");
 	}
-	function need_close(){
-     	needPopup.hide();
-     }
-     needPopup.config.custom = {
-         'removerPlace': 'outside',
-         'closeOnOutside': false,
-         onShow: function() {
-				console.log('needPopup is shown');
-         },
-         onHide: function() {
-             console.log('needPopup is hidden');
-         }
-     };
-     needPopup.init();
     </script>
 </body>
 </html>

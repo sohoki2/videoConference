@@ -238,7 +238,7 @@
 	       						       
 						    		   $("#meetingName").val( obj.meeting_name);
 						    		   $("#roomType").val( obj.room_type);
-						    		   jqGridFunc.fn_AyavaView();
+						    		   jqGridFunc.fn_MeetingFieldView();
 						    		   $("#payClassification").val( obj.pay_classification);
 						    		   jqGridFunc.fn_payClassGubun(obj.pay_gubun, obj.pay_cost)
 						    		   $("#maxCnt").val( obj.max_cnt);
@@ -252,8 +252,10 @@
 						    		   toggleClick("meetingEqupgubun", obj.meeting_equpgubun);
 						    		   toggleClick("mailSendcheck", obj.mail_sendcheck);
 						    		   toggleClick("smsSendcheck", obj.sms_sendcheck);
+						    		   
 						    		   jqGridFunc.fn_msgView("M", obj.mail_sendcheck);
 						    		   jqGridFunc.fn_msgView("S", obj.sms_sendcheck);
+						    		   
 						    		   $("#ir1").val(obj.meetingroom_remark);
 						    		   $("#resMessageMail").val( obj.res_message_mail);
 						    		   $("#canMessageMail").val( obj.can_message_mail);
@@ -268,7 +270,25 @@
 						    		   $("#userLastNm").val( obj.user_last_nm);
 						    		   $("#userEmail").val( obj.user_email);
 						    		   //여기 수정 
-						    		   $("#sp_empView").html($("#sp_empView").html() + obj.seat_admin_txt);
+						    		   $("#sp_empView").html(obj.seat_admin_txt);
+						    		   
+						    		   $("#meetingRemark01").val( obj.meeting_remark01);
+						    		   $("#meetingRemark02").val( obj.meeting_remark02);
+						    		   $("#meetingRemark03").val( obj.meeting_remark03);
+						    		   $("#meetingRemark04").val( obj.meeting_remark04);
+						    		   $("#meetingRemark05").val( obj.meeting_remark05);
+						    		   $("#meetingRemark06").val( obj.meeting_remark06);
+						    		   $("#meetingRemark07").val( obj.meeting_remark07);
+						    		   $("#meetingRemark08").val( obj.meeting_remark08);
+						    		   
+						    		   $("#meetingImg1").val("");
+						    		   $("#meetingImg2").val("");
+						    		   $("#meetingImg3").val("");
+						    		   $("#meetingFile01").val("");
+						    		   $("#meetingFile02").val("");
+						    		   
+						    		  
+						    		   
 						    		   
 		       					   }else{
 		       						   alert(result.meesage);
@@ -281,14 +301,35 @@
 		        }else{
 		        	$('input[name^=meeting]').val("");
 		        	//roomType
+		        	$("#meetingImg1").val("");
+		        	$("#roomType").val("");
+	    		    $("#meetingImg2").val("");
+	    		    $("#meetingImg3").val("");
+	    		    $("#meetingFile01").val("");
+	    		    $("#meetingFile02").val("");
+		        	$("#ir1").val("");
 		        	$("#centerId").val("");
+		        	
+		        	toggleDefault("meetingUseyn");
+		        	toggleDefault("meetingConfirmgubun");
+		        	toggleDefault("meetingMainview");
+		        	toggleDefault("meetingView");
+		        	toggleDefault("meetingEqupgubun");
+		        	toggleDefault("mailSendcheck");
+		        	toggleDefault("smsSendcheck");
+		    		   
+		    		   
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
 		        	//가리기 
 		        	$("#tr_resMial").hide();
 		        	$("#tr_resSms").hide();
-		        	$(".avayaView").hide()
+		        	$(".avayaView").hide();
+		        	$(".meetingRemark").hide();
 		        	$("#btnUpdate").text("등록");
+		        	
+		        	회의실타입
+		        	
 		        }
            },clearGrid : function() {
                 $("#mainGrid").clearGridData();
@@ -307,7 +348,7 @@
 		    	var formData = new FormData();
 	     	 	    formData.append('meetingImg1', $('#meetingImg1')[0].files[0]);
 	     			formData.append('meetingImg2', $('#meetingImg2')[0].files[0]);
-	     			formData.append('meetingImg3', $('#meetingImg2')[0].files[0]);
+	     			formData.append('meetingImg3', $('#meetingImg3')[0].files[0]);
 	     			formData.append('meetingFile01', $('#meetingFile01')[0].files[0]);
 	     			formData.append('meetingFile02', $('#meetingFile02')[0].files[0]);
 	     			formData.append('partSeq' , fn_emptyReplace($("#partSeq").val(),"0"));
@@ -342,6 +383,16 @@
 	     			formData.append('userFirstNm' , $("#userFirstNm").val());
 	     			formData.append('userLastNm' , $("#userLastNm").val());
 	     			formData.append('userEmail' , $("#userEmail").val());
+	     			
+	     			formData.append('meetingRemark01' , $("#meetingRemark01").val());
+	     			formData.append('meetingRemark02' , $("#meetingRemark02").val());
+	     			formData.append('meetingRemark03' , $("#meetingRemark03").val());
+	     			formData.append('meetingRemark04' , $("#meetingRemark04").val());
+	     			formData.append('meetingRemark05' , $("#meetingRemark05").val());
+	     			formData.append('meetingRemark06' , $("#meetingRemark06").val());
+	     			formData.append('meetingRemark07' , $("#meetingRemark07").val());
+	     			formData.append('meetingRemark08' , $("#meetingRemark08").val());
+	     			
 	     			formData.append('resReqday' ,fn_emptyReplace( $("#resReqday").val(),"0"));
 	     			formData.append('mode' , $("#mode").val());
      			  
@@ -406,8 +457,13 @@
 	 		}else if (msgType == "S" && $("#smsSendcheck").val() == "N") {
 	 			$("#tr_resSms").hide();			
 	 		}
-	     }, fn_AyavaView : function(){
+	     }, fn_MeetingFieldView : function(){
+	    	 
+	    	 
+	    	 
 	    	 $("#roomType").val() == "SWC_GUBUN_2" ? $(".avayaView").show() : $(".avayaView").hide();
+	    	 $("#roomType").val() == "SWC_GUBUN_3" ? $(".meetingRemark").show() : $(".meetingRemark").hide();
+	    	 
 	     }, fn_adminChoic : function (empId){
 	    	 var empTxt =  $("#meetingConfirmgubun").val() == "Y" ? "<a href='javascript:backoffice_common.fn_adminForm(&#34;admin&#34;)'>[관리자 선택]</a>" : "";
 	    	 $("#sp_empView").html(empTxt);
@@ -453,6 +509,15 @@
 			                         </c:forEach>
 			                    </select>
 			                    <span id="sp_floorCombo"></span>
+		                	</td>
+		                	<th>회의실 타입</th>
+		                	<td>
+		                	<select path="searchRoomType" id="searchRoomType" title="회의실 구분">
+		                	    <option value="">지점 선택</option>
+		                         <c:forEach items="${centerInfo}" var="centerInfo">
+		                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
+		                         </c:forEach>
+		                	</select>
 		                	</td>
 		                	<th>검색</th>
 		                	<td>
@@ -515,7 +580,7 @@
 		                        </td>
 		                        <th><span class="redText">*</span>회의실타입</th>
 		                        <td style="text-align:left">
-		                            <select id="roomType" name="roomType" style="width:120px" onChange="jqGridFunc.fn_AyavaView()">
+		                            <select id="roomType" name="roomType" style="width:120px" onChange="jqGridFunc.fn_MeetingFieldView()">
 		                                 <option value="">회의실 구분</option>
 				                         <c:forEach items="${selectSwcGubun}" var="code">
 				                            <option value="${code.code}">${code.codeNm}</option>
@@ -639,6 +704,55 @@
 				                      </label>
 		                        </td>
 		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>시설 소개글</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark01" id="meetingRemark01" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>위치</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark02" id="meetingRemark02" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>규모</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark03" id="meetingRemark03" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>이용시간</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark04" id="meetingRemark04" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>장비현황</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark05" id="meetingRemark05" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>시간당</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark06" id="meetingRemark06" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>일당(8H)</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark07" id="meetingRemark07" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    <tr class='meetingRemark'>
+		                       <th>문의</th>
+		                       <td style="text-align:left" colspan="3">
+		                         <input name="meetingRemark08" id="meetingRemark08" type="text" size="20"/>  
+		                       </td>
+		                    </tr>
+		                    
 		                    <tr>
 		                        <th colspan="4">회의실 상세 설명</th>
 		                    </tr>
@@ -648,6 +762,11 @@
 		                       <input type="hidden" name="meetingroomRemark" id="meetingroomRemark" />
 		                       </td>
 		                    </tr>
+		                    
+		                    
+		                    
+		                    
+		                    
 		                    <tr id="tr_resMial">
 		                        <th><span class="redText">*</span>예약 메세지</th>
 		                        <td style="text-align:left">
@@ -773,22 +892,22 @@
  </form:form>
  <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
  <c:import url="/backoffice/inc/uni_pop.do" />
-<script>
-var oEditors = [];
-nhn.husky.EZCreator.createInIFrame({
-    oAppRef: oEditors,
-    elPlaceHolder: "ir1",                        
-    sSkinURI: "/js/SE/SmartEditor2Skin.html",
-    htParams: { 
-   	 bUseToolbar: true,
-        fOnBeforeUnload: function () { },
-        //boolean 
-        fOnAppLoad: function () { }
-        //예제 코드
-    },
-    fCreator: "createSEditor2"
-});
-</script>	    
+ <script>
+	var oEditors = [];
+	nhn.husky.EZCreator.createInIFrame({
+	    oAppRef: oEditors,
+	    elPlaceHolder: "ir1",                        
+	    sSkinURI: "/js/SE/SmartEditor2Skin.html",
+	    htParams: { 
+	   	 bUseToolbar: true,
+	        fOnBeforeUnload: function () { },
+	        //boolean 
+	        fOnAppLoad: function () { }
+	        //예제 코드
+	    },
+	    fCreator: "createSEditor2"
+	});
+ </script>	    
 </div>
 </body>
 </html>

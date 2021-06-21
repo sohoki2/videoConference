@@ -119,6 +119,9 @@
          INSERT INTO   TB_COMPAY_TENNANT_HISTORY (COM_CODE, TENN_SEQ,  REG_ID, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL)
          VALUES (#{comCode}, ${tennSeq}, #{userId,jdbcType=VARCHAR}, getdate(),  #{tennRecCount,jdbcType=VARCHAR}, 'TENN_PLAY_GUBUN_1', 'Y')
     </insert>
+    <insert id="insertTennantMonthManage" statementType="CALLABLE">
+         { call SP_TENNPAYMENT()}
+    </insert>
     <insert id="insertTennantInfoManages" parameterType="java.util.List">
         <foreach collection="list" item="item" separator=";" close=";">
            INSERT INTO TB_COMPAY_TENNANT(COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 
@@ -135,11 +138,6 @@
                    )
 	    </foreach>    
     </insert> 
-    
-    
-    
-		
-		
     <update id="updateTennantInfoManage" >
            UPDATE  TB_COMPAY_TENNANT SET COM_CODE = #{comCode} 
 		                                , TENN_REC_DATE = #{tennRecDate,jdbcType=VARCHAR} 

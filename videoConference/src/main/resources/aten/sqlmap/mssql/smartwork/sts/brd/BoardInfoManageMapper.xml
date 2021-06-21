@@ -20,7 +20,7 @@
 											END 		user_nm
 											, (SELECT DEPTNAME FROM tb_empInfo WHERE EMPNO = a.BOARD_REG_ID) deptname
 											, a.BOARD_REG_ID , a.BOARD_VISITED, a.BOARD_NOTICE_USEYN, a.BOARD_TOP_SEQ
-											, a.BOARD_CONTENT
+											, a.BOARD_CONTENT, a.BOARD_NOTICE_STARTDAY, a.BOARD_NOTICE_ENDDAY, a.BOARD_FILE01
 									FROM  tb_board a
 									WHERE a.BOARD_GUBUN = #{params.boardGubun}
 									<if test="params.boardGubun== 'NOT'">
@@ -50,14 +50,14 @@
 						            </if>      		        
 							        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							        	<choose>
-							        		<when test="params.searchCondition == 0">
+							        		<when test="params.searchCondition == all">
 							        			<![CDATA[
 									             AND (	BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%')  or BOARD_CONTENT LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') )
 												]]> 
 							        		</when>
 							        		<otherwise>
 							        			<choose>
-													<when test="params.searchCondition == 1">
+													<when test="params.searchCondition == boardTitle">
 													<![CDATA[
 									                AND BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
 													]]> 
@@ -134,12 +134,9 @@
 				, a.BOARD_TITLE
 		        , a.BOARD_NOTICE_USEYN
 		        , CONVERT(VARCHAR(10) , CONVERT(DATETIME, a.BOARD_NOTICE_STARTDAY), 120) BoardNoticeStartdayTxt
-		        , CONVERT(VARCHAR(10) , CONVERT(DATETIME, a.BOARD_NOTICE_ENDDAY), 120) BoardNoticeStartdayTxt
-		        , a.BOARD_NOTICE_STARTDAY
-		        , a.BOARD_NOTICE_ENDDAY
-		        , a.BOARD_GUBUN
-		        , a.BOARD_CONTENT
-		        , a.BOARD_RETURN_CONTENT
+		        , CONVERT(VARCHAR(10) , CONVERT(DATETIME, a.BOARD_NOTICE_ENDDAY), 120) BoardNoticeEnddayTxt
+		        , a.BOARD_NOTICE_STARTDAY, a.BOARD_NOTICE_ENDDAY
+		        , a.BOARD_GUBUN, a.BOARD_CONTENT, a.BOARD_RETURN_CONTENT
 		        , CONVERT(VARCHAR(10), a.BOARD_REGDATE, 120) boardRegdate
 		        , a.BOARD_REG_ID
 		        , CONVERT(VARCHAR(10), a.BOARD_UPDATE_DATE, 120) boardUpdateDate
@@ -254,10 +251,10 @@
                                 BOARD_UPDATE_ID =#{userId,jdbcType=VARCHAR} ,
                                 BOARD_UPDATE_DATE = GETDATE() 
                                  ]]>     
-                                <if test="boardFile01 != '' ">                                    
+                                <if test="boardFile01 != ''">                                    
                                , BOARD_FILE01 = #{boardFile01, jdbcType=VARCHAR}
                                </if>
-                                <if test="boardFile02 != '' ">                     
+                                <if test="boardFile02 != ''">                     
                                , BOARD_FILE02 = #{boardFile02, jdbcType=VARCHAR}
                                </if>                 
                                <![CDATA[              

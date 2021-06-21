@@ -56,4 +56,14 @@ public class MeetingRoomInfo {
 	//첨부 파일 확인 
 	private String meetingFile01 = "";
 	private String meetingFile02 = "";
+	
+	//신규 추가
+	private String meetingRemark01 = "";
+	private String meetingRemark02 = "";
+	private String meetingRemark03 = "";
+	private String meetingRemark04 = "";
+	private String meetingRemark05 = "";
+	private String meetingRemark06 = "";
+	private String meetingRemark07 = "";
+	private String meetingRemark08 = "";
 }

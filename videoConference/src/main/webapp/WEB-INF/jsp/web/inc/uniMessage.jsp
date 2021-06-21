@@ -35,6 +35,45 @@
         <div class="clear"></div>
 </div>
 
+
+ <!--//회의자원 팝업-->
+ <div id='meet_detail' class="needpopup">
+     <h5 class="pop_tit">예약신청</h5>
+     <ul class="form">
+       <li>
+         <!-- Swiper -->
+         <div class="swiper-container">
+           <div class="swiper-wrapper">
+             <div class="swiper-slide"><img id="img_left01" name="img_left01"/></div>
+             <div class="swiper-slide"><img id="img_left02" name="img_left02"/></div>
+             <div class="swiper-slide"><img id="img_left03" name="img_left03"/></div>
+           </div>
+           <!-- Add Pagination -->
+           <div class="swiper-pagination"></div>
+           <!-- Add Arrows -->
+           <div class="swiper-button-next swiper-button-white"></div>
+           <div class="swiper-button-prev swiper-button-white"></div>
+         </div>
+         <table class="table_pop">
+           <tbody>
+             <tr>
+               <th>회의실명</th>
+               <td><span id="sp_roomTitle"></span></td>
+             </tr>
+              <tr>
+               <th>회의실 자원</th>
+               <td><span id="sp_remark"></span></td>
+             </tr>
+              <tr>
+               <th>최대사용인원</th>
+               <td><span id="sp_personCnt"></span>명</td>
+             </tr>
+           </tbody>
+         </table>
+       </li>
+     </ul>
+ </div>
+ <!--회의자원 팝업//-->
 <!--//예약신청 팝업-->
 <div id="app_meeting" class="needpopup">
     <h5 class="pop_tit">예약신청</h5>
@@ -140,9 +179,9 @@
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>
 <button type="button" id="btn_meeting" style="display:none" data-needpopup-show='#app_meeting'>예약 화면 보여주기</button>
 <button type="button" id="btn_SeatRes" style="display:none" data-needpopup-show='#seat_fastR_popup'>좌석예약 보여주기</button>
+<button type="button" id="btn_meetingShow" style="display:none" data-needpopup-show='#meet_detail'>회의실 상세 보여주기</button>
 
-
-
+<script src="/front_res/js/swiper.min.js"></script>
 <script src="/front_res/js/com_resInfo.js"></script>
 <script src="/front_res/js/needpopup.min.js"></script>
 <script type="text/javascript">

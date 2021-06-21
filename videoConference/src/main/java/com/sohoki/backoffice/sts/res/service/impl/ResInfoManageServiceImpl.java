@@ -1,7 +1,6 @@
 package com.sohoki.backoffice.sts.res.service.impl;
 
 import com.sohoki.backoffice.cus.org.mapper.EmpInfoManageMapper;
-import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 import com.sohoki.backoffice.cus.ten.service.TennantInfoManageService;
 import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper;
@@ -10,13 +9,10 @@ import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sts.res.vo.TimeInfoVO;
 import com.sohoki.backoffice.sym.avaya.mapper.AvayMessageManageMapper;
-import com.sohoki.backoffice.sym.avaya.service.virturalConerenceInfo;
 import com.sohoki.backoffice.sym.avaya.service.virturalConerenceInfoService;
 import com.sohoki.backoffice.sym.avaya.vo.AvayaMessageInfo;
 import com.sohoki.backoffice.sym.equ.mapper.EquipmentManageMapper;
 import com.sohoki.backoffice.sym.equ.vo.EquipmentVO;
-import com.sohoki.backoffice.sym.sat.mapper.SeatInfoManageMapper;
-import com.sohoki.backoffice.sym.sat.vo.SeatInfoVO;
 import com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.util.SmartUtil;

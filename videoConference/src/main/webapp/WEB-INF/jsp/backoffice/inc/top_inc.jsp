@@ -59,7 +59,7 @@ if(loginVO == null ){
                             <a href="/backoffice/boardManage/boardList.do?boardGubun=NOT" class="dropbtn">커뮤니티</a>
                             <ul class="dropdown-content sedrop">
                                 <li><a href="/backoffice/boardManage/boardList.do?boardGubun=NOT">공지사항</a></li>
-                                <li><a href="/backoffice/boardManage/boardList.do?boardGubun=QNA">Q&A</a></li>
+                                <!-- <li><a href="/backoffice/boardManage/boardList.do?boardGubun=QNA">Q&A</a></li> -->
                                 <li><a href="/backoffice/boardManage/boardList.do?boardGubun=FAQ">FAQ</a></li>
                             </ul>
                       </li>

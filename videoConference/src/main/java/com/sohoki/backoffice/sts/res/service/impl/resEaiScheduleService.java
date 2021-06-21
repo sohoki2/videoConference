@@ -16,9 +16,6 @@ import com.sohoki.backoffice.cus.org.service.OrgInfoManageService;
 import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 import com.sohoki.backoffice.cus.org.vo.jobInfo;
 import com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper;
-import com.sohoki.backoffice.sym.equ.vo.ScheduleInfo;
-import com.sohoki.backoffice.sym.equ.service.ScheduleInfoManageService;
-import com.sohoki.backoffice.sym.sat.mapper.SeatInfoManageMapper;
 import egovframework.let.utl.sim.service.ShellScript;
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -27,7 +24,7 @@ import egovframework.rte.fdl.property.EgovPropertyService;
 public class resEaiScheduleService {
 
 	
-	private static final Logger logger = Logger.getLogger(resMessageSendSchedulerService.class);
+	private static final Logger logger = Logger.getLogger(resEaiScheduleService.class);
 	
 	
 	
