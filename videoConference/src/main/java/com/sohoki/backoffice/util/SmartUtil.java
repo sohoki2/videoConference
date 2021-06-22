@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Array;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -387,4 +389,19 @@ public class SmartUtil {
 		
 		return ret;
 	} 
+	/*
+	 *  ibats 파라니머 안넘기기   
+	 * 
+	 */
+	public static boolean isEmpty(Object obj) {
+		if (obj instanceof String ) return obj == null || "".equals(obj.toString().trim());
+		else if (obj instanceof List) return obj == null || ((List)obj).isEmpty();
+		else if (obj instanceof Map) return obj == null || ((Map)obj).isEmpty();
+		else if (obj instanceof Object[]) return obj == null || Array.getLength(obj) == 0;
+		else return obj == null;
+		
+	}
+	public static boolean isEmpty(String s) {
+		return !isEmpty(s);
+	}
 }

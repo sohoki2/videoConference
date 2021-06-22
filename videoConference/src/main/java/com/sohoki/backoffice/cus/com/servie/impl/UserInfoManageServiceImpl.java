@@ -55,6 +55,9 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		System.out.println("userid:"+vo.getUserId());
 		if (vo.getUserId().equals("") )
 			vo.setUserId(vo.getUserNo());
+		//일반 사용자 일때
+		if (vo.getComCode().equals("C_00000004") )
+			vo.setUserNo(vo.getUserId());
 		if (vo.getUserPassword().equals("") )
 			vo.setUserPassword("sto3877#*&&"); 
 		return vo.getMode().equals("Ins") ?  userMapper.insertUserInfoManage(vo) :  userMapper.updateUserInfoManage(vo);

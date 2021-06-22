@@ -94,6 +94,13 @@
 		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"> 
 								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
+		                	<th>총 입주사</th>
+		                	<td>
+		                	   <select id="searchMode" name="searchMode">
+		                	       <option value="mode" selected>일반</option>
+		                	       <option value="">전체</option>
+		                	   </select>
+		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">크레딧 등록</a>
@@ -665,6 +672,7 @@
 	    	    	 datatype	: "json",
 	    	    	 postData	: JSON.stringify(  {
 	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
+	    	    		"mode" : $("#searchMode").val(),
 		          		"searchCenter" :  $("#searchCenter").val(),
 		          		"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),

@@ -142,7 +142,7 @@ public class ResInfoVO extends ResInfo implements Serializable {
     private String resState   = "";
     private String meetingName   = "";
     private String roomType = "";
-   
+    private String searchNotTime = "";
    
     
 }

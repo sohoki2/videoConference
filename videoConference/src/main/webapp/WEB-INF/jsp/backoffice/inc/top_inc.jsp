@@ -51,7 +51,7 @@ if(loginVO == null ){
                           <ul class="dropdown-content">
                               <li><a href="/backoffice/companyManage/companyList.do">입주사관리</a></li>
                               <li><a href="/backoffice/companyManage/userList.do">사용자관리</a></li>
-                              <li><a href="/backoffice/companyManage/userList.do">일반사용자현황</a></li>
+                              <li><a href="/backoffice/companyManage/userList.do?comCode=C_00000004">일반사용자현황</a></li>
                               <li><a href="/backoffice/companyManage/tennList.do">크레딧 관리</a></li>
                           </ul>
                       </li>

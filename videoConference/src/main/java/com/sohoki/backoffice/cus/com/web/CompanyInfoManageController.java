@@ -118,7 +118,6 @@ public class CompanyInfoManageController {
 			  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 			  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 			  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
-			  searchVO.put("mode", "mode");
 			  
 			  List<Map<String, Object>> list = companyService.selectCompanyInfoManageListByPagination(searchVO);
 		      model.addObject(Globals.JSON_RETURN_RESULTLISR,  list );
@@ -250,7 +249,11 @@ public class CompanyInfoManageController {
 		    	   HttpSession httpSession = request.getSession(true);
 		    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
 			  }
+			  String comCode = request.getParameter("comCode") != "" ? request.getParameter("comCode") : "";
+			 
 			  model.addObject("searchCenter", centerInfoService.selectCenterInfoManageCombo());
+			  model.addObject("comCode",comCode);
+			  
 			  model.setViewName("/backoffice/companyManage/userList");
 			  return model;	
 		}

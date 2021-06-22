@@ -60,7 +60,7 @@
     		setGrid : function(gridOption){
     			 var grid = $('#'+gridOption);
     		    //ajax 관련 내용 정리 하기 
-    		     var postData = {};
+    		     var postData = {'comCode' : $("#searchComCode").val()};
     		     grid.jqGrid({
     		    	url : '/backoffice/companyManage/userListAjax.do' ,
     		        mtype :  'POST',
@@ -268,6 +268,7 @@
     	    	 datatype	: "json",
     	    	 postData	: JSON.stringify(  {
     	    		 "pageIndex": $("#pager .ui-pg-input").val(),
+    	    		 "comCode" :  $("#searchComCode").val(),
 	          		 "searchCenter" :  $("#searchCenter").val(),
 	          		 "searchCondition" :  $("#searchCondition").val(),
 	          		 "searchFloorSeq" : $("#searchFloorSeq").val(),
@@ -288,7 +289,8 @@
 <c:import url="/backoffice/inc/top_inc.do" />
 <input type="hidden" name="pageIndex" id="pageIndex">
 <input type="hidden" name="mode" id="mode" >
-<input type="hidden" name="comCode" id="comCode" >
+<input type="hidden" name="searchComCode" id="searchComCode"  value="${comCode}">
+<input type="hidden" name="comCode" id="comCode">
 <div class="Aconbox">
         <div class="rightT">
             <div class="Smain">

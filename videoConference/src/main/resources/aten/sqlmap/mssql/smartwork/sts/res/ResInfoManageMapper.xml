@@ -120,6 +120,19 @@
 	   WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 	   ORDER BY 	TA.REG_DATE DESC 	
 	</select>
+	<select id="selectTodayResSeatInfo" resultType="lmap">
+	   SELECT TOP 1 b.SEAT_NAME, d.CENTER_NM, c.FLOOR_NAME, a.IN_TIME, a.OT_TIME
+	   FROM TB_SWCRESERVATION a, TB_SEATINFO b, TB_FLOORINFO c, TB_CENTERINFO d
+	   WHERE a.ITEM_ID = b.SEAT_ID
+		      AND b.CENTER_ID = d.CENTER_ID
+			  AND b.FLOOR_SEQ = c.FLOOR_SEQ
+		      AND b.SEAT_GUBUN = 'SEAT_GUBUN_1'
+			  AND a.ITEM_GUBUN = 'ITEM_GUBUN_2'
+			  AND a.RES_STARTDAY = convert(varchar(8), getdate(), 112)
+			  AND a.USER_ID  = #{empNo}
+	   ORDER BY RES_SEQ desc     
+	
+	</select>
     <select id="selectCalenderInfo" resultType="ResInfoVO">
 	    SELECT  CONCAT( YEAR, MONTH) as calenderTitle, CONCAT(YEAR , '-', MONTH, ' 월') as calenderTitleTxt
 	    FROM TB_CALENDER
@@ -217,6 +230,9 @@
 					      </if>
 					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.centerId)">
 					      AND b.CENTER_ID = #{params.centerId}
+					      </if>
+					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.meetingId)">
+					      AND b.MEETING_ID = #{params.meetingId}
 					      </if>
 					      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.authorCode)">
 					         <choose>
@@ -404,21 +420,9 @@
 			FROM TB_SWCRESERVATION a 
 			WHERE RES_STARTDAY =CONVERT(VARCHAR(8), GETDATE(), 112) AND RESERV_PROCESS_GUBUN IN ('PROCESS_GUBUN_1','PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
 	</select>
-	<select id="selectKioskCalendarList"  resultType="lmap">
-	
-	    SELECT RES_TITLE,  dbo.FN_ATTENTLIST(a.RES_ATTENDLIST), 
-		       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00') RES_STARTTIME , 
-               CONCAT(CONVERT (DATE, a.RES_STARTDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
-		       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
-		       a.RES_SEQ 
-		FROM TB_SWCRESERVATION a , TB_EMPINFO   b
-		WHERE ITEM_ID  = #{meetingId} 
-              AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
-              AND  RES_ENDTIME >= REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','') 
-              AND a.USER_ID = b.EMPNO 
-              AND a.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_1', 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
-	</select>
-	
+	<select id="selectKioskCalendarList" resultType="lmap" statementType="CALLABLE">
+        { call SP_KIOSKCALDARLIST(#{ITEM_ID ,mode=IN, jdbcType=VARCHAR, javaType=string} )}
+    </select> 
 	<select id="selectTennInfo"  resultType="java.lang.String">
 	    SELECT dbo.FN_TENNPLAYINFO(#{itemId}, #{itemGubun}, #{resStartday, jdbcType=VARCHAR}, #{resStarttime, jdbcType=VARCHAR}, #{resEndtime, jdbcType=VARCHAR}, #{userId}) as tenn
 	</select>

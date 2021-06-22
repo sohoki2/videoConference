@@ -8,6 +8,16 @@ function any_empt_line_id(frm_nm, alert_message){
          return true;
 	 }
 }
+//패스워드 설정 
+function chkPwd(str){
+	 var reg_pwd = /^.*(?=.{10,20})(?=.*[0-9])(?=.*[a-zA-Z]).*$/;
+	 if(!reg_pwd.test(str)){
+	    $("#sp_message").text("비밀번호를 확인하세요.<br/>(영문,숫자를 혼합하여 10~20자 이내) ");
+	    $("#btn_result").trigger("click");
+	    return false;
+	 }
+	 return true;
+}
 function fn_Check (_UniCheckFormNm, _btn_message){
 	if ($("#"+_UniCheckFormNm).is(":checked") == true){
 		return true;
@@ -18,14 +28,38 @@ function fn_Check (_UniCheckFormNm, _btn_message){
 	}
 }
 function any_empt_line_span(frm_nm, alert_message){
-     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
-		 $("#sp_message").html(alert_message);
+     //if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
+     if ($('#'+frm_nm).val() == "" ){
+         $("#sp_message").html(alert_message);
 		 $("#btn_result").trigger("click");
-  		 $('#'+frm_nm).focus();
+		 $('#'+frm_nm).focus();
 		 return false;
 	 }else{
          return true;
 	 }
+}
+function fn_index(){
+    location.href="/web/Login.do";
+}
+function fn_uniCheck(url, params, _field){
+    uniAjax(url, params, 
+			  function(result) {
+			       var alert_message = ""; 
+			       if (result.status == "SUCCESS"){
+	                   //관련자 보여 주기 
+	                   alert_message = "중복된 내역이 없습니다.";
+					   $("#"+_field).val("Y");
+				   }else {
+				      alert_message = "중복된 내역이 있습니다.";
+					  $("#"+_field).val("N");
+				   }
+				   $("#sp_message").html("중복된 내역이 없습니다.");
+		           $("#btn_result").trigger("click");
+			  },
+			  function(request){
+				    alert("Error:" +request.status );	       						
+			  }    		
+	);
 }
 function fn_trInnerTxt(td_id, td_message){
   if (td_message == ""){
@@ -129,24 +163,6 @@ function uniAjax(url, param, done_callback, fail_callback){
 		        data : JSON.stringify(param)
 		    }).done(done_callback).fail(fail_callback);
 	return jxFax;
-}
-
-function fn_uniCheck(url, params, _field){
-    uniAjax(url, params, 
-			  function(result) {
-			       if (result.status == "SUCCESS"){
-	                   //관련자 보여 주기 
-	                    alert("중복된 내역이 없습니다.");
-					   $("#"+_field).val("Y");
-				   }else {
-				      alert("중복된 내역이 있습니다.");
-					  $("#"+_field).val("N");
-				   }
-			  },
-			  function(request){
-				    alert("Error:" +request.status );	       						
-			  }    		
-	);
 }
 function today_get(){
 	var now = new Date();

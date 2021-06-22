@@ -891,8 +891,8 @@ function fn_floorMeetingInfo() {
 			    }    		
     );    
 }
-//장기 예약 리스트 
-function fn_floorMeetingIntervalInfo(){
+//장기 예약 리스트  (30분)
+function fn_floorMeetingIntervalInfo(_calValue){
 		if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
 		if (yesterDayConfirm($("#searchResEndday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
 		var res_reqday = $("#resReqday").val();		
@@ -930,15 +930,14 @@ function fn_floorMeetingIntervalInfo(){
 	  									setHtml += "<th style='padding-left: 20px;' title='"+timeInfo.swc_resday+"' class='fixed_th'>"+timeInfo.swc_resday+"</th>";
 	  									resDay = timeInfo.swc_resday;
   									}
-  									
-  									if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
-										setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
+  									if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N"  ){
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='none' colspan="+_calValue+"></td>";
 									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
-										setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)' colspan="+_calValue+"></td>";
 									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
-										setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)'></td>";
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)' colspan="+_calValue+"></td>";
 									}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
-										setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' onclick='fn_resIntevalInfo(&#39;"+$("#itemId").val() +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+timeInfo.swc_resday+"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.room_type +"&#39;);'></td>";
+										setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' colspan="+_calValue+" onclick='fn_resIntevalInfo(&#39;"+$("#itemId").val() +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+timeInfo.swc_resday+"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.room_type +"&#39;);'></td>";
 									}
 	  					        } 
   								setHtml += "</tr>";
@@ -981,7 +980,7 @@ function fn_resIntevalInfo (itemId, timeSeq, swcTime, swc_resday,  swcName, resS
 	}else {
 		$("#mode").val("Edt");
 	}
-	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
+	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val(), 'searchNotTime' : '30'};
 	fn_swcTimeUni(params, $("#searchRoomType").val(), 0, null);
             			
 }
@@ -1095,9 +1094,7 @@ function fn_resCancel(resSeq, reservProcessGubun){
 	$("#reservProcessGubun").val(reservProcessGubun);
 	
 }
-function fn_index(){
-    location.href="/web/Login.do";
-}
+
 function fn_resCancelUpdate(){
 	if (any_empt_line_id("cancelCode", '취소 유형을 선택해 주세요.') == false) return;
 	if (any_empt_line_id("cancelReason", '취소 사유를 입력해 주세요.') == false) return;
@@ -1184,6 +1181,7 @@ function fn_modify(){
             	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
             	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
             	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
+            	if(!chkPwd( $.trim($('#newPassword1').val())) == false)return;
             	if (trim($("#newPassword1").val()) !=   trim($("#newPassword2").val())  ){
             		$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
          		    $("#btn_result").trigger("click");

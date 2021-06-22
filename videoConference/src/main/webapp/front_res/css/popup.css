@@ -138,7 +138,6 @@
 .staffList .tit{font-size: 26px; font-weight: 700; margin-bottom: 37px;}
 .staffList ul{height: 558px; overflow: auto;}
 .staffList ul li{height: 114px;padding:0 8px;padding-left: 90px;position: relative;}
-.staffList ul li{background: url(/img/staff_ex.jpg) no-repeat;}
 .staffList ul li.visitor{background:url(/img/visitor_icon.png)no-repeat;}
 .staffList ul li.visitor p{padding-top: 26px;}
 .staffList ul li p{font-size: 20px;padding-top: 14px;display: inline-block;}

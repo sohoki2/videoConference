@@ -41,11 +41,11 @@
                 <div class="login_reser_b">
                     <div class="login_reser_box">
                         <p class="reser_b_tit">아이디</p>                
-                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요." value="002786">
+                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요.">
                     </div>
                     <div class="login_reser_box">
                         <p class="reser_b_tit">비밀번호</p>                
-                        <input type="text" name="user_password" id="user_password" placeholder="비밀번호를 입력하세요." style="color:#000"  value="qwe123!@#">
+                        <input type="text" name="user_password" id="user_password" placeholder="비밀번호를 입력하세요." style="color:#000" >
                     </div>
                 </div>
                 <!--input 박스//-->
@@ -57,14 +57,6 @@
                 </div>
             </div>
         </div>
-
-        <!--//아이디/패스워드 틀릴 때 팝업-->
-        <div id='error_popup' class="needpopup">
-            <p>
-              <span id="sp_error"></span>
-            </p>
-        </div>
-        <!--아이디/패스워드 틀릴 때 팝업//-->
   </form>
 <!--needpopup script-->
 <c:import url="/web/inc/unimessage.do" />

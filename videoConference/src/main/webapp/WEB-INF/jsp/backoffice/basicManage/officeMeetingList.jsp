@@ -420,6 +420,7 @@
 	    	    	datatype	: "json",
 	    	    	postData	: JSON.stringify({
 	    	    		"pageIndex": $("#pager .ui-pg-input").val(),
+	    	    		"searchRoomType" : $("#searchRoomType").val(), 
 	    	    		"searchCenter" :  $("#searchCenter").val(),
 	          			"searchFloorSeq" : $("#searchFloorSeq").val(),
 	         			"searchKeyword" : $("#searchKeyword").val(),
@@ -513,9 +514,9 @@
 		                	<th>회의실 타입</th>
 		                	<td>
 		                	<select path="searchRoomType" id="searchRoomType" title="회의실 구분">
-		                	    <option value="">지점 선택</option>
-		                         <c:forEach items="${centerInfo}" var="centerInfo">
-		                            <option value="${centerInfo.centerId}">${centerInfo.centerNm}</option>
+		                	    <option value="">회의실 타입 선택</option>
+		                         <c:forEach items="${selectSwcGubun}" var="code">
+		                            <option value="${code.code}">${code.codeNm}</option>
 		                         </c:forEach>
 		                	</select>
 		                	</td>

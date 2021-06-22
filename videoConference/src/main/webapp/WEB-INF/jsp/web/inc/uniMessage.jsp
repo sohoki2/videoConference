@@ -8,7 +8,7 @@
         </ul>
         <div class="clear"></div>
         <div class="footerBtn">
-          <a href="#" onClick="fn_hisInfo()" class="grayBtn">확인</a>
+          <a href="#" onClick="fn_hisInfo()" class="grayBtn" style="width:100%">확인</a>
         </div>
         <div class="clear"></div>  
 </div>
@@ -171,10 +171,8 @@
      </div>            
      <a href="#" class="needpopup_remover"></a>
 </div>
-<!--  예약 취소 팝업  끝 부분-->    
-                 
+<!--  예약 취소 팝업  끝 부분-->                        
 <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
-
 <button type="button" id="btn_resultCk" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
 <button type="button" id="btn_meetingInfo" style="display:none" data-needpopup-show='#dv_meetingInfo'>경고창 보여 주기</button>
 <button type="button" id="btn_meeting" style="display:none" data-needpopup-show='#app_meeting'>예약 화면 보여주기</button>

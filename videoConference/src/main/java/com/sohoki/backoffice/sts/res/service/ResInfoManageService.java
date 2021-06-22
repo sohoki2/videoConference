@@ -13,6 +13,8 @@ public interface ResInfoManageService {
     // 메인 회의실 리스트 보여 주기 
     List<Map<String, Object>> selectIndexList(Map<String, Object> params)throws Exception;
     
+    Map<String, Object> selectTodayResSeatInfo(String empNo)throws Exception;
+    
     List<ResInfoVO> selectCalenderInfo()throws Exception;
     
     List<ResInfoVO> selectCalenderDetailInfo(ResInfoVO searchVO)throws Exception;

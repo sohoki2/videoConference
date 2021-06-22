@@ -32,6 +32,7 @@
 		SELECT A.CODE as code, A.CODE_NM as codeNm, A.CODE_DC as codeDc, A.USE_AT as useAt
 		FROM LETTCCMMNDETAILCODE A		    
 		WHERE A.CODE_ID = #{code}
+		
 		ORDER BY CAST( REPLACE(CODE, CONCAT(CODE_ID, '_'), '') AS INT) ASC
 	</select>
 	<!--  신규 추가 -->
@@ -63,7 +64,16 @@
 		      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.startCode) and !@org.apache.commons.lang3.StringUtils@isEmpty(params.endCode)">
 		         AND CAST(CODE_DC as int)  BETWEEN  REPLACE(#{params.startCode}, CONCAT(#{params.code},'_'), '')  AND REPLACE(#{params.endCode}, CONCAT(#{params.code},'_'), '')
 		      </if>
-		      AND	USE_AT ='Y'
+		      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notIn)">
+		         AND  CODE NOT IN 
+				 <foreach collection="params.notlist" item="item" open="(" separator="," close=")">
+		            #{item}
+		         </foreach>
+		      </if>
+		      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notSearch)">
+        	    AND REPLACE(a.CODE_NM, ':','') NOT LIKE CONCAT('%',#{params.notSearch})
+        	  </if>
+			  AND	USE_AT ='Y'
 		<choose>
 		   <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.startCode) and !@org.apache.commons.lang3.StringUtils@isEmpty(params.endCode)">
 		       ORDER BY CAST(CODE_DC as int)  ASC

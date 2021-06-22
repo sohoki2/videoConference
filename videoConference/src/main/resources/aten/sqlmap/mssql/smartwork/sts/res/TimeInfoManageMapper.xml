@@ -20,8 +20,11 @@
         			 AND a.SWC_RESDAY = #{params.swcResday}
         		</otherwise>
         	 </choose>
-	          AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
-	          AND a.SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY)
+        	 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notSearch)">
+        	    AND REPLACE(a.SWC_TIME, ':','') NOT LIKE CONCAT('%',#{params.notSearch})
+        	 </if>
+        	 AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
+	         AND a.SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY)
 	    ORDER BY SWC_RESDAY ASC, SWC_TIME ASC
 	</select>
     

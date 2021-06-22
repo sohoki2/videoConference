@@ -208,7 +208,7 @@ public class frontResInfoManageController {
 				vo.setUserState("USER_STATE_1");
 			}
 			int ret = userService.updateUserInfoManage(vo);
-			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다<br/>회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
+			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다 회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
 			if (ret >0){
 				model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_MESSAGE, message);
@@ -366,6 +366,29 @@ public class frontResInfoManageController {
 		model.setViewName("/web/inc/right_menu");
 		return model;		
 	}
+	@RequestMapping(value="rightSeatInfo.do")
+	public ModelAndView selectRightSeatInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                              , HttpServletRequest request
+			    		                  , BindingResult bindingResult) throws Exception {
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			//인터넷 가입 이면 확인
+			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+			String url = "/web/index";
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		url = "/web/login";
+		  	}else {
+		  		model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
+		  		model.addObject(Globals.STATUS_REGINFO  , resService.selectTodayResSeatInfo(empInfoVO.getEmpno()));
+		  	}
+			
+		}catch(Exception e) {
+			LOGGER.debug("actionJoinProcess error:"  + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
+		}
+    	return model;	
+    }
 	@RequestMapping(value="index.do")	
 	public ModelAndView webIndex(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
 					            , HttpServletRequest request
@@ -605,12 +628,21 @@ public class frontResInfoManageController {
 				searchVO.setResStarttime(util.NVL(searchVO.getResStarttime(), nowData));
 				
 				
+				
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("code", "SWC_TIME");
 				params.put("nowData", searchVO.getResStarttime());
 				
 				
+				
+				LOGGER.debug("---------------------------------------------------");
+				LOGGER.debug("-----" + searchVO.getSearchNotTime());
+				if (!searchVO.getSearchNotTime().equals(""))
+				params.put("notSearch", "30");
+				
 				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				if (!searchVO.getSearchNotTime().equals(""))
+					params.put("notSearch", "00");
 				if (searchVO.getSearchRoomType().equals("SWC_GUBUN_3")) {
 					params.put("nowData", "0800");
 					model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
@@ -641,6 +673,9 @@ public class frontResInfoManageController {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		try{
 			//SSO 관련 내용 넣기  
+			
+			
+			 
 	 		EmpInfoVO user = new EmpInfoVO();
 			user = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
 			//관련 내용 넣기 
@@ -707,6 +742,90 @@ public class frontResInfoManageController {
 			 
 		}catch(Exception e){
 			
+			LOGGER.debug("error:"+ e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	/*
+	 *  kisok 예약 
+	 * 
+	 */
+	@RequestMapping(value="resReservertionKioskUpdate.do")	
+	public ModelAndView resUpdateKioskInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+											, @RequestBody ResInfoVO searchVO
+											, HttpServletRequest request
+											, BindingResult bindingResult	) throws Exception {
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try{
+			//SSO 관련 내용 넣기  
+	 		
+
+			//사용자 정버 넣기 
+			searchVO.setUserId( searchVO.getProxyUserId() );
+			//사용자 정보 알아 오기
+			EmpInfoVO user = empService.selectEmpInfoDetailNo( searchVO.getProxyUserId()); 
+			
+			//크레딧 정보 사용 여부 확인 
+			if (user.getAuthorCode().equals("ROLE_USER")) {
+				String tennInfo = util.NVL(resService.selectTennInfo(searchVO), "");
+				if (tennInfo.indexOf("|")> 0 && tennInfo.length()> 2) {
+					String tennInfosp[] =  tennInfo.split("\\|");
+					//추후 변경 예정
+					if (Integer.valueOf(tennInfosp[0]) > Integer.valueOf(tennInfosp[1])) {
+						
+						searchVO.setTennCnt(tennInfosp[1]);
+					}else {
+						model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+						model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.tenninsuff"));	
+						return model;
+					}
+				}	
+			}else {
+				searchVO.setTennCnt("0");
+			}
+			LOGGER.debug("searchVO:" + searchVO.getTennCnt());
+			//좌석 이면 동일 시간때 있는지 확인 필요
+			int ret = 0;
+			if (searchVO.getItemGubun().equals("ITEM_GUBUN_2")) {
+				
+				Map<String, Object> timeinfo = new HashMap<String, Object>();
+			    timeinfo.put("timeStartDay", searchVO.getResStartday());
+			    timeinfo.put("strTime", searchVO.getResStarttime());
+			    timeinfo.put("endTime",  searchVO.getResEndtime());
+			    timeinfo.put("userId", searchVO.getUserId());
+			    timeinfo.put("resGubun", searchVO.getResGubun());
+			    
+				ret =   timeService.selectResSeatPreCheckInfo(timeinfo);
+				if (ret > 0) {
+					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+					model.addObject(Globals.STATUS_MESSAGE, "동일 시간때 다른데 예야된 좌석이 있습니다.");	
+					return model;
+				}
+				
+			}
+			
+			ret = resService.insertResManage(searchVO); 
+			
+			LOGGER.debug("-------------------------------------------------------");
+			LOGGER.debug("--" + ret);
+			LOGGER.debug("-------------------------------------------------------");
+			if (ret > 0){
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE,
+				egovMessageSource.getMessage("sucess.common.reservation")); //크레딧 차감
+			} else if (ret == -3){
+				model.addObject(Globals.STATUS, "EXIST");
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.reservation.exist"));
+			} else if (ret <0){
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			    model.addObject(Globals.STATUS_MESSAGE,
+			    egovMessageSource.getMessage("fail.common.reservation")); 
+			}else { throw new  Exception(); }
+			
+			
+		}catch(Exception e){
 			LOGGER.debug("error:"+ e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
@@ -1382,6 +1501,8 @@ public class frontResInfoManageController {
 			  	//기초 데이터 넣기 
 			  	params.put("swcResday", searchStartDay);
 			  	params.put("swcResEndday", searchEndDay);
+			  	//값 넣기 
+			  	params.put("notSearch", "30");
 			  	
 			  	List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(params);	
 			  	model.addObject("seatinfo", meetingInfo);
@@ -1479,7 +1600,6 @@ public class frontResInfoManageController {
 			
 			
 			List<Map<String, Object>> timeLists = resService.selectKioskCalendarList(meetingId);
-			LOGGER.debug("-----------------------------   size:" + timeLists.size());
 			
 			/*
 			 * JSONArray resTime = new JSONArray(); for (Map<String, Object> timeList :
@@ -1527,8 +1647,8 @@ public class frontResInfoManageController {
 			
 		}catch(Exception e){
 			
-			
-			LOGGER.error("selectResInfo ERROR:" + e.toString());
+			StackTraceElement[] ste = e.getStackTrace();
+			LOGGER.error("selectResInfo ERROR:" + e.toString() + ":" + ste[0].getLineNumber());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
 		}
@@ -1618,36 +1738,6 @@ public class frontResInfoManageController {
 		return model;
 			
 	}
-	@RequestMapping(value="resReservertionKioskUpdate.do")	
-	public ModelAndView resUpdateKioskInfo (@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
-										    , @RequestBody ResInfoVO searchVO
-										    , HttpServletRequest request
-										    , BindingResult bindingResult	) throws Exception {
-		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-		try{
-			//SSO 관련 내용 넣기  
-	 		
-
-			//사용자 정버 넣기 
-			searchVO.setUserId( searchVO.getProxyUserId() );
-			int ret = resService.insertResManage(searchVO);
-			if (ret > 0){
-				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("sucess.common.reservation"));
-				
-			}else if (ret <0){
-				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.reservation"));	
-			}else {
-				throw new Exception();
-			}
-		}catch(Exception e){
-			LOGGER.debug("error:"+ e.toString());
-			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
-		}
-		return model;
-	}
 	@RequestMapping(value="resMeetingInfoAjax.do")
 	public ModelAndView selectResMeetingInfoAjax(@RequestParam("resSeq") String resSeq	) throws Exception {
 		
@@ -1663,9 +1753,9 @@ public class frontResInfoManageController {
 	}
 	@RequestMapping(value="resInfoAjax.do")
 	public ModelAndView selectResInfoAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
-															  , @RequestBody ResInfoVO searchVO
-															  , HttpServletRequest request
-															  , BindingResult bindingResult	) throws Exception {
+										  , @RequestBody ResInfoVO searchVO
+										  , HttpServletRequest request
+										  , BindingResult bindingResult	) throws Exception {
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);		
 		try{
@@ -1697,15 +1787,17 @@ public class frontResInfoManageController {
 			}else {
 				LOGGER.debug("===========================================================1");
 				
+				
+				
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("code", "SWC_TIME");
 				params.put("nowData", searchVO.getResStarttime());
-				model.addObject("resStartTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
-				
-				params.put("code", "SWC_TIME");
-				params.remove("nowData");
-				params.put("overData", searchVO.getResEndtime());
-				model.addObject("resEndTime", cmmnDetailService.selectCmmnDetailComboEtc(params));
+				List<CmmnDetailCode> resTime = cmmnDetailService.selectCmmnDetailComboEtc(params);
+				model.addObject("resStartTime", resTime);
+				//params.put("code", "SWC_TIME");
+				//params.remove("nowData");
+				//params.put("overData", searchVO.getResStarttime());
+				model.addObject("resEndTime", resTime);
 				model.addObject("seatInfo", meetingService.selectMeetingRoomDetailInfoManage(searchVO.getItemId()));
 			}
 			

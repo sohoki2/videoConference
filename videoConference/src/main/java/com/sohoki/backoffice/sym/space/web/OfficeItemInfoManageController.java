@@ -1,6 +1,8 @@
 package com.sohoki.backoffice.sym.space.web;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -315,26 +317,39 @@ public class OfficeItemInfoManageController {
 		
 		
 		  ModelAndView model = new ModelAndView(); 
-		  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		  if(!isAuthenticated) {
-				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
-				model.setViewName("/backoffice/login");
-				return model;	
-		  }else {
-	    	   HttpSession httpSession = request.getSession(true);
-	    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+		  try {
+			  Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			  if(!isAuthenticated) {
+					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+					model.setViewName("/backoffice/login");
+					return model;	
+			  }else {
+		    	   HttpSession httpSession = request.getSession(true);
+		    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+			  }
+			  model.addObject("centerInfo", centerInfoManageService.selectCenterInfoManageCombo());
+			  model.addObject("orgInfo", orgService.selectOrgInfoCombo());
+			  model.addObject("payGubun", cmmnDetailService.selectCmmnDetailCombo("PAY_CLASSIFICATION"));
+			  //model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailCombo("SWC_GUBUN"));
+			  
+			  model.addObject("selectMail", msgService.selectMsgCombo("MSG_TYPE_1"));
+			  model.addObject("selectSms", msgService.selectMsgCombo("MSG_TYPE_2"));
+			  
+			  
+			  HashMap<String, Object> params = new HashMap<String, Object>();
+			  params.put("code", "SWC_GUBUN");
+			  params.put("notIn", "List");
+			  params.put("notlist",  util.dotToList("SWC_GUBUN_4"));
+			  model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailComboEtc(params));
+		      
+			  
+		  }catch(Exception e) {
+			  StackTraceElement[] ste = e.getStackTrace();
+			  LOGGER.info(e.toString() + ':' + ste[0].getLineNumber());
+			  model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			  model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
 		  }
-		  model.addObject("centerInfo", centerInfoManageService.selectCenterInfoManageCombo());
-		  model.addObject("orgInfo", orgService.selectOrgInfoCombo());
-		  model.addObject("payGubun", cmmnDetailService.selectCmmnDetailCombo("PAY_CLASSIFICATION"));
-		  model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailCombo("SWC_GUBUN"));
-		  
-		  model.addObject("selectMail", msgService.selectMsgCombo("MSG_TYPE_1"));
-		  model.addObject("selectSms", msgService.selectMsgCombo("MSG_TYPE_2"));
-		  
-		  model.addObject("selectSwcGubun", cmmnDetailService.selectCmmnDetailCombo("SWC_GUBUN"));
-		  
-	      model.setViewName("/backoffice/basicManage/officeMeetingList");
+		  model.setViewName("/backoffice/basicManage/officeMeetingList");
 		  return model;	
 	}
 	//구역 리스트 보여 주기 

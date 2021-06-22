@@ -50,8 +50,12 @@
                     <tbody>
                         <tr>
                             <th>* 아이디</th>
-                            <td><input type="text" id="userId" name="userId">
-                                <a href="javascript:join.fn_idCheck()">[중복체크]</a></td>
+                            <td>
+                                <section>
+	                                <input type="text" id="userId" name="userId">
+	                                <a href="#" onClick="join.fn_idCheck()">중복체크</a>
+                                </section>
+                            </td>
                         </tr>
                         <tr>
                             <th>* 비밀번호</th>
@@ -74,35 +78,18 @@
                             <td>
                                 <section>
                                     <input type="text" name="userCellphone" id="userCellphone" placeholder="전화번호 입력"  id="userCellphone">
-                                    <button>인증번호 받기</button>
+                                     <a href="">인증번호 받기</a>
                                 </section>
                                 <input type="text" name="" placeholder="인증번호를 입력하세요.">
                                 <!--인증번호 받기 버튼 클릭 시 추가 되는 텍스트-->
                                 <p class="noti">인증번호가 발송되었습니다</p>
-                                <button class="darkBtn joinBtn" onClick="join.fn_join()" data-needpopup-show="#agreeN_popup">가입하기</button>
+                                <a href="#" class="darkBtn joinBtn" onClick="join.fn_join()">가입하기</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <!--//개인정보 수집 체크 안했을 때 팝업-->
-        <div id='agreeN_popup' class="needpopup">
-            <p>
-              <span id="sp_message"></span>
-            </p>
-        </div>
-        <!--개인정보 수집 체크 안했을 때 팝업//-->
-
-        <!--// 필수 입력 정보를 입력 안했을 때 팝업-->
-        <div id='checkN_popup' class="needpopup">
-            <p>
-                필수 입력 정보를 입력하세요
-            </p>
-        </div>
-        <!-- 필수 입력 정보를 입력 안했을 때 팝업//-->
-
         <!--//회원가입 완료 팝업-->
         <div id='join_popup' class="needpopup">
             <p>
@@ -111,33 +98,38 @@
             </p>
         </div>
 </form>
-<button type="button" id="btn_message" style="display:none" data-needpopup-show='#agreeN_popup'>확인1</button>
+
 <!--needpopup script-->
 
-<script src="/front_res/js/needpopup.min.js"></script>
+<c:import url="/web/inc/unimessage.do" />
+
 <script>  
     var join = {
     	fn_idCheck : function(){
-    		if (join.any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
-    		var params = {"userId" : $("#userId").val()};
     		
+    		if (any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
+    		var params = {"userId" : $("#userId").val()};
     		fn_uniCheck("/web/userUniCheck.do", params, "uniCheck");
     	},fn_join : function(){
-    		if (join.any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
-			if (join.fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
+    		if (fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
+    		if (any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
 			if (join.fn_UniCheckAlert("uniCheck", "중복 검사를 하지 않았습니다") == false) return;
-			if (join.any_empt_line_span("userPassword1", "패스워드을 입력해주세요.") == false) return;
-			if (join.any_empt_line_span("userPassword2", "패스워드을 입력해주세요.") == false) return;
-		    if (join.any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
-  		    if (join.any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
-  		    if (join.any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
-  		    if ( $.trim($('#userPassword1').val()) !=   $.trim($('#userPassword2').val())  ){
-			   $("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
-   		       $("#btn_message").trigger("click");
-			   return;
-		    }
+			if (any_empt_line_span("userPassword1", "패스워드을 입력해주세요.") == false) return;	
+			if (any_empt_line_span("userPassword2", "패스워드을 입력해주세요.") == false) return;
+			if(!chkPwd( $.trim($('#userPassword1').val())) == false  )return;
+			if ($.trim($('#userPassword1').val()) !=   $.trim($('#userPassword2').val())  ){
+				$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
+			    $("#btn_result").trigger("click");
+			    return;
+			}
+		    if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
+  		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
+  		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
+  		    
+  		    
   		    var param = {"userId" : $("#userId").val(),
 	     		     	 "userName" : $("#userName").val(),
+	     		     	 "userPassword" : $("#userPassword1").val(),
 	     		     	 "userCellphone" : $("#userCellphone").val(),
 	     		     	 "userEmail" : $("#userEmail").val(),
 	     		     	 "mode" :  "Ins"
@@ -148,12 +140,13 @@
   		     			function(result) {
   						       if (result.status == "SUCCESS"){
   	                               //관련자 보여 주기 
+  	                               $("#hid_history").val("fn_index");
   						    	   $("#sp_message").text(result.message);
-  				   		          // $("#btn_message").trigger("click");
-  	                               location.href="/web/Login.do";
+  				   		           $("#btn_result").trigger("click");
+  	                               
   		  					   }else {
   		  						  $("#sp_message").text(result.message);
-  		  	    		          $("#btn_message").trigger("click");
+  		  	    		          $("#btn_result").trigger("click");
   		  					   }
   						},
 						function(request){
@@ -162,45 +155,17 @@
   		        );
   		   }
     	} , fn_UniCheckAlert : function (_UniCheckFormNm, _btn_message){
+    		
     		if ($("#"+_UniCheckFormNm).val() == "Y"){
     			return true;
     		}else {
-    		    $("#sp_message").text(_btn_message);
-    		    $("#btn_message").trigger("click");
+    		    $("#sp_message").html(_btn_message);
+    			$("#btn_result").trigger("click");
     			return false;
     			
     		}
-    	}, fn_Check : function (_UniCheckFormNm, _btn_message){
-    		if ($("#"+_UniCheckFormNm).is(":checked") == true){
-    			return true;
-    		}else {
-    		    $("#sp_message").text(_btn_message);
-    		    $("#btn_message").trigger("click");
-    			return false;
-    			
-    		}
-    	}, any_empt_line_span : function (frm_nm, alert_message){
-    	     if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
-    	    	  $("#sp_message").html(alert_message);
-    	    	  $("#btn_message").trigger("click");
-     		      $('#'+frm_nm).focus();
-    			  return false;
-    		 }else{
-    	         return true;
-    		 }
     	}
     }
-    needPopup.config.custom = {
-        'removerPlace': 'outside',
-        'closeOnOutside': false,
-        onShow: function() {
-            console.log('needPopup is shown');
-        },
-        onHide: function() {
-            console.log('needPopup is hidden');
-        }
-    };
-    needPopup.init();
 </script>
 </body>
 </html>

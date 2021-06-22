@@ -165,9 +165,9 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	    }
 	    else {
 	    	// 초기화 시키기
-	        this.resMapper.errorResDateStep01(resSeq);
-	        this.resMapper.errorResDateStep02(resSeq);
-	        ret = -1;
+	        //this.resMapper.errorResDateStep01(resSeq);
+	        //this.resMapper.errorResDateStep02(resSeq);
+	        ret = -3;
 	    }
 	    return ret;
 	  }
@@ -433,6 +433,12 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	public List<Map<String, Object>> selectNameplate() throws Exception {
 		// TODO Auto-generated method stub
 		return resMapper.selectNameplate();
+	}
+
+	@Override
+	public Map<String, Object> selectTodayResSeatInfo(String empNo) throws Exception {
+		// TODO Auto-generated method stub
+		return resMapper.selectTodayResSeatInfo(empNo);
 	}
 	  
 }

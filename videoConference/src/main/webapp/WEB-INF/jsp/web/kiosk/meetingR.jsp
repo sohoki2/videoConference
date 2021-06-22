@@ -19,10 +19,10 @@
     <link rel='stylesheet' href='/front_res/css/time_main.css'/>
     <link rel='stylesheet' href='/front_res/css/list_main.css' />
     
-    <script src="/front_res/js/jquery-2.2.4.min.js"></script>
+    <script src="/front_res/js/jquery-3.5.1.min.js"></script>
+    <script src="/front_res/js/bpopup.js" ></script>
     <script src="/front_res/js/packages/main.js"></script>
-    <script src="/js/bpopup.js"  type="text/javascript" />
-    
+
     <!-- 캘린더 관련 -->
     
    
@@ -38,13 +38,19 @@
 <body>
 <form:form name="regist" commandName="regist" method="post" >
  <input type="hidden" id="meetingId" name=meetingId value="${regist.meeting_id }">
+ <input type="hidden" id="floorSeq" name="floorSeq" value="${regist.floor_seq }">
  <input type="hidden" id="resSeq" name="resSeq"  >
  <input type="hidden" id="userId" name="userId"  >
  <input type="hidden" id="mode" name="mode"  >
  <input type="hidden" id="resStartday" name="resStartday" >
- <input type="hidden" id="centerId" name="centerId"  >
+ <input type="hidden" id="searchCenterId" name="searchCenterId"  value="${regist.center_id }">
+ <input type="hidden" id="seatConfirmgubun" name="seatConfirmgubun"  value="${regist.meeting_confirmgubun }">
+ 
  <input type="hidden" id="timeSeq" name="timeSeq"  >
   <input type="hidden" id="swcTime" name="swcTime"  >
+
+
+
 
  <div class="wrap">
         <!--//header-->
@@ -241,7 +247,7 @@
             <div class="popup_con">
                 <span class="button b-close">&times;</span>
                 <div class="top">
-                    <p>소회의실</p><span>예약 시간을 선택해주세요.</span>
+                    <p><span id="sp_bookingTitle"></span></p><span>예약 시간을 선택해주세요.</span>
                 </div>
                 <div class="con">
                     <select id='resStarttime' style="width:120px;"></select>~
@@ -290,7 +296,6 @@
     
     
     <script type="text/javascript">
-        /* popup */
         $('[data-popup-open]').bind('click', function () {
           var targeted_popup_class = jQuery(this).attr('data-popup-open');
           $('[data-popup="' + targeted_popup_class + '"]').bPopup();
@@ -301,10 +306,9 @@
         	$('body').css('overflow', 'auto');
             e.preventDefault(); 
         });
-        
         $( function() {
         	meetingR.meetingInfo();
-          } );
+        });
         
         
         var meetingR = {
@@ -316,19 +320,21 @@
     		 				       // 결과 시작 
 			        				if (result.status == "SUCCESS"){
 										  if (result.resultlist.length > 0 ){
+											console.log("result.resultlist.length:" + result.resultlist.length);
 											
-											for (var i in result.resultlist){
+											for (var i = 0; i < 1; i ++ ){
 											     var obj = result.resultlist;
-											     //alert(obj[i].centerId);
+											     
 											     
 												 $("#centerId").val(obj[i].center_id);
 										    	 $("#timeSeq").val(obj[i].time_seq);
 										    	 $("#swcTime").val(obj[i].swc_time);
 										    	 $("#sp_swcName").html(obj[i].meeting_name);
-									    	
+										    	 $("#sp_bookingTitle").html(obj[i].meeting_name);
+										    	 
 											     if (obj[i].res_seq != "0"){
 											    	$("#sp_title").html(obj[i].res_title );
-			  							    	 $("#dv_time").html( obj[i].resStartTimeT+"~"+ obj[i].resEndTimeT)
+			  							    	 $("#dv_time").html( obj[i].resstarttimet+"~"+ obj[i].resendtimet)
 			  							    	 $("#sp_userInfo").html(obj[i].attendlisttxt);
 			  							    	 $("#resSeq").val(obj[i].res_seq);
 			  							    	
@@ -425,6 +431,9 @@
     					           if (result.status == "SUCCESS"){
     									    //테이블 정리 하기
 		        						    if ($("#mode").val() == "R" ){
+		        						    	
+		        						    	
+		        						    	
 		        						    	$("#btn_hide").trigger("click");
 		        								$("#btn_booking").trigger("click");
 		        						    }else {
@@ -444,30 +453,28 @@
     			     );	
         			
         		}, fn_meetReservation : function (){
-        			 var equipType01 = "N";
-        			 var equipType02 = "N";
-        			 var resEqupcheck = "";
-        		     //예약 화면 닫기 하기 
+        			 //예약 화면 닫기 하기 
         		     $("#booking").bPopup().close();
         		     $("#btn_hideRes").trigger("click");
         		     
         			 if (parseInt($("#resStarttime").val() ) > parseInt($("#resEndtime").val())      ){
         				   meetingR.fn_hideMessage("시작 시간이 종료 시간보다 빠를 수 없습니다.", "checkIn");
         			 }else {
-        				 resEqupcheck = "RES_EQUPCHECK_1";
-            			 //
-            			 var params = {'mode': $("#mode").val(), 'swcSeq': $("#swcSeq").val(), 'resTitle' : "현장 예약 입니다",
-            							       'resPassword' : "Y", 'resStartday' : $("#resStartday").val().replaceAll("-", "") ,
-            							       'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
-            							       'proxyUserId' : $("#userId").val(), 'resGubun' : "SWC_GUBUN_1",
-            							       'useYn' : "Y", 'centerId': $("#centerId").val(),
-            							       'proxyYn' :  "R",  'meetingSeq' : "", 
-            							       'resAttendlist' :$("#userId").val(),
-            							       'conNumber' : "N", 'conPin' : "N",
-            							       'conVirtualPin' :"N", 'conAllowstream' : "N",
-            							       'conBlackdial' : "N" , 'conSendnoti' :  "N",
-            							       'resEqupcheck' : "RES_EQUPCHECK_1", 
-            							       'equipType01' : "N", 'equipType02' :  "N"
+        				 var params = {'mode': $("#mode").val(), 'itemId': $("#meetingId").val(), 'itemGubun':'ITEM_GUBUN_1', 
+            					       'resTitle' : "현장 예약 입니다",'resPassword' : "Y", 
+            					       'resStartday' : $("#resStartday").val().replaceAll("-", "") ,
+         							   'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
+         							   'proxyUserId' : $("#userId").val(), 'resGubun' : "SWC_GUBUN_1",
+         							   'useYn' : "Y", 'centerId': $("#searchCenterId").val(),
+         							   'proxyYn' :  "Y",  'meetingSeq' : "", 
+         							   'seatConfirmgubun': $("#seatConfirmgubun").val(),
+       							       'resAttendlist' :$("#userId").val(),
+       							       'conNumber' : "N", 'conPin' : "N",
+       							       'conVirtualPin' :"N", 'conAllowstream' : "N",
+       							       'conBlackdial' : "N" , 'conSendnoti' :  "N",
+       							       'resEqupcheck' : "RES_EQUPCHECK_1", 
+       							       'sendMessage' : 'N',
+       							       'floorSeq' : $("#floorSeq").val(), 'resRemark' : '', 'resPerson' : "0"
             			              };
             			
             			 //값 수정 
@@ -476,10 +483,10 @@
             		  			function(result) {
             						       if (result.status == "SUCCESS"){
             						    	    meetingR.meetingInfo();
-            						    	    meetingR.fn_hideMessage("예약이 정상적으로 처리 되었습니다.", "checkIn");
+            						    	    meetingR.fn_hideMessage(result.message, "checkIn");
             						    	    
             							   }else {
-            								   meetingR.fn_hideMessage("예약 도중 문제가 발생 하였습니다.", "checkIn");
+            								   meetingR.fn_hideMessage(result.message, "checkIn");
             							   }
             						    },
             						    function(request){
@@ -511,8 +518,8 @@
     			   }
         		}, bookingInfo : function (){
         			//부킹 정보 확인 하기 
-        			var time_params = {'resStarttime': $("#swcTime").val() , 'resSeq': '0', 'swcSeq' : $("#swcSeq").val()   };
-        			uniAjax("/front/resInfo/resInfoAjax.do", time_params, 
+        			var time_params = {'resStarttime': $("#swcTime").val() , 'resSeq': '0', 'itemId' : $("#meetingId").val()   };
+        			uniAjax("/web/resInfoAjax.do", time_params, 
 				 			function(result) {
 							           if (result.status == "SUCCESS"){
 										    //테이블 정리 하기
@@ -557,14 +564,14 @@
         			
         		}, showResInfo : function (resSeq){
         			
-        	        uniAjax("/front/resInfo/resMeetingInfoAjax.do?resSeq="+resSeq, null, 
+        	        uniAjax("/web/resMeetingInfoAjax.do?resSeq="+resSeq, null, 
         		  			function(result) {
         	        	               if (result.status == "SUCCESS"){
         						    	     var obj  =  result.resInfo;
         						    	     
         						    	     
-        						    	     $("#meeting_timeInfo").html (obj.resStartday +":" +   obj.resStarttime+"~"+ obj.resEndtime)
-        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.resTitle+"</p><span>"+obj.attendListTxt+"<br/>"+obj.deptname+"</span>");
+        						    	     $("#meeting_timeInfo").html (obj.resstartday +":" +   obj.resstarttime+"~"+ obj.resendtime)
+        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.res_title+"</p><span>"+obj.attendlisttxt+"<br/>"+obj.deptname+"</span>");
         						       }else {
         								   $("#sp_stateTxt").html("<p>조회 도중 문제가 발생 하였습니다.</p>");
  											

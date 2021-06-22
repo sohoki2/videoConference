@@ -1,5 +1,6 @@
 package videoConference;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,16 +28,22 @@ public class dayTest {
 	@Test
 	public void dbTest() {
 
-		// 컨테이너에서 getBean()
-		//List<String> floorInfo = dotToList("2,3,4");
-		//String centerFloorInfo = checkItemList(floorInfo, "4", "6");
-		//LocalDate.parse("20081004", DateTimeFormatter.BASIC_ISO_DATE);
-
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("code", "SWC_TIME");
 		
-		//System.out.println(conferenceState("다목적홀:unuse,시민아카데미:unuse") );
-		LocalDateTime now = LocalDateTime.now();
-		System.out.println( LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm")));
 	}
+	public static boolean isEmpty(Object obj) {
+		if (obj instanceof String ) return obj == null || "".equals(obj.toString().trim());
+		else if (obj instanceof List) return obj == null || ((List)obj).isEmpty();
+		else if (obj instanceof Map) return obj == null || ((Map)obj).isEmpty();
+		else if (obj instanceof Object[]) return obj == null || Array.getLength(obj) == 0;
+		else return obj == null;
+		
+	}
+	public static boolean isEmpty(String s) {
+		return !isEmpty(s);
+	}
+	
 	public List<String> dotToList (String _dotlist) {
     	return !_dotlist.equals("") ?  Arrays.asList(_dotlist.split("\\s*,\\s*")) : null;
     }

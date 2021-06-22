@@ -148,7 +148,7 @@
                       <div class="dateBox">
                         <span>시작 일시</span>
                           <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}">
-                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo()">
+                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo('2')">
                             <a class="dateBtn">검색</a>
                           </div>
                        </div>
@@ -157,12 +157,12 @@
                       <div class="dateBox">
                          <span>종료일시</span>
                           <input type="text" id="searchResEndday" name="searchResEndday" class="inputSearch" value="${regist.searchResEndday}">
-                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo()">
+                          <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo('2')">
                             <a class="dateBtn">검색</a>
                           </div>
                        </div>
                     </li>
-                    <li><a class="searchBtn" href="#" onClick="fn_floorMeetingIntervalInfo()">검색</a></li>
+                    <li><a class="searchBtn" href="#" onClick="fn_floorMeetingIntervalInfo('2')">검색</a></li>
                   </ul>
                   <div class="clear"></div>
                 </div>
@@ -434,7 +434,7 @@
 	           								    $("#sp_message").text(result.message);
 	           								    $("#btn_result").trigger("click");
 	           								    fn_resCancel();
-	           								    res.fn_floorInfo();	
+	           								    fn_floorMeetingIntervalInfo('2')
 	           							   }
 	           							  
 	           					},
@@ -450,7 +450,7 @@
             			}else {
             				$("#meeetingDetail").hide();
             				$("#meeetingRes").show();
-            				fn_floorMeetingIntervalInfo();
+            				fn_floorMeetingIntervalInfo("2");
             			}
             		}, fn_meetingInfo : function (){
             			var url = "/web/meetingDetail.do";
