@@ -11,6 +11,8 @@ public class ScheduleInfo {
 	private String schName = "";
 	private String schRegdate  = "";
 	private String schResult = "";
+	private String schResultMessage= "";
+	
 	
 	
 }

@@ -16,7 +16,7 @@ import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
-@Service("EgovSysLogService")
+@Service
 public class EgovSysLogServiceImpl  extends EgovAbstractServiceImpl implements EgovSysLogService {
 
 	

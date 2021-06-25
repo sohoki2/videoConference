@@ -103,8 +103,8 @@
 								 <choose>
 									 <when test="params.searchDayGubun == 'REG_DATE'">
 									  <![CDATA[    			
-										AND A.REG_DATE >= TRUNC(TO_DATE(#{params.searchStartDay}, 'YYYYMMDD'))
-                 					    AND A.REG_DATE < TRUNC(TO_DATE(#{params.searchEndDay}, 'YYYYMMDD') + 1)
+										AND  CONVERT(varchar(8), A.REG_DATE, 112) >= #{params.searchStartDay}
+                 					    AND CONVERT(varchar(8), A.REG_DATE, 112) <  CONVERT (VARCHAR(8), DATEADD(DAY,1,CONVERT(DATE,#{params.searchEndDay})), 112) 
                  					  ]]>
 									  </when>
 									  <otherwise>					      
@@ -544,17 +544,17 @@
 						         AND a.SWC_RESDAY  = CONVERT(VARCHAR(8), GETDATE(), 112)  
 						         AND SWC_TIME BETWEEN REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','') 
 						                      AND  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
-						         AND (REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') -b.RES_STARTTIME ) > 10 
+						         AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( b.RES_STARTTIME AS INT) ) > 10  
 		                    );
 		 UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL ='N'
 		 WHERE RES_SEQ in (
 			              SELECT b.RES_SEQ 
-						  FROM tb_swctime a, tb_swcreservation b
+						  FROM TB_SWCTIME a, TB_SWCRESERVATION b
 						  WHERE a.RES_SEQ = b.RES_SEQ
 						      AND a.SWC_RESDAY  =  CONVERT(VARCHAR(8), GETDATE(), 112)
 						      AND SWC_TIME BETWEEN  REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','')   
 						                   AND  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
-						      AND (REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') -b.RES_STARTTIME ) > 10 
+						      AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( b.RES_STARTTIME AS INT) ) > 10 
 			              ) ; 
 		 
     </update>

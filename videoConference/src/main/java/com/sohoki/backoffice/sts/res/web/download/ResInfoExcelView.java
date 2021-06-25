@@ -11,14 +11,21 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
 import com.sohoki.backoffice.sts.hly.web.HolyworkInfoManageController;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
+import com.sohoki.backoffice.util.SmartUtil;
 
 public class ResInfoExcelView extends AbstractExcelView{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResInfoExcelView.class);
+	
+	@Autowired
+	private SmartUtil util;
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -37,82 +44,79 @@ public class ResInfoExcelView extends AbstractExcelView{
 			
 			// put text in first cell
 			cell = getCell(sheet, 0, 0);
-			setText(cell, "회의실 예약관리");
+			setText(cell, "예약관리");
 			setText(getCell(sheet, 2, 0), "No.");
 			setText(getCell(sheet, 2, 1), "부서");
 			setText(getCell(sheet, 2, 2), "이름");
 			setText(getCell(sheet, 2, 3), "사번");
 			setText(getCell(sheet, 2, 4), "연락처");
-			setText(getCell(sheet, 2, 5), "예약센터");
-			setText(getCell(sheet, 2, 6), "회의실명");
-			setText(getCell(sheet, 2, 7), "예약구분");
-			setText(getCell(sheet, 2, 8), "회의제목");
-			setText(getCell(sheet, 2, 9), "공개여부");
-			
-			setText(getCell(sheet, 2, 10), "참여인원");
+			setText(getCell(sheet, 2, 5), "메일");
+			setText(getCell(sheet, 2, 6), "지점");
+			setText(getCell(sheet, 2, 7), "층수");
+			setText(getCell(sheet, 2, 8), "예약구분");
+			setText(getCell(sheet, 2, 9), "시설명");
+			setText(getCell(sheet, 2, 10), "제목");
 			setText(getCell(sheet, 2, 11), "신청일");
 			setText(getCell(sheet, 2, 12), "예약일자");
-			setText(getCell(sheet, 2, 13), "시작~종료시간");
+			setText(getCell(sheet, 2, 13), "사용크레딧");
 			setText(getCell(sheet, 2, 14), "결제상태");
-			setText(getCell(sheet, 2, 15), "승인자");
+			setText(getCell(sheet, 2, 15), "요청사항");
+			setText(getCell(sheet, 2, 16), "행사규모");
+			setText(getCell(sheet, 2, 17), "승인자");
+			setText(getCell(sheet, 2, 18), "최종승인일자");
+			setText(getCell(sheet, 2, 19), "반려사유유형");
+			setText(getCell(sheet, 2, 20), "반려사유");
 			
-			setText(getCell(sheet, 2, 16), "최종승인일자");
-			setText(getCell(sheet, 2, 17), "반려사유유형");
-			setText(getCell(sheet, 2, 18), "반려사유");
-			setText(getCell(sheet, 2, 19), "회의록");
 			
-			
-			List<ResInfoVO> goods = (List<ResInfoVO>) model.get("resReport");
+			List<Map<String, Object>> goods = (List<Map<String, Object>>) model.get("resReport");
 			for (int i = 0; i < goods.size(); i++) {
-				ResInfoVO resVO = goods.get(i);
+				Map<String, Object> resVO = goods.get(i);
 	
 				cell = getCell(sheet, 3 + i, 0);
 				setText(cell, Integer.toString(i + 1));
 				cell = getCell(sheet, 3 + i, 1);
-				setText(cell, resVO.getDeptname());
+				setText(cell, util.NVL(resVO.get("deptname"), "").toString());
 				cell = getCell(sheet, 3 + i, 2);
-				setText(cell, resVO.getEmpname());
+				setText(cell, util.NVL(resVO.get("empname"), "").toString());
 				cell = getCell(sheet, 3 + i, 3);
-				setText(cell, resVO.getUserId());
+				setText(cell, util.NVL(resVO.get("empno"), "").toString());
 				cell = getCell(sheet, 3 + i, 4);
-				setText(cell, resVO.getEmpmail());
+				setText(cell, util.NVL(resVO.get("emphandphone"), "").toString());
 				cell = getCell(sheet, 3 + i, 5);
-				setText(cell, resVO.getCenterNm());
+				setText(cell, util.NVL(resVO.get("empmail"), "").toString());
 				cell = getCell(sheet, 3 + i, 6);				
-				setText(cell, resVO.getSeatName());
+				setText(cell, util.NVL(resVO.get("center_nm"), "").toString());
 				cell = getCell(sheet, 3 + i, 7);				
-				setText(cell, resVO.getResGubunTxt());
+				setText(cell, util.NVL(resVO.get("floor_name"), "").toString());
 				cell = getCell(sheet, 3 + i, 8);
-				setText(cell, resVO.getAttendListTxt());
-				
+				setText(cell, util.NVL(resVO.get("item_gubun_t"), "").toString());
 				cell = getCell(sheet, 3 + i, 9);
-				setText(cell, resVO.getResTitle());
+				setText(cell, util.NVL(resVO.get("item_name"), "").toString());
 				cell = getCell(sheet, 3 + i, 10);
-				setText(cell, resVO.getResPassTxt());
-				
-				
+				setText(cell, util.NVL(resVO.get("res_title"), "").toString());
 				cell = getCell(sheet, 3 + i, 11);
-				setText(cell, resVO.getRegDate().substring(0,10) );
+				String resdayinfo = (util.NVL(resVO.get("item_gubun"), "").toString().equals("ITEM_GUBUN_3")) ? 
+						util.NVL(resVO.get("resstartday"), "") +"일 " + util.NVL(resVO.get("resstarttime"), "") + " 부터 ~" + util.NVL(resVO.get("resendday"), "") +"일 " + util.NVL(resVO.get("resendtime"), "")  + "까지"
+                        : util.NVL(resVO.get("resstartday"), "")+"일 "+ util.NVL(resVO.get("resstarttime"), "")+ "~"+ util.NVL(resVO.get("resendtime"), "");
+				setText(cell, resdayinfo );
 				cell = getCell(sheet, 3 + i, 12);
-				setText(cell, resVO.getResStartday());
+				setText(cell, util.NVL(resVO.get("reg_date"), "").toString());
 				cell = getCell(sheet, 3 + i, 13);
-				setText(cell, resVO.getResStarttime() +"~"+ resVO.getResEndtime());	
+				setText(cell, util.NVL(resVO.get("tenn_cnt"), "").toString());	
 				cell = getCell(sheet, 3 + i, 14);
-				setText(cell, resVO.getReservProcessGubunTxt()  );
+				setText(cell, util.NVL(resVO.get("reservprocessgubuntxt"), "").toString() );
 				cell = getCell(sheet, 3 + i, 15);
-				setText(cell, resVO.getUserId());
-				
+				setText(cell, util.NVL(resVO.get("res_remark"), "").toString());
 				cell = getCell(sheet, 3 + i, 16);
-				setText(cell, resVO.getAdminReplayDate()  );
-				
+				setText(cell, util.NVL(resVO.get("res_person"), "").toString());
 				cell = getCell(sheet, 3 + i, 17);
-				setText(cell, resVO.getCancelCodeTxt()  );
-				
+				setText(cell, util.NVL(resVO.get("proxyyntxt"), "").toString());
 				cell = getCell(sheet, 3 + i, 18);
-				setText(cell, resVO.getReservationReason()  );
-				
+				setText(cell, util.NVL(resVO.get("updatedate"), "").toString());
 				cell = getCell(sheet, 3 + i, 19);
-				setText(cell, resVO.getMeetinglog());
+				setText(cell, util.NVL(resVO.get("cancelcodetxt"), "").toString());
+				cell = getCell(sheet, 3 + i, 20);
+				setText(cell, util.NVL(resVO.get("cancel_reason"), "").toString());
 				
 				
 			}

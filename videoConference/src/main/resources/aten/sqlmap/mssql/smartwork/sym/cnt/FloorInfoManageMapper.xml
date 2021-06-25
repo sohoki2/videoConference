@@ -50,6 +50,7 @@
 							         AND FLOOR_SEQ IN (SELECT FLOOR_SEQ
 													   FROM TB_SEATINFO
 													   WHERE SEAT_USEYN ='Y'
+													         AND SEAT_GUBUN = 'SEAT_GUBUN_2' 
 													   GROUP BY FLOOR_SEQ)    
 							      </when>
 							      <when test="params.searchFloor == 'MEETING'">

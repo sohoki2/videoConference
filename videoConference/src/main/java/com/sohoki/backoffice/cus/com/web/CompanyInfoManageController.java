@@ -252,6 +252,7 @@ public class CompanyInfoManageController {
 			  String comCode = request.getParameter("comCode") != "" ? request.getParameter("comCode") : "";
 			 
 			  model.addObject("searchCenter", centerInfoService.selectCenterInfoManageCombo());
+			  model.addObject("userState", cmmnDetailService.selectCmmnDetailCombo("USER_STATE"));
 			  model.addObject("comCode",comCode);
 			  
 			  model.setViewName("/backoffice/companyManage/userList");

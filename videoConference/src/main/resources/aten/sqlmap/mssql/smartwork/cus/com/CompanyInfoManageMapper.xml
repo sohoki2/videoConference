@@ -17,8 +17,8 @@
 						       FORMAT(a.COM_UPDATE,'yyyy-MM-dd HH:mm:ss')  COM_UPDATE,	
 						       a.COM_UPDATEID, b.CODE_NM,   c.CENTER_NM, d.FLOOR_NAME, a.TENN_USEYN,
 						       CASE a.TENN_USEYN WHEN 'Y' THEN 
-						              (SELECT ISNULL(SUM(TENN_REC_NOW_CNT),0) 
-						               FROM tb_compay_tennant e
+						              (SELECT CAST(ISNULL(SUM(TENN_REC_NOW_CNT),0) AS VARCHAR(MAX))
+						               FROM TB_COMPAY_TENNANT e
                                        WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
                                        )
 						            ELSE 
@@ -57,16 +57,16 @@
 				   COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, COM_HOMEPAGE, COM_STATE, COM_LOGO,
 				   COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, CENTER_ID, FLOOR_SEQ, TENN_USEYN, COM_PLAY_FLOOR,
 				   CASE a.TENN_USEYN WHEN 'Y' THEN 
-			              (SELECT ISNULL(SUM(TENN_REC_NOW_CNT),0) 
-			               FROM tb_compay_tennant e
+			              (SELECT CAST(ISNULL(SUM(TENN_REC_NOW_CNT),0) AS VARCHAR(MAX))
+			               FROM TB_COMPAY_TENNANT e
                                     WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
                                     )
 			            ELSE 
 			               '사용안함'
 			       END TENN_INFO,
 			       CASE a.TENN_USEYN WHEN 'Y' THEN 
-			              (SELECT ISNULL(SUM(TENN_REC_COUNT),0) 
-			               FROM tb_compay_tennant e
+			              (SELECT CAST(ISNULL(SUM(TENN_REC_COUNT),0) AS VARCHAR(MAX))
+			               FROM TB_COMPAY_TENNANT e
                                     WHERE TENN_REC_END ='Y' AND a.COM_CODE = e.COM_CODE
                                     )
 			            ELSE 

@@ -6,6 +6,5 @@
 	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
 	   <property name="order" value="0" />
 	</bean>
-	<bean id="ResReportExcelView" class="com.sohoki.backoffice.sts.res.web.download.ResInfoExcelView" />
-	<bean id="IotReportExcelView" class="com.sohoki.backoffice.sts.iot.web.download.IotInfoExcelView" />	
+	<bean id="ResReportExcelView" class="com.sohoki.backoffice.sts.res.web.download.ResInfoExcelView" />		
 </beans>

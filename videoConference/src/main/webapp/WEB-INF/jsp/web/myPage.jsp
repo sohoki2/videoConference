@@ -189,7 +189,7 @@
 	   									  if (gubun == "res"){
 	   										 sHtml	+="<tr>"
 						                            +"    <td>"+a+"</td>"
-						                            +"    <td>"+obj[i].item_gubun+"</td>"
+						                            +"    <td>"+obj[i].item_gubun_t+"</td>"
 						                            +"    <td>"+obj[i].res_title+"</td>"
 						                            +"    <td>"+obj[i].resstartday+"</td>"
 						                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"

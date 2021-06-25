@@ -56,7 +56,6 @@
 		   jqGridFunc.setGrid("mainGrid");
 	 });
      var jqGridFunc  = {
-    		
     		setGrid : function(gridOption){
     			 var grid = $('#'+gridOption);
     		    //ajax 관련 내용 정리 하기 
@@ -103,7 +102,7 @@
     		        loadui : "enable",
     		        loadtext:'데이터를 가져오는 중...',
     		        emptyrecords : "조회된 데이터가 없습니다", //빈값일때 표시 
-    		        height : "420px",
+    		        height : "100%",
     		        autowidth:true,
     		        shrinkToFit : true,
     		        refresh : true,
@@ -158,7 +157,7 @@
     	            },onCellSelect : function (rowid, index, contents, action){
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
     	                //console.log(cm);
-    	                if (cm[index].name=='com_name' || cm[index].name=='user_no' ){
+    	                if (cm[index].name=='com_name' || cm[index].name=='user_no' || cm[index].name=='user_name' ){
     	                	jqGridFunc.fn_userInfo("Edt", $(this).jqGrid('getCell', rowid, 'user_no'));
             		    }
     	                
@@ -176,7 +175,7 @@
         		   fn_uniDelAction("/backoffice/companyManage/userDelete.do",params, "jqGridFunc.fn_search");
 		        }
            }, fn_userInfo : function (mode, userNo){
-        	    $("#dv_userInfo").trigger("click");
+        	    $("#btn_user").trigger("click");
 			    $("#mode").val(mode);
 		        $("#userNo").val(userNo);
 		        if (mode == "Ins"){
@@ -249,7 +248,7 @@
      								   location.href="/backoffice/login.do";
      		  					   }else if (result.status == "SUCCESS"){
      	                               //관련자 보여 주기 
-     		  						  userFunc.fn_userList();
+     		  						  jqGridFunc.fn_search();
      	                              
      		  					   }else {
      		  						  alert(result.message);  
@@ -409,7 +408,7 @@
         <div class="clear"></div>
          <div class="pop_footer">
             <span id="join_confirm_comment" class="join_pop_main_subTxt">내용을 모두 입력후 클릭해주세요.</span>
-            <a href="javascript:userFunc.fn_userUpdate();" class="redBtn" id="btnUserUpdate"><spring:message code="button.create" /></a>    
+            <a href="javascript:jqGridFunc.fn_CheckForm();" class="redBtn" id="btnUserUpdate"><spring:message code="button.create" /></a>    
         </div>   
     </div>   
 

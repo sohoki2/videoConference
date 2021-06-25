@@ -2,6 +2,7 @@ package com.sohoki.backoffice.sts.res.web;
 
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -222,9 +223,9 @@ public class ResBackInfoManageController {
 		}
 		@RequestMapping(value="resInfoAjax.do")		
 		public ModelAndView resResInfoAjax(@ModelAttribute("loginVO") AdminLoginVO loginVO
-							                                , @RequestParam("resSeq") String resSeq
-															, HttpServletRequest request
-															, BindingResult bindingResult) throws Exception{
+			                                , @RequestParam("resSeq") String resSeq
+											, HttpServletRequest request
+											, BindingResult bindingResult) throws Exception{
 			
 		   
 		   ModelAndView model = new ModelAndView(Globals.JSONVIEW );
@@ -264,6 +265,7 @@ public class ResBackInfoManageController {
 		   return model;
           
 		}
+		
 		@RequestMapping(value="resEquChange.do")
 		public ModelAndView resEquipChange(@ModelAttribute("loginVO") AdminLoginVO loginVO
 															 , @RequestBody ResInfoVO searchVO
@@ -368,9 +370,9 @@ public class ResBackInfoManageController {
 		}
 		@RequestMapping(value="resListAjax.do")
 		public ModelAndView resListAjax (@ModelAttribute("loginVO") AdminLoginVO loginVO
-				                        , @RequestBody Map<String, Object> searchVO
-	                                    , HttpServletRequest request
-	                                    , BindingResult bindingResult) throws Exception {
+				                         , @RequestBody Map<String, Object> searchVO
+	                                     , HttpServletRequest request
+	                                     , BindingResult bindingResult) throws Exception {
 			
 			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 			
@@ -384,6 +386,9 @@ public class ResBackInfoManageController {
 				}else{
 					 HttpSession httpSession = request.getSession(true);
 				     loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+				     
+				     //HashMap<String, Object> searchVO = new HashMap<String, Object>(); 
+				     
 				     searchVO.put("authorCode", loginVO.getAuthorCode());
 				     
 				     PaginationInfo paginationInfo = new PaginationInfo();
@@ -425,5 +430,72 @@ public class ResBackInfoManageController {
 			}
 			return model;
 		}
+		@RequestMapping("resListExcel.do")
+    	public ModelAndView selectBrodExcelList (@ModelAttribute("loginVO") AdminLoginVO loginVO
+								    			 , @ModelAttribute("resInfo") ResInfoVO resInfo 
+								                 , HttpServletRequest request
+								                 , BindingResult bindingResult) throws Exception {
+			
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			try {
+				
+				Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+				
+				
+				HashMap<String, Object> searchVO = new HashMap<String, Object>();
+				if(!isAuthenticated) {
+					 ModelAndView model = new ModelAndView();
+			    	 model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+			    	 model.setViewName("/backoffice/login");
+			    	 return model;
+				}else{
+				    	 HttpSession httpSession = request.getSession(true);
+				    	 loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+					     searchVO.put("authorCode",loginVO.getAuthorCode());
+				}
+				
+	            //관리자 강제로 사용
+	            
+	            PaginationInfo paginationInfo = new PaginationInfo();
+	  		    paginationInfo.setCurrentPageNo(1);
+	  		    paginationInfo.setRecordCountPerPage(10000);
+	  		    paginationInfo.setPageSize(10000);
+	  		    
+	  		    searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+				searchVO.put("lastIndex", 100000000);
+				searchVO.put("recordCountPerPage", 1000000);
+				 
+				String date1 = util.NVL(resInfo.getSearchStartDay(),  com.sohoki.backoffice.util.SmartUtil.reqDay(-7)) ;
+		        String date2 =  util.NVL(resInfo.getSearchEndDay(),  com.sohoki.backoffice.util.SmartUtil.reqDay(0)) ;
+		        searchVO.put("searchStartDay", date1);
+		        searchVO.put("searchEndDay", date2);
+		        searchVO.put("searchDayGubun", resInfo.getSearchDayGubun());
+		        searchVO.put("searchCondition", resInfo.getSearchCondition());
+		        searchVO.put("searchKeyword", resInfo.getSearchKeyword());
+		        searchVO.put("itemGubun", resInfo.getItemGubun());
+		        searchVO.put("searchReservProcessGubun", resInfo.getSearchReservProcessGubun());
+		        
+		        searchVO.put("SearchEmpno", loginVO.getAdminId());
+		          
+		  		List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
+		  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+		  		 
+	    		
+	    		map.put("resReport", reslist);
+	    		map.put("resType", searchVO.get("resType"));
+	    		
+	    		
+	    		
+			}catch(Exception e) {
+				StackTraceElement[] ste = e.getStackTrace();
+			    int lineNumber = ste[0].getLineNumber();
+				LOGGER.error("resPreCheckString error:"+ e.toString() + ":" + lineNumber);
+			}
+        	
+			return new ModelAndView("ResReportExcelView", map);
+			 
+    		
+    	}
 		
 }

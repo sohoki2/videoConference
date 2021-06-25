@@ -83,6 +83,7 @@
 			height: 30px;
 		 }
 	 </style>
+	 
     <script type="text/javascript">
       var jqGridFunc  = {
     		 setGrid : function(gridOption){
@@ -182,7 +183,14 @@
 		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
 		    		          	  postData : JSON.stringify(  {
 							    		          			"pageIndex": gridPage,
-							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
+							    		          			"searchDayGubun" : fn_emptyReplace($('input[name="searchDayGubun"]:checked').val(),"")	,
+										    	    		"searchStartDay" : $("#searchStartDay").val(),
+										    	    		"searchEndDay" : $("#searchEndDay").val(),
+										    	    		"searchCondition" : $("#searchCondition").val(),
+										    	    		"searchKeyword" : $("#searchKeyword").val(),
+										    	    		"searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
+										    	    		"itemGubun" : $("#itemGubun").val(),
+										    	    		"pageUnit":$('.ui-pg-selbox option:selected').val()
 							    		          		})
     		          		}).trigger("reloadGrid");
     		        },onSelectRow: function(rowId){
@@ -258,10 +266,10 @@
 	    	    		 "searchStartDay" : $("#searchStartDay").val(),
 	    	    		 "searchEndDay" : $("#searchEndDay").val(),
 	    	    		 "searchCondition" : $("#searchCondition").val(),
+	    	    		 "searchKeyword" : $("#searchKeyword").val(),
 	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
 	    	    		 "itemGubun" : $("#itemGubun").val(),
 	    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
-	         			 "searchKeyword" : $("#searchKeyword").val(),
 	         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
 	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}
@@ -289,6 +297,8 @@
 	    						    alert("Error:" +request.status );	       						
 	    					    }    		
 	    	      );
+	        	
+	        }, fn_ExcelDown : function (){
 	        	
 	        }
        
@@ -324,8 +334,6 @@
             <div class="Swrap Asearch">
                 <div class="Atitle">
                 
-                
-               
                 </div>
                 <section class="Bclear">
 	                <table class="pop_table searchThStyle">
@@ -353,7 +361,7 @@
 								<input class="nameB " type="text" name="searchKeyword" id="searchKeyword"   size="20"  maxlength="30"    onkeydown="if(event.keyCode==13){search_form();}">
 		                	</td>
 		                	<td rowspan="2" class="border-left" style="width:70px">
-			                    <a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
+			                    <a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 						</tr>
 						<tr>  
@@ -368,8 +376,8 @@
 		                	</td>
 		                	<th>예약 구분</th>
 		                	<td>
-		                		<form:select path="itemGubun" id="itemGubun" title="결재상태">
-							    	<form:option value="" label="결재상태"/>
+		                		<form:select path="itemGubun" id="itemGubun" title="예약구분">
+							    	<form:option value="" label="예약구분"/>
 				                    <form:options items="${selectItemGubun}" itemValue="code" itemLabel="codeNm"/>
 							    </form:select>
 		                	</td>
@@ -385,7 +393,7 @@
                     </table>
                 </section>
                 <div class="rightB magin-bottom20">
-                	  <a href="javascript:fn_ExcelDown();"><span class="deepBtn">엑셀다운</span></a>
+                	  <a href="javascript:fn_ExcelDown()" traget="_blank"><span class="deepBtn">엑셀다운</span></a>
                 </div>
                 <div class="clear"></div>
             </div>
@@ -651,6 +659,9 @@
  						    alert("Error:" +request.status );	       						
  					    }    		
  	      );
+    }
+    function fn_ExcelDown(){    	
+    	$("form[name=regist]").attr("action", "/backoffice/resManage/resListExcel.do").submit();
     }
     function fn_EqupStateView(resCode, equipList, resEqupcheck){
     	$("#delResSeq").val(resCode);

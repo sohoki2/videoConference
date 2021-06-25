@@ -52,7 +52,6 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	public int updateUserInfoManage(UserInfo vo) throws Exception {
 		// TODO Auto-generated method stub
 		
-		System.out.println("userid:"+vo.getUserId());
 		if (vo.getUserId().equals("") )
 			vo.setUserId(vo.getUserNo());
 		//일반 사용자 일때

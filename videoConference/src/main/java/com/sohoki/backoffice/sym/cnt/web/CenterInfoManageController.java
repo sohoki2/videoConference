@@ -110,24 +110,30 @@ public class CenterInfoManageController {
 			  
 			  searchVO.put("pageSize", propertiesService.getInt("pageSize"));
 			  
-			  LOGGER.info("pageUnit:" + pageUnit);
+			  LOGGER.info("------------------------pageUnit:" + pageUnit);
 			  
 		       /** pageing */       
 		   	  PaginationInfo paginationInfo = new PaginationInfo();
+		   	  LOGGER.debug("1");
 			  paginationInfo.setCurrentPageNo( Integer.parseInt( util.NVL(searchVO.get("pageIndex").toString(), "1") ) );
+			  LOGGER.debug("2");
 			  paginationInfo.setRecordCountPerPage(pageUnit);
+			  LOGGER.debug("3");
 			  paginationInfo.setPageSize(propertiesService.getInt("pageSize"));
-
+			  
 			  searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 			  searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
 			  searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
 			  
 			  
-			  
+			  LOGGER.info("pageUnit End");
 			  List<Map<String, Object>> list = centerInfoManageService.selectCenterInfoManageListByPagination(searchVO);
+			  LOGGER.info("[-------------------------------------------list:" + list.size() + "------]");
 		      model.addObject(Globals.JSON_RETURN_RESULTLISR,  list );
 		      model.addObject(Globals.STATUS_REGINFO, searchVO);
 		      int totCnt = list.size() > 0 ?  Integer.valueOf( list.get(0).get("total_record_count").toString()) :0;
+		      
+		      LOGGER.info("totCnt:" + totCnt);
 		      
 		      paginationInfo.setTotalRecordCount(totCnt);
 		      model.addObject("paginationInfo", paginationInfo);
@@ -136,7 +142,9 @@ public class CenterInfoManageController {
 	
 			  
 		}catch(Exception e) {
-			LOGGER.info(e.toString());
+			LOGGER.info("---------------------------------------");
+			StackTraceElement[] ste = e.getStackTrace();
+			LOGGER.error(e.toString() + ":" + ste[0].getLineNumber());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
 		}
