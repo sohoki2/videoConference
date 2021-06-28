@@ -150,7 +150,16 @@
 		                                , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	      WHERE TENN_SEQ = #{tennSeq}           
     </update> 
-    <update id="updatePlayTennantInfoManage" >
+    <update id="updatePlayTennantInfoManage" statementType="CALLABLE">
+         { call SP_PLAYTENNENT(#{tenn.userId ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                               , #{tenn.tennSeq ,mode=IN, jdbcType=INTEGER, javaType=string}
+                               , #{tenn.tennCnt ,mode=IN, jdbcType=INTEGER, javaType=string}
+                               , #{tenn.resSeq ,mode=IN, jdbcType=INTEGER, javaType=string}
+                               , #{result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
+         }    
+	</update> 
+	
+    <!-- <update id="updatePlayTennantInfoManage" >
            UPDATE  TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT + #{tenn.tennCnt,jdbcType=VARCHAR}
 		                                 , TENN_REC_NOW_CNT = TENN_REC_NOW_CNT - #{tenn.tennCnt,jdbcType=VARCHAR}
 		                                 , UPDATE_DATE = getdate()
@@ -158,8 +167,7 @@
 	       WHERE TENN_SEQ = #{tenn.tennSeq}   ;
 	       INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
 	       VALUES (#{tenn.tennSeq}, #{tenn.comCode} , #{tenn.userId,jdbcType=VARCHAR}, getdate(), #{tenn.tennCnt}, 'TENN_PLAY_GUBUN_2', 'Y', #{tenn.resSeq});
-	         
-    </update> 
+	</update>  -->
     <update id="updateRetireTennantInfoManage" >
          <selectKey resultType="int"  keyProperty="cnt" order="BEFORE">
 	            SELECT  DATEDIFF (MINUTE  , getdate(), 

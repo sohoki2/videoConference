@@ -109,21 +109,7 @@
         <!--퇴실 팝업-//->
 
         <!--needpopup script-->
-    
-        <script src="/front_res/js/needpopup.min.js"></script>
-        <script>  
-            needPopup.config.custom = {
-                'removerPlace': 'outside',
-                'closeOnOutside': false,
-                onShow: function() {
-                    console.log('needPopup is shown');
-                },
-                onHide: function() {
-                    console.log('needPopup is hidden');
-                }
-            };
-            needPopup.init();
-        </script>
+        <c:import url="/web/inc/unimessage.do" />
         <script type="text/javascript">
 		    $( function() {
 		    	fn_meetingList();
@@ -133,6 +119,7 @@
             	var params = { 
 			    	    		"pageIndex": $("#pageIndex").val(),
 			          			"searchKeyword" : $("#searchKeyword").val(),
+			          			"searchRoomType" : "SWC_GUBUN_1",
 			         			"pageUnit": $("#pageUnit").val()
          		}; 
 		    	uniAjax(url, params, 

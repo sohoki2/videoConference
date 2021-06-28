@@ -70,11 +70,11 @@
                    </div>
                    <div class="float_right list_T">
                      <a href="/web/meetingDay.do" class="active dayBtn">day</a>  
-                     <a href="/web/resCalendar.do" class="calBtn">calendar</a>  
+                     <a href="/web/resCalendar.do" class="calBtn">calendar</a> 
                    </div>
                    <div class="float_right btnL">
-                        <a href="/web/meetingList.do" class="listBtn"></a>  
-                        <a href="/web/meetingDay.do" class="active blockBtn"></a>  
+                        <a href="javascript:fn_ViewChange('List')" class="listBtn"></a>  
+                        <a href="javascript:fn_ViewChange('Day')" class="active blockBtn"></a>  
                     </div>
                 <div class="clear"></div>
                 </div>

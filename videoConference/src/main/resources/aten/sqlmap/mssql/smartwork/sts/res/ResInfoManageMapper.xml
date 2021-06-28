@@ -165,6 +165,7 @@
 		 ORDER BY a.DATES ASC  
 		 
     </select>
+    <!--  mssql 2014 이후 버전 
     <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
         SELECT X.DATES, X.weekTxt , X.passDate,
                STRING_AGG(X.FLOOR_INFO, ',') WITHIN GROUP(ORDER BY X.FLOOR_INFO) resState
@@ -179,6 +180,33 @@
 			                         WHERE FLOOR_SEQ = #{floorSeq}) b
 	          WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
 			  GROUP BY DATES , MEETING_ID, MEETING_NAME
+		 ) X
+		GROUP BY X.DATES, X.weekTxt, X.passDate
+		ORDER BY X.DATES ASC
+    </select>
+    -->
+    <!--  mssql 2014 이전 버전 -->
+     <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
+        SELECT DISTINCT X.DATES, X.weekTxt , X.passDate
+                ,  STUFF(
+				  (SELECT ',' + cast( CONCAT( b.MEETING_NAME,':', dbo.FN_SWCRESTATE( b.MEETING_ID, DATES)) as VARCHAR(max))
+				   FROM TB_CALENDER a  , (SELECT MEETING_ID, MEETING_NAME, MEETING_ORDER
+				                          FROM TB_MEETING_ROOM
+				                          WHERE FLOOR_SEQ =  #{floorSeq}) b
+	               WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
+				         AND DATES = X.DATES
+			       GROUP BY DATES , MEETING_NAME, MEETING_ID, MEETING_ORDER
+			       ORDER BY MEETING_ORDER ASC
+				   FOR XML PATH('')
+				  ), 1, 1, '') resState
+        FROM ( 
+	          SELECT DATES, 
+	                 CASE WHEN DATES > CONVERT(VARCHAR(8), GETDATE(), 112) THEN 0
+			             ELSE 1
+			          END AS passDate ,DATEPART(WEEKDAY, CONVERT (DATE, DATES)) weekTxt
+			  FROM TB_CALENDER a  
+	          WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
+			  GROUP BY DATES 
 		 ) X
 		GROUP BY X.DATES, X.weekTxt, X.passDate
 		ORDER BY X.DATES ASC

@@ -13,10 +13,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Array;
 
+import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -38,6 +41,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
@@ -112,7 +120,51 @@ public class SmartUtil {
 		
 		return  dayFormat;
 	}
-	
+    /*
+     *  qr 생성 
+     *  path 부분은 삭제 필요 
+     */
+    public static String getQrCode(String path, String data, int width, int height, String file_nm){
+		
+		LOGGER.debug("path : " + path);
+		LOGGER.debug("data : " + data);
+		LOGGER.debug("visit_id : " + file_nm);
+		
+		try {
+            File file = null;
+            // 큐알이미지를 저장할 디렉토리 지정
+            file = new File(path);
+            if(!file.exists()) {
+                file.mkdirs();
+            }
+            //qr존재시삭제
+            
+            // 코드인식시 인식할 내용 (url로 변경 예정 )
+            String codeurl = new String(data.getBytes("UTF-8"), "ISO-8859-1");
+            // 큐알코드 바코드 생상값
+          
+            int qrcodeColor =   0xff000000;
+//            #000000
+            // 큐알코드 배경색상값
+            int backgroundColor = 0xFFFFFFFF;
+             
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            // 3,4번째 parameter값 : width/height값 지정
+            BitMatrix bitMatrix = qrCodeWriter.encode(codeurl, BarcodeFormat.QR_CODE, width, height);
+            //
+            MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrcodeColor,backgroundColor);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix,matrixToImageConfig);
+            // ImageIO를 사용한 바코드 파일쓰기
+            ImageIO.write(bufferedImage, "png", new File(path + "/" + file_nm + ".png" ));
+             
+        } catch (Exception e) {
+        	data = "FAIL";
+        	LOGGER.error("getQrCode ERROR" + e.toString());
+            e.printStackTrace();
+        }  
+		
+		return data;
+	}
 	public static String timeView(String _time)
 	{
 		return _time.length() ==4 ? _time.substring(0,2)+":"+_time.substring(2,4) : "";

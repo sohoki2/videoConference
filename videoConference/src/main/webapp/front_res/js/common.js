@@ -262,7 +262,11 @@ function stringLength (str, strlength, replaceTxt){
 	}
 	return str;
 }
-
+//List to Day 변경 
+function fn_ViewChange(_viewGubun){
+            	var url = (_viewGubun == "List") ? "/web/meetingList.do" : "/web/meetingDay.do" ;
+            	$("form[name=regist]").attr("action",url).submit();
+}
 function ajaxPaging(currentPageNo, firstPageNo, recordCountPerPage, firstPageNoOnPageList, lastPageNoOnPageList, totalPageCount, pageSize, pageScript){
     var pageHtml = "";
     pageHtml += "<ul class='page_num'>";

@@ -1,17 +1,13 @@
 package com.sohoki.backoffice.sym.space.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.sohoki.backoffice.cus.org.mapper.EmpInfoManageMapper;
 import com.sohoki.backoffice.cus.org.vo.EmpInfo;
-import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sym.space.mapper.MeetingRoomInfoManageMapper;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
@@ -19,7 +15,6 @@ import com.sohoki.backoffice.sym.space.vo.MeetingRoomInfo;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.mapper.UniSelectInfoManageMapper;
 import com.sohoki.backoffice.util.service.fileService;
-
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -35,9 +30,6 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 	
 	@Autowired
 	private EmpInfoManageMapper empMapper;
-	
-	@Autowired
-	private ResInfoManageMapper resMapper;
 	
 	@Autowired
 	private SmartUtil util;

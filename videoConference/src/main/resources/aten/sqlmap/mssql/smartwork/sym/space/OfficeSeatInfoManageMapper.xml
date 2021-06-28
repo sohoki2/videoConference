@@ -19,13 +19,16 @@
 							  END USER_NAME,
 							  CASE a.SEAT_CONFIRMGUBUN WHEN 'Y' THEN '관리자승인'
 							       ELSE '바로사용'
-							  END SEAT_CONFIRMGUBUN
+							  END SEAT_CONFIRMGUBUN, QR_PLAYYN
 					    FROM  TB_SEATINFO a, TB_CENTERINFO b, TB_FLOORINFO c, LETTCCMMNDETAILCODE d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
 					          AND a.SEAT_GUBUN = d.CODE
 						      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
-								  AND (    a.SEAT_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
+								  AND (a.SEAT_NAME LIKE CONCAT('%',#{params.searchKeyword},'%'))
+							  </if>	
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchQrplay)">
+								  AND a.QR_PLAYYN = #{params.searchQrplay}
 							  </if>		
 							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchCenter)">
 								<![CDATA[    
@@ -48,9 +51,9 @@
 	        		 	    
     </select>
     <select id="selectOfficeSeatInfoManageDetail"  resultType="lmap">
-           SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
+           SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, QR_PLAYYN,
 				   SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
-				   SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
+				   SEAT_ORDER, SEAT_NUMBER,
 				   REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE,
 				   SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_CONFIRMGUBUN, RES_REQDAY, 
 				   CASE  
@@ -70,16 +73,16 @@
          </selectKey>
          INSERT INTO TB_SEATINFO(CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, 
 								 SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
-								 SEAT_QR_CODE, SEAT_QR_CODE_PATH, SEAT_QR_CODE_FULL_PATH, SEAT_ORDER, SEAT_NUMBER,
+								 SEAT_ORDER, SEAT_NUMBER,
 								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, 
 								 SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, 
-								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN , RES_REQDAY)
+								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN , RES_REQDAY, QR_PLAYYN)
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
                  #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
                  #{userId,jdbcType=VARCHAR}, GETDATE(), #{userId,jdbcType=VARCHAR}, GETDATE(),
                  #{seatGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
-                 #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  ,  #{resReqday, jdbcType=VARCHAR}
+                 #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  ,  #{resReqday, jdbcType=VARCHAR} ,  #{qrPlayyn, jdbcType=VARCHAR}
                  );
                  
          UPDATE tb_floorinfo SET SEAT_CNT = SEAT_CNT + 1
@@ -214,15 +217,7 @@
 	                              , SEAT_CONFIRMGUBUN = #{seatConfirmgubun,jdbcType=VARCHAR}
 	                              , SEAT_FIX_GUBUN = #{seatFixGubun,jdbcType=VARCHAR}
 	                              , RES_REQDAY = #{resReqday, jdbcType=VARCHAR}
-	    WHERE SEAT_ID = #{seatId}           
-    </update>
-    <update id="updateOfficeSeatQrInfoManage" >
-        UPDATE TB_SEATINFO SET  SEAT_QR_CODE = #{seatQrCode,jdbcType=VARCHAR} 
-	                            , SEAT_QR_CODE_PATH = #{seatQrCodePath,jdbcType=VARCHAR} 
-	                            , SEAT_QR_CODE_FULL_PATH = #{seatQrCodeFullPath,jdbcType=VARCHAR} 
-	                            , SEAT_ORDER  = #{seatOrder,jdbcType=VARCHAR} 
-	                            , UPDATE_DATE = GETDATE()
-	                            , UPDATE_ID = #{userId,jdbcType=VARCHAR}
+	                              , QR_PLAYYN  = #{qrPlayyn, jdbcType=VARCHAR}
 	    WHERE SEAT_ID = #{seatId}           
     </update>
     <update id="updateOfficeSeatPositionInfoManage" parameterType="java.util.List">

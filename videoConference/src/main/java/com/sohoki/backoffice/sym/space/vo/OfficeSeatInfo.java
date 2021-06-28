@@ -43,5 +43,7 @@ public class OfficeSeatInfo {
 	private String seatConfirmgubun = "";
 	private String seatFixGubun = "";
 	private String resReqday = "";
+	private String qrPlayyn ="";
+	private String qrUpdateDate = "";
 }
 

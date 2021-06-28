@@ -425,6 +425,7 @@ public class frontResInfoManageController {
 	
 	@RequestMapping(value="meetingDay.do")	
 	public ModelAndView webMeetingInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                           , @ModelAttribute("ResInfoVO") ResInfoVO searchVO
 			                           , HttpServletRequest request
 			                           , BindingResult bindingResult) throws Exception{				
 	    ModelAndView model = new ModelAndView();
@@ -454,10 +455,12 @@ public class frontResInfoManageController {
 			  		String floorSeq = floorList.get(0).get("floor_seq").toString();
 				  	model.addObject("floorinfo", floorList);
 				  	//기초 정리 하기 
-				  	String searchDay = util.reqDay(0);
+				  	
+				  
+				  	String searchResStartday = searchVO.getSearchResStartday().equals("") ?    util.reqDay(0): searchVO.getSearchResStartday();
 				  	reginfo.put("floorSeq", floorSeq);
 				  	reginfo.put("centerId", params.get("centerId").toString());
-				  	reginfo.put("searchResStartday", searchDay);
+				  	reginfo.put("searchResStartday", searchResStartday);
 				  	model.addObject(Globals.STATUS_REGINFO,  reginfo);
 			  	}else {
 			  		model.addObject(Globals.STATUS, Globals.STATUS_FAILLACK);
@@ -1000,6 +1003,10 @@ public class frontResInfoManageController {
 		     
 		     
 	    }catch(Exception e){
+	    	StackTraceElement[] ste = e.getStackTrace();
+	    	int lineNumber = ste[0].getLineNumber();
+	    	LOGGER.debug("webMybooking error:" + e.toString() + ":" + lineNumber);
+	    	
 	    	model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
 	    	model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	 
 	    }

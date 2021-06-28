@@ -235,7 +235,7 @@ function fn_returnInfo(url, params){
 	);
 	return returnVal;
 }
-//
+//결과값 가지고 오기 
 function fn_returnInfoReg(url, params){
     var returnVal = "";
     uniAjaxAsync(url, params, 
@@ -243,6 +243,7 @@ function fn_returnInfoReg(url, params){
 					       if (result.status == "LOGIN FAIL"){
 							   location.href="/backoffice/login.do";
 						   }else if (result.status == "SUCCESS"){
+						        alert(result.message);
 						       returnVal = result;
 						      
 						   }else {
@@ -611,6 +612,37 @@ function fn_comboList(_spField, _Field, _url, _params, _onChangeAction, _width, 
 			     ); 
 		    }   
 }
+//return 값 받아 오기 
+function uniAjaxReturn(url, param){
+    var returnVal = "";
+	$.ajax({
+		        type : 'POST',
+		        url : url,
+		        async: false,
+		        beforeSend:function(jxFax, settings){
+	        	   jxFax.setRequestHeader('AJAX', true);
+	        	   //$('.loadingDiv').show();
+	            }, 
+		        complete : function(jqXHR, textStatus) {
+		        },
+		        contentType : "application/json; charset=utf-8",
+		        data : JSON.stringify(param)
+		    }).done(function(result){
+		           if (result.status == "LOGIN FAIL"){
+			    	   alert(result.meesage);
+					   location.href="/web/Login";
+				   }else if (result.status == "SUCCESS"){
+				       returnVal = result;
+				   }else {
+				       alert(result.meesage); 
+				   }
+		       }
+		    ).fail(function(request){
+		          alert("Error:" +request.status );
+		           }
+	);
+	return returnVal;
+}
 function fn_comboListPost(_spField, _Field, _url, _params, _onChangeAction, _width, _checkVal){
 		    //requestBody 로 보내기
 		    if ($("#"+_spField) != undefined){
@@ -732,11 +764,15 @@ function toggleValue(obj){
 	 $(obj).is(":checked") ? $(obj).val("Y") : $(obj).val("N");
 }
 function toggleClick(obj, val){
+     val = (val == undefined)  ? "N" : val;
      $("#"+obj).val(val);
-     console.log(obj + ":" + val);
-     
-     if (val == "Y" && !$("#"+obj).is(":checked"))
-		 $("#"+obj).trigger("click");
+     console.log("obj:" + obj + val);
+     if (val == "Y" && !$("#"+obj).is(":checked")){
+        $("#"+obj).trigger("click");
+     }else if (val != "Y" && $("#"+obj).is(":checked")){
+        $("#"+obj).trigger("click");
+     }
+		 
 }
 //토글 디폴트 
 function toggleDefault(obj){

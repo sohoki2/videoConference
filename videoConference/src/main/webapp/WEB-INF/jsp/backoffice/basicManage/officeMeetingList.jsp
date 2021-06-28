@@ -96,8 +96,9 @@
 	    			                { label: '정렬순서', name:'meeting_order',       index:'meeting_order',      align:'center', width:'12%'},
 	    			                { label: '비용 구분', name:'pay_classification',       index:'mail_sendcheck',      align:'center', width:'20%', 
 	    			                  sortable : false,	formatter:jqGridFunc.classinfo},
-	    			                { label: '메일 전송 여부', name:'mail_sendcheck',       index:'mail_sendcheck',      align:'center', width:'12%'},
-	    			                { label: 'SMS 전송 여부', name:'sms_sendcheck',       index:'seat_order',      align:'center', width:'12%'},
+	    			                { label: '메일 전송 여부', name:'mail_sendcheck',       index:'mail_sendcheck',      align:'center', width:'8%'},
+	    			                { label: 'SMS 전송 여부', name:'sms_sendcheck',       index:'seat_order',      align:'center', width:'8%'},
+	    			                { label: 'QR사용유무', name:'qr_playyn',       index:'qr_playyn',      align:'center', width:'8%'},
 	    			                { label: '사전예약일', name:'res_reqday',       index:'res_reqday',      align:'center', width:'10%'},
 	    			                { label: '수정자', name:'update_id',      index:'update_id',     align:'center', width:'14%'},
 	    			                { label: '수정 일자', name:'update_date', index:'update_date', align:'center', width:'12%', 
@@ -252,6 +253,7 @@
 						    		   toggleClick("meetingEqupgubun", obj.meeting_equpgubun);
 						    		   toggleClick("mailSendcheck", obj.mail_sendcheck);
 						    		   toggleClick("smsSendcheck", obj.sms_sendcheck);
+						    		   toggleClick("qrPlayyn", obj.qr_playyn);
 						    		   
 						    		   jqGridFunc.fn_msgView("M", obj.mail_sendcheck);
 						    		   jqGridFunc.fn_msgView("S", obj.sms_sendcheck);
@@ -309,7 +311,6 @@
 	    		    $("#meetingFile02").val("");
 		        	$("#ir1").val("");
 		        	$("#centerId").val("");
-		        	
 		        	toggleDefault("meetingUseyn");
 		        	toggleDefault("meetingConfirmgubun");
 		        	toggleDefault("meetingMainview");
@@ -317,8 +318,8 @@
 		        	toggleDefault("meetingEqupgubun");
 		        	toggleDefault("mailSendcheck");
 		        	toggleDefault("smsSendcheck");
-		    		   
-		    		   
+		        	toggleDefault("qrPlayyn");
+		    		
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
 		        	//가리기 
@@ -371,6 +372,7 @@
 	     			formData.append('meetingroomRemark' , $("#meetingroomRemark").val());
 	     			formData.append('mailSendcheck' , fn_emptyReplace($("#mailSendcheck").val(),"N"));
 	     			formData.append('smsSendcheck' , fn_emptyReplace($("#smsSendcheck").val(),"N"));
+	     			formData.append('qrPlayyn' , fn_emptyReplace($("#qrPlayyn").val(),"N"));
 	     			formData.append('resMessageMail' , fn_emptyReplace($("#resMessageMail").val(),"0"));
 	     			formData.append('canMessageMail' , fn_emptyReplace($("#canMessageMail").val(),"0"));
 	     			formData.append('resMessageSms' , fn_emptyReplace($("#resMessageSms").val(),"0"));
@@ -675,8 +677,14 @@
 		                    
 							<tr>
 							    <th><span class="redText">*</span>이미지3</th>
-		                        <td style="text-align:left" colspan="3">
+		                        <td style="text-align:left">
 		                         <input name="meetingImg3" id="meetingImg3" type="file"  size="20"/>  
+		                        </td>
+		                        <th><span class="redText">QR 사용여부</th>
+		                        <td><label class="switch">                                               
+				                    	<input type="checkbox" id="qrPlayyn" name="qrPlayyn" onclick="toggleValue(this)" value="Y">
+					                    <span class="slider round"></span> 
+				                    </label> 
 		                        </td>
 		                    </tr>
 		                    <tr>

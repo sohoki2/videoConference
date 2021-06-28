@@ -29,7 +29,8 @@
                 <entry key="avayaPullUrl" value="http://10.10.5.170:8080/xmlservice/entry"/>
                 <entry key="avayaPort" value="8080"/>
                 
-                
+                <entry key="Globals.qrPath" value="C:\dev\git\conference\videoConference\src\main\webapp\qrcode"/>
+                <entry key="qrCodePath" value="qrcode"/>
                 
 	        </map>
 		</property>

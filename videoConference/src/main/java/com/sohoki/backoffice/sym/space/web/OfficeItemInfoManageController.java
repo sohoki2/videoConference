@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -43,9 +44,11 @@ import com.sohoki.backoffice.sym.log.annotation.NoLogging;
 import com.sohoki.backoffice.sym.space.service.DeviceInfoManageService;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
+import com.sohoki.backoffice.sym.space.service.QrcpdeInfoManageServie;
 import com.sohoki.backoffice.sym.space.vo.DeviceInfo;
 import com.sohoki.backoffice.sym.space.vo.MeetingRoomInfo;
 import com.sohoki.backoffice.sym.space.vo.OfficeSeatInfo;
+import com.sohoki.backoffice.sym.space.vo.QrcodeInfo;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
 import com.sohoki.backoffice.util.service.fileService;
@@ -59,7 +62,7 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 import com.google.gson.reflect.TypeToken;
 
-
+import javax.servlet.ServletContext;
 
 @RestController
 @RequestMapping("/backoffice/basicManage")
@@ -109,7 +112,13 @@ public class OfficeItemInfoManageController {
 	private MessageInfoManageService msgService;
 	
 	@Autowired
+	private QrcpdeInfoManageServie qrService;
+	
+	@Autowired
 	private fileService uploadFile;
+	
+	@Autowired
+    ServletContext servletContext;
 	
 	
 	
@@ -276,6 +285,71 @@ public class OfficeItemInfoManageController {
 	    try {
 	    	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			model.addObject(Globals.STATUS_REGINFO, officeService.selectOfficeSeatInfoManageDetail(seatId));
+	    }catch(Exception e) {
+			LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
+	    }
+	    return model;
+	}
+	/*
+	 *  qr 이미지 생성 
+	 * 
+	 * 
+	 */
+	@RequestMapping (value="officeSpaceQrCreate.do")
+	public ModelAndView selectFloorInfoManage(@ModelAttribute("AdminLoginVO") AdminLoginVO loginVO
+									          , @RequestBody Map<String, Object> params	) throws Exception{
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+	    if(!isAuthenticated) {
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				model.setViewName("/backoffice/login");
+				return model;	
+	    }
+	    try {
+	    	//qr 생성 (좌석/회의실) 사용유무 할지는 나중에 정리 
+	    	Map<String, Object> search = new HashMap<String, Object>();
+	    	search.put("searchQrplay", "Y");
+	    	
+	    	//추후 겁색 값으로 대처 필요 
+	    	search.put("firstIndex", 0);
+	    	search.put("lastRecordIndex", 1000);
+	    	search.put("recordCountPerPage", 1000);
+				  
+	    	String qr_code = "";
+	        String path = "";
+	        //path = servletContext.getRealPath("/") + propertiesService.getString("qrCodePath") + "/";
+	        path =  propertiesService.getString("Globals.qrPath");
+	         
+	    	List<Map<String, Object>> qrLists = params.get("qrMode").equals("Seat") ? officeService.selectOfficeSeatInfoManageListByPagination(search)
+	    			                           : meetingService.selectMeetingRoomManageListByPagination(search);
+	    	
+	    	
+	    	
+	    	int ret = 0;
+	    	for (Map<String, Object> qrList : qrLists) {
+	    		 //추후 변경 예정
+	    		 qr_code = qrList.get("seat_id").toString()+"_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+	    		 String result =  util.getQrCode(path, qr_code, 200, 300, qrList.get("seat_id").toString()); // qr코드 생성 및 이미지 생성
+	    		 if (!result.equals("FAIL")) {
+	    			 QrcodeInfo info = new QrcodeInfo();
+		    		 info.setItemId(qrList.get("seat_id").toString());
+		    		 info.setMode("Ins");
+		    		 info.setQrGubun("ITEM_GUBUN_2");
+		    		
+		    		 //qr 등록 만들기 
+		             info.setQrCode(qr_code);
+		             
+		             info.setQrFullPath(path + "/" + qrList.get("seat_id").toString() + ".png");
+		             info.setQrPath("/" + propertiesService.getString("qrCodePath") + "/" + qrList.get("seat_id").toString() + ".png");
+		             ret = qrService.updateQrcodeManage(info);
+	    		 } 
+	    	}
+	    	
+	    	model.addObject(Globals.STATUS_MESSAGE, "QR 코드가 정상적으로 생성 되었습니다.");
+	    	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			
 	    }catch(Exception e) {
 			LOGGER.info(e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);

@@ -66,4 +66,8 @@ public class MeetingRoomInfo {
 	private String meetingRemark06 = "";
 	private String meetingRemark07 = "";
 	private String meetingRemark08 = "";
+	private String qrPlayyn ="";
+	private String qrUpdateDate = "";
+	
+	
 }

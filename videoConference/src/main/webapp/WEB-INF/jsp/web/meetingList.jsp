@@ -64,15 +64,15 @@
                     <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                   </div>
                   <div class="dateBox float_left">
-                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday" value="${regist.searchResStartday}">
+                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday" value="${regist.searchResStartday}" onChange="fn_meeingList()">
                       <div class="dateIcon"  onClick="fn_meeingList()">
                         <a class="dateBtn">검색</a>
                       </div>
                       <div class="clear"></div>
                    </div>
                   <div class="float_right btnL">
-                        <a href="/web/meetingList.do" class="listBtn"></a>  
-                        <a href="/web/meetingDay.do" class="active blockBtn"></a>  
+                        <a href="javascript:fn_ViewChange('List')" class="active listBtn"></a>  
+                        <a href="javascript:fn_ViewChange('Day')" class="blockBtn"></a>  
                     </div>
                 <div class="clear"></div>
                 </div>
@@ -84,7 +84,7 @@
                    <li>
                        <div class="meetT">
                             <div class="meet_tit float_left">${resInfo.res_title }</div>
-                            <div class="meet_subtit float_right">주최자 : ${resInfo.empname } 장소: ${resInfo.meeting_name } </div>
+                            <div class="meet_subtit float_right">주최자 : ${resInfo.empname } 장소: ${resInfo.item_name } </div>
                        </div>
                        <div class="clear"></div>
                        <div class="meetD">
@@ -111,7 +111,6 @@
         </div>
         <!--퇴실 팝업-//->
         <!--needpopup script-->
-        <c:import url="/web/inc/unimessage.do" />
         <script>  
             $( function() {
             	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
