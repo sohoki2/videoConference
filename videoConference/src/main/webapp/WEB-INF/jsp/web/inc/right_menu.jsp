@@ -45,8 +45,10 @@
 
         <div class="gnb user_reser_b">
              <div class="reser_box reser_box_txt"><span>바로가기 메뉴</span></div>
+             <% if (!loginVO.getComCode().equals("C_00000004") ){ %>
              <div class="reser_box"><a class="reser_iconGo" href="/web/seatInfo.do">자율좌석예약</a></div>
              <div class="reser_box"><a class="reser_iconGo" href="/web/meetingDay.do">회의실예약현황</a></div>
+             <% } %>
              <div class="reser_box"><a class="reser_iconGo" href="/web/coronation.do">시설대관</a></div>
              <div class="reser_box"><a class="reser_iconGo" href="/web/mybooking.do">나의예약</a></div>
              <div class="reser_box"><a class="reser_iconGo" href="/web/notice.do">공지사항</a></div>
@@ -66,7 +68,7 @@
 		var obj = result.regist;
 		
 		$("#dv_resSeatStateInfo01").show();
-		$("#dv_resSeatStateInfo01").show();
+		$("#dv_resSeatStateInfo02").show();
 		$("#sp_resTodaySeatInfo01").text(obj.floor_name)
 		$("#dv_resSeatStateInfo02").text(obj.seat_name)
 		if (obj.in_time == "" && obj.ot_time == "" ){
@@ -79,11 +81,9 @@
 			$("#check_in").attr("class", "");
 			$("#check_out").attr("class", "");
 		}
-		
-		
 	 }else {
 		$("#dv_resSeatStateInfo01").hide();
-		$("#dv_resSeatStateInfo01").hide();
+		$("#dv_resSeatStateInfo02").hide();
 	}
 	 
  }

@@ -102,6 +102,11 @@
 		          AND a.CENTER_ID = b.CENTER_ID  
 		          AND a.FLOOR_INFO = c.CODE
     </select>
+    <select id="selectTimeInfo" resultType="lmap">
+         select  convert(varchar(8) , getdate(), 112) as dayinfo, 
+                 datename(dw, getdate()) as weekinfo, 
+                 ltrim(right(convert(varchar(25), getdate(), 100), 7)) timeinfo
+    </select>
     <insert id="insertFloorInfoManage" >
          INSERT INTO TB_FLOORINFO(CENTER_ID, FLOOR_INFO, FLOOR_MAP, FLOOR_MAP1, FLOOR_NAME,
 								  SEAT_CNT, MEET_CNT,FLOOR_USEYN, FLOOR_PART,

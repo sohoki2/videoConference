@@ -130,7 +130,7 @@ public class ResBackInfoManageController {
 				    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
 				    		return model;
 				  }
-	        	  if (searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_4") || searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_5")) {
+	        	  if (searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_4") || searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_5") || searchVO.getReservProcessGubun().equals("PROCESS_GUBUN_8")) {
 	        		  searchVO.setProxyUserId(EgovUserDetailsHelper.getAuthorities().toString());
 				  }
 	    		  int ret = resService.updateResManageChange(searchVO);
@@ -294,7 +294,7 @@ public class ResBackInfoManageController {
 		  
 		  try{
 			  if (params.get("resStarttime") == null ) {
-				  params.put("resStarttime", "0800");
+				  params.put("resStarttime", "0900");
 			  }
 			  if (params.get("resEndtime") == null ) {
 				  params.put("resEndtime", "1730");
@@ -392,7 +392,7 @@ public class ResBackInfoManageController {
 				     searchVO.put("authorCode", loginVO.getAuthorCode());
 				     
 				     PaginationInfo paginationInfo = new PaginationInfo();
-					 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+					 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndex"), "1")));
 					 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
 					 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
 					 
@@ -479,13 +479,10 @@ public class ResBackInfoManageController {
 		        searchVO.put("SearchEmpno", loginVO.getAdminId());
 		          
 		  		List<Map<String, Object>> reslist = resService.selectResManageListByPagination(searchVO);
-		  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
-		  		 
-	    		
+		  		int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;	
 	    		map.put("resReport", reslist);
 	    		map.put("resType", searchVO.get("resType"));
-	    		
-	    		
+
 	    		
 			}catch(Exception e) {
 				StackTraceElement[] ste = e.getStackTrace();

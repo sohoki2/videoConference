@@ -147,16 +147,19 @@
                     <li class="float_left">
                       <div class="dateBox">
                         <span>시작 일시</span>
-                          <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}">
+                          <input type="hidden" id="resetStartday" value="${regist.searchResStartday}" >
+                          <input type="text" id="searchResStartday" name="searchResStartday" class="inputSearch" value="${regist.searchResStartday}"  onchange="fn_dayIntervalCheck(this)">
                           <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo('2')">
                             <a class="dateBtn">검색</a>
                           </div>
                        </div>
+
                     </li>
                     <li class="float_left">
                       <div class="dateBox">
-                         <span>종료일시</span>
-                          <input type="text" id="searchResEndday" name="searchResEndday" class="inputSearch" value="${regist.searchResEndday}">
+                         <span>종료 일시</span>
+                          <input type="hidden" id="resetEndday" value="${regist.searchResEndday}" > 
+                          <input type="text" id="searchResEndday" name="searchResEndday" class="inputSearch" value="${regist.searchResEndday}" onchange="fn_dayIntervalCheck(this)">
                           <div class="dateIcon" onClick="fn_floorMeetingIntervalInfo('2')">
                             <a class="dateBtn">검색</a>
                           </div>
@@ -171,9 +174,14 @@
            
            <div class="whiteBack meet">
                 <div class="infoContents float_left">
-                        <span class="usingSeat">예약완료</span>
-                        <span class="posSeatD">예약검토</span>
-                        <span class="posSeatU">대관요청</span>
+                      <span class="posSeatU">신청완료</span> > 
+                        <span class="posSeatD">대관검토</span> > 
+                        <span class="usingSeat">대관확정</span>
+                </div>
+                <div class="cor_text float_left">
+                      1. 하단의 빈 일정을 클릭하여 대관예약을 해주세요<br/>
+                      2. 현재일로부터 7일 이후, 90일 이내 예약만 가능합니다<br/>
+                      3. 대관 프로세스: 신청완료 > 대관검토 > 대관확정
                 </div>
                 <div class="clear"></div>
                <div class="scroll">
@@ -183,7 +191,7 @@
                            <thead>
                                <tr>
                                    <th class="fixed_th">시간</th>
-                                   <td colspan="2">8시</td>
+                                   <!-- <td colspan="2">8시</td> -->
                                    <td colspan="2">9시</td>
                                    <td colspan="2">10시</td>
                                    <td colspan="2">11시</td>
@@ -193,7 +201,7 @@
                                    <td colspan="2">15시</td>
                                    <td colspan="2">16시</td>
                                    <td colspan="2">17시</td>
-                                   <td colspan="2">18시</td>
+                                   <!--<td colspan="2">18시</td>-->
                                </tr>
                            </thead>
                            <tbody>
@@ -237,12 +245,11 @@
         <!--contetns//-->
         
 		<!--//대관 신청 팝업-->
-		<div id="app_meeting" class="needpopup">
+		<div id="app_meeting" class="needpopup coron_pop">
 		      <h5 class="pop_tit">예약신청</h5>
 		      <ul class="form">
 		        <li>
-		          <p class="pop_text">대관</p>
-		          <span id="res_swcName"></span>
+		          <p class="pop_text">대관 시설명</p> : <span id="res_swcName"></span>
 		          <!--  영상 회의 관련 내용 -->
 		          <div style="display:none">
 		          
@@ -263,38 +270,41 @@
 		          <input type="hidden" id="conSendnoti" name="conSendnoti"/>
 		          <input type="hidden" id="resEqupcheck" name="resEqupcheck"/>
 		          <input type="hidden" id="proxyUserId" name="proxyUserId"/>
-		          <input type="checkbox" id="sendMessage" name="sendMessage"> 
 		          <input type="checkbox" id="proxyYn" name="proxyYn" value="Y"> <!--  대리 예약 관련 내용 --> 
 		          <input type="hidden" id="seatConfirmgubun" name="seatConfirmgubun"> 
 		          
 		          </div>
 		          <!--  영상 회의 관련 내용 -->
 		        </li>
-		        <li class="w50_cor">
+		        <li>
+              <p class="pop_text">행사명</p>
+              <input type="text" id="resTitle" name="resTitle" placeholder="행사명을 입력하세요"/>
+            </li>
+		        <li class="w50_cor" style="display:none">
 		          <p class="pop_text">사용자</p>
 		          <span id="sp_userId"></span>
 		        </li>
-		        <li class="w50_cor">
+		        <li class="w50_cor" style="display:none">
 		          <p class="pop_text">이메일</p>
 		          <span id="sp_userEmail"></span>
 		        </li>
-		        <li>
-		          <p class="pop_text">사용목적</p>
-		          <input type="text" id="resRemark" name="resRemark">
-		        </li>
-		        <li>
-		          <p class="pop_text">행사규모</p>
+				    <li>
+		          <p class="pop_text">행사인원</p>
 		          <input type="number" id="resPerson" name="resPerson">
+              명
 		        </li>
 		        <li>
-		          <p class="pop_text">사용일시</p>
-		          <input class="date_cor" type="text" id="resStartday" name="resStartday" class="inputSearch" onChange="fn_ResDayCheck()" />
+		          <p class="pop_text">대관목적</p>
+		          <input type="text" id="resRemark" name="resRemark" placeholder="대관 목적을 상세하게 기입해주세요">
+		        </li>
+		       
+		        <li>
+		          <p class="pop_text">대관일시</p>
+		                      시작일시<input class="date_cor" type="text" id="resStartday" name="resStartday" class="inputSearch" onChange="fn_ResDayCheck()" />
 		          <select id='resStarttime' style="width:120px;"></select>
-		          ~ 
-		          <input class="date_cor" type="text" id="resEndday" name="resEndday" class="inputSearch"  onChange="fn_ResDayCheck()"/>
+		          <br/>종료일시<input class="date_cor" type="text" id="resEndday" name="resEndday" class="inputSearch"  onChange="fn_ResDayCheck()"/>
 		          <select id='resEndtime' style="width:120px;"></select>
 		        </li>
-		        <li><input type="text" id="resTitle" name="resTitle" placeholder="제목"/></li>
 		        <li>
 		          <p class="pop_text">주의사항</p>
 		          <div class="scroll">
@@ -310,7 +320,8 @@
 		            ○ 개인정보 보유 및 이용기간: 신청일 기준 5년<br/>
 		                                ※ 동의를 거부할 권리가 있으며 동의 거부 시 시설 이용이 제한됩니다.<br/>
 		          </div>
-		          <p class="pop_text margintop10"><input type="checkbox" id="agreeCheck" name="agreeCheck">동의합니다</p>
+				  <p class="pop_text margintop10"><input type="checkbox" id="agreeCheck" name="agreeCheck">동의합니다.</p>
+		          <p class="pop_text margintop10"><input type="checkbox" id="sendMessage" name="sendMessage" value="Y" checked="checked">예약 결과 알림톡 받기</p>
 		        </li>
 		      </ul>
 		      <div class="clear"></div>
@@ -329,7 +340,7 @@
 	        </ul>
 	        <div class="clear"></div>
 	        <div class="footerBtn">
-	          <a href="#" onClick="fn_hisInfo()" class="grayBtn">확인</a>
+	          <a href="#" onClick="fn_hisInfo()" class="grayBtn" style="width: 100%;">확인</a>
 	        </div>
 	        <div class="clear"></div>  
 	   </div>
@@ -357,10 +368,10 @@
         <script src="/front_res/js/swiper.min.js"></script>
         <script>  
             $( function() {
-            	 $( "#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
-            	 $( "#searchResEndday").datepicker({ dateFormat: 'yymmdd' });
-            	 $( "#resStartday").datepicker({ dateFormat: 'yymmdd' });
-            	 $( "#resEndday").datepicker({ dateFormat: 'yymmdd' });
+            	 $( "#searchResStartday").datepicker({ dateFormat: 'yy-mm-dd' });
+            	 $( "#searchResEndday").datepicker({ dateFormat: 'yy-mm-dd' });
+            	 $( "#resStartday").datepicker({ dateFormat: 'yy-mm-dd' });
+            	 $( "#resEndday").datepicker({ dateFormat: 'yy-mm-dd' });
             	 //fn_floorMeetingInfo();
             	 var state = "${status}";
         		 if (state == "FAILLACK"){
@@ -378,9 +389,9 @@
             			 
             			 $("#hid_history").val("res_show");
             			 if (fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
-            			 if (any_empt_line_span("resTitle", '회의 제목을 입력해 주세요.') == false) return;
+            			 if (any_empt_line_span("resTitle", '행사명을 입력해 주세요.') == false) return;
             			 if (any_empt_line_span("resStarttime", '회의 시작 시간을 선택해 주세요.') == false) return;
-	           			 if (any_empt_line_span("resEndtime", '사용목적을 선택해 주세요.') == false) return;
+	           			 if (any_empt_line_span("resEndtime", '대관 목적을 선택해 주세요.') == false) return;
 	           			 if (any_empt_line_span("resRemark", '회의 종료 시간을 입력해 주세요.') == false) return;
 	           			 if ($("#div_equipRoomInfo").is(":visible") == true){
 	           		           if (any_empt_line_span("resEqupcheck", '장비사용 여부를 선택해 주세요.') == false) return;
@@ -390,7 +401,7 @@
 	           				 $("#btn_result").trigger("click");
 	           				 return;
 	           			 }
-	           			 if ($("#resStartday").val() ==  $("#resEndday").val() && $("#resStarttime").val() > $("#resEndtime").val()){
+	           			 if ($("#resStartday").val().replaceAll("-","") ==  $("#resEndday").val().replaceAll("-","") && $("#resStarttime").val() > $("#resEndtime").val()){
 	           				 $("#sp_message").html("같은일자에 시작시간이 종료 시간보다 큽니다.");
 	           				 $("#btn_result").trigger("click");
 	           				 return;
@@ -405,8 +416,8 @@
 	           		          $("#meetingSeq").val("");
 	           			 }
 	           			 var params = {'mode': $("#mode").val(), 'itemId': $("#itemId").val(), 'itemGubun':'ITEM_GUBUN_3', 'resTitle' : $("#resTitle").val(),
-	           			               'resPassword' : fn_domNullReplace( $("input:radio[name='resPassword']:checked").val() ,'Y'), 'resStartday' : $("#resStartday").val(),
-	           			               'resEndday' : $("#resEndday").val(),
+	           			               'resPassword' : fn_domNullReplace( $("input:radio[name='resPassword']:checked").val() ,'Y'), 'resStartday' : $("#resStartday").val().replaceAll("-",""),
+	           			               'resEndday' : $("#resEndday").val().replaceAll("-",""),
 	           					       'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
 	           					       'proxyUserId' : $("#proxyUserId").val(), 'resGubun' : $("#resGubun").val(),
 	           					       'useYn' : "Y", 'centerId': $("#searchCenterId").val(),
@@ -487,11 +498,12 @@
             				$("#sp_userId").text(empInfoVO.empno);
             				$("#sp_userEmail").text(empInfoVO.empmail);
             				
-            				
-            				if (obj.meeting_file01 != "")
-            					$("#td_meeting_remark08")[0].innerHtml = "<a href='/upload/"+obj.meeting_file01+"' target='_blank'>"+ obj.meeting_file01+ "</a>";
-            				
-            				
+            				if (obj.meeting_file01 != "" && obj.meeting_file01 != undefined){
+ 							   $("#td_meeting_file01").parent().show();
+                                $("#td_meeting_remark08")[0].innerHtml = "<a href='/upload/"+obj.meeting_file01+"' target='_blank'>"+ obj.meeting_file01+ "</a>";
+ 							}else{
+                                $("#td_meeting_file01").parent().hide();
+ 							}
             				var galleryThumbs = new Swiper('.gallery-thumbs', {
             		              spaceBetween: 1,
             		              slidesPerView: 3,
@@ -544,13 +556,48 @@
     		}
             function fn_ResDayCheck(){
             	//$("#hid_history").val("res_show"); //추후 막아 놓기 
-            	if (yesterDayConfirm($("#resStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
-        		if (yesterDayConfirm($("#resEndday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+            	if (yesterDayConfirm($("#resStartday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+        		if (yesterDayConfirm($("#resEndday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
         		var res_reqday = $("#resReqday").val();		
-        		if (dateCheck($("#resStartday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
-        		if (dateCheck($("#resEndday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
-        		if (dateDiff($("#resStartday").val(), $("#resEndday").val(), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
+        		if (dateCheck($("#resStartday").val().replaceAll("-",""), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+        		if (dateCheck($("#resEndday").val().replaceAll("-",""), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+        		if (dateDiffCheck($("#resStartday").val().replaceAll("-",""), $("#resEndday").val().replaceAll("-",""), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
         		
+            }
+            function fn_dayIntervalCheck(obj){
+            	var calId = $(obj).attr('id');
+            	var res_reqday = $("#resReqday").val();	
+            	
+            	var thisDay = $("#"+calId).val().replaceAll("-", "");
+				
+            	if (dateCheck( thisDay,  res_reqday ,  "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false ){ 
+            		if (calId == "searchResStartday"){
+                		$("#searchResStartday").val($("#resetStartday").val());
+                	}else {
+                		$("#searchResEndday").val($("#resetEndday").val());
+                	}
+            		return;
+            		
+            	}
+            	if (dateDiffCheck(thisDay, dateAdd("90"), "현재로 부터 7일 이후 90일 이내 예약만 가능 합니다.")  == false ){ 
+            		if (calId == "searchResStartday"){
+                		$("#searchResStartday").val($("#resetStartday").val());
+                	}else {
+                		$("#searchResEndday").val($("#resetEndday").val());
+                	}
+            		return;
+            	}
+            	if (dateDiffCheck($("#searchResStartday").val().replaceAll("-",""), $("#searchResEndday").val().replaceAll("-",""), "시작일이 종료일 보다 이후 일 입니다.")  == false) {
+            		if (calId == "searchResStartday"){
+                		$("#searchResStartday").val($("#resetStartday").val());
+                	}else {
+                		$("#searchResEndday").val($("#resetEndday").val());
+                	}
+            	}	
+				
+            }
+            function fn_dayReset(){
+            	
             }
          </script>
          <!-- Swiper JS -->

@@ -127,7 +127,7 @@
     		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
     		        	  var totalPage = grid.getGridParam("total");
     		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
+    		            	  if (gridPage < lastPage ){
     		            		  gridPage += 1;
     		            	  }else{
     		            		  gridPage = gridPage;
@@ -141,7 +141,7 @@
     		              }else if (pgButton == "first"){
     		            	  gridPage = 1;
     		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
+    		            	  gridPage = lastPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
     		            	  
@@ -372,13 +372,6 @@
                  $("#tb_userInfo").hide();
              }
         } 
-    }
-    function fn_qrCreate(_gubun){
-    	var url = "/backoffice/basicManage/officeSpaceQrCreate.do";
-    	var params = {'qrMode': _gubun};
-    	var result = fn_returnInfoReg(url, params);
-    	
-    	
     }
   </script>
   

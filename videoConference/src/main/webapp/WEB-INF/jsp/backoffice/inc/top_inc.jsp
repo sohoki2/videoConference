@@ -16,7 +16,7 @@ if(loginVO == null ){
     <header class="Mwrap">
         <section>
             <div class="subwidth">
-                <h1><a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_1"><img src="/img/logo.png" alt="logo" /></h1>
+                <h1><a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_1"><img src="/img/logo.png" alt="logo" style="width:200px" /></h1>
                 <nav id="topMenu">
                     <ul>
                       

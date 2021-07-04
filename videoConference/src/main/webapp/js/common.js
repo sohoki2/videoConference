@@ -20,6 +20,12 @@ function chkPwd(str){
 	 }
 	 return true;
 }
+//qr 체크 
+function fn_qrCreate(_gubun){
+	var url = "/backoffice/basicManage/officeSpaceQrCreate.do";
+	var params = {'qrMode': _gubun};
+	var result = fn_returnInfoReg(url, params);
+}
 //jqGrid 체크 박스 체크된 값 알아오기 
 function getEquipArray(id, array){
     var ids = $("#"+id).jqGrid('getDataIDs');

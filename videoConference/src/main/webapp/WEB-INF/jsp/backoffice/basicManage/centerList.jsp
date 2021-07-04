@@ -113,7 +113,7 @@
     		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
     		        	  var totalPage = grid.getGridParam("total");
     		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
+    		            	  if (gridPage < lastPage ){
     		            		  gridPage += 1;
     		            	  }else{
     		            		  gridPage = gridPage;
@@ -127,7 +127,7 @@
     		              }else if (pgButton == "first"){
     		            	  gridPage = 1;
     		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
+    		            	  gridPage = lastPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
     		            	  
@@ -145,6 +145,7 @@
 		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
 		    		          	  postData : JSON.stringify(  {
 							    		          			"pageIndex": gridPage,
+							    		          			"searchKeyword" : $("#searchKeyword").val(),
 							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
 							    		          		})
     		          		}).trigger("reloadGrid");

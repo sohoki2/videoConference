@@ -76,13 +76,16 @@
                         <tr>
                             <th>* 휴대전화</th>
                             <td>
-                                <section>
-                                    <input type="text" name="userCellphone" id="userCellphone" placeholder="전화번호 입력"  id="userCellphone">
-                                     <a href="">인증번호 받기</a>
-                                </section>
+							    <input type="text" name="userCellphone" id="userCellphone" placeholder="예약결과 안내등을 위한 정확한 번호를 입력해 주세요."  id="userCellphone">
+                                <!--<section>
+                                    
+                                     <!--<a href="">인증번호 받기</a>
+                                </section>-->
+								<!--
                                 <input type="text" name="" placeholder="인증번호를 입력하세요.">
-                                <!--인증번호 받기 버튼 클릭 시 추가 되는 텍스트-->
+                                <!--인증번호 받기 버튼 클릭 시 추가 되는 텍스트
                                 <p class="noti">인증번호가 발송되었습니다</p>
+								-->
                                 <a href="#" class="darkBtn joinBtn" onClick="join.fn_join()">가입하기</button>
                             </td>
                         </tr>
@@ -111,6 +114,8 @@
     		var params = {"userId" : $("#userId").val()};
     		fn_uniCheck("/web/userUniCheck.do", params, "uniCheck");
     	},fn_join : function(){
+			
+
     		if (fn_Check("agreeCheck", "개인정보 수집 및 이용 동의는 필수입니다.") == false) return;
     		if (any_empt_line_span("userId", "아이디을 입력해 주세요.") == false) return;	
 			if (join.fn_UniCheckAlert("uniCheck", "중복 검사를 하지 않았습니다") == false) return;
@@ -125,7 +130,7 @@
 		    if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
   		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
   		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
-  		    
+  		    if (verifyEmail("userEmail") == false) return;
   		    
   		    var param = {"userId" : $("#userId").val(),
 	     		     	 "userName" : $("#userName").val(),
@@ -135,7 +140,7 @@
 	     		     	 "mode" :  "Ins"
   		                }
   			
-  		    if (confirm("저장 하시겠습니까?")== true){
+  		    if (confirm("가입하시겠습니까?")== true){
   			   uniAjax("/web/JoinProcess.do", param, 
   		     			function(result) {
   						       if (result.status == "SUCCESS"){
@@ -155,8 +160,7 @@
   		        );
   		   }
     	} , fn_UniCheckAlert : function (_UniCheckFormNm, _btn_message){
-    		
-    		if ($("#"+_UniCheckFormNm).val() == "Y"){
+			if ($("#"+_UniCheckFormNm).val() == "Y"){
     			return true;
     		}else {
     		    $("#sp_message").html(_btn_message);

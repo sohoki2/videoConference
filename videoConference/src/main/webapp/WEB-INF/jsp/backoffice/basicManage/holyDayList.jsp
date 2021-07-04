@@ -113,7 +113,7 @@
     		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
     		        	  var totalPage = grid.getGridParam("total");
     		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
+    		            	  if (gridPage < lastPage ){
     		            		  gridPage += 1;
     		            	  }else{
     		            		  gridPage = gridPage;
@@ -127,7 +127,7 @@
     		              }else if (pgButton == "first"){
     		            	  gridPage = 1;
     		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
+    		            	  gridPage = lastPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
     		            	  
@@ -145,6 +145,7 @@
 		    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
 		    		          	  postData : JSON.stringify(  {
 							    		          			"pageIndex": gridPage,
+							    		          			"searchKeyword" : $("#searchKeyword").val(),
 							    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
 							    		          		})
     		          		}).trigger("reloadGrid");
@@ -154,8 +155,8 @@
     	            	grid.jqGrid('editRow', rowid, {keys: true});
     	            },onCellSelect : function (rowid, index, contents, action){
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
-    	                //console.log(cm);
-    	                if (cm[index].name=='msg_title'){
+    	                
+    	                if (cm[index].name=='holy_title'){
     	                	jqGridFunc.fn_HolyInfo("Edt", $(this).jqGrid('getCell', rowid, 'holy_day'));
             		    }
     	            }
@@ -165,15 +166,15 @@
             	    	return '<a href="javascript:jqGridFunc.delRow('+rowObject.msg_seq+');">삭제</a>';
            },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-	       }, delRow : function (holyDay){
+	       },delRow : function (holyDay){
         	    if(holyDay != "") {
         		   var params = {'holyDay':holyDay };
         		   fn_uniDelAction("/backoffice/holyDayDelete/holyDayDelete.do",params, "jqGridFunc.fn_search");
 		        }
            },fn_HolyInfo : function (mode, holyDay){
-        	    $("#app_message").attr("data-needpopup-show", "#resInfoPop").trigger("click");
-			    $("#mode").val(mode);
-		        $("#msgSeq").val(msgSeq);
+        	    $("#btn_message").trigger("click");
+        	    $("#mode").val(mode);
+		        $("#holyDay").val(holyDay);
 		        if (mode == "Edt"){
 		           $("#btnUpdate").text("수정");
 		           var params = {"holyDay" : holyDay};
@@ -186,10 +187,9 @@
 		       					   }else if (result.status == "SUCCESS"){
 		       						   //총 게시물 정리 하기
 		       						    var obj  = result.regist;
-		       						      $("#holyDay").val(obj.holyDay).attr('readonly', true);
-							    		  $("#holyTitle").val( obj.holyTitle);
-							    		  toggleClick("holyUseyn", obj.holyUseyn);
-							    		  
+		       						    $("#holyDay").val(obj.holy_day).attr('readonly', true);
+							    		$("#holyTitle").val(obj.holy_title);
+							    		toggleClick("holyUseyn", obj.holy_useyn);
 		       					   }
 		     				    },
 		     				    function(request){
@@ -249,7 +249,6 @@
 <c:import url="/backoffice/inc/top_inc.do" />
 <input type="hidden" name="pageIndex" id="pageIndex">
 <input type="hidden" name="mode" id="mode" >
-<input type="hidden" name="msgSeq" id="msgSeq" >
 
 <div class="Aconbox">
         <div class="rightT">
@@ -303,23 +302,23 @@
 <c:import url="/backoffice/inc/bottom_inc.do" />
 
 
-<div id='app_message' class="needpopup">
+    <div id='app_message' class="needpopup">
         <div class="popHead" id="popTitle">
-            <h2>메세지 관리</h2>
+            <h2>휴일 관리</h2>
         </div>
         <!-- pop contents-->   
         <div class="popCon">
             <!--// 팝업 필드박스-->
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">*<spring:message code="page.message.messageNm" /> <span class="join_id_comment joinSubTxt"></span></p>
+                    <p class="pop_tit">*휴일일자 <span class="join_id_comment joinSubTxt"></span></p>
                     <input type="text" name="holyDay" id="holyDay" class="input_noti" size="10"/>
                     
                 </div>                
             </div>
             <div class="pop_box1000">
                 <div class="padding15">
-                    <p class="pop_tit"><spring:message code="page.message.messageContent" /> <span class="join_id_comment joinSubTxt"></span></p>
+                    <p class="pop_tit">휴일 내용 <span class="join_id_comment joinSubTxt"></span></p>
                     <input type="text" name="holyTitle" id="holyTitle" class="input_noti" size="10"/>
                 </div>                
             </div>
@@ -342,11 +341,28 @@
     </div>  
    
  </form:form>
+ <button id="btn_message" style="display:none" data-needpopup-show='#app_message'>확인1</button>
     
 </div>
 
-
-
+<script src="/js/needpopup.js"></script> 
+<script src="/js/jquery-ui.js"></script>
+<script type="text/javascript">
+	 function need_close(){
+     	needPopup.hide();
+     }
+	 needPopup.config.custom = {
+         'removerPlace': 'outside',
+         'closeOnOutside': false,
+         onShow: function() {
+				console.log('needPopup is shown');
+         },
+         onHide: function() {
+             console.log('needPopup is hidden');
+         }
+     };
+     needPopup.init();
+</script>
 
 </body>
 </html>

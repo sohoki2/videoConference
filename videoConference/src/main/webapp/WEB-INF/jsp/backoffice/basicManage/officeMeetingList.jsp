@@ -130,7 +130,7 @@
     		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
     		        	  var totalPage = grid.getGridParam("total");
     		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
+    		            	  if (gridPage < lastPage ){
     		            		  gridPage += 1;
     		            	  }else{
     		            		  gridPage = gridPage;
@@ -144,7 +144,7 @@
     		              }else if (pgButton == "first"){
     		            	  gridPage = 1;
     		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
+    		            	  gridPage = lastPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
     		            	  
@@ -528,7 +528,7 @@
 								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
-		                	    <a href="#" ><span class="deepBtn">QR생성</span></a>
+		                	    <a href="javascript:fn_qrCreate('Meeting')" ><span class="deepBtn">QR생성</span></a>
 		                		<a href="javascript:jqGridFunc.fn_ObjectInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="#" onClick="jqGridFunc.fn_delCheck()"><span class="deepBtn">삭제</span></a>
 		                	</td>

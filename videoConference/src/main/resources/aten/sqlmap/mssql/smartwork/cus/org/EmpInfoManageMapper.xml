@@ -100,7 +100,7 @@
 	   	  FROM 	TB_EMPINFO a , TB_USERINFO b
 	   	 WHERE a.EMPNO = b.USER_NO AND b.USER_ID = #{params.userId}
 	   	       AND b.USER_PASSWORD = #{params.userPassword}
-    </select>
+	</select>
     <select id="selectMeetinngUserList" resultType="EmpInfoVO">
          SELECT EMPNO, EMPNAME, DEPTNAME, DEPTCODE , EMPMAIL
          FROM TB_EMPINFO 

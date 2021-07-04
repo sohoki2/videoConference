@@ -285,6 +285,12 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 						}
 						LOGGER.debug("체크 시작  ------3");
 					}
+			}else if (vo.getReservProcessGubun().equals("PROCESS_GUBUN_8")) {
+					info.setApprival("V");
+					timeMapper.updateTimeInfoY(info);
+					resCode = "VIEW";
+					ret = resMapper.updateResManageChange(vo);
+					resInfo = resMapper.selectResManageView(vo.getResSeq() );
 			}
 			// 어바이어 장비 통신 
 			LOGGER.debug("------------------------------------------------------1");

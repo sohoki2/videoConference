@@ -133,7 +133,7 @@ public class HolyworkInfoManageController {
 	}
 	@RequestMapping (value="holyDayView.do")
 	public ModelAndView selecholyDayInfoManageView(@ModelAttribute("loginVO") AdminLoginVO loginVO
-                                                 , @RequestParam("holeDay") String holeDay
+                                                 , @RequestParam("holyDay") String holyDay
                                                  , HttpServletRequest request
                                     			 , BindingResult bindingResult) throws Exception{	
 		
@@ -146,7 +146,7 @@ public class HolyworkInfoManageController {
 	    }
 	    try {
 	    	model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-			model.addObject(Globals.STATUS_REGINFO, holyDayService.selectHolyInfoManageView(holeDay));
+			model.addObject(Globals.STATUS_REGINFO, holyDayService.selectHolyInfoManageView(holyDay));
 	    }catch(Exception e) {
 			LOGGER.info(e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);

@@ -59,7 +59,7 @@
             <!--//date picker-->
                 <div class="contents mobileM">
                     <div class="float_right">
-                    <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
+                    <button type="button" class="resource" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                   </div>
                   <div class="dateBox float_left">
                       <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday"  value="${regist.searchResStartday}" onChange="fn_floorMeetingInfo()">
@@ -70,12 +70,12 @@
                    </div>
                    <div class="float_right list_T">
                      <a href="/web/meetingDay.do" class="active dayBtn">day</a>  
-                     <a href="/web/resCalendar.do" class="calBtn">calendar</a> 
+                     <a href="/web/resCalendar.do" class="calBtn">calendar</a>  
                    </div>
                    <div class="float_right btnL">
                         <a href="javascript:fn_ViewChange('List')" class="listBtn"></a>  
                         <a href="javascript:fn_ViewChange('Day')" class="active blockBtn"></a>  
-                    </div>
+                   </div>
                 <div class="clear"></div>
                 </div>
               <!--date picker//-->
@@ -88,8 +88,8 @@
                        <table class="day_T" id="tb_seatTimeInfo">
                            <thead>
                                <tr>
-                                   <th class="fixed_th" >시간</th>
-                                   <td colspan="2">8시</td>
+                                   <th class="fixed_th" >회의실</th>
+                                   <!--<td colspan="2">8시</td>-->
                                    <td colspan="2">9시</td>
                                    <td colspan="2">10시</td>
                                    <td colspan="2">11시</td>
@@ -99,7 +99,7 @@
                                    <td colspan="2">15시</td>
                                    <td colspan="2">16시</td>
                                    <td colspan="2">17시</td>
-                                   <td colspan="2">18시</td>
+                                   <!-- <td colspan="2">18시</td> -->
                                </tr>
                            </thead>
                            <tbody>
@@ -119,7 +119,7 @@
         
         <script>  
             $( function() {
-            	 $("#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
+            	 $("#searchResStartday").datepicker({ dateFormat: 'yy-mm-dd' });
             	 fn_floorMeetingInfo();
             }); 
         </script>

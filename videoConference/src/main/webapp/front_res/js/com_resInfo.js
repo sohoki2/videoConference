@@ -534,7 +534,7 @@ function fn_EquipCheck(){
 
 
 function day_convert(date ){
-	return (date.length> 7) ?  date.substring(0,4)+"년"+date.substring(4,6)+"월"+date.substring(6,8)+"일" : date ;
+	return (date.length> 7) ?  date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8) : date ;
 	
 }
 
@@ -606,11 +606,11 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
         $("#mode").val("Ins");
 		$("#res_swcName").text(swcName);
 		$("#resTitle").val("");
-		var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val();
+		var resDay = ($("#searchResStartday").val() == "") ? today_get() : $("#searchResStartday").val().replaceAll("-","");
 		if (dateCheck(resDay, res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다")  == false) { return; }
 		
 		$("#sp_ResDay").text(day_convert(resDay));
-		$("#resStartday").val(resDay);
+		$("#resStartday").val(day_convert(resDay));
 		$("#itemId").val(itemId);
 		$("#useYn").val("Y");
         $("#sp_meetingAttendList").html("");
@@ -640,7 +640,7 @@ function fn_resInfo(itemId, timeSeq, swcTime, swcName, resSeq, seatConfirmgubun,
 		$("#mode").val("Edt");
 	}
 	
-	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
+	var params =  {'resStartday' : $("#searchResStartday").val().replaceAll("-",""), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val()};
 	fn_swcTimeUni(params, $("#searchRoomType").val(), 0, null);
 	
     //var params = {'resStarttime': swcTime, 'resSeq': resSeq, 'itemId' : itemId};	       	    
@@ -705,13 +705,13 @@ function fn_swcTime(swcTime, resSeq, itemId){
 			    }    		
      );
 }
-/*
+
 function fn_indexInfo(itemId, timeSeq, swcTime, swcName, resSeq, centerId, seatConfirmgubun ,seatEqupgubun){
 	$("#mode").val("Ins");
 	$("#res_swcName").text(swcName);
-	var resDay = ($("#resStartDay").val() == "") ? today_get() : $("#resStartDay").val();
-	$("#resStartDay").val(resDay);
-	alert($("#resStartDay").val());
+	var resDay = ($("#resStartday").val() == "") ? today_get() : $("#resStartday").val();
+	$("#resStartday").val(resDay);
+	//alert($("#resStartDay").val());
 	
 	$("#sp_ResDay").text(day_convert(resDay) + "");
 	$("#itemId").val(itemId);
@@ -732,7 +732,6 @@ function fn_indexInfo(itemId, timeSeq, swcTime, swcName, resSeq, centerId, seatC
     
     fn_swcTime(swcTime, resSeq, itemId);
 }
-*/
 
 function fn_resCancel(){	
 	 $("#itemId").val("");
@@ -747,6 +746,7 @@ function fn_resCancel(){
 	 $("#meetingSeq").val("");
 	 $("#hid_attendList").val("");
 	 $("#conPin").val("");
+	
 	 $("#conAllowstream").val("N");
 	 $("#conBlackdial").val("N");
 	 $("#conSendnoti").val("N");
@@ -834,10 +834,10 @@ function fn_meetingShow(meetingId){
 }
 //하루 단위 예약 (회의실)
 function fn_floorMeetingInfo() {
-     if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+     if (yesterDayConfirm($("#searchResStartday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
 	 var params = {'searchCenterId' : $("#searchCenterId").val(), 
 			      'searchFloorseq' :  $("#floorSeq").val(),
-			      'searchResStartday' : $("#searchResStartday").val(), 
+			      'searchResStartday' : $("#searchResStartday").val().replaceAll("-",""), 
 			      'searchRoomType' : $("#searchRoomType").val(),
 			      'searchSeatView': 'Y' 
      }; 
@@ -850,7 +850,7 @@ function fn_floorMeetingInfo() {
 				    	   alert(result.meesage);
   						   location.href="/web/Login.do";
   					   }else if (result.status == "SUCCESS"){
-  						    $("#searchResStartday").val(result.result.searchResStartday);
+  						    $("#searchResStartday").val(day_convert(result.result.searchResStartday));
   						    $("#searchCenterId").val(result.result.searchCenterId);
   						    var setHtml = "";
 							$("#tb_seatTimeInfo > tbody").empty(); 
@@ -858,8 +858,8 @@ function fn_floorMeetingInfo() {
 								var seatinfo = result.seatInfo[i];
 								setHtml += "<tr id='swcSeq_"+seatinfo.meeting_id +"' style='height:50px;'>";
 								setHtml += "<th style='padding-left: 20px;' title='"+seatinfo.meetingroom_remark+"' onClick='fn_meetingShow(&#39;"+seatinfo.meeting_id +"&#39;)' data-needpopup-show='#meet_detail' class='fixed_th'>"+seatinfo.meeting_name+"</th>";
-								if (seatinfo.timeinfo.length < 20){
-									setHtml += "<td colspan='20' style='text-aling:center;'>예약 불가</td>";
+								if (seatinfo.timeinfo.length < 18){
+									setHtml += "<td colspan='18' style='text-aling:center;'>예약 불가</td>";
 								}else {
 									//console.log("seatinfo.res_reqday:" + seatinfo.res_reqday)
 									for (var a  in seatinfo.timeinfo){
@@ -893,17 +893,17 @@ function fn_floorMeetingInfo() {
 }
 //장기 예약 리스트  (30분)
 function fn_floorMeetingIntervalInfo(_calValue){
-		if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
-		if (yesterDayConfirm($("#searchResEndday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+		if (yesterDayConfirm($("#searchResStartday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+		if (yesterDayConfirm($("#searchResEndday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
 		var res_reqday = $("#resReqday").val();		
-		if (dateCheck($("#searchResStartday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
-		if (dateCheck($("#searchResEndday").val(), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
-		if (dateDiff($("#searchResStartday").val(), $("#searchResEndday").val(), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
+		if (dateCheck($("#searchResStartday").val().replaceAll("-",""), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+		if (dateCheck($("#searchResEndday").val().replaceAll("-",""), res_reqday, "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false) { return; }
+		if (dateDiff($("#searchResStartday").val().replaceAll("-",""), $("#searchResEndday").val().replaceAll("-",""), "시작일이 종료일 보다 이후 일 입니다.")  == false) { return; }
 		if (any_empt_line_span("itemId", "대관시설을 선택 하지 않았습니다." ) == false ) return;
     	var params = {'searchCenterId' : $("#searchCenterId").val(), 
     			      'itemId' :  $("#itemId").val(),
-    			      'searchResStartday' : $("#searchResStartday").val(), 
-    			      'searchResEndday' : $("#searchResEndday").val(), 
+    			      'searchResStartday' : $("#searchResStartday").val().replaceAll("-",""), 
+    			      'searchResEndday' : $("#searchResEndday").val().replaceAll("-",""), 
     			      'searchSeatView': 'Y' 
         }; 
     	var url = "/web/meetingIntervalResAjax.do";
@@ -927,15 +927,17 @@ function fn_floorMeetingIntervalInfo(_calValue){
   										if (i != 0)
   										   setHtml += "</tr>";
   										setHtml += "<tr style='height:50px;'>";
-	  									setHtml += "<th style='padding-left: 20px;' title='"+timeInfo.swc_resday+"' class='fixed_th'>"+timeInfo.swc_resday+"</th>";
+	  									setHtml += "<th style='padding-left: 20px;' title='"+timeInfo.swc_resday+"' class='fixed_th'>"+dayConvert(timeInfo.swc_resday)+"</th>";
 	  									resDay = timeInfo.swc_resday;
   									}
   									if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N"  ){
 										setHtml += "<td id='"+timeInfo.time_seq+"' class='none' colspan="+_calValue+"></td>";
 									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
 										setHtml += "<td id='"+timeInfo.time_seq+"' class='waiting' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)' colspan="+_calValue+"></td>";
-									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
+									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "V")){
 										setHtml += "<td id='"+timeInfo.time_seq+"' class='now' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)' colspan="+_calValue+"></td>";
+									}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
+										setHtml += "<td id='"+timeInfo.time_seq+"' class='none' onclick='fn_resView(&#39;"+timeInfo.res_seq +"&#39;)' colspan="+_calValue+"></td>";
 									}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
 										setHtml += "<td id='"+timeInfo.time_seq+"' data-needpopup-show='#app_meeting' class='popup_view' colspan="+_calValue+" onclick='fn_resIntevalInfo(&#39;"+$("#itemId").val() +"&#39;,&#39;"+timeInfo.time_seq +"&#39;,&#39;"+timeInfo.swc_time +"&#39;,&#39;"+timeInfo.swc_resday+"&#39;,&#39;"+ seatinfo.meeting_name +"&#39;,&#39;"+timeInfo.res_seq +"&#39;,&#39;"+seatinfo.meeting_confirmgubun +"&#39;,&#39;"+seatinfo.meeting_equpgubun +"&#39;,&#39;"+seatinfo.room_type +"&#39;);'></td>";
 									}
@@ -957,7 +959,7 @@ function fn_resIntevalInfo (itemId, timeSeq, swcTime, swc_resday,  swcName, resS
 		$("#mode").val("Ins");
 		$("#res_swcName").text(swcName);
 		$("#resTitle").val();
-		$("#resStartday").val(swc_resday);
+		$("#resStartday").val(dayConvert(swc_resday));
 		$("#resEndday").val($("#searchResEndday").val());
 		$("#itemId").val(itemId);
 		$("#useYn").val("Y");
@@ -980,7 +982,7 @@ function fn_resIntevalInfo (itemId, timeSeq, swcTime, swc_resday,  swcName, resS
 	}else {
 		$("#mode").val("Edt");
 	}
-	var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val(), 'searchNotTime' : '30'};
+	var params =  {'resStartday' : $("#searchResStartday").val().replaceAll("-",""), 'floorSeq':$("#floorSeq").val(), 'resSeq': resSeq, 'resStarttime' : swcTime, 'itemId' : itemId, 'searchRoomType' : $("#searchRoomType").val(), 'searchNotTime' : '30'};
 	fn_swcTimeUni(params, $("#searchRoomType").val(), 0, null);
             			
 }
@@ -1016,7 +1018,7 @@ function fn_ResSave(){
 	 var resTitle =  ($("#itemGubun").val() == "ITEM_GUBUN_2") ? "좌석예약: " + $("#p_seatNm").text() : $("#resTitle").val();
 	 var params = {'mode': fn_domNullReplace($("#mode").val(), "Ins"), 'itemId': $("#itemId").val(), 'itemGubun':$("#itemGubun").val(), 
 	               'resTitle' : resTitle, 'resPassword' : fn_domNullReplace( $(":radio[name='resPassword']:checked").val() ,'Y'), 
-	               'resStartday' : $("#resStartday").val(), 'resEndday' : fn_domNullReplace( $("#resEndday").val(), ""),
+	               'resStartday' : $("#resStartday").val().replaceAll("-","") , 'resEndday' : fn_domNullReplace( $("#resEndday").val(), "").replaceAll("-",""),
 			       'resStarttime' : $("#resStarttime").val(), 'resEndtime' : $("#resEndtime").val(),
 			       'proxyUserId' : $("#proxyUserId").val(), 'resGubun' : $("#resGubun").val(),
 			       'useYn' : "Y", 'centerId': $("#searchCenterId").val(),
@@ -1092,7 +1094,7 @@ function fn_resCancel(resSeq, reservProcessGubun){
 	
 	$("#resSeq").val(resSeq);
 	$("#reservProcessGubun").val(reservProcessGubun);
-	
+	$("#cancelReason").val("");
 }
 
 function fn_resCancelUpdate(){
@@ -1123,84 +1125,84 @@ function fn_resCancelUpdate(){
 }
 //회원 정보 수정 
 function fn_modify(){
-            	//회원 정보 수정 
-            	if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
-      		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
-      		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
-	      		var param = {"userId" : $("#userId").val(),
-	      				     "userNo" : $("#userNo").val(),
-		     		     	 "userName" : $("#userName").val(),
-		     		     	 "userCellphone" : $("#userCellphone").val(),
-		     		     	 "userEmail" : $("#userEmail").val(),
-		     		     	 "mode" :  "Edt"
-			                }
-				
-			    if (confirm("변경 하시겠습니까?")== true){
-				   uniAjax("/web/JoinProcess.do", param, 
-			     			function(result) {
-							       if (result.status == "SUCCESS"){
-		                               //관련자 보여 주기 
-							    	   $("#sp_message").text(result.message);
-					   		           $("#btn_result").trigger("click");
-		                           }else {
-			  						  $("#sp_message").text(result.message);
-			  	    		          $("#btn_result").trigger("click");
-			  					   }
-							},
-							function(request){
-								    alert("Error:" +request.status );	       						
-							}    		
-			        );
-			    }
-            }
-            function fn_secession(){
-            	uniAjax("/web/withdrawal.do", null, 
-		     			function(result) {
-       			           $("#sp_message").text(result.message);
-  	    		           $("#btn_result").trigger("click");
-  	    		           if(result.status == "SUCCESS"){
-  	    		        	 $("#hid_history").val("fn_index");
-  	    		           }
-						},
-						function(request){
-							    alert("Error:" +request.status );	       						
-						}    		
-			    );
-            }
+	//회원 정보 수정 
+	if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
+    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
+    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
+	var param = {"userId" : $("#userId").val(),
+			     "userNo" : $("#userNo").val(),
+ 		     	 "userName" : $("#userName").val(),
+ 		     	 "userCellphone" : $("#userCellphone").val(),
+ 		     	 "userEmail" : $("#userEmail").val(),
+ 		     	 "mode" :  "Edt"
+                }
+	
+    if (confirm("변경 하시겠습니까?")== true){
+	   uniAjax("/web/JoinProcess.do", param, 
+     			function(result) {
+				       if (result.status == "SUCCESS"){
+                           //관련자 보여 주기 
+				    	   $("#sp_message").text(result.message);
+		   		           $("#btn_result").trigger("click");
+                       }else {
+  						  $("#sp_message").text(result.message);
+  	    		          $("#btn_result").trigger("click");
+  					   }
+				},
+				function(request){
+					    alert("Error:" +request.status );	       						
+				}    		
+        );
+    }
+}
+function fn_secession(){
+	uniAjax("/web/withdrawal.do", null, 
+ 			function(result) {
+	           $("#sp_message").text(result.message);
+	           $("#btn_result").trigger("click");
+	           if(result.status == "SUCCESS"){
+	        	 $("#hid_history").val("fn_index");
+	           }
+			},
+			function(request){
+				    alert("Error:" +request.status );	       						
+			}    		
+    );
+}
             
-            function fn_formPass(showGubun){
-            	if (showGubun== "Mod"){
-            		$("#tb_modify").show();
-                	$("#tb_passwd").hide();
-            	}else {
-            		$("#tb_modify").hide();
-                	$("#tb_passwd").show();
-            	}
-            }
-            function fn_passChange(){
-            	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
-            	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
-            	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
-            	if(!chkPwd( $.trim($('#newPassword1').val())) == false)return;
-            	if (trim($("#newPassword1").val()) !=   trim($("#newPassword2").val())  ){
-            		$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
-         		    $("#btn_result").trigger("click");
-      			    return;
-      		    }
-            	if (confirm("변경 하시겠습니까?")== true){
-            		var param = {'nowPassword': $("#nowPassword").val(),'newPassword': $("#newPassword1").val()};
-            		uniAjax("/web/passChange.do", param, 
- 			     			function(result) {
-            			           $("#sp_message").text(result.message);
-		  	    		           $("#btn_result").trigger("click");
-		  	    		           if(result.status == "SUCCESS"){
-		  	    		        	 $("#tb_modify").show();
-		  	    	            	 $("#tb_passwd").hide();
-		  	    		           }
- 							},
- 							function(request){
- 								    alert("Error:" +request.status );	       						
- 							}    		
- 			        );
- 			    }
-            }
+function fn_formPass(showGubun){
+	if (showGubun== "Mod"){
+		$("#tb_modify").show();
+    	$("#tb_passwd").hide();
+	}else {
+		$("#tb_modify").hide();
+    	$("#tb_passwd").show();
+	}
+}
+function fn_passChange(){
+	if (any_empt_line_span("nowPassword", "기존 비밀번호를 입력해주세요.") == false) return;
+	if (any_empt_line_span("newPassword1", "신규 비밀번호를 입력해주세요.") == false) return;
+	if (any_empt_line_span("newPassword2", "신규 비밀번호를 입력해주세요.") == false) return;
+	if(!chkPwd( $.trim($('#newPassword1').val())) == false)return;
+	if (trim($("#newPassword1").val()) !=   trim($("#newPassword2").val())  ){
+		$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
+	    $("#btn_result").trigger("click");
+	    return;
+    }
+	if (confirm("변경 하시겠습니까?")== true){
+		var param = {'nowPassword': $("#nowPassword").val(),'newPassword': $("#newPassword1").val()};
+		uniAjax("/web/passChange.do", param, 
+     			function(result) {
+			           $("#sp_message").text(result.message);
+    		           $("#btn_result").trigger("click");
+    		           if(result.status == "SUCCESS"){
+    		        	 $("#tb_modify").show();
+    	            	 $("#tb_passwd").hide();
+    		           }
+				},
+				function(request){
+					    alert("Error:" +request.status );	       						
+				}    		
+        );
+    }
+}

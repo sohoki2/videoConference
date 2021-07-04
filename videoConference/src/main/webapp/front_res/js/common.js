@@ -61,6 +61,20 @@ function fn_uniCheck(url, params, _field){
 			  }    		
 	);
 }
+function verifyEmail(_field){
+    var emailVal = $("#"+_field).val(); 
+	alert(emailVal);
+
+	var reg_email = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+	if (!reg_email.test(emailVal)) { 
+		$("#sp_message").html("입력한 이메일이 형식에 맞지 않습니다.");
+		$("#btn_result").trigger("click");
+		return false; 
+	} else { 
+		return true; 
+	}
+
+}
 function fn_trInnerTxt(td_id, td_message){
   if (td_message == ""){
      $("#"+td_id).parent().hide();
@@ -189,6 +203,15 @@ function yesterDayConfirm(res_day, alert_message){
     	return true;
     }
 }
+function dayConvert(day){
+    
+    
+	if(day.length == 8){
+	    
+		day = day.substring(0,4)+"-"+day.substring(4,6)+"-"+day.substring(6,8);
+	}
+	return day 
+}
 //요청일로 부터 비교 하기 
 function dateAdd(reqDay){
 	var now = new Date();
@@ -204,11 +227,11 @@ function dateCheck (_date, _addDay, alert_message){
     	$("#sp_message").html(alert_message);	 
 	    $("#btn_result").trigger("click");
     	return false;
-    }else {
+   }else {
     	return true;
-    }
+   }
 }
-function dateDiff (_date, _addDay, alert_message){
+function dateDiffCheck (_date, _addDay, alert_message){
    if (parseInt(_date) > parseInt(_addDay)){
     	$("#sp_message").html(alert_message);	 
 	    $("#btn_result").trigger("click");
@@ -261,6 +284,19 @@ function stringLength (str, strlength, replaceTxt){
 		str = str;
 	}
 	return str;
+}
+//특정 문자 앞에 값 넣기 
+function timeComma(str, gubun){
+   if (gubun == "S"){
+     str = str.substring(0,2)+":"+str.substring(2,4)
+   }else {
+     if (str.substring(2,2) == "30"){
+        str = parseInt(str.substring(0,2)+1) + ":00";
+     }else{
+        str = str.substring(0,2)+":30";
+     }
+   }
+   return str;
 }
 //List to Day 변경 
 function fn_ViewChange(_viewGubun){

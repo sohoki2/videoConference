@@ -65,7 +65,7 @@
 		         AND CAST(CODE_DC as int)  BETWEEN  REPLACE(#{params.startCode}, CONCAT(#{params.code},'_'), '')  AND REPLACE(#{params.endCode}, CONCAT(#{params.code},'_'), '')
 		      </if>
 		      <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notIn)">
-		         AND  CODE NOT IN 
+		         AND  a.CODE_NM NOT IN 
 				 <foreach collection="params.notlist" item="item" open="(" separator="," close=")">
 		            #{item}
 		         </foreach>
@@ -74,6 +74,7 @@
         	    AND REPLACE(a.CODE_NM, ':','') NOT LIKE CONCAT('%',#{params.notSearch})
         	  </if>
 			  AND	USE_AT ='Y'
+			 
 		<choose>
 		   <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.startCode) and !@org.apache.commons.lang3.StringUtils@isEmpty(params.endCode)">
 		       ORDER BY CAST(CODE_DC as int)  ASC

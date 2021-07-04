@@ -99,7 +99,7 @@ header {
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 99999;
+    z-index: 9;
     top: 0;
     left: 0;
     background-color: rgba(0,0,0,0.4);
@@ -304,6 +304,7 @@ header {
     border-bottom: 1px solid #ededed;
     padding-bottom: 24px;
     transition: 0.5s;
+    height: 268px;
 }
 
 
@@ -1624,7 +1625,7 @@ li.ui-menu-item {
     border: none;
     color: white;
 }
-.booking li{width: 50%;float: left;text-align: left;margin-bottom: 6px;}
+.booking li{width: 50%;float: left;text-align: left;margin-bottom: 6px;width: 100px;}
 .booking li.unuse:before{display: inline-block;content: '';width: 10px;height: 10px;border-radius: 5px;background-color: #898989;margin-right: 5px;}
 .booking li.useD:before{display: inline-block;content: '';width: 10px;height: 10px;border-radius: 5px;background-color: #f39800;margin-right: 5px;}
 .booking li.useU:before{display: inline-block;content: '';width: 10px;height: 10px;border-radius: 5px;background-color: #007ac3;margin-right: 5px;}
@@ -1778,6 +1779,7 @@ input[type="text"] {
     font-size: 1.5rem;
     border: 1px solid #eaeaea;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 input[type="number"] {
     width: 100%;
@@ -1792,6 +1794,7 @@ input[type="password"] {
     font-size: 1.5rem;
     border: 1px solid #eaeaea;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 .pop_text {
     margin-bottom: 10px !important;
@@ -1804,6 +1807,7 @@ input[type="password"] {
     border-top: none;
     padding-top: 5px;
 }
+.footerBtn button{border:none;width: 49%;float: left;}
 .footerBtn a{border:none;width: 49%;float: left;}
 .footerBtn .grayBtn {
     float: right;
@@ -1984,13 +1988,14 @@ div#time_popup {
     background: #fff;
     border-radius: 5px;
     position: relative;
-    min-height: 370px;
+    max-height: 370px;
+    height: 100%;
 } 
-.slider_box {padding: 20px 30px;}
+.slider_box {padding: 20px 30px;font-size: 2.2rem;}
 .padding_box { padding:0 30px; }
 .slide_tit {font-size:  30px;background: url("../img/slider_back.png ")left 85% no-repeat;padding-bottom: 35px;font-weight: 600;margin-bottom: 25px;}
 .meeting_ing { background: url("../img/meeting_ing.png")left bottom no-repeat; }
-.meeting_noti {color:#424242;font-weight: 500;font-size: 1.5rem;}
+.meeting_noti {color:#424242;font-weight: 500;font-size: 1.5rem;margin-bottom: 5px;}
 .meeting_btn { position: absolute;width: 100%; bottom:30px}
 .start_btn {
     display: block;
@@ -2032,9 +2037,10 @@ div#time_popup {
 .noti-down{background: url(../img/notice_down.png) no-repeat 10px;
     margin-left: 12px;}
     .meet .scroll {
-    height: 675px;
+    max-height: 675px;
     border: none;
     padding: 0;
+    height: auto;
 }
 .main-noti a {
     color: white;
@@ -2121,8 +2127,12 @@ button{cursor: pointer;}
 .needpopup textarea {
     width: 100%;
     height: 150px;
+    font-size: 1.5rem;
     border: 1px solid #eaeaea;
+    box-sizing: border-box;
 }
+
+f {}
 .profile .darkBtn {
     width: 100%;
     height: 40px;
@@ -2264,7 +2274,7 @@ button{cursor: pointer;}
     padding: 10px;
 }
 .seat_fast {
-    height: 40px;
+    height: 40px !important;
     display: block;
     line-height: 40px;
     padding: 0 20px;
@@ -2272,7 +2282,7 @@ button{cursor: pointer;}
     background-color: #007ac3;
     color: white;
     font-size: 1.5rem;
-    margin-top: -15px;
+    margin-top: -20px;
     margin-left: 15px;
 }
 #seat_fastR_popup ul li span {
@@ -2421,4 +2431,31 @@ select.date_cor{height: 50px;}
 
 .table_pop tbody tr:last-child td {
     border-bottom: 1px solid #dedede;
+}
+#searchCalenderTitle {
+    font-size: 1.6rem;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+}
+.page_num li a {
+    color: gray;
+}
+#resStarttime, #resEndtime {
+    padding: 10px;
+    font-size: 1.5rem;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 40px !important;
+}
+#btn_other {
+    height: 49px;
+    margin-left: 5px;
+    line-height: 20px;
+    background-color: #eb9b16;
+}
+.timeBox .seat_fast {
+    display: inline-block;
+    margin-left: 5px;
 }

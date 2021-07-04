@@ -7,6 +7,8 @@
 
 <%
    EmpInfoVO loginVO = (EmpInfoVO) session.getAttribute("empInfoVO");
+
+
    if(loginVO == null ){
 	   %>
 	   	<script type="text/javascript">
@@ -15,6 +17,8 @@
 	   	</script>
 <%        
    }else{ 
+	   
+	   
 %> 
 <header>
      <div class="contents">
@@ -23,8 +27,10 @@
          <div class="menu">
              <ul>
                  <!--메뉴 선택 시 li에 active 추가-->
+                 <% if (!loginVO.getComCode().equals("C_00000004") ){ %>
                  <li class="menu01"><a href="/web/seatInfo.do">자율좌석예약</a></li>
                  <li class="menu02"><a href="/web/meetingDay.do">회의실예약현황</a></li>
+                 <% } %>
                  <li class="menu04"><a href="/web/coronation.do">시설대관</a></li>
                  <li class="menu03"><a href="/web/myPage.do">나의예약</a></li>
              </ul>

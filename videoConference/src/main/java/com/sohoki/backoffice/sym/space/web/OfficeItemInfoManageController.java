@@ -330,21 +330,38 @@ public class OfficeItemInfoManageController {
 	    	int ret = 0;
 	    	for (Map<String, Object> qrList : qrLists) {
 	    		 //추후 변경 예정
-	    		 qr_code = qrList.get("seat_id").toString()+"_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-	    		 String result =  util.getQrCode(path, qr_code, 200, 300, qrList.get("seat_id").toString()); // qr코드 생성 및 이미지 생성
-	    		 if (!result.equals("FAIL")) {
-	    			 QrcodeInfo info = new QrcodeInfo();
-		    		 info.setItemId(qrList.get("seat_id").toString());
-		    		 info.setMode("Ins");
-		    		 info.setQrGubun("ITEM_GUBUN_2");
-		    		
-		    		 //qr 등록 만들기 
-		             info.setQrCode(qr_code);
-		             
-		             info.setQrFullPath(path + "/" + qrList.get("seat_id").toString() + ".png");
-		             info.setQrPath("/" + propertiesService.getString("qrCodePath") + "/" + qrList.get("seat_id").toString() + ".png");
-		             ret = qrService.updateQrcodeManage(info);
-	    		 } 
+	    		if(params.get("qrMode").equals("Seat")) {
+	    			 qr_code = qrList.get("seat_id").toString()+"_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+		    		 String result =  util.getQrCode(path, qr_code, 200, 300, qrList.get("seat_id").toString()); // qr코드 생성 및 이미지 생성
+		    		 if (!result.equals("FAIL")) {
+		    			 QrcodeInfo info = new QrcodeInfo();
+			    		 info.setItemId(qrList.get("seat_id").toString());
+			    		 info.setMode("Ins");
+			    		 info.setQrGubun("ITEM_GUBUN_2");
+			    		 info.setQrCode(qr_code);
+			             info.setQrFullPath(path + "/" + qrList.get("seat_id").toString() + ".png");
+			             info.setQrPath("/" + propertiesService.getString("qrCodePath") + "/" + qrList.get("seat_id").toString() + ".png");
+			             ret = qrService.updateQrcodeManage(info);
+		    		 } 	
+	    		}else {
+	    			
+	    			 qr_code = qrList.get("meeting_id").toString()+"_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+		    		 String result =  util.getQrCode(path, qr_code, 200, 300, qrList.get("meeting_id").toString()); // qr코드 생성 및 이미지 생성
+		    		 if (!result.equals("FAIL")) {
+		    			 QrcodeInfo info = new QrcodeInfo();
+			    		 info.setItemId(qrList.get("meeting_id").toString());
+			    		 info.setMode("Ins");
+			    		 
+			    		 String itemGubun = qrList.get("room_type").toString().equals("SWC_GUBUN_1") ? "ITEM_GUBUN_1" : "ITEM_GUBUN_3";
+			    		 info.setQrGubun(itemGubun);
+			    		 //qr 등록 만들기 
+			             info.setQrCode(qr_code);
+			             info.setQrFullPath(path + "/" + qrList.get("meeting_id").toString() + ".png");
+			             info.setQrPath("/" + propertiesService.getString("qrCodePath") + "/" + qrList.get("meeting_id").toString() + ".png");
+			             ret = qrService.updateQrcodeManage(info);
+		    		 } 
+	    		}
+	    		
 	    	}
 	    	
 	    	model.addObject(Globals.STATUS_MESSAGE, "QR 코드가 정상적으로 생성 되었습니다.");

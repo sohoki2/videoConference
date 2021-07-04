@@ -65,5 +65,11 @@ public class FloorInfoManageServiceImpl extends EgovAbstractServiceImpl  impleme
 		// TODO Auto-generated method stub
 		return officeSeatMapper.insertFloorInfoOfficeSeatInfoManage(params);
 	}
+    //신규 수정 
+	@Override
+	public Map<String, Object> selectTimeInfo() throws Exception {
+		// TODO Auto-generated method stub
+		return floorMapper.selectTimeInfo();
+	}
 
 }

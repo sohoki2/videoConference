@@ -149,9 +149,9 @@
     		        }, onPaging: function(pgButton){
     		        	  var gridPage = grid.getGridParam('page'); //get current  page
     		        	  var lastPage = grid.getGridParam("lastpage"); //get last page 
-    		        	  var totalPage = grid.getGridParam("total");
+						  var totalPage = grid.getGridParam("total");
     		              if (pgButton == "next"){
-    		            	  if (gridPage < totalPage ){
+    		            	  if (gridPage < lastPage ){
     		            		  gridPage += 1;
     		            	  }else{
     		            		  gridPage = gridPage;
@@ -165,7 +165,7 @@
     		              }else if (pgButton == "first"){
     		            	  gridPage = 1;
     		              }else if  ( pgButton == "last"){
-    		            	  gridPage = totalPage;
+    		            	  gridPage = lastPage;
     		              } else if (pgButton == "user"){
     		            	  var nowPage = Number($("#pager .ui-pg-input").val());
     		            	  
@@ -186,6 +186,8 @@
 							    		          			"searchDayGubun" : fn_emptyReplace($('input[name="searchDayGubun"]:checked').val(),"")	,
 										    	    		"searchStartDay" : $("#searchStartDay").val(),
 										    	    		"searchEndDay" : $("#searchEndDay").val(),
+															"searchCenter" : $("searchCenter").val(),
+															"searchFloorSeq" : fn_emptyReplace($("searchFloorSeq").val(),""),
 										    	    		"searchCondition" : $("#searchCondition").val(),
 										    	    		"searchKeyword" : $("#searchKeyword").val(),
 										    	    		"searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
@@ -215,12 +217,14 @@
     		}, resProcess : function (cellvalue, options, rowObject){
     			//예약 combo 
     			var resCombo = ""
-    			if (rowObject.reserv_process_gubun == "PROCESS_GUBUN_1" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_2" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_4"){
+    			if (rowObject.reserv_process_gubun == "PROCESS_GUBUN_1" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_2" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_4" || rowObject.reserv_process_gubun == "PROCESS_GUBUN_8"){
     				var selecte1 =  (rowObject.reserv_process_gubun == 'PROCESS_GUBUN_4') ? "selected" : "";
     				var selecte2 =  (rowObject.reserv_process_gubun == 'PROCESS_GUBUN_5') ? "selected" : "";
+    				var selecte3 =  (rowObject.reserv_process_gubun == 'PROCESS_GUBUN_8') ? "selected" : "";
     				resCombo = "<select name=\"reservProcessGubun\"  id=\"reservProcessGubun_"+rowObject.res_seq+"\" onChange=\"jqGridFunc.fn_change_process('reservProcessGubun_"+rowObject.res_seq+"', '"+rowObject.res_seq+"');\">"
     			             + "   <option value=''>관리자 승인여부</option>"  
     			             + "   <option value='PROCESS_GUBUN_4' "+ selecte1 +">관리자 승인</option>"
+    			             + "   <option value='PROCESS_GUBUN_8' "+ selecte3 +">예약 검토</option>"
     			             + "   <option value='PROCESS_GUBUN_5' "+ selecte2 +">관리자 취소</option>"
     			             + "</select>";
     			}else {
@@ -265,6 +269,8 @@
 	    	    		 "searchDayGubun" : fn_emptyReplace($('input[name="searchDayGubun"]:checked').val(),"")	,
 	    	    		 "searchStartDay" : $("#searchStartDay").val(),
 	    	    		 "searchEndDay" : $("#searchEndDay").val(),
+						 "searchCenter" : $("searchCenter").val(),
+						 "searchFloorSeq" : fn_emptyReplace($("searchFloorSeq").val(),""),
 	    	    		 "searchCondition" : $("#searchCondition").val(),
 	    	    		 "searchKeyword" : $("#searchKeyword").val(),
 	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
@@ -360,13 +366,13 @@
 								</select>
 								<input class="nameB " type="text" name="searchKeyword" id="searchKeyword"   size="20"  maxlength="30"    onkeydown="if(event.keyCode==13){search_form();}">
 		                	</td>
-		                	<td rowspan="2" class="border-left" style="width:70px">
+		                	<td rowspan="2" class="border-left" style="width:72px">
 			                    <a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 						</tr>
 						<tr>  
 		                	<th>회의실별</th>
-		                	<td style="text-align:left;padding-left: 20px;" colspan="5">
+		                	<td style="text-align:left;padding-left: 20px;" colspan="3">
 		                		<form:select path="searchCenter" id="searchCenter" title="회의실구분" onChange="backoffice_common.fn_floorSearch('','sp_floorCombo', 'searchFloorSeq')">
 								         <form:option value="" label="회의실구분"/>
 				                         <form:options items="${searchCenterId}" itemValue="centerId" itemLabel="centerNm"/>

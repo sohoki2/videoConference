@@ -9,7 +9,7 @@
 							           SELECT ROW_NUMBER() OVER (ORDER BY a.MEETING_ID DESC) AS RNUM 
 							                 , a.MEETING_ID, a.MEETING_NAME, a.MEETING_USEYN, a.FLOOR_SEQ, a.PART_SEQ
 		              						 , b.CENTER_NM, c.FLOOR_NAME,  a.MEETINGROOM_REMARK, a.MEETING_CONFIRMGUBUN, a.MEETING_ADMINID
-		                                     , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT
+		                                     , dbo.FN_DETAILCODENM(a.ROOM_TYPE) AS ROOM_TYPE_TXT, a.ROOM_TYPE
 		                                     , FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss')  UPDATE_DATE
 						                     , a.UPDATE_ID, a.MAX_CNT, a.MEETING_IMG1, a.MEETING_IMG2, a.AVAYA_CONFI_ID, a.AVAYA_USERID
 		                                     , a.TERMINAL_ID, a.END_NAME, a.TERMINAL_NUMBER, a.TERMINAL_TEL

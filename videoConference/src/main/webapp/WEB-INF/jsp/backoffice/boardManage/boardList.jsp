@@ -360,7 +360,50 @@
 					    	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
 					    },loadError:function(xhr, status, error) {
 					        alert("error:" + error); 
-					    },onSelectRow: function(rowId){
+					    }, onPaging: function(pgButton){
+	    		        	  var gridPage = $('#'+gridOption).getGridParam('page'); //get current  page
+	    		        	  var lastPage = $('#'+gridOption).getGridParam("lastpage"); //get last page 
+	    		        	  var totalPage = $('#'+gridOption).getGridParam("total");
+	    		              if (pgButton == "next"){
+	    		            	  if (gridPage < lastPage ){
+	    		            		  gridPage += 1;
+	    		            	  }else{
+	    		            		  gridPage = gridPage;
+	    		            	  }
+	    		              }else if (pgButton == "prev"){
+	    		            	  if (gridPage > 1 ){
+	    		            		  gridPage -= 1;
+	    		            	  }else{
+	    		            		  gridPage = gridPage;
+	    		            	  }
+	    		              }else if (pgButton == "first"){
+	    		            	  gridPage = 1;
+	    		              }else if  ( pgButton == "last"){
+	    		            	  gridPage = lastPage;
+	    		              } else if (pgButton == "user"){
+	    		            	  var nowPage = Number($("#pager .ui-pg-input").val());
+	    		            	  
+	    		            	  if (totalPage >= nowPage && nowPage > 0 ){
+	    		            		  gridPage = nowPage;
+	    		            	  }else {
+	    		            		  $("#pager .ui-pg-input").val(nowPage);
+	    		            		  gridPage = nowPage;
+	    		            	  }
+	    		              }else if (pgButton == "records"){
+	    		            	  gridPage = 1;
+	    		              }
+	    		              $('#'+gridOption).setGridParam({
+			    		          	  page : gridPage,
+			    		          	  rowNum : $('.ui-pg-selbox option:selected').val(),
+			    		          	  postData : JSON.stringify(  {
+								    		          			"pageIndex": gridPage,
+								    		          			"boardGubun" : $("#boardGubun").val(),
+								    		    	    		"searchCondition" : $("#searchCondition").val(),
+								    		    	    		"searchKeyword" : $("#searchKeyword").val(),
+								    		          			"pageUnit":$('.ui-pg-selbox option:selected').val()
+								    		          		})
+	    		          		}).trigger("reloadGrid");
+	    		        },onSelectRow: function(rowId){
 					        if(rowId != null) { 
 					           //멀트 체크 할떄 특정 값이면 다른 값에 대한 색 변경 	
 					        }// 체크 할떄

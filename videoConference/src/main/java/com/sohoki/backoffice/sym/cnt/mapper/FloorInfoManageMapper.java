@@ -15,6 +15,8 @@ public interface FloorInfoManageMapper {
 	public List<Map<String, Object>> selectFloorInfoManageCombo (String centerId);
 	
 	public Map<String, Object> selectFloorInfoManageDetail(String floorSeq);
+	//신규 Time 수정 
+	public Map<String, Object> selectTimeInfo();
 		
 	public int insertFloorInfoManage(FloorInfo vo);
 	

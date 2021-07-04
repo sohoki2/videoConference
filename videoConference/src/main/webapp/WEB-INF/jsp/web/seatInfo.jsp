@@ -58,7 +58,7 @@
         <!--floor Btn//-->
         <!--//search box-->
         <div class="contents">
-            <div class="searchBox float_right">
+            <div class="searchBox float_right" style="display:none">
                 <input type="text" placeholder="임직원 검색" id="search_user" name="search_user" class="inputSearch ui-autocomplete-input">
                 <div class="searchIcon">
                     <a href="#" onClick="res.fn_userSearch()" class="searchBtn">검색</a>
@@ -79,14 +79,13 @@
                       </div>
                       <div class="clear"></div>
                    </div>
-                   <div class="float_left" style="margin-left: 15px;margin-top: -15px;">
+                   <div class="float_left timeBox" style="margin-left: 15px;margin-top: -20px;">
                         <select id='resStarttime' style="width:100px;height:30px;"></select>
                          ~
                         <select id='resEndtime' style="width:100px;height:30px;"></select>
-                   </div>
-                   <div class="float_left">
                         <a href="#" onClick="res.fn_floorInfo()" class="seat_fast" style="height: 32px;">검색</a>
-                    </div>
+                   </div>
+                        
                     <div class="infoContents float_left">
                         <span class="posSeatU">예약가능</span>
                         <span class="usingSeat">사용좌석</span>
@@ -188,7 +187,7 @@
      <c:import url="/web/inc/unimessage.do" />
      <script>  
          $( function() {
-        	 $("#searchResStartday").datepicker({ dateFormat: 'yymmdd' });
+        	 $("#searchResStartday").datepicker({ dateFormat: 'yy-mm-dd' });
 	       	 res.fn_seatTimeCombo();
 	     });
          var res = {
@@ -196,7 +195,7 @@
         			//사용자 검색 
         		}, fn_floorInfo : function(){
         			var url = "/backoffice/resManage/seatStateInfo.do";
-        			var params = {"swcResday" : $("#searchResStartday").val(), 
+        			var params = {"swcResday" : $("#searchResStartday").val().replaceAll("-",""), 
 		  					      "floorSeq" : $("#floorSeq").val(), 
 		  					      "resStarttime" : $("#resStarttime").val(), 
 		  					      "resEndtime" : $("#resEndtime").val()
@@ -246,8 +245,8 @@
     		 				    }    		
     		        );
         		}, fn_seatTimeCombo : function(){
-        			if (yesterDayConfirm($("#searchResStartday").val() , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
-        			var params =  {'resStartday' : $("#searchResStartday").val(), 'floorSeq':$("#floorSeq").val(), 'resSeq': '0'};
+        			if (yesterDayConfirm($("#searchResStartday").val().replaceAll("-","") , "지난 일자는 검색 하실수 없습니다" ) == false ) return;
+        			var params =  {'resStartday' : $("#searchResStartday").val().replaceAll("-",""), 'floorSeq':$("#floorSeq").val(), 'resSeq': '0'};
        	       	    fn_swcTimeUni(params, "SWC_GUBUN_4", 0, "res.fn_floorInfo");
        	       	    
         		}, fn_openTime : function(seat_id, classinfo, seatGubun, seat_name,seat_confirmgubun, res_reqday){
@@ -257,7 +256,7 @@
     				$("#seatConfirmgubun").val(seat_confirmgubun);
     				$("#resReqday").val(res_reqday);
     				$("#sp_seatNm").text(seat_name);
-    				$("#resStartday").val($("#searchResStartday").val());
+    				$("#resStartday").val($("#searchResStartday").val().replaceAll("-",""));
     				if (seatGubun == "SEAT_GUBUN_2" && classinfo == "seatUse") {
         				//스마트워크 좌석 예약
         				$("#btn_other").show();
@@ -279,7 +278,7 @@
         			 $("#resReqday").val("");
         		}, fn_rightView : function(){
         			 var url = "/web/selectTimeInfo.do";
-    				 var params = {"itemId" : $("#itemId").val(), "searchResStartday" : $("#searchResStartday").val()};
+    				 var params = {"itemId" : $("#itemId").val(), "searchResStartday" : $("#searchResStartday").val().replaceAll("-","")};
     				 uniAjax(url, params, 
     		      			function(result) {
     		 				      if (result.status == "SUCCESS"){
