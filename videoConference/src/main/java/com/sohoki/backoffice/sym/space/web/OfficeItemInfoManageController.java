@@ -475,12 +475,15 @@ public class OfficeItemInfoManageController {
 		    model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 		    //지도 이미지 
 		    if (searchVO.get("searchFloorSeq") != null ) {
-		    	 Map<String, Object> mapInfo = searchVO.get("searchPartSeq") != null ? floorService.selectFloorInfoManageDetail(searchVO.get("searchFloorSeq").toString()) : partService.selectFloorPartInfoManageDetail(searchVO.get("searchPartSeq").toString());
+		    	 Map<String, Object> mapInfo = searchVO.get("searchPartSeq") != null ? 
+		    			 floorService.selectFloorInfoManageDetail(util.NVL(searchVO.get("searchFloorSeq"),"").toString()) : 
+		    		     partService.selectFloorPartInfoManageDetail(util.NVL(searchVO.get("searchPartSeq"),"").toString());
 		    	 model.addObject("seatMapInfo", mapInfo);
 		    }
 		    model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		}catch(Exception e) {
-			LOGGER.info(e.toString());
+			StackTraceElement[] ste = e.getStackTrace();
+			LOGGER.info("ERROR" + e.toString() + "line" + ste[0].getLineNumber());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
 		}
@@ -719,70 +722,6 @@ public class OfficeItemInfoManageController {
 	}
 	
 	//디바이스 통신
-	@RequestMapping(value = "regist_device.do")
-	public ModelAndView registDevice(@RequestParam("device_id") String device_id
-			                         , HttpServletRequest request) throws Exception {
-		
-		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-		
-        try {
-    		String ip = "";
-    		String mac  = "";    		
-    		LOGGER.debug("device_id:" + device_id +":" + ip + ":" + mac);
-    		try {
-    			DeviceInfo vo = new DeviceInfo();
-    			vo.setDeviceMac(mac);
-    			vo.setDeviceId(device_id);
-    			vo.setDeviceIp(ip);
-    			int ret = deviceService.updateDeviceIpMac(vo);
-    			JSONObject jsonResult1 = new JSONObject();
-    			if (ret > 0){
-    				jsonResult1.put("code", "OK");
-    				jsonResult1.put("device_id", device_id);
-    			}else {
-    				jsonResult1.put("code", "fail");
-    				jsonResult1.put("msg", "처리 도중 문제가 발생 하였습니다.");
-    			}
-    			model.addObject(jsonResult1);
-    			
-    		} catch (Exception e) {
-    			LOGGER.error("registDevice ERROR : " + e.toString());
-    		}
-    		
-        }catch(Exception e) {
-        	System.out.println(e.toString());
-        }
-		return model;
-	}
 	
-	@RequestMapping(value = "device_info.do")
-	public ModelAndView selectDeviceStatus(@RequestParam("device_id") String device_id
-			                               , HttpServletRequest request) throws Exception {
-		
-		
-		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-		JSONObject jsonResult1 = new JSONObject();
-		try {
-			
-			Map<String, Object> deviceInfo = deviceService.selectDeviceInfo(device_id);
-			if (deviceInfo != null){
-				jsonResult1.put("code", "OK");
-				jsonResult1.put("url", "/front/resInfo/resPadInfo.do?swcSeq=" + deviceInfo.get("swc_seq"));
-				jsonResult1.put("start_time",  deviceInfo.get("device_starttime") );
-				jsonResult1.put("end_time",  deviceInfo.get("device_endtime") );
-				jsonResult1.put("status",  deviceInfo.get("status"));
-			}else {
-				jsonResult1.put("code", "fail");
-				jsonResult1.put("msg", "처리 도중 문제가 발생 하였습니다.");
-			}
-			
-		} catch (Exception e) {
-			jsonResult1.put("code", "fail");
-			jsonResult1.put("msg", "처리 도중 문제가 발생 하였습니다.");
-			LOGGER.error("selectDeviceStatus ERROR : " + e.toString());
-		}
-		model.addObject(jsonResult1);
-		return model;
-	}
 	
 }

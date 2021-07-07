@@ -26,7 +26,7 @@ public interface DeviceInfoManageMapper {
 
 	public int updateDeviceIpMac(DeviceInfo vo);
 	
-	public int updateDeviceEndConnTime(DeviceInfo vo);
+	public int updateDeviceEndConnTime(String deviceId);
 	
 	public int deleteDevieManage(String deviceId);
 }

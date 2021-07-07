@@ -9,6 +9,7 @@
 }
 
 .log_b{width: 515px;height: 480px;padding: 35px 30px;}
+.log_id{height: auto;}
 .login_reser_box {padding: 15px;}
 .log_b h1 {
     padding-bottom: 20px;
@@ -80,6 +81,7 @@ header {
     padding-left: 0;
     border-top: 1px dashed #eeeeee;
     padding-top: 20px;
+    height: 75px;
 }
 
 .userInfo .pass {
@@ -105,7 +107,7 @@ header {
         height: 40px;
         width: 80px;
         cursor: pointer;
-        display: inline-block;
+        display: inline-block !important;
         text-align: center;
         line-height: 40px;
     }
@@ -1073,6 +1075,8 @@ header > .content {
     width: 100%;
     text-align: center;
     border-radius: 5px;
+    position: absolute;
+    bottom: 0;
 }
 
     .state li {
@@ -1153,7 +1157,7 @@ a.user_logout {
 .joinArea table section input {
     width: 360px;
 }
-.joinArea table section a{width: 100px;}
+.joinArea table section a{width: 136px;}
 .resource {
     width: 110px !important;
     margin-top: -80px;
@@ -1174,7 +1178,7 @@ a.user_logout {
 .btnL{margin-top: -20px; margin-right: 10px;}
 .btnL a{border: none;width: 40px;height: 40px;cursor: pointer;display: inline-block;}
 .calendar-container {
-    margin-top: 15px;
+    margin-top: 15px !important;
 }
 .mypage{position: absolute;
     left: 75px;

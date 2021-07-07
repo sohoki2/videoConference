@@ -198,6 +198,7 @@
 		        $("#empno").val(empno);
 		        if (mode == "Edt"){
 		        	$("#btnUpdate").text("수정");
+		        	$("#sp_unicheck").html("");
 		     	    var params = "empno="+$("#empno").val();
 		     	    var url = "/backoffice/orgManage/empDetail.do";
 		     	    uniAjaxSerial(url, params, 
@@ -225,6 +226,20 @@
 		     					    alert("Error:" +request.status );	       						
 		     				    }    		
 		               );
+		        }else{
+		        	 $("#empno").val("");
+					 $("#empid").val("");
+					 $("#empname").val("");
+					 $("#deptname").val("");
+					 $("#empgrad").val("");
+					 $("#emptelphone").val("");
+					 $("#emphandphone").val("");
+					 $("#empmail").val("");
+					 $("#empState").val("");
+	    			 $("#preWorkinfo").val("");
+	    			 $("#nowWorkinfo").val("");
+	    			
+	    			 $("#sp_unicheck").html("<a href='javascript:jqGridFunc.fn_uniCheck()'>중복체크</a>");
 		        }
            },clearGrid : function() {
                $("#mainGrid").clearGridData();
@@ -232,6 +247,9 @@
 			     if (any_empt_line_id("empno", "사번을 입력해주세요.") == false) return;		
 		    	 if (any_empt_line_id("empname", "이름을 입력해주세요.") == false) return;	
 		    	 if (any_empt_line_id("preWorkinfo", "현재 근무 시간을 선택해주세요.") == false) return;	
+		    	 if ($("#mode").val() == "Ins"){
+	    			 if (any_empt_line_id("uniCheck", "아이디 중복을 하지 않았습니다.") == false) return;
+	    		 }
 		    	 //확인 
 		    	 var url = "/backoffice/orgManage/employUpdate.do";
 		    	 var params = {  'empno' : $("#empno").val(),
@@ -256,13 +274,19 @@
 		   						   //총 게시물 정리 하기
 		   						   need_close();
 		   						   $('#mainGrid').jqGrid().trigger("reloadGrid");
-		   					   }
+		   					   }else {
+                                   alert(result.meesage);
+							   }
 		 				    },
 		 				    function(request){
 		 					    alert("Error:" +request.status );	   
 		 					    $("#btn_needPopHide").trigger("click");
 		 				    }    		
 		           );
+		  },fn_uniCheck : function(){
+			 //중복 체크 
+			  var params = {"empno" : $("#empno").val()};
+			  fn_uniCheck("/backoffice/orgManage/IdCheck.do", params, "uniCheck");
 		  }   
     }
   </script>
@@ -273,6 +297,7 @@
 <c:import url="/backoffice/inc/top_inc.do" />
 <input type="hidden" name="pageIndex" id="pageIndex">
 <input type="hidden" name="mode" id="mode" >
+<input type="hidden" name="uniCheck" id="uniCheck">
 
 <div class="Aconbox">
         <div class="rightT">
@@ -302,7 +327,7 @@
 								 <a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
-		                		<a href="javascript:jqGridFunc.fn_employInfo('Ins','0')" ><span class="deepBtn">인사정보 연동</span></a>
+		                		<a href="javascript:jqGridFunc.fn_employInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                	</td>
 						</tr>
                     </table>
@@ -333,11 +358,10 @@
             <table class="pop_table thStyle" id="tb_managerInfo">
                 <tbody>
                     <tr>
-                        <th><span class="redText">*</span>사번/(아이디)</th>
+                        <th><span class="redText">*</span>사번<br>아이디</th>
                         <td style="text-align:left">
-                        <input type="text" name="empno" id="empno" size="30" style="width:100px;" />
+                        <input type="text" name="empno" id="empno" size="30" style="width:100px;" /><span id="sp_unicheck" ></span><br/>
                         <input type="text" id="empid" name="empid" size="30" style="width:140px;" />
-                        <span id="sp_unicheck" ></span>
                         </td>
                         <th><span class="redText">*</span>이름</th>
                         <td style="text-align:left">

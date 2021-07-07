@@ -148,7 +148,7 @@
 }
 
     .Atitle span {
-        color: #a14346 !important;
+        color: #cb2d51 !important;
     }
 
 
@@ -292,6 +292,7 @@
     padding: 0 3%;
     width: 50%;
     margin: 0 auto;
+    text-align: center;
 }
 
     .pager > a {
@@ -462,7 +463,7 @@
 }
 
 a.active {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 400;
     color: #00538d !important;
 }
@@ -545,7 +546,7 @@ a.active {
 }
 
 .tableM {
-    border-top: 3px solid #0075c1 !important;
+    border-top: 3px solid #f9a43f !important;
 }
 
 .mattersArea tr {
@@ -824,7 +825,7 @@ input {
     margin-top: 20px;
     width: 100%;
     position: relative;
-    border-top: 3px solid #0075c1;
+    border-top: 3px solid #fab35f;
     margin-bottom: 20px;
 }
 
@@ -832,6 +833,7 @@ input {
         background-color: #eeeeed;
         font-weight: 500;
         color: #555656;
+        text-align: center !important;
     }
 
     .pop_table th, .pop_table td {
@@ -1054,7 +1056,7 @@ table tr td > a{color:#616161;text-decoration: underline;}
 .viewArea table th a{color: #343434;}
 .alltext{font-weight: 500; font-size: 13px; display: inline-block; margin-right: 0 !important;}
 /*20191114*/
-.needpopup input{width:100%; box-sizing:border-box; margin-left:0;}
+.needpopup input, .needpopup select{width:100%;box-sizing:border-box;margin-left:0;padding: 6px 12px;width: 100%;border: 1px solid #d5d8dc;border-radius: 6px;outline: none;-webkit-appearance: none;-moz-appearance: none;appearance: none;font-weight: 300;font-size: 15px;box-sizing: border-box;}
 .needpopup select{width:100%;}
 .width40{width:40% !important;}
 .hasDatepicker{height:24px;}
@@ -1116,8 +1118,8 @@ input[type="file"] {
 .pop_table input, .pop_table select{margin-left: 0 !important;}
 .tableArea select{font-size: 14px;}
 .top_btn{border: solid 1px #e8392f !important;background-color: #e8392f !important;}
-#topMenu ul li:nth-of-type(1) ul {
-    right: -62px;
+#topMenu ul li:nth-of-type(1) ul, #topMenu ul li:nth-of-type(4) ul {
+    right: -40px;
 }
 .popCon{
     max-height: 565px;
@@ -1126,3 +1128,8 @@ input[type="file"] {
     height: auto;
     }
     .pop_box100{height:  auto !important;}
+    .textR, .text-right{text-align: right;}
+    .pager li {
+    display: inline-block;
+    margin: 0 5px;
+}

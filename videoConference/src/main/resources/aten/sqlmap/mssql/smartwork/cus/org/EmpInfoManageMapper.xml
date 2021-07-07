@@ -162,7 +162,7 @@
                 </when>
                 <otherwise>
                         INSERT INTO TB_EMPINFO(EMPID, EMPNO, EMPNAME, DEPTNAME, DEPTCODE, EMPGRAD, EMPGRADCODE,
-                                               EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE
+                                               EMPJIKW, EMPJIKWCODE, EMPHANDPHONE, EMPTELPHONE, EMPMAIL, UPDATE_DATE,
                                                EMP_STATE, PRE_WORKINFO, NOW_WORKINFO, AUTHOR_CODE
                                                ) 
                         VALUES(#{empid}, #{empno}, #{empname}, #{deptname}, #{deptcode}, #{empgrad}, #{empgradcode},

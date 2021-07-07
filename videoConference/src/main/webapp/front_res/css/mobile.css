@@ -1,4 +1,5 @@
-﻿/*header*/
+﻿
+/*header*/
 
 .log_b {width: 90%;padding: 25px 20px;}
 .log_b h1 {
@@ -89,7 +90,7 @@ header .userInfo {
 
 .mapArea {
     width: 100%;
-    margin: 40px 0 0 0;
+    margin: 17px 0 0 0;
     height: calc(100vh - 295px);
     padding: 5px;
     box-sizing: border-box;
@@ -116,7 +117,7 @@ header .userInfo {
 
 .infoContents {
     position: relative;
-    margin: 52px 0 0 0;
+    margin: 30px 0 0 0;
     font-size: 1.2rem;
     font-weight: 500;
     color: #585858;
@@ -271,13 +272,13 @@ header .userInfo {
     margin-top: 0;
     position: absolute;
     top: 0;
-    z-index: 9999;
+    z-index: 1;
 }
 
 .inputSearch {
     font-size: 1.4rem;
-    width: 78% !important;
-    padding: 6px 10px;
+    width: 100% !important;
+    padding: 6px 10px !important;
     height: 100%;
 }
 
@@ -329,7 +330,7 @@ header .userInfo {
 }
 
 .sel_inner_box {
-    min-height: 400px
+    min-height: auto;
 }
 
 .leftReser {
@@ -893,7 +894,7 @@ span.date_icon {
 }
 
 .infoSeat {
-    margin: 51px 0 0 0;
+    margin: 30px 0 0 0;
     font-size: 1.2rem;
 }
 
@@ -963,6 +964,8 @@ a.closebtn {
     width: 100%;
     text-align: center;
     border-radius: 5px;
+    bottom: 30px;
+    position: absolute;
 }
 
     .state li {
@@ -1042,14 +1045,14 @@ a.user_logout {
 }
 .scroll {width: 100%;position: relative;font-weight: 400;}
 .scroll > div{overflow-x: scroll;}
-.day_T{min-width: 755px;width: 100%;border-top:2px solid #4a4a4a;font-size: 1.2rem;overflow-x: scroll;}
+.day_T{min-width: 755px;width: 100%;font-size: 1.2rem;overflow-x: scroll;}
 .day_T thead tr{background-color:#f4f4f4;}
-.day_T thead tr th, .day_T thead tr td{padding: 10px 0;box-sizing:border-box;text-align: center;border-bottom: 1px solid #f4f4f4;height: auto;}
+.day_T thead tr th, .day_T thead tr td{padding: 10px 0;box-sizing:border-box;text-align: center;border-bottom: 1px solid #f4f4f4;height: auto;border-top: 2px solid #4a4a4a;}
 .day_T tbody tr th, .day_T tbody tr td{box-sizing: border-box;border-bottom:1px solid #f4f4f4;}
-.day_T tbody tr th{padding: 15px 0;text-align: center;border-left: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;background: white;}
-.day_T tbody tr td {width: 30px;border-left:1px solid #f4f4f4;height: 45px;}
+.day_T tbody tr th{padding: 15px 0 !important;text-align: center;border-left: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;background: white;}
+.day_T tbody tr td {width: 30px;border-left:1px solid #f4f4f4;height: 45px;position: relative;left: 125px;}
 .day_T tbody tr td:last-child {border-right: 1px solid #f4f4f4;}
-.fixed_th {position: absolute;background: #f4f4f4;left: 0;z-index: 999;height: 45px;top: auto;border-right: 0px none black;border-top-width: 3px;width: 104px !important;}
+.fixed_th {position: absolute;background: #f4f4f4;left: 0;z-index: 1;height: 50px;top: auto;border-right: 0px none black;border-top-width: 3px;width: 125px !important;}
 .dateIcon {
     position: absolute;
     right: 7px;
@@ -1059,7 +1062,7 @@ a.user_logout {
     padding: 4px 4px;
     box-sizing: border-box;
 }
-.list_T{right: 0;margin-top: 10px;position: absolute;bottom: 0;}
+.list_T{left: 0;margin-top: 10px;position: absolute;bottom: 0;}
 .list_T a{cursor: pointer;font-size: 1.2rem;height: 33px;width: 65px;line-height: 33px;}
 .meet{padding: 10px;box-sizing: border-box;margin-top: 10px;}
 .whiteBack h5{font-size: 1.2rem;margin-bottom: 10px;word-break: keep-all;line-height: 16px;}
@@ -1099,7 +1102,8 @@ a.user_logout {
 .form {
     margin-top: 15px;
     padding-top: 15px;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    overflow-x: hidden;
 }
 
 .form li select {
@@ -1108,7 +1112,7 @@ a.user_logout {
 }
 
 .form li span {
-    display: block;
+    display: inline-block;
     margin-bottom: 5px;
 }
 
@@ -1207,7 +1211,7 @@ p.main_tit {
     position: relative;
 }
 
-a.resource {
+.resource {
     text-align: center;
     position: absolute;
     top: 0;
@@ -1225,8 +1229,11 @@ a.resource {
 .btnL {
     margin: 0;
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: 0;
+    width: auto;
+    height: 33px;
+    text-align: right;
 }
 
 .btnL a {
@@ -1234,13 +1241,15 @@ a.resource {
     height: 33px;
     border: none;
     background-size: 16px !important;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .calendar_con .list_T {
     top: 60px;
 }
 
-.calendar-container {margin-top: 45px;}
+.calendar-container {margin-top: 45px !important;width: 975px !important;overflow-x: scroll;}
 
 .calendar_con .btnL {
     top: 65px;
@@ -1353,11 +1362,11 @@ a.resource {
 }
 
 .resource_margT .resourceT {
-    margin-top: 60px;
+    margin-top: 15px;
 }
 
 .resource_margT .inputSearch {
-    width: 80%;
+    width: 80% !important;
 }
 
 .resource_margT .dateBox {
@@ -1423,7 +1432,7 @@ a.resource {
     border-radius: 5px !important;
 }
 .coronArea {
-    width: 745px;
+    width: 895px;
 }
 
 .coronArea  a {
@@ -1438,21 +1447,125 @@ li.float_left {
 }
 
 .cor_detail .dateBox {
-    width: 45%;
+    width: 90%;
 }
 
 .cor_detail .datebox input[type="text"] {
     width: 100% !important;
+    font-size: 1.3rem;
 }
 
 .cor_detail ul li:last-child {
     right: 0;
     position: absolute;
-    bottom: 3px;
+    bottom: -9px;
     width: 10%;
     text-align: center;
+    width: 12%;
 }
 
 .cor_detail .line {
     height: 60px;
+}
+.timeBox {
+    width: 100%;
+    margin: 10px 0 0 -7px !important;
+    position: relative;
+}
+
+.timeBox .seat_fast {
+    position: absolute;
+    top: 0;
+    left: 215px;
+    width: 28px;
+    line-height: 40px;
+}
+span#p_seatNm {
+    display: inline-block;
+    margin-right: 0 !important;
+    margin-left: 10px;
+}
+
+#seat_fastR_popup .footerBtn a {
+    width: 32.333% !important;
+    box-sizing: border-box;
+    padding: 0 !important;
+    height: 40px !important;
+    line-height: 40px;
+}
+
+.footerBtn {
+    width: 100%;
+}
+#sp_ResDay{width: 100%;}
+header.scroll{
+    margin: 0;
+    height: auto;
+    padding: 0;
+    overflow: unset;
+}
+.calendar_con .whiteBack {
+    overflow: scroll;
+}
+
+.calendar-header {
+    text-align: left !important;
+}
+
+select#searchCalenderTitle {
+    display: inline-block;
+}
+
+.calendar-header p {
+    display: inline-block;
+    margin-left: 10px;
+}
+.coronation_T thead tr td {
+    position: relative;
+    left: 125px;
+}
+
+.coronation_T tbody tr td {
+    width: 30px;
+    border-left: 1px solid #f4f4f4;
+    height: 45px;
+    position: relative;
+    left: 125px;
+}
+.coron .infoContents span {
+    display: inline-block;
+}
+.coron_pop #resStarttime, .coron_pop #resEndtime {
+    width: 28% !important;
+    font-size: 1.3rem;
+    padding: 10px 8px !important;
+    height: 40px !important;
+}
+
+.coron_pop #resPerson {
+    height: 37px;
+}
+.day_T thead tr td {
+    position: relative;
+    left: 125px;
+    background-color: #f4f4f4;
+}
+#tb_seatTimeInfo.day_T tbody tr td {
+    width: 100px;
+}
+.resource_margT .resource {
+    bottom: 0;
+    top: unset;
+}
+.error {
+    width: 90%;
+    margin: 100px auto;
+}
+
+.error section h1 {
+    font-size: 18px;
+}
+
+.error section p {
+    font-size: 15px;
 }

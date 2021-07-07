@@ -47,11 +47,11 @@
     <div class="contents">
       <header>
         <div class="floatL">
-          <h1><img src="/img/logo.png" align="서울관광플라자"></h1>
+          <h1><img src="/images/logo.png" align="서울관광플라자"></h1>
           <div class="tit">
             <span id="sp_FloorTitle"></span>
             <span>
-                               서울관광플라자 스마트워크센터 예약 시스템<br/>
+              서울관광플라자 스마트워크센터 예약 시스템<br/>
               SEOUL TOURISM PLAZA Reservation System
             </span>
           </div>
@@ -117,12 +117,9 @@
                   <th>16:30</th>
                   <th>17:00</th>
                   <th>17:30</th>
-                  <th>18:00</th>
-                  <th>18:30</th>
                 </tr>
               </thead>
               <tbody>
-                
               </tbody>
             </table>
           </div>
@@ -145,7 +142,6 @@
          <!-- //인증 전-->
         <div id="dv_LoginInfo">
 	        <div class="info" id="dv_info">
-	        
 	        </div>
 	        <p class="info_sub">좌석을 선택해주세요.</p>
         </div>
@@ -198,7 +194,7 @@
    <div id="openTime" class="needpopup"  style="display: none;">
 	     <div class="time">
 	       <div class="seat_info">
-	                   좌석 명<span class="blueFont" id="sp_seatName">4F 01</span> 번 좌석
+	         좌석 명<span class="blueFont" id="sp_seatName">4F 01</span> 번 좌석
 	      </div>
 	      <div class="select_time">
 	        <p>* 예약을 원하는 시작 시간과 종료 시간을 선택해주세요 *</p>
@@ -252,7 +248,6 @@
  <!--//예약완료 팝업-->
    <div id="reserve_pop" class="needpopup"  style="display: none;">
      <div class="popup_con">
-            <span class="button b-close">&times;</span>
             <span id="sp_stateTxt"></span>
      </div>
    </div>
@@ -276,34 +271,37 @@
   
 <!--needpopup script-->
 <script>
-$( function() {
-	$("#kioskGubun").val("SEAT");
-	res.fn_rightBtn($("#kioskGubun").val());
-	res.fn_loginForm("LOGOUT");
-});
-function fn_seatTime(){
-	var url = "/web/kioskSeatInfoTime.do";
-	params = {'floorSeq' : $("#floorSeq").val()};
-	uniAjaxSerial(url, params, 
-  			function(result) {
-				      if (result.status == "SUCCESS"){
+	$( function() {
+		$("#kioskGubun").val("SEAT");
+		res.fn_rightBtn($("#kioskGubun").val());
+		res.fn_loginForm("LOGOUT");
+	});
+	function fn_seatTime(){
+		var url = "/web/kioskSeatInfoTime.do";
+		params = {'floorSeq' : $("#floorSeq").val()};
+		uniAjaxSerial(url, params, 
+				function(result) {
+					if (result.status == "SUCCESS"){
 						   //총 게시물 정리 하기
 						   if (result.regist.timeInfo!= null){
-				    		   var obj = result.regist.timeInfo;
-				    		   $("#sp_dayInfo").html(obj.dayinfo +"<br>"+obj.weekinfo);
-				    		   $("#sp_timeInfo").html("<strong>"+obj.timeinfo+"<strong>");
-				    	   }
-                           if (result.regist.floorInfo!= null)
-                        	   $("#sp_FloorTitle").html("<p>"+result.regist.floorInfo.floor_name+"</p>");
-                           res.fn_floorInfo();
+							   var obj = result.regist.timeInfo;
+							   $("#sp_dayInfo").html(obj.dayinfo +"<br>"+obj.weekinfo);
+							   $("#sp_timeInfo").html("<strong>"+obj.timeinfo+"<strong>");
+						   }
+						   if (result.regist.floorInfo!= null)
+							   $("#sp_FloorTitle").html("<p>"+result.regist.floorInfo.floor_name+"</p>");
+						   res.fn_floorInfo();
 					   }
-				    },
-				    function(request){
-					    alert("Error:" +request.status );	   
-					    $("#btn_needPopHide").trigger("click");
-				    }    		
-    );
-}
+					},
+					function(request){
+						alert("Error:" +request.status );	   
+						$("#btn_needPopHide").trigger("click");
+					}    		
+		);
+		// 60초 후 정리 하기 
+		window.setTimeout("meetingR.meetingInfo()", 60000);
+	}
+	
     var res = {
 		   fn_floorInfo : function(){
 			    var url = "/backoffice/resManage/seatStateInfo.do";
@@ -466,11 +464,13 @@ function fn_seatTime(){
 								   $("#loginOK").val("OK");
 								   res.fn_loginForm("LOGIN");
 							   }else {
+								   $("#userId").val("");
 								   res.fn_hideMessage("해당 사원 정보가 없습니다.", "checkIn");
 								   res.fn_loginForm("LOGOUT");
 							   }
 						    },
 						    function(request){
+								 $("#userId").val("");
 						    	res.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
 						    	res.fn_loginForm("LOGOUT");
 						    }    		
@@ -500,7 +500,10 @@ function fn_seatTime(){
 					$("#btn_checkIn").trigger("click");
 					$("#userId").val("")
 					$("#loginOK").val("");
+                    //좌석 예약으로 넘기기
 					res.fn_loginForm("LOGOUT");
+					$("#kioskGubun").val("SEAT");
+					res.fn_rightBtn($("#kioskGubun").val());
 		    	}
 		    }, fn_ResSave : function(){
 		   	 
@@ -553,7 +556,8 @@ function fn_seatTime(){
 							       if (result.status == "SUCCESS"){
 							    	    res.fn_floorInfo();
 							    	    res.fn_hideMessage(result.message, "checkIn");
-							    	    
+							    	    //
+										res.fn_empInput();
 								   }else {
 									    res.fn_hideMessage(result.message, "checkIn");
 								   }
@@ -644,6 +648,7 @@ function fn_seatTime(){
 			  						    $("#searchCenterId").val(result.result.searchCenterId);
 			  						    var setHtml = "";
 										$("#tb_meetingState > tbody").empty(); 
+										
 										for (var i in result.seatInfo){
 											var seatinfo = result.seatInfo[i];
 											setHtml += "<tr>";
@@ -652,19 +657,49 @@ function fn_seatTime(){
 												setHtml += "<td colspan='18' style='text-aling:center;'>예약 불가</td>";
 											}else {
 												//console.log("seatinfo.res_reqday:" + seatinfo.res_reqday)
+												var rowCol = 0;
+												var rowResseq = "";
+												var rowInfo = "";
+												var resTitle = "";
+												var resStart = "";
+												console.log("<resStart>" + resStart);
+
 												for (var a  in seatinfo.timeinfo){
 			  										var timeInfo = seatinfo.timeinfo[a];
 			  										var classInfo = "";
 			  										//색갈 넣기 및 예약자 클릭 관련 내용 넣기 \
 			  										if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
+														console.log("<td>");
 			  											setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
-			  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "R")){
-			  											setHtml += "<td class='waiting'></td>";
-			  										}else if (timeInfo.res_seq != "0" && (timeInfo.apprival == "Y" )){
-			  											setHtml += "<td class='now' ></td>";
+			  										}else if ((timeInfo.res_seq == "0" || timeInfo.res_seq == "-1")  &&  rowResseq != "0"){
+														console.log("rowCol:" + rowCol + ":" + resTitle);
+														var resInfo = resTitle.split("|");
+														setHtml += "<td colspan='"+rowCol+"'><div class='"+resInfo[1]+"'>"+resInfo[0]+"</div></td>";
+														rowResseq = timeInfo.res_seq;
+														rowCol = 1;
+														resTitle= "";
+													}else if (timeInfo.res_seq != "0" ){
+														if (timeInfo.res_seq != parseInt(rowResseq) && resStart != ""){
+															var resInfo = resTitle.split("|");
+															setHtml += "<td colspan='"+rowCol+"'><div class='"+resInfo[1]+"'>"+resInfo[0]+"</div></td>";
+															rowResseq = timeInfo.res_seq;
+															rowCol = 1;
+														    resTitle= "";
+														}else if (timeInfo.res_seq != parseInt(rowResseq) && resStart == ""){
+															rowResseq = timeInfo.res_seq;
+															resTitle = timeInfo.res_info;
+                                                            rowCol = parseInt(rowCol)+1;
+															resStart = "S";
+														}else{
+															resTitle = timeInfo.res_info;
+                                                            rowCol = parseInt(rowCol)+1;
+														}
+			  											//setHtml += "<td class='waiting'></td>";
 			  										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
+														//console.log("N");
 			  											setHtml += "<td></td>";
 			  										}
+													//console.log(timeInfo.res_seq);
 			  									}
 											}
 											//centerId 값 넣기 

@@ -21,7 +21,7 @@ public interface DeviceInfoManageService {
 	
 	int updateDeviceIpMac(DeviceInfo vo) throws Exception;
 	
-	int updateDeviceEndConnTime(DeviceInfo vo) throws Exception;
+	int updateDeviceEndConnTime(String deviceId) throws Exception;
 	
 	int deleteDevieManage(String deviceId) throws Exception;
 }

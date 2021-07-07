@@ -18,7 +18,7 @@
 					  ]]>
 					  A.DEVICE_STATUS, A.USE_YN, 
 					  FORMAT(A.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') UPDATE_DATE,
-					  C.FLOOR_NAME, A.UPDATE_ID
+					  C.FLOOR_NAME, A.UPDATE_ID,  A.DEVICE_RELOAD, A.DEVICE_RESTART
 				FROM TB_DEVICEINFO A, TB_CENTERINFO B, TB_FLOORINFO C
 				WHERE A.CENTER_ID = B.CENTER_ID
 				      AND A.FLOOR_SEQ = C.FLOOR_SEQ
@@ -44,7 +44,7 @@
 				A.DEVICE_OS, A.DEVICE_STARTTIME, A.DEVICE_ENDTIME, A.DEVICE_REMARK, A.DEVICE_ENDCONNTIME,
 				A.DEVICE_STATUS, A.USE_YN, 
 				A.REG_ID, A.REG_DATE, A.UPDATE_ID, A.UPDATE_DATE,
-				A.CENTER_ID, A.MEETING_ID, A.FLOOR_SEQ, A.PART_SEQ
+				A.CENTER_ID, A.MEETING_ID, A.FLOOR_SEQ, A.PART_SEQ, A.DEVICE_RELOAD, A.DEVICE_RESTART
      	FROM TB_DEVICEINFO A
      	WHERE A.DEVICE_ID = #{deviceId}
    	</select>		
@@ -55,17 +55,16 @@
        WHERE A.DEVICE_ID = #{deviceId} 
    	</select>
     <select id="selectDeviceInfo"  		resultType ="lmap">
-       SELECT a. DEVICE_STARTTIME, a.DEVICE_ENDTIME,
-                      CASE WHEN (c.RES_SEQ > 0) THEN 
-                             (SELECT CASE  WHEN LENGTH(IN_TIME) > 0 THEN '1' ELSE '2' END   FROM TB_SWCRESERVATION d WHERE c.RES_SEQ = d.RES_SEQ)
-                      ELSE
-                           '0'
-                      END status  , 
-                      
-                      a.MEETING_ID
-       FROM TB_DEVICEINFO a, TB_SWC_ROOM b, TB_SWCTIME c
+       SELECT A.DEVICE_RELOAD, A.DEVICE_RESTART, a. DEVICE_STARTTIME, a.DEVICE_ENDTIME,
+              CASE WHEN (c.RES_SEQ > 0) THEN 
+                     (SELECT CASE  WHEN LEN(IN_TIME) > 0 THEN '1' ELSE '2' END   FROM TB_SWCRESERVATION d WHERE c.RES_SEQ = d.RES_SEQ)
+              ELSE
+                   '0'
+              END status  , a.MEETING_ID, d.FLOOR_NAME
+       FROM TB_DEVICEINFO a, TB_MEETING_ROOM b, TB_SWCTIME c, TB_FLOORINFO d
        WHERE a.MEETING_ID = b.MEETING_ID
-             AND b.ITEM_ID = c.MEETING_ID
+             AND c.ITEM_ID = b.MEETING_ID
+             AND d.FLOOR_SEQ = a.FLOOR_SEQ
              AND c.SWC_RESDAY  =  CONVERT(VARCHAR(8), GETDATE(), 112)
              AND SWC_TIME BETWEEN  REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','')   
                          AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
@@ -77,14 +76,16 @@
 			DEVICE_ID, DEVICE_NM, DEVICE_IP, DEVICE_MAC, DEVICE_URL,
 			DEVICE_OS, DEVICE_STARTTIME, DEVICE_ENDTIME, DEVICE_REMARK,
 			DEVICE_STATUS, USE_YN, REG_ID, REG_DATE, UPDATE_ID, UPDATE_DATE, 
-			MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ
+			MEETING_ID, CENTER_ID, FLOOR_SEQ, PART_SEQ, DEVICE_RELOAD, DEVICE_RESTART
 		)
 		VALUES 
 		(
 			#{deviceId}, #{deviceNm, jdbcType=VARCHAR}, #{deviceIp, jdbcType=VARCHAR}, #{deviceMac, jdbcType=VARCHAR}, #{deviceUrl, jdbcType=VARCHAR},
 			#{deviceOs, jdbcType=VARCHAR}, #{deviceStartTime, jdbcType=VARCHAR}, #{deviceEndTime, jdbcType=VARCHAR}, #{deviceRemark, jdbcType=VARCHAR},
 			#{deviceStatus, jdbcType=VARCHAR}, #{useYn, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, GETDATE(), #{userId, jdbcType=VARCHAR},GETDATE(), 
-			#{meetingId}, #{centerId}, #{floorSeq, jdbcType=VARCHAR},#{partSeq, jdbcType=VARCHAR}
+			#{meetingId}, #{centerId}, #{floorSeq, jdbcType=VARCHAR},#{partSeq, jdbcType=VARCHAR},
+			#{deviceReload, jdbcType=VARCHAR},#{deviceRestart, jdbcType=VARCHAR}
+			
 		)
 	</insert>
 	
@@ -100,7 +101,10 @@
 								  CENTER_ID = #{centerId, jdbcType=VARCHAR},
 								  FLOOR_SEQ = #{floorSeq, jdbcType=VARCHAR},
 								  PART_SEQ = #{partSeq, jdbcType=VARCHAR},
-								  MEETING_ID = #{meetingId, jdbcType=VARCHAR}
+								  MEETING_ID = #{meetingId, jdbcType=VARCHAR},
+								  DEVICE_RELOAD = #{deviceReload, jdbcType=VARCHAR},
+								  DEVICE_RESTART = #{deviceRestart, jdbcType=VARCHAR},
+								  
 		WHERE DEVICE_ID = #{deviceId} 
 	</update>
 	
@@ -109,7 +113,10 @@
 								   DEVICE_MAC = #{deviceMac, jdbcType=VARCHAR}
 	      WHERE DEVICE_ID = #{deviceId}                      
    </update>
-   
+   <update id="updateDeviceEndConnTime">
+   		UPDATE TB_DEVICEINFO SET DEVICE_ENDCONNTIME = GETDATE()
+   		WHERE DEVICE_ID = #{deviceId}
+   </update>
    <delete id="deleteDevieManage">
        DELETE FROM TB_DEVICEINFO
        WHERE DEVICE_ID = #{deviceId}    

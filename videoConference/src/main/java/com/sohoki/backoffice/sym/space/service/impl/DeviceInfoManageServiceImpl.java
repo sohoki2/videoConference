@@ -74,9 +74,9 @@ public class DeviceInfoManageServiceImpl extends EgovAbstractServiceImpl impleme
 	}
 	
 	@Override
-	public int updateDeviceEndConnTime(DeviceInfo vo) throws Exception {
+	public int updateDeviceEndConnTime(String deviceId) throws Exception {
 		// TODO Auto-generated method stub
-		return deviceMapper.updateDeviceEndConnTime(vo);
+		return deviceMapper.updateDeviceEndConnTime(deviceId);
 	}
 
 	@Override

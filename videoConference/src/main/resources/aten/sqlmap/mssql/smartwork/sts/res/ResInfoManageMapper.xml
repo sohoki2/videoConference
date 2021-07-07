@@ -230,13 +230,13 @@
                           )
 			        ELSE 
 			          ''
-			        END  EMPNAME, c.IN_TIME, c.OT_TIME, TA.MEETING_ORDER, TA.FLOOR_INFO, ISNULL( TA.RES_REQDAY, 0) RES_REQDAY
-            FROM  ( SELECT b.MEETING_USEYN, a.RES_SEQ , a.TIME_SEQ, b.MEETING_NAME , a.SWC_TIME, a.CENTER_ID, b.MEETING_ID, 
+			        END  EMPNAME, c.IN_TIME, c.OT_TIME, TA.MEETING_ORDER, TA.FLOOR_INFO, ISNULL( TA.RES_REQDAY, 0) RES_REQDAY, TA.ROOM_TYPE
+            FROM  ( SELECT b.MEETING_USEYN, a.RES_SEQ , a.TIME_SEQ, b.MEETING_NAME , a.SWC_TIME, a.CENTER_ID, b.MEETING_ID, b.ROOM_TYPE,
                             b.MEETING_CONFIRMGUBUN, b.MEETING_EQUPGUBUN, b.MEETING_ORDER, cast(replace( c.FLOOR_INFO, 'CENTER_FLOOR_', '') as int)  FLOOR_INFO,
                             b.RES_REQDAY
 					FROM TB_SWCTIME a, TB_MEETING_ROOM b, TB_FLOORINFO c
 					WHERE a.ITEM_ID = b.MEETING_ID
-					      AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2')
+					      AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2','SWC_GUBUN_3')
 					      AND b.FLOOR_SEQ = c.FLOOR_SEQ
 		                  <choose>
 		                    <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchMeetingid)">
@@ -561,7 +561,7 @@
                                    </if>
        WHERE RES_SEQ = #{resSeq}
    </update>
-    <update id="updateResCancel10MinLateEmpty">
+   <update id="updateResCancel10MinLateEmpty">
         UPDATE TB_SWCRESERVATION SET RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_6',
 								                              CANCEL_CODE = 'CANCEL_CODE_3',
 								                              CANCEL_REASON = '10분 이후 입실 없음'

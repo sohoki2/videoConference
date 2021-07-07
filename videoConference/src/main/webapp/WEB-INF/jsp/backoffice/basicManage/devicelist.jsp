@@ -286,7 +286,12 @@
     	        	$("#floorSeq").remove();
     	        	$("#partSeq").remove();
     	        	$("#centerId").val("");
-    				$("#meetingId").hide();		 
+    				$("#meetingId").hide();		
+
+					toggleDefault("useYn");
+					toggleDefault("deviceReload");
+					toggleDefault("deviceRestart");
+
       		    }else {
       		    	if($('#deviceId').val() != '') {
     					$(".popHead > h2").html("단말기 수정");
@@ -313,6 +318,10 @@
 	       						    }
     								$("#meetingId").show();
     								toggleClick("useYn", obj.use_yn);
+									toggleClick("deviceReload", obj.device_reload);
+									toggleClick("deviceRestart", obj.device_restart);
+
+									
     								
     								jqGridFunc.fn_meetingView(obj.meeting_id);
     								
@@ -368,6 +377,8 @@
 	   				centerId: $("#centerId").val(), 
 	   				floorSeq: $("#floorSeq").val(), 
 	   				partSeq:  fn_emptyReplace($("#partSeq").val(),"0"), 
+					deviceReload:  fn_emptyReplace($("deviceReload").val(),"N"), 
+					deviceRestart:  fn_emptyReplace($("deviceRestart").val(),"N"), 
 	   				meetingId: $("#meetingId").val()
 	   			};
 	   		   	uniAjax("/backoffice/basicManage/deviceInfoUpdate.do", params, 
@@ -461,11 +472,12 @@
 		                		<input class="nameB" type="text" name="searchKeyword" id="searchKeyword">  
 								<a href="javascript:search_form();"><span class="searchTableB"><spring:message code="button.inquire" /></span></a>
 		                	</td>
-		                	<td class="text-right">
-		                		   <a href="#" class="top_btn" onclick="jqGridFunc.fn_devicePop('Ins', '0');">단말기 등록</a>
-		                	</td>		                	
+		                	                	
 						</tr>
                     </table>
+                    <div class="text-right">
+                                   <a href="#" class="deepBtn" onclick="jqGridFunc.fn_devicePop('Ins', '0');">단말기 등록</a>
+                            </div>       
                     <br/>                
                 </section>
             </div>
@@ -478,7 +490,7 @@
                         
 	        </div>
 	    </div>
-	    
+	    </div>
          
 	<div id='device_pop' class="needpopup">
 				<div class="popHead">
@@ -561,12 +573,29 @@
 							<input id="deviceRemark" name="deviceRemark" type="text" class="input_noti">
 						</div>
 					</div>
-					
 					<div class="pop_box50">
 						<div class="padding15">
 							<p class="pop_tit">사용유무</p>
 							<label class="switch">                                               
 		                    	<input type="checkbox" id="useYn" onclick="toggleValue(this);" value="Y">
+			                    <span class="slider round"></span> 
+		                     </label>
+						</div>
+					</div>
+					<div class="pop_box50">
+						<div class="padding15">
+							<p class="pop_tit">화면 새로 고침</p>
+							<label class="switch">                                               
+		                    	<input type="checkbox" id="deviceReload" onclick="toggleValue(this);" value="Y">
+			                    <span class="slider round"></span> 
+		                     </label>
+						</div>
+					</div>
+					<div class="pop_box50">
+						<div class="padding15">
+							<p class="pop_tit">단말기 재시작</p>
+							<label class="switch">                                               
+		                    	<input type="checkbox" id="deviceRestart" onclick="toggleValue(this);" value="Y">
 			                    <span class="slider round"></span> 
 		                     </label>
 						</div>

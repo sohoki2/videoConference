@@ -656,7 +656,7 @@ function fn_comboListPost(_spField, _Field, _url, _params, _onChangeAction, _wid
 		    	$("#"+_spField).html("<select id='"+ _Field + "' name='"+ _Field + "'" + onChangeTxt+" style='width:" + _width + "'></select>");
 		        uniAjax(_url, _params, 
 		  			    function(result) {
-					       if (result.status == "LOGIN FAIL"){
+		  			       if (result.status == "LOGIN FAIL"){
 					    	   location.href="/backoffice/login.do";
 						   }else if (result.status == "SUCCESS"){
 							   //총 게시물 정리 하기

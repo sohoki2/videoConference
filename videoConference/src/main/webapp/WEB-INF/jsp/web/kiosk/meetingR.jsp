@@ -337,6 +337,12 @@
 			  							    	 $("#dv_time").html( obj[i].resstarttimet+"~"+ obj[i].resendtimet)
 			  							    	 $("#sp_userInfo").html(obj[i].attendlisttxt);
 			  							    	 $("#resSeq").val(obj[i].res_seq);
+			  							    	 
+			  							    	 if (obj[i].room_type === "SWC_GUBUN_3"){
+			  							    		 $("#a_btn_res").hide();
+			  							    	 }else {
+			  							    		 $("#a_btn_res").show();
+			  							    	 }
 			  							    	
 			  							    	 //인사 정보 확인
 			  							    	 var sHtml = "<ul>";

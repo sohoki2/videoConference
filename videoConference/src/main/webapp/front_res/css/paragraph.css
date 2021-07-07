@@ -9,6 +9,8 @@ html, body{font-size: 10px; background-color: #fafafa; }
 .w50 {width: 50% !important;}
 .w100 {width: 100% !important;}
 .whiteBack .scroll::-webkit-scrollbar {display: none !important;} 
+input[type=password] {font-family:'Malgun gothic', dotum, sans-serif;}
+
 /*login*/
 .login, .main_back{width: 100%;
   height: 100vh;
@@ -2114,6 +2116,7 @@ div#time_popup {
 }
 .page_num{width: 100%; font-size: 1.4rem; text-align: center; margin-top: 20px;}
 .page_num li{display: inline-block; margin:0 5px; cursor: pointer;}
+.page_num li a.active{display:inline-block; color: white;font-weight:600;width: 20px;height: 20px;border-radius: 20px;background-color: #007ac3;line-height: 20px;text-align: center;}
 .page_num li.active{color: white;font-weight:600;width: 20px;height: 20px;border-radius: 20px;background-color: #007ac3;line-height: 20px;text-align: center;}
 .notice tr td{cursor: pointer;}
 .my_T.noticeV tr td {
@@ -2458,4 +2461,58 @@ select.date_cor{height: 50px;}
 .timeBox .seat_fast {
     display: inline-block;
     margin-left: 5px;
+}
+span#res_swcName {display: inline-block;}
+
+.coron_pop li:nth-child(1) p.pop_text {
+    display: inline-block;
+}
+.coron_pop #resPerson {
+    width: 93%;
+}
+.coron_pop .date_cor {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.coron_pop #resStarttime, .coron_pop #resEndtime {
+    height: 50px !important;
+}
+.whiteBack .cor_text {
+    margin-top: 20px !important;
+    line-height: 30px;
+    border-top: 1px dashed #eeeeee;
+    width: 100%;
+    padding-top: 15px;
+}
+.error .logo {
+    position: relative;
+    background: url(/img/back_logo.png)no-repeat center top;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.error .logo img {
+    display: none;
+}
+
+.error {
+    width: 500px;
+    margin: 300px auto;
+    text-align: center;
+}
+
+.error section {
+    border-top: 1px dashed #eeeeee;
+    margin-top: 25px;
+    padding-top: 25px;
+}
+
+.error section h1 {
+    font-size: 27px;
+}
+
+.error section p {
+    font-size: 17px;
+    margin-top: 15px;
 }

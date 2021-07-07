@@ -37,6 +37,9 @@ public class DeviceInfo implements Serializable{
 	private String userId = "";
 	private String deviceTop = "";
 	private String deviceLeft = "";
+	//신규 추가
+	private String deviceReload = "";
+	private String deviceRestart = "";
 	
 	
 }

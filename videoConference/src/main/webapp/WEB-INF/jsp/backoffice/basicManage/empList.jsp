@@ -389,12 +389,13 @@
 								<input class="nameB" type="text" name="searchKeyword" id="searchKeyword" />      
 								 <a href="javascript:jqGridFunc.fn_search();"><span class="lightgrayBtn">조회</span></a>      
 		                	</td>
-		                	<td class="text-right">
-		                		<a href="#" onclick="jqGridFunc.fn_empInfo('Ins','0')"><span class="blueBtn">등록</span></a>
-								<a href="#" onclick="jqGridFunc.fn_avayaUpdate()"><span class="blueBtn">인사정보연동</span></a>
-		                	</td>
+		                	
 						</tr>
                     </table>
+                    <div class="text-right">
+                          <a href="#" onclick="jqGridFunc.fn_empInfo('Ins','0')"><span class="blueBtn">등록</span></a>
+                          <a href="#" onclick="jqGridFunc.fn_avayaUpdate()"><span class="lightgrayBtn">인사정보연동</span></a>
+                    </div>
                 
                     <br/>
                 

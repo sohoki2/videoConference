@@ -291,5 +291,13 @@ public class EmpInfoManageController {
 			}
 			return model;
 		}
+		@RequestMapping(value="IdCheck.do")
+		public ModelAndView selectUserMangerIDCheck(@RequestParam("empno") String empno) throws Exception {
+			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+			int IDCheck = uniService.selectIdDoubleCheck("EMPNO", "TB_EMPINFO", "EMPNO = ["+ empno + "[" );
+			String result =  (IDCheck> 0) ? Globals.STATUS_FAIL : Globals.STATUS_SUCCESS;
+			model.addObject(Globals.STATUS, result);
+			return model;
+		}
 		
 }

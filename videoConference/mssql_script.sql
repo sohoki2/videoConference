@@ -2933,6 +2933,27 @@ begin
 
 
 end 
+
+create function FN_RESSTATEINFO (@RES_SEQ int )
+returns varchar(100)
+begin
+   
+   declare @res_state varchar(100);
+   set  @res_state = ( 
+                       SELECT CONCAT( RES_TITLE, '|',
+							  CASE WHEN RES_STARTDAY > convert(varchar(8), getdate(), 112) THEN 'after'
+								   WHEN (RES_STARTDAY =  convert(varchar(8), getdate(), 112) AND  
+										REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','') <  RES_STARTTIME) THEN 'after'
+								   WHEN (RES_STARTDAY =  convert(varchar(8), getdate(), 112) AND  
+										REPLACE(SUBSTRING(CONVERT(VARCHAR(12), GETDATE(), 114), 1,5), ':','')  BETWEEN RES_STARTTIME AND RES_ENDTIME) THEN 'now' 
+								   ELSE 'before'
+								   END )
+					   FROM TB_SWCRESERVATION
+					   WHERE RES_SEQ = @RES_SEQ
+					   )
+   return @res_state
+end 
+
 GO
 USE [master]
 GO
