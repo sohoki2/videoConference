@@ -157,7 +157,7 @@ public class HolyworkInfoManageController {
 	}
 	@RequestMapping (value="holyDayDelete.do")
 	public ModelAndView deleteholyDayInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
-			                                 , @RequestParam("holeDay") String holeDay
+			                                 , @RequestParam("holyDay") String holyDay
 									         , HttpServletRequest request) throws Exception {
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
@@ -168,7 +168,7 @@ public class HolyworkInfoManageController {
 				return model;	
 	    }	
 		try{
-			  int ret = 	uniService.deleteUniStatement("", "TB_HOLYINFO", "HOLE_DAY="+holeDay);		      
+			  int ret = 	uniService.deleteUniStatement("", "TB_HOLYINFO", "HOLY_DAY=["+holyDay+"[");		      
 		      if (ret > 0 ) {		
 		    	  //층 삭제
 		    	  model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -193,16 +193,16 @@ public class HolyworkInfoManageController {
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		String meesage = null;
 		try{
-			 Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-			 if(!isAuthenticated) {
+			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			if(!isAuthenticated) {
 					model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
 					model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
 					return model;	
-		     }
-			 
+		    }
+			vo.setUserId(EgovUserDetailsHelper.getAuthenticatedUser().toString());
 			int ret  = holyDayService.updateHolyInfoManage(vo);
-			meesage = (vo.getMode().equals("Ins")) ? "sucess.common.insert" : "sucess.common.update";
-			if (ret >0){
+			if (!vo.getResult().equals("ERR")){
+				meesage = (vo.getResult().equals("INS")) ? "sucess.common.insert" : "sucess.common.update";
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage(meesage));
 						

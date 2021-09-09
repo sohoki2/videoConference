@@ -136,7 +136,7 @@
 	      				, #{equipmentId,  jdbcType=VARCHAR}
 	      				, #{equipmentName, jdbcType=VARCHAR}
 	      				, #{centerId}
-	      				, NOW()
+	      				, getdate()
 	      				, #{company ,jdbcType=VARCHAR}
 	      				, #{remark ,jdbcType=VARCHAR}
 	      				, #{useYn ,jdbcType=VARCHAR}
@@ -149,10 +149,10 @@
                                           , SWC_SEQ = #{swcSeq}
                                           , USER_ID = #{userId}
                                           <if test="equpIndate !=  '' ">
-                                          , EQUP_INDATE = now()
+                                          , EQUP_INDATE = getdate()
                                           </if>
                                           <if test="equpOtdate !=  '' ">  
-                                          , EQUP_OTDATE = now()
+                                          , EQUP_OTDATE = getdate()
                                           </if>
                                            <if test="equipSerial !=  '' ">  
                                           , EQUIP_SERIAL = #{equipSerial,jdbcType=VARCHAR}

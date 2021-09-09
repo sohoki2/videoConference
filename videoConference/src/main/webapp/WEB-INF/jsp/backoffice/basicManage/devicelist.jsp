@@ -287,6 +287,13 @@
     	        	$("#partSeq").remove();
     	        	$("#centerId").val("");
     				$("#meetingId").hide();		
+    				
+    				$("#deviceOs").val("");
+    				$("#deviceStartTime1").val("");
+    				$("#deviceStartTime2").val("");
+    				$("#deviceEndTime1").val("");
+    				$("#deviceEndTime2").val("");
+    				
 
 					toggleDefault("useYn");
 					toggleDefault("deviceReload");
@@ -470,7 +477,7 @@
                                     <option value="deviceId">단말기ID</option>
                                 </select>
 		                		<input class="nameB" type="text" name="searchKeyword" id="searchKeyword">  
-								<a href="javascript:search_form();"><span class="searchTableB"><spring:message code="button.inquire" /></span></a>
+								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB"><spring:message code="button.inquire" /></span></a>
 		                	</td>
 		                	                	
 						</tr>

@@ -16,21 +16,21 @@
 					WHERE a.AUTHOR_CODE = c.AUTHOR_CODE
 				          <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 								<choose>
-									<when test=" params.searchKeyword == 'all'">
+									<when test="params.searchCondition == 'ALL'">
 										<![CDATA[						
-										   and (    ADMIN_ID LIKE CONCAT('%',#{searchKeyword},'%')  OR  ADMIN_NAME LIKE CONCAT('%',#{searchKeyword},'%')  )
+										   and (    ADMIN_ID LIKE CONCAT('%',#{params.searchKeyword},'%')  OR  ADMIN_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')  )
 										 ]]> 	
 									</when>
 									<otherwise>
 										<choose>
-											<when test=" params.searchKeyword == 'ADMIN_ID'">
+											<when test="params.searchCondition == 'ADMIN_ID'">
 												<![CDATA[		
-												  AND  ADMIN_ID LIKE CONCAT('%',#{searchKeyword},'%') 
+												  AND  ADMIN_ID LIKE CONCAT('%',#{params.searchKeyword},'%') 
 												]]> 	
 											</when>
 											<otherwise>
 												<![CDATA[		
-												AND ADMIN_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+												AND ADMIN_NAME LIKE CONCAT('%',#{params.searchKeyword},'%')
 												]]> 	
 											</otherwise>
 										</choose>

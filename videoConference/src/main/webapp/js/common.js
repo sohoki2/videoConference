@@ -805,17 +805,30 @@ function fn_userSearch(){
 		   						   var obj = result.resultlist;
 		   						   if (obj.length > 0){
 		   						      var html = "";
-		   						      for (var i in obj){
-		   						          
-	   						              html  = "<tr onClick='fn_useChoice(\""+$("#searchUserGubun").val()+"\", \""+ obj[i].empno +"\", \""+ obj[i].empname +"\")'>"
-	   						                    + "   <td>" + obj[i].com_name + "</td>"
-	   						                    + "   <td>" + obj[i].empno + "</td>"
-	   						                    + "   <td>" + obj[i].empname + "</td>"
-	   						                    + "   <td>" + obj[i].emptelphone + "</td>"
-	   						                    + " </tr>";		   						          
-		   						          $("#tb_userInfo > tbody").append(html);
-		   						          html = "";
-		   						      }
+									  if ($("#searchUserGubun").val() === "G"){
+										  for (var i in obj){		   						          
+											  html  = "<tr onClick='fn_useChoice(\""+$("#searchUserGubun").val()+"\", \""+ obj[i].empno +"\", \""+ obj[i].empname +"\")'>"
+													+ "   <td>" + obj[i].com_name + "</td>"
+													+ "   <td>" + obj[i].empno + "</td>"
+													+ "   <td>" + obj[i].empname + "</td>"
+													+ "   <td>" + obj[i].emptelphone + "</td>"
+													+ " </tr>";		   						          
+											  $("#tb_userInfo > tbody").append(html);
+											  html = "";
+										  }
+									  }else {
+										  for (var i in obj){		   						          
+											  html  = "<tr onClick='fn_useChoice(\""+$("#searchUserGubun").val()+"\", \""+ obj[i].user_no +"\", \""+ obj[i].user_name +"\")'>"
+													+ "   <td>" + obj[i].com_name + "</td>"
+													+ "   <td>" + obj[i].user_no + "</td>"
+													+ "   <td>" + obj[i].user_name + "</td>"
+													+ "   <td>" + obj[i].user_cellphone + "</td>"
+													+ " </tr>";		   						          
+											  $("#tb_userInfo > tbody").append(html);
+											  html = "";
+										  }
+									  }
+		   						      
 		   						   }else{
 		   						     alert("검색한 내용이 없습니다");
 		   						   }
@@ -1247,7 +1260,6 @@ var regex = /^(\d{2,4}[-\/:]\d{2}.\d{2}|\d{8}|\d{6})/g;
 // regex true than variable capture
 var regex2 = /^(?:(\d{4})(\d{2})(\d{2}))|^(?:(\d{2})(\d{2})(\d{2}))/g;
   input = input.replace(/\D/g, '');
-  var formatLength = $.isEmptyObject(format) ? 0 : format.replace(/[^yMd]/g, '').length;
   if (regex.test(input))
   {
    var transfer = '';

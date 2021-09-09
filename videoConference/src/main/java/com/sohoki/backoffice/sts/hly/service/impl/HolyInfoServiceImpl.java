@@ -30,11 +30,11 @@ public class HolyInfoServiceImpl extends EgovAbstractServiceImpl implements Holy
 		// TODO Auto-generated method stub
 		return holyMapper.selectHolyInfoManageView(holyDay);
 	}
-
+    //수정 하기 
 	@Override
 	public int updateHolyInfoManage(HolyInfo vo) throws Exception {
 		// TODO Auto-generated method stub
-		return vo.getMode().equals("Ins") ? holyMapper.insertHolyInfoManage(vo) : holyMapper.updateHolyInfoManage(vo);
+		return holyMapper.insertHolyInfoManage(vo);
 	}
 	
 	

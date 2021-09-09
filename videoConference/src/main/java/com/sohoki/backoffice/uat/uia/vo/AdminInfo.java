@@ -25,6 +25,4 @@ public class AdminInfo implements Serializable {
 	private String empjikw = "";
 	private String empjkwcode = "";
 
-	
-	
 }

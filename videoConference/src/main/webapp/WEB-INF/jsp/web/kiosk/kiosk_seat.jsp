@@ -275,7 +275,15 @@
 		$("#kioskGubun").val("SEAT");
 		res.fn_rightBtn($("#kioskGubun").val());
 		res.fn_loginForm("LOGOUT");
+		
 	});
+	function fn_nowTime(){
+		let today = new Date();   
+		let hours =  stringLength( today.getHours(), "2", "0"); // 시
+		let minutes = stringLength( today.getMinutes(), "2", "0");  // 분
+		return hours +""+minutes;
+		
+	}
 	function fn_seatTime(){
 		var url = "/web/kioskSeatInfoTime.do";
 		params = {'floorSeq' : $("#floorSeq").val()};
@@ -299,7 +307,7 @@
 					}    		
 		);
 		// 60초 후 정리 하기 
-		window.setTimeout("meetingR.meetingInfo()", 60000);
+		window.setTimeout("res.fn_floorInfo()", 60000);
 	}
 	
     var res = {
@@ -307,6 +315,7 @@
 			    var url = "/backoffice/resManage/seatStateInfo.do";
 				var params = {"swcResday" : $("#searchResStartday").val().replaceAll("-",""), 
 	  					      "floorSeq" : $("#floorSeq").val(), 
+	  					       "seatUseyn" : "Y", 
 	  					      "resStarttime" : $("#resStarttimeKiosk").val(), 
 	  					      "resEndtime" : $("#resEndtimeKiosk").val()
 	  					      };
@@ -554,10 +563,14 @@
 			   	 uniAjax("/web/resReservertionKioskUpdate.do", params, 
 			  			function(result) {
 							       if (result.status == "SUCCESS"){
+
+							   		
+							    	    $("#resStarttimeKiosk").val(fn_nowTime());
+							    	    $("#resEndtimeKiosk").val("1730");
+							    	    res.fn_empInput();
 							    	    res.fn_floorInfo();
 							    	    res.fn_hideMessage(result.message, "checkIn");
-							    	    //
-										res.fn_empInput();
+							    	    
 								   }else {
 									    res.fn_hideMessage(result.message, "checkIn");
 								   }
@@ -669,10 +682,8 @@
 			  										var classInfo = "";
 			  										//색갈 넣기 및 예약자 클릭 관련 내용 넣기 \
 			  										if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
-														console.log("<td>");
-			  											setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
+														setHtml += "<td id='"+timeInfo.time_seq+"' class='none'></td>";
 			  										}else if ((timeInfo.res_seq == "0" || timeInfo.res_seq == "-1")  &&  rowResseq != "0"){
-														console.log("rowCol:" + rowCol + ":" + resTitle);
 														var resInfo = resTitle.split("|");
 														setHtml += "<td colspan='"+rowCol+"'><div class='"+resInfo[1]+"'>"+resInfo[0]+"</div></td>";
 														rowResseq = timeInfo.res_seq;
@@ -694,12 +705,9 @@
 															resTitle = timeInfo.res_info;
                                                             rowCol = parseInt(rowCol)+1;
 														}
-			  											//setHtml += "<td class='waiting'></td>";
 			  										}else if  (timeInfo.res_seq == "0" && timeInfo.apprival == "N"){
-														//console.log("N");
-			  											setHtml += "<td></td>";
+														setHtml += "<td></td>";
 			  										}
-													//console.log(timeInfo.res_seq);
 			  									}
 											}
 											//centerId 값 넣기 

@@ -329,7 +329,7 @@
 								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
-		                		<a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a>
+		                		<!-- <a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a> -->
 		                	</td>
 						</tr>
                     </table>

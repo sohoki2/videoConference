@@ -512,7 +512,7 @@
 	            	   return '<a href="javascript:boardinfo.delRow(&#34;'+rowObject.board_seq+'&#34;);">삭제</a>';
 	         }, delRow : function (board_seq){
 	        	 if(board_seq != "") {
-	          		 var params = {'board_seq':board_seq };
+	          		 var params = {'boardSeq':board_seq };
 	          		 fn_uniDelAction("/backoffice/boardManage/boardDelete.do",params, "boardinfo.fn_search");
 	        	 }
 	    	 }, fn_boardFormCk : function (){

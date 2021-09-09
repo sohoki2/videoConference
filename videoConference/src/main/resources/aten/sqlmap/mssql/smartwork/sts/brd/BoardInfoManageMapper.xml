@@ -50,21 +50,21 @@
 						            </if>      		        
 							        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 							        	<choose>
-							        		<when test="params.searchCondition == all">
+							        		<when test="params.searchCondition == 'all'">
 							        			<![CDATA[
 									             AND (	BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%')  or BOARD_CONTENT LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') )
 												]]> 
 							        		</when>
 							        		<otherwise>
 							        			<choose>
-													<when test="params.searchCondition == boardTitle">
+													<when test="params.searchCondition == 'boardTitle'">
 													<![CDATA[
 									                AND BOARD_TITLE LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
 													]]> 
 													</when>
 													<otherwise>
 													<![CDATA[
-												    AND	BOARD_CONTENT CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
+												    AND	BOARD_CONTENT LIKE CONCAT('%',#{params.searchKeyword, jdbcType=VARCHAR},'%') 
 													]]> 
 												  </otherwise>
 									            </choose>

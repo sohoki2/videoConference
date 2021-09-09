@@ -16,5 +16,6 @@ public class HolyInfo {
 	private String updateId = "";
 	private String userId = "";
 	private String mode = "";
-	
+	//신규
+	private String result = "";
 }

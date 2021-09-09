@@ -156,7 +156,8 @@
     	            },onCellSelect : function (rowid, index, contents, action){
     	            	var cm = $(this).jqGrid('getGridParam', 'colModel');
     	                if (cm[index].name=='center_img'){
-    	                	$("#centerId").val( $(this).jqGrid('getCell', rowid, 'center_id'));
+    	                	$("#centerId").val($(this).jqGrid('getCell', rowid, 'center_id'));
+    	                	if ($("#centerId").val() != "")
     	                	$("form[name=regist]").attr("action", "/backoffice/basicManage/centerView.do").submit();
     	                	
             		    }

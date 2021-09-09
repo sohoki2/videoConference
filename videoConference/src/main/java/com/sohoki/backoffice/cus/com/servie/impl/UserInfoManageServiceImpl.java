@@ -1,5 +1,6 @@
 package com.sohoki.backoffice.cus.com.servie.impl;
 
+import java.lang.System.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,8 +58,10 @@ public class UserInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		//일반 사용자 일때
 		if (vo.getComCode().equals("C_00000004") )
 			vo.setUserNo(vo.getUserId());
-		if (vo.getUserPassword().equals("") )
+		if (vo.getUserPassword().equals("") && vo.getMode().equals("Ins") )
 			vo.setUserPassword("sto3877#*&&"); 
+		
+		
 		return vo.getMode().equals("Ins") ?  userMapper.insertUserInfoManage(vo) :  userMapper.updateUserInfoManage(vo);
 		//return 0;
 	}

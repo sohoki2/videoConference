@@ -60,6 +60,9 @@
 								 AND a.SWC_TIME BETWEEN  #{params.resStarttime} AND #{params.resEndtime}
 								 AND FLOOR_SEQ  = #{params.floorSeq}
 								 AND SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY AND HOLY_USEYN ='Y')
+								 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.seatUseyn)">
+								 AND b.SEAT_USEYN = #{params.seatUseyn}
+								 </if>
 						   GROUP by b.SEAT_ID, b.SEAT_TOP, b.SEAT_LEFT, b.SEAT_NAME, b.SEAT_GUBUN, b.SEAT_CONFIRMGUBUN, a.RES_SEQ, b.RES_REQDAY
 				     )S
 				     GROUP BY S.SEAT_ID, S.SEAT_TOP, S.SEAT_LEFT, S.SEAT_NAME, S.SEAT_GUBUN, S.SEAT_CONFIRMGUBUN, S.RESCNT, S.RES_REQDAY
@@ -90,6 +93,9 @@
 		     FROM TB_SEATINFO a 
 		     WHERE SEAT_GUBUN = 'SEAT_GUBUN_1'
 		           AND FLOOR_SEQ  = #{params.floorSeq}
+		           <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.seatUseyn)">
+					   AND SEAT_USEYN = #{params.seatUseyn}
+				   </if>
         ) X
         ORDER BY X.SEAT_NAME ASC  
 
@@ -141,8 +147,8 @@
          SELECT ISNULL(COUNT(*),0) AS CNT
 		 FROM TB_SWCRESERVATION
 		 WHERE RES_STARTDAY = #{params.timeStartDay} 
-		       AND RES_STARTTIME BETWEEN  #{params.strTime} AND  dbo.FN_UPSTIMEDOWN(#{params.endTime})  
-			   AND RES_ENDTIME BETWEEN  #{params.strTime} AND dbo.FN_UPSTIMEDOWN(#{params.endTime} ) 
+		       AND ( RES_STARTTIME BETWEEN  #{params.strTime} AND  dbo.FN_UPSTIMEDOWN(#{params.endTime})  
+			         OR RES_ENDTIME BETWEEN  #{params.strTime} AND dbo.FN_UPSTIMEDOWN(#{params.endTime} ) )
 			   AND USER_ID = #{params.userId} 
 			   AND ITEM_GUBUN = 'ITEM_GUBUN_2'
 			   AND RESERV_PROCESS_GUBUN in ('PROCESS_GUBUN_1',  'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')  

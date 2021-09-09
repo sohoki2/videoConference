@@ -17,6 +17,8 @@ public interface ResInfoManageMapper {
     public List<Map<String, Object>> selectResManageListByPagination(@Param("params") Map<String, Object> params);
     
     public List<Map<String, Object>> selectIndexList(@Param("params") Map<String, Object> params );
+    // 회의실 예약 배치 파일 
+    public List<Map<String, Object>> selectMessageInfoList(String searchDay );
     //당일 일반 좌석 예약 현황
     public Map<String, Object> selectTodayResSeatInfo(String empNo);
     

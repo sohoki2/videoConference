@@ -203,7 +203,7 @@ public class BoardInfoManageController {
 		@NoLogging
 		@RequestMapping (value="boardDelete.do")
 		public ModelAndView deleteBoardInfoManage(@ModelAttribute("loginVO") AdminLoginVO loginVO
-				                            , @RequestParam("boardSeq") String boardSeq)throws Exception{
+				                                 , @RequestParam("boardSeq") String boardSeq)throws Exception{
 			
 			ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 			String returnMessage = "F";

@@ -28,12 +28,19 @@
     <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
+    <script>
+     function enterkey() {
+		if (window.event.keyCode == 13) {
+		     login();
+        }
+     }
+	</script>
 </head>
 <body>
-    <form name="regist" method="post" action="/web/LoginProcess.do" autocomplete="off">
+    <form name="regist" method="post" autocomplete="off">
     
     <div class="login">
-            <div class="log_b">
+            <div class="log_b" style="height:auto">
                 <h1><img src="/front_res/img/logo.png"></h1>
                 <p>LOGIN</p>
                 <span>SIGN IN TO CONTINUE</span>
@@ -41,7 +48,7 @@
                 <div class="login_reser_b">
                     <div class="login_reser_box">
                         <p class="reser_b_tit">아이디</p>                
-                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요.">
+                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요." onkeypress="enterkey();">
                     </div>
                     
                 </div>
@@ -57,13 +64,13 @@
 
 <script>  
     function login(){
-    	if (any_empt_line_span("user_id", "아이디를 입력해주세요.") == false) return;	
-    	var params = {"userId": $("#user_id").val(), "userPassword": $("#user_password").val(), "mode": "emp"};
+    	if (any_empt_line_span("user_id", "아이디를 입력해주세요.") == false) return;
+		var params = {"userId": $("#user_id").val(), "mode": "emp"};
     	var url = "/web/LoginProcess.do";
     	uniAjax(url, params, 
 	     			function(result) {
-				       if (result.status == "SUCCESS"){
-				    	    location.href="/web/index.do";
+    		           if (result.status == "SUCCESS"){
+						   location.href="/web/index.do";
   					   }else {
   						  $("#sp_message").html(result.message);
   						  $("#btn_result").trigger("click");

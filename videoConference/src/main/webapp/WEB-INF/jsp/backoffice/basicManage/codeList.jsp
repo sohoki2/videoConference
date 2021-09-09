@@ -223,9 +223,9 @@
         	if ($("#"+input_id).val() != ""){
         		uniAjaxSerial(url, param, 
 	        			    function(result) {	
-        			           if (result != null) {	       					
-									if (result.status == "SUCCESS"){
-										if (result.result = "OK"){
+        			           if (result != null) {	       	
+        			        	   if (result.status == "SUCCESS"){
+        			        		    if (result.result == "OK"){
 											alert('<spring:message code="common.codeOk.msg" />');
 											$("#"+idCheck_Nm).val("Y");	
 										}else {

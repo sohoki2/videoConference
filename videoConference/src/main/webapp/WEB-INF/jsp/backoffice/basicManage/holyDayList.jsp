@@ -69,7 +69,8 @@
 		yearRange: '1970:2030' //1990년부터 2020년까지
         };	       
         $("#searchStartDay").datepicker(clareCalendar);
-        $("#searchEndDay").datepicker(clareCalendar);        
+        $("#searchEndDay").datepicker(clareCalendar);
+        $("#holyDay").datepicker(clareCalendar);
         $("img.ui-datepicker-trigger").attr("style", "margin-left:3px; vertical-align:middle; cursor:pointer;"); //이미지버튼 style적용
 	    $("#ui-datepicker-div").hide(); //자동으로 생성되는 div객체 숨김
 		   jqGridFunc.setGrid("mainGrid");
@@ -123,7 +124,7 @@
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert(error); 
     		        }, onPaging: function(pgButton){
@@ -182,15 +183,16 @@
     	            }
     		    });
     		},rowBtn: function (cellvalue, options, rowObject){
-            	 if (rowObject.msg_seq != "")
-            	    	return '<a href="javascript:jqGridFunc.delRow('+rowObject.msg_seq+');">삭제</a>';
+            	 if (rowObject.holy_day != "")
+            	     return '<a href="javascript:jqGridFunc.delRow('+rowObject.holy_day+');">삭제</a>';
            },refreshGrid : function(){
 	        	$('#mainGrid').jqGrid().trigger("reloadGrid");
 	       },delRow : function (holyDay){
         	    if(holyDay != "") {
-        		   var params = {'holyDay':holyDay };
-        		   fn_uniDelAction("/backoffice/holyDayDelete/holyDayDelete.do",params, "jqGridFunc.fn_search");
-		        }
+        	       var params = {'holyDay':holyDay};
+        		   fn_uniDelAction("/backoffice/basicManage/holyDayDelete.do", params, "jqGridFunc.fn_search");
+        		   $("#searchKeyword").val("")
+        		}
            },fn_HolyInfo : function (mode, holyDay){
         	    $("#btn_message").trigger("click");
         	    $("#mode").val(mode);
@@ -285,7 +287,7 @@
             </div>
 
             <div class="Swrap Asearch">
-                <div class="Atitle">총 <span id="sp_totcnt" /> 휴일수 </div>
+                <div class="Atitle">총 <span id="sp_totcnt"></span>휴일수</div>
                 <section class="Bclear">
                    
                 	<table class="pop_table searchThStyle">

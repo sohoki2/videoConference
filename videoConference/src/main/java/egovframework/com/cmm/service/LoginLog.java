@@ -23,6 +23,7 @@ public class LoginLog  implements Serializable {
 	private int recordCountPerPage = 10;
 	private String searchCondition = "";
 	private String searchKeyword = "";
+	private String loginMthd = "";
 	 
 	
 	

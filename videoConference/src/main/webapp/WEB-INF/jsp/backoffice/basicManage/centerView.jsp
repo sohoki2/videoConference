@@ -609,13 +609,13 @@
 	     		    var floorMap = (rowObject.floor_map == "no_image.gif" || rowObject.floor_map == undefined ) ? "/img/no_image.gif": "/upload/"+ rowObject.floor_map;
 	     		    return '<img src="' + floorMap + ' " style="width:100px">';
 	     	   },rowBtn: function (cellvalue, options, rowObject){
-	                if (rowObject.com_code != "")
-	            	   return '<a href="javascript:jqGridFunc.delRow(&#34;'+rowObject.com_code+'&#34;);">삭제</a>';
+	                if (rowObject.floor_seq != "")
+	            	   return '<a href="javascript:jqGridFunc.delRow(&#34;'+rowObject.floor_seq+'&#34;);">삭제</a>';
 	           }, refreshGrid : function(){
 		        	$('#mainGrid').jqGrid().trigger("reloadGrid");
-		       }, delRow : function (com_code){
-	        	    if(com_code != "") {
-	        		   var params = {'comCode':com_code };
+		       }, delRow : function (floor_seq){
+	        	    if(floor_seq != "") {
+	        		   var params = {'floorSeq':floor_seq };
 	        		   fn_uniDelAction("/backoffice/basicManage/floorDelete.do",params, "jqGridFunc.fn_search");
 			        }
 	           },clearGrid : function() {

@@ -22,6 +22,7 @@
         <property name="username" value="${Globals.UserName}"/>
         <property name="password" value="${Globals.Password}"/>
         <property name="validationQuery" value="select 1"/>
+        <property name="maxActive" value="100"></property>
         <property name="testWhileIdle" value="true"/>
         <property name="timeBetweenEvictionRunsMillis" value="7200000"/>
     </bean>

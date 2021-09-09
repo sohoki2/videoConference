@@ -12,6 +12,8 @@ public interface EmpInfoManageService {
 
 	List<Map<String, Object>> selectEmpInfoList(Map<String, Object> params)  throws Exception;
 	
+	List<Map<String, Object>> selectEmpInfoCombo(Map<String, Object> params)  throws Exception;
+	
 	EmpInfoVO selectEmpInfoLogin(Map<String, Object> params) throws Exception;
 	
 	List<Map<String, Object>> selectMeetinngUserList(List empNoList)throws Exception;

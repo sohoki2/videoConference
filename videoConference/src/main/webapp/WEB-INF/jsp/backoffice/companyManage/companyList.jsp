@@ -104,7 +104,7 @@
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">크레딧 등록</a>
-		                		<a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a>
+		                		<!-- <a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a> -->
 		                		
 		                		
 		                	</td>

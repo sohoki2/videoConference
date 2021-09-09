@@ -2,6 +2,8 @@ package com.sohoki.smartoffice.homepage.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -19,6 +22,9 @@ import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sohoki.backoffice.cus.com.servie.CompanyInfoManageService;
@@ -137,12 +144,12 @@ public class frontResInfoManageController {
                                     , HttpServletRequest request
 			    		            , HttpSession session
 			    	                , BindingResult bindingResult) throws Exception {
-		
+		//로그인 수정 
 		ModelAndView mav = new ModelAndView();
     	
-    	String empno = (String) request.getSession().getAttribute("empno");
-		LOGGER.debug("-----------------------------------------------------------------");
-    	if(empno != null){
+		EmpInfoVO result =  (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+		LOGGER.debug("-----------------------------------------------------------------" +result );
+    	if(result != null){
     		mav.setViewName("/web/index");
     	}else{
     		mav.setViewName("/web/login_emp");
@@ -150,6 +157,7 @@ public class frontResInfoManageController {
     	return mav;	
     }
 	//사용자 로그인 프로세스
+	@NoLogging
 	@RequestMapping(value="LoginProcess.do")
 	public ModelAndView actionUniCheck(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
 			                           , @RequestBody Map<String, Object> params 
@@ -160,18 +168,52 @@ public class frontResInfoManageController {
 			//session은 EmpInfoVO 설정 
 			String userIp = EgovClntInfo.getClntIP(request);
 			LOGGER.debug("mode"+ params.get("mode") + ":" + params.get("userId"));
-			EmpInfoVO resultVO =  params.get("mode").equals("emp") ? empService.selectEmpInfoDetailNo( util.NVL(  params.get("userId").toString(), "")) : empService.selectEmpInfoLogin(params);
+			EmpInfoVO resultVO =  util.NVL(params.get("mode"),"").equals("emp") ? empService.selectEmpInfoDetailNo( util.NVL(  params.get("userId").toString(), "")) : empService.selectEmpInfoLogin(params);
     		if (resultVO != null && resultVO.getEmpno() != null ) {
+    			
+    			
+    			request.getSession().setAttribute("empInfoVO", resultVO);
+    			//spring securite 
+    			UsernamePasswordAuthenticationFilter springSecurity = null;
+            	ApplicationContext act = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
+            	Map<String, UsernamePasswordAuthenticationFilter> beans = act.getBeansOfType(UsernamePasswordAuthenticationFilter.class);
+            	
 
-	        	request.getSession().setAttribute("empInfoVO", resultVO);
-	        	mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+            	if (beans.size() > 0) {
+            		springSecurity = (UsernamePasswordAuthenticationFilter)beans.values().toArray()[0];
+            		springSecurity.setUsernameParameter("egov_security_username");
+            		springSecurity.setPasswordParameter("egov_security_password");
+            		springSecurity.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(request.getServletContext().getContextPath() +"/login", "POST"));
+            	} else {
+            		throw new IllegalStateException("No AuthenticationProcessingFilter");
+            	}
+            	springSecurity.setContinueChainBeforeSuccessfulAuthentication(false);	// false 이면 chain 처리 되지 않음.. (filter가 아닌 경우 false로...)
+            	
+            	
+            	
+                //여기 부분 다시 확인 필요
+            	//springSecurity.doFilter(new RequestWrapperForSecurity(request, resultVO.getEmpname() + resultVO.getEmpno() , resultVO.getEmpno()), response, null);
+            	/*
+            	Authentication authentication = new UsernamePasswordAuthenticationToken(resultVO.get .getAdminId(), "USER_PASSWORD");   
+            	SecurityContext securityContext = SecurityContextHolder.getContext();
+                securityContext.setAuthentication(authentication);
+                HttpSession session = request.getSession(true);
+                
+                */
+            	
+            	
+                mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+                
+               
+    			
+	        	
 	        } else {
-	        	LOGGER.debug("로그인 실패");
+	        	LOGGER.debug("로그인 실패  not id/pwd");
 	        	mav.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);	
 	        	mav.addObject(Globals.STATUS_MESSAGE, "가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.");
  	        }
 		}catch(Exception e) {
-			LOGGER.debug("로그인 실패");
+			LOGGER.debug("로그인 실패 error");
 			mav.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			mav.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
 		}
@@ -193,7 +235,6 @@ public class frontResInfoManageController {
     		if (resultVO != null && resultVO.getEmpno() != null ) {
 
 	        	request.getSession().setAttribute("empInfoVO", resultVO);
-	        	//mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 	        	mav.setViewName("redirect:/web/index.do");
 	        } else {
 	        	mav.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -229,14 +270,26 @@ public class frontResInfoManageController {
 				vo.setComCode("C_00000004");
 				vo.setUserState("USER_STATE_1");
 			}
-			int ret = userService.updateUserInfoManage(vo);
-			String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다 회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
-			if (ret >0){
-				model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
-				model.addObject(Globals.STATUS_MESSAGE, message);
-			}else {
-				throw new Exception();
-			}
+			
+			LOGGER.debug("CI:" + vo.getCi());
+			
+			int result = vo.getMode().equals("Ins") ? uniService.selectIdDoubleCheck("CI", "TB_USERINFO", "CI=["+vo.getCi()+"[") : 0;
+		    if (result > 0) {
+		    	model.addObject(Globals.STATUS  , Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, "이미 가입된 회원 입니다.");
+		    }else {
+		    	int ret = userService.updateUserInfoManage(vo);
+				String message = (vo.getMode().equals("Ins")) ? " 서울관광플라자에 오신걸 환영합니다 회원가입을 완료 하였습니다" : "회원 정보가 수정 되었습니다";
+				if (ret >0){
+					model.addObject(Globals.STATUS  , Globals.STATUS_SUCCESS);
+					model.addObject(Globals.STATUS_MESSAGE, message);
+				}else {
+					throw new Exception();
+				}
+		    }
+					
+			
+			
 		}catch(Exception e) {
 			LOGGER.debug("actionJoinProcess error:"  + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -447,7 +500,6 @@ public class frontResInfoManageController {
 		return model;		
 	}
 	//회의실 예약 부터 시작
-	
 	@RequestMapping(value="meetingDay.do")	
 	public ModelAndView webMeetingInfo(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
 			                           , @ModelAttribute("ResInfoVO") ResInfoVO searchVO
@@ -720,10 +772,7 @@ public class frontResInfoManageController {
 			}
 			//사용자 정버 넣기 
 			// 테스트로 해서 사용자 정보 넣기 
-			
 			searchVO.setUserId( user.getEmpno() );
-			LOGGER.debug("------------------------------------------------------------------" + user.getAuthorCode());
-			LOGGER.debug("------------------------------------------------------------------" + user.getEmpno());
 			//크레딧 정보 사용 여부 확인 
 			if (user.getAuthorCode().equals("ROLE_USER")) {
 				String tennInfo = util.NVL(resService.selectTennInfo(searchVO), "");
@@ -731,7 +780,6 @@ public class frontResInfoManageController {
 					String tennInfosp[] =  tennInfo.split("\\|");
 					//추후 변경 예정
 					if (Integer.valueOf(tennInfosp[0]) > Integer.valueOf(tennInfosp[1])) {
-						
 						searchVO.setTennCnt(tennInfosp[1]);
 					}else {
 						model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
@@ -834,7 +882,7 @@ public class frontResInfoManageController {
 				ret =   timeService.selectResSeatPreCheckInfo(timeinfo);
 				if (ret > 0) {
 					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-					model.addObject(Globals.STATUS_MESSAGE, "동일 시간때 다른데 예야된 좌석이 있습니다.");	
+					model.addObject(Globals.STATUS_MESSAGE, "예약 하실려는 시간때  다른 좌석에 예약된 정보가 있습니다.");	
 					return model;
 				}
 				
@@ -1606,23 +1654,19 @@ public class frontResInfoManageController {
 		try{
 			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
 		  
-		  	if (empInfoVO.getEmpno() ==  null) {
-				model.addObject(Globals.STATUS_MESSAGE, "세션이 만료 되었습니다.");
- 	    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
- 	    		return model;	
-		  	}else {
-		  		//
-		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  	if (empInfoVO !=  null) {
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_USERINFO, empService.selectEmpInfoDetailNo(empInfoVO.getEmpno()));
 				model.addObject(Globals.STATUS_REGINFO, meetingService.selectMeetingRoomDetailInfoManage(meetingId));
+		  	}else {
+		  		//
+		  		model.addObject(Globals.STATUS_MESSAGE, "세션이 만료 되었습니다.");
+ 	    		model.addObject(Globals.STATUS,  Globals.STATUS_LOGINFAIL);
 		  	}
-			
-			//신규 수정 
-			
 		}catch(Exception e){
 			LOGGER.error("selectResInfo ERROR:" + e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);	
-			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.request"));
+			model.addObject(Globals.STATUS_MESSAGE, "사용자 애러 발생" + e.toString());
 		}
 		return model;
 		
@@ -1660,6 +1704,7 @@ public class frontResInfoManageController {
 			
 			resSearch.put("meetingId", meetingId);
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			resSearch.put("searchKisok", "koisk");
 			List<Map<String, Object>> resInfos =  resService.selectIndexList(resSearch);
 			model.addObject(Globals.JSON_RETURN_RESULTLISR , resInfos);
 			//
@@ -1923,8 +1968,6 @@ public class frontResInfoManageController {
 			  	reginfo.put("centerId", params.get("centerId").toString());
 			  	
 			  	
-			  	reginfo.put("searchResStartday", EgovDateUtil.convertDate(searchDay,"0000", "yyyy-MM-dd"));
-			  	
 			  	String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
 			  	reginfo.put("nowDate", nowDate);
 			  	reginfo.put("endDate", "1730");
@@ -2064,5 +2107,116 @@ public class frontResInfoManageController {
 	
 		
 	}
+	@NoLogging
+	@RequestMapping(value="Ready.do")
+	public ModelAndView joinReady( ) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/uas/Ready");	
+		try {
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			
+	       
+			HttpURLConnection aHttpURLConnection = null;
+	        URL aURL = new URL( "https://uas.teledit.com/uas/" );
+			aHttpURLConnection = (HttpURLConnection) aURL.openConnection();
+	        int responseCode = aHttpURLConnection.getResponseCode();
+			
+	        LOGGER.debug("responseCode:" + responseCode);
+			
+		}catch(Exception e) {
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	@NoLogging
+	@RequestMapping(value="BackURL.do")
+	public ModelAndView joinBackURL( ) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/uas/BackURL");	
+		try {
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	@NoLogging
+	@RequestMapping(value="CPCGI.do")
+	public ModelAndView joinCPCGI( ) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/uas/CPCGI");	
+		try {
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	@RequestMapping(value="Success.do")
+	public ModelAndView joinSuccess( ) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/uas/Success");	
+		try {
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
+	@RequestMapping(value="Error.do")
+	public ModelAndView joinError( ) throws Exception {
+		
+		ModelAndView model = new ModelAndView("/uas/Error");	
+		try {
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e) {
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+		}
+		return model;
+	}
 	
+	
+}
+class RequestWrapperForSecurity extends HttpServletRequestWrapper {
+	private String username = null;
+	private String password = null;
+
+	public RequestWrapperForSecurity(HttpServletRequest request, String username, String password) {
+		super(request);
+
+		this.username = username;
+		this.password = password;
+	}
+	
+	@Override
+	public String getServletPath() {		
+		return ((HttpServletRequest) super.getRequest()).getContextPath() + "/Login";
+	}
+
+	@Override
+	public String getRequestURI() {		
+		return ((HttpServletRequest) super.getRequest()).getContextPath() + "/Login";
+	}
+
+	@Override
+	public String getParameter(String name) {
+		if (name.equals("egov_security_username")) {
+			return username;
+		}
+
+		if (name.equals("egov_security_password")) {
+			return password;
+		}
+
+		return super.getParameter(name);
+	}
 }

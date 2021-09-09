@@ -32,6 +32,10 @@
 <body>
 <form name="regist" method="post" action="/web/joinProcess.do" autocomplete="off">
     <input type="hidden" id="uniCheck" />
+	<input type="hidden" name="DI" id="DI" />
+	<input type="hidden" name="CI" id="CI" />
+	<input type="hidden" name="TID" id="TID" />
+	<input type="hidden" id="cert" name="cert" />
         <div class="contents joinCon">
             <div class="joinArea">
                 <h1><img src="/front_res/img/logo.png"/></h1>
@@ -70,23 +74,19 @@
                             <td><input type="text" name="userName" id="userName"></td>
                         </tr>
                         <tr>
-                            <th>* 이메일</th>
-                            <td><input type="text" name="userEmail" id="userEmail"></td>
-                        </tr>
-                        <tr>
                             <th>* 휴대전화</th>
                             <td>
-							    <input type="text" name="userCellphone" id="userCellphone" placeholder="예약결과 안내등을 위한 정확한 번호를 입력해 주세요."  id="userCellphone">
-                                <!--<section>
-                                    
-                                     <!--<a href="">인증번호 받기</a>
-                                </section>-->
-								<!--
-                                <input type="text" name="" placeholder="인증번호를 입력하세요.">
-                                <!--인증번호 받기 버튼 클릭 시 추가 되는 텍스트
-                                <p class="noti">인증번호가 발송되었습니다</p>
-								-->
-                                <a href="#" class="darkBtn joinBtn" onClick="join.fn_join()">가입하기</button>
+						        <section>
+                                     <input type="text" name="userCellphone" id="userCellphone" placeholder="예약결과 안내등을 위한 정확한 번호를 입력해 주세요."  id="userCellphone">
+                                     <a href="javascript:fn_uas()">인증번호 받기</a>
+                                </section>
+						    </td>
+                        </tr>
+                        <tr>
+                            <th>* 이메일</th>
+                            <td>
+                            <input type="text" name="userEmail" id="userEmail">
+                            <a href="#" class="darkBtn joinBtn" onClick="join.fn_join()">가입하기</button>
                             </td>
                         </tr>
                     </tbody>
@@ -107,6 +107,10 @@
 <c:import url="/web/inc/unimessage.do" />
 
 <script>  
+    function fn_uas(){
+    	 var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no';
+    	 window.open("/web/Ready.do", "실명인증", options);
+    }
     var join = {
     	fn_idCheck : function(){
     		
@@ -136,7 +140,10 @@
 	     		     	 "userName" : $("#userName").val(),
 	     		     	 "userPassword" : $("#userPassword1").val(),
 	     		     	 "userCellphone" : $("#userCellphone").val(),
-	     		     	 "userEmail" : $("#userEmail").val(),
+	     		     	 "ci" : $("#CI").val(),
+	     		     	 "tid" : $("#TID").val(),
+						 "di" : $("#DI").val(),
+						 "userEmail" : $("#userEmail").val(),
 	     		     	 "mode" :  "Ins"
   		                }
   			

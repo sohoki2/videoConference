@@ -11,7 +11,7 @@ html,body {
     height:100%;
 
 }
-#wrapper{position: relative;min-height: 100%;}
+#wrapper{position: relative;min-height: 100%;background: white;}
 
 .Swrap, .Mwrap {
     max-width: 100%;

@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>서울관광플라자</title>
+    <title><spring:message code="URL.TITLE" /></title>
 
     <!--css-->
     <link href="/front_res/css/reset.css" rel="stylesheet" />
@@ -182,7 +182,7 @@
 		   							   var a = "1";
 		   							   for (var i in result.resultlist ){
 		   								
-		   								costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_8") ?
+		   								costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_4") ?
 		   										   "<a href='' onClick='fn_resCancel(&#39;"+ obj[i].res_seq+"&#39;,&#39;PROCESS_GUBUN_6&#39;)' class='cancleBtn active' data-needpopup-show='#cancle_popup'>예약취소</a>" :
 		   										   "취소완료";
 		   								  

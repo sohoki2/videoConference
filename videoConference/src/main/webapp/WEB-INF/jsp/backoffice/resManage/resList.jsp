@@ -263,14 +263,14 @@
     	   			jqGridFunc.fn_search();
     	   		}
     	    }, fn_search: function(){
- 	    	   $("#mainGrid").setGridParam({
+    	       $("#mainGrid").setGridParam({
 	    	    	 datatype	: "json",
 	    	    	 postData	: JSON.stringify(  {
 	    	    		 "searchDayGubun" : fn_emptyReplace($('input[name="searchDayGubun"]:checked').val(),"")	,
 	    	    		 "searchStartDay" : $("#searchStartDay").val(),
 	    	    		 "searchEndDay" : $("#searchEndDay").val(),
-						 "searchCenter" : $("searchCenter").val(),
-						 "searchFloorSeq" : fn_emptyReplace($("searchFloorSeq").val(),""),
+						 "searchCenter" : $("#searchCenter").val(),
+						 "searchFloorSeq" : fn_emptyReplace($("#searchFloorSeq").val(),""),
 	    	    		 "searchCondition" : $("#searchCondition").val(),
 	    	    		 "searchKeyword" : $("#searchKeyword").val(),
 	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
@@ -309,6 +309,16 @@
 	        }
        
       }
+      $(function(){
+    	  document.addEventListener('keydown', function(e){
+    	    const keyCode = e.keyCode;
+    	    console.log('pushed key ' + e.key);
+
+    	    if(keyCode == 13){ // Enter key
+    	    	jqGridFunc.fn_search();
+    	    }
+    	  })
+    	});
   </script>
     
 </head>
@@ -360,7 +370,7 @@
 		                	<th style="width:90px;">검색어</th>
 		                	<td colspan="5"  style="text-align:left;padding-left: 20px;">
 		                		<select name="searchCondition"  id="searchCondition">
-									<option value="a.ITEM_NAME">시설명코드</option>
+									<option value="" >선택</option>
 									<option value="b.EMPNO" >사번</option>
 									<option value="b.EMPNAME" >이름</option>
 								</select>

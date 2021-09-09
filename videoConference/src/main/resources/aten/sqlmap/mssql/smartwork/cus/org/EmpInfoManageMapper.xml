@@ -63,6 +63,50 @@
         </if>
         ORDER BY TA.EMPNAME  ASC 
     </select>
+    <select id="selectEmpInfoCombo" resultType="lmap">
+        SELECT a.EMPID, a.EMPNO, a.EMPNAME,
+               b.COM_TITLE AS COM_NAME
+        FROM   TB_EMPINFO a , TB_SWCINFO b
+        WHERE  AUTHOR_CODE != 'ROLE_USER'
+               <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
+				  <choose>
+				    <when test="params.searchCondition == 'empname'">
+					    <![CDATA[
+					      AND  a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					     ]]> 
+					</when>	
+					<when test="params.searchCondition == 'emphandphone'">
+					    <![CDATA[
+					      AND ( REPLACE(a.EMPHANDPHONE, '-','') LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					            OR 
+					            REPLACE(a.EMPTELPHONE, '-','') LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           )
+					     ]]> 
+					</when>	
+					<when test="params.searchCondition == 'empno'">
+					    <![CDATA[
+					      AND  a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					     ]]> 
+					</when>							
+					<otherwise>
+					      AND (a.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           OR a.EMPID LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           OR a.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           OR REPLACE(a.EMPHANDPHONE, '-','') LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           OR REPLACE(a.EMPTELPHONE, '-','') LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					           )
+					</otherwise>
+			      </choose>
+			  </if>	
+			  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchJobpst)">
+			      AND a.DEPTCODE= #{params.searchJobpst}
+			  </if>
+			  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchSwcEmpNo)">
+			      AND a.EMPID IN  (SELECT ADMIN_ID FROM tb_admin WHERE AUTHOR_CODE = 'ROLE_ANONYMOUS')
+			  </if>      
+                              
+		ORDER BY a.EMPNAME  ASC 
+    </select>
     
     <select id="selectUserLogin" resultType="lmap">
          SELECT * 

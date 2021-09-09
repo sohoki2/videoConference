@@ -321,11 +321,15 @@
 			        				if (result.status == "SUCCESS"){
 										  if (result.resultlist.length > 0 ){
 											console.log("result.resultlist.length:" + result.resultlist.length);
-											
+										    var resBtn = "";
 											for (var i = 0; i < 1; i ++ ){
 											     var obj = result.resultlist;
 											     
-											     
+											     if (obj[i].room_type == "SWC_GUBUN_3"){
+													resBtn = "hide";
+			  							    	 }else {
+			  							    		resBtn = "show";
+			  							    	 }
 												 $("#centerId").val(obj[i].center_id);
 										    	 $("#timeSeq").val(obj[i].time_seq);
 										    	 $("#swcTime").val(obj[i].swc_time);
@@ -338,13 +342,9 @@
 			  							    	 $("#sp_userInfo").html(obj[i].attendlisttxt);
 			  							    	 $("#resSeq").val(obj[i].res_seq);
 			  							    	 
-			  							    	 if (obj[i].room_type === "SWC_GUBUN_3"){
-			  							    		 $("#a_btn_res").hide();
-			  							    	 }else {
-			  							    		 $("#a_btn_res").show();
-			  							    	 }
 			  							    	
 			  							    	 //인사 정보 확인
+												 console.log("start");
 			  							    	 var sHtml = "<ul>";
 			  							    	 if (obj[i].empname != ""){
 			  							    		var empInfo = obj[i].empname.split('|');
@@ -357,13 +357,18 @@
 			  							    		}
 			  					                 }
 			  							    	 sHtml += "</ul>";
+												 console.log("end");
 			  							    	 $("#sp_resListPop").html(sHtml);
-			  							    	 if (obj[i].in_time != ""  &&  obj[i].ot_time == "" ){
-			  							    		  $("#p_stateInfo").html("회의 중");
+												 console.log("in_time:" + obj[i].in_time + ":" + obj[i].ot_time);
+			  							    	 if ((obj[i].in_time != "" && obj[i].in_time != undefined)  &&  (obj[i].ot_time == ""  || obj[i].ot_time == undefined )){
+													 console.log("퇴실 처리");
+			  							    		 $("#p_stateInfo").html("회의 중");
 			  							    		 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("OT")').text("퇴실");
-			  							    	 }else if  (obj[i].in_time == "") {
-			  							    		
-			  							    	 }else if (obj[i].ot_time != "" ){
+			  							    	 }else if  (obj[i].in_time == "" || obj[i].in_time == undefined) {
+													 console.log("입실 처리");
+			  							    		 $("#a_stateChange").show();
+            				  						 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("IN")').text("입실");
+			  							    	 }else if (obj[i].ot_time != "" || obj[i].ot_time != undefined ){
 			  							    		 $("#a_stateChange").hide();
 			  							    		 $("#p_stateInfo").html("회의 종료");
 			  							    	 }
@@ -389,7 +394,8 @@
 									   }else {
 										   $("#a_btn_res").show();
 									   }
-									    
+									   (resBtn == "hide") ? $("#a_btn_res").hide() :$("#a_btn_res").show();
+
 								       $("#sp_timeInfo").html(result.timeInfo);//날짜 
 								       
 								       calView( result.resTime  );

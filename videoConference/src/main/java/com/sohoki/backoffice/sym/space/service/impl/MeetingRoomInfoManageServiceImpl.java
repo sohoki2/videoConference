@@ -145,35 +145,40 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 		boolean result = false;
 		try {
 			
-			Map<String, Object> meetingInfo = meetingMapper.selectMeetingRoomDetailInfoManage( resInfo.get("item_id").toString() );
+			
 			String strTitle = "";
 			String strMessage = "";
 			String strSMS  = "";
+			//메일 보내는 구문 
 			
 			if ((resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_1")) || 
 				(resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_2")) || 
-				(resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_4"))) {
-		         //예약 메세지
-				  strTitle = String.format(meetingInfo.get("resmessagemailtxt").toString(),resInfo.get("res_title").toString())  ;
-	       		  strMessage = String.format(meetingInfo.get("resmessagemailcontexttxt").toString(), resInfo.get("res_title").toString() , resInfo.get("resstartday")  ,  resInfo.get("resstarttime"), resInfo.get("resendtime"));
-	       		  strSMS =   String.format(meetingInfo.get("resmessagesmstxt").toString(),  resInfo.get("res_title").toString() , resInfo.get("resStartday") , resInfo.get("resStarttime") , resInfo.get("resendtime"));
-	       		  
+				(resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_4")) 
+				&& resInfo.get("mail_sendcheck").equals("Y") && !resInfo.get("resmessagemailtxt").equals("메세지 없음")  ) {
+		         //예약 메세지 
+				 strTitle = String.format(resInfo.get("resMessageMailTxt").toString(),resInfo.get("res_title").toString())  ;
+	       		 strMessage = String.format(resInfo.get("resmessagemailcontexttxt").toString(), resInfo.get("res_title").toString() , resInfo.get("resstartday")  ,  resInfo.get("resstarttime"), resInfo.get("resendtime"));
+	       		 
 		      } else if ((resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_3")) || 
 		    		     (resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_5")) || 
 		                 (resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_6")) || 
-		                 (resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_7"))){
+		                 (resInfo.get("reserv_process_gubun").equals("PROCESS_GUBUN_7"))  
+		                 && resInfo.get("mail_sendcheck").equals("Y")
+		                 && !resInfo.get("canmessagemailtxt").equals("메세지 없음") ){
 		    	  
 		    	  //취소 메세지 
-		    	  strTitle = String.format(meetingInfo.get("canmessagemailtxt").toString(), resInfo.get("res_title").toString())  ;
-		       	  strMessage = String.format(meetingInfo.get("resmessagemailcontexttxt").toString(), resInfo.get("res_title").toString() , resInfo.get("resstartday")  ,  resInfo.get("resstarttime"), resInfo.get("resendtime"));
-		       	  strSMS =   String.format(meetingInfo.get("canmessagesmstxt").toString(),  resInfo.get("res_title").toString() , resInfo.get("resStartday") , resInfo.get("resStarttime") , resInfo.get("resendtime"));
-		       	   
+		    	  strTitle = String.format(resInfo.get("canmessagemailtxt").toString(), resInfo.get("res_title").toString())  ;
+		       	  strMessage = String.format(resInfo.get("resmessagemailcontexttxt").toString(), resInfo.get("res_title").toString() , resInfo.get("resstartday")  ,  resInfo.get("resstarttime"), resInfo.get("resendtime"));
+		       	  
 		     }
+			 
 			
+			 //sms 보내는 구문
+			 /*
 			 util.sendSMS(strTitle, strMessage, resInfo.get("empmail").toString(), resInfo.get("empname").toString(), 
-						     resInfo.get("empmail").toString(),resInfo.get("mail_sendcheck").toString(), 
-						     resInfo.get("emphandphone").toString(),  resInfo.get("emphandphone").toString(), 
-						     resInfo.get("sms_sendcheck").toString(), strSMS);
+						  resInfo.get("empmail").toString(),resInfo.get("mail_sendcheck").toString(), 
+						  resInfo.get("emphandphone").toString(),  resInfo.get("emphandphone").toString(), 
+						  resInfo.get("sms_sendcheck").toString(), strSMS);
 				 
 			 String[] messangetoUrlList = resInfo.get("res_attendlist").toString().split(",");
 			 for (int a = 0; a < messangetoUrlList.length; a++) {
@@ -183,6 +188,7 @@ public class MeetingRoomInfoManageServiceImpl  extends EgovAbstractServiceImpl i
 							     resInfo.get("emphandphone").toString(),  resInfo.get("emphandphone").toString(), 
 							     resInfo.get("sms_sendcheck").toString(), strSMS);
 			 }
+			 */
 				 
 			
 		}catch(Exception e) {

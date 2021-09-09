@@ -24,10 +24,10 @@
 				      AND A.FLOOR_SEQ = C.FLOOR_SEQ
 				<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
 					<choose>
-						<when test="params.searchKeyword == 'deviceNm'">
+						<when test="params.searchCondition == 'deviceNm'">
 							AND A.DEVICE_NM LIKE CONCAT('%',#{params.searchKeyword},'%')
 						</when>
-						<when test="params.searchKeyword == 'deviceId'">
+						<when test="params.searchCondition == 'deviceId'">
 							AND A.DEVICE_ID = #{params.searchKeyword}
 						</when>
 						<otherwise>

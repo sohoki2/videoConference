@@ -64,22 +64,18 @@ public class EgovCcmCmmnCodeManageController {
 									    , CmmnCode cmmnCode
 									    , HttpServletRequest request
 									    , BindingResult bindingResult	) throws Exception {
-    	ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+    	
+    	ModelAndView model = new ModelAndView("redirect:/backoffice/basicManage/codeList.do");
     	try {
     		int ret = cmmnCodeManageService.deleteCmmnCode(cmmnCode.getCodeId());
-        	if (ret > 0){
-    			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-    			model.addObject(Globals.STATUS_MESSAGE,   egovMessageSource.getMessage("success.common.delete"));    		
-        	}else {
-        		throw new Exception();    		
-        	}
+    		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			model.addObject(Globals.STATUS_MESSAGE,   egovMessageSource.getMessage("success.common.delete"));    		
+        	
     	}catch(Exception e) {
     		LOGGER.info(e.toString());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.delete"));
     	}
-    	
-    	
         return model;
 	}
 
@@ -87,9 +83,9 @@ public class EgovCcmCmmnCodeManageController {
 	
     @RequestMapping(value="/backoffice/basicManage/codeList.do")
 	public ModelAndView selectCmmnCodeList (@ModelAttribute("adminLoginVO") AdminLoginVO adminLoginVO
-										, @ModelAttribute("searchVO") CmmnCodeVO searchVO
-										, HttpServletRequest request
-										, BindingResult bindingResult	) throws Exception {
+										   , @ModelAttribute("searchVO") CmmnCodeVO searchVO
+										   , HttpServletRequest request
+										   , BindingResult bindingResult	) throws Exception {
     	ModelAndView model = new ModelAndView("/backoffice/basicManage/codeList");
     	try {
     		model.addObject(Globals.STATUS_REGINFO, searchVO);
@@ -103,7 +99,6 @@ public class EgovCcmCmmnCodeManageController {
     		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
     		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
     		paginationInfo.setPageSize(searchVO.getPageSize());
-
     		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
     		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
     		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
@@ -111,13 +106,16 @@ public class EgovCcmCmmnCodeManageController {
     		List<CmmnCodeVO> list =  cmmnCodeManageService.selectCmmnCodeListByPagination(searchVO);
 
             model.addObject(Globals.JSON_RETURN_RESULTLISR, list);
-            int totCnt =  list.get(0).getTotalRecordCount();
+            
+            int totCnt =  list.size() > 0 ? list.get(0).getTotalRecordCount() : 0;
+            LOGGER.debug("totCnt:" + totCnt);
             model.addObject(Globals.PAGE_TOTALCNT, totCnt);
             
     		paginationInfo.setTotalRecordCount(totCnt);
             model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
     	}catch(Exception e) {
-    		LOGGER.info(e.toString());
+    		StackTraceElement[] ste = e.getStackTrace();
+    		LOGGER.info("codeList.do error:" + e.toString() + " : error line =" +  ste[0].getLineNumber());
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
     	}

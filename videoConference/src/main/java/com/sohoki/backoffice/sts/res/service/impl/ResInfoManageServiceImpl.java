@@ -1,5 +1,6 @@
 package com.sohoki.backoffice.sts.res.service.impl;
 
+import com.sohoki.backoffice.cus.kko.service.KkoMsgManageSevice;
 import com.sohoki.backoffice.cus.org.mapper.EmpInfoManageMapper;
 import com.sohoki.backoffice.cus.ten.service.TennantInfoManageService;
 import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
@@ -74,6 +75,9 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 	  @Autowired
 	  private UniSelectInfoManageService  uniService;
 	  
+	  @Autowired
+	  private KkoMsgManageSevice kkoSerice;
+	  
 	  @Override
 	  public List<Map<String, Object>> selectResManageListByPagination(Map<String, Object> searchVO)   throws Exception  {
 		  return this.resMapper.selectResManageListByPagination(searchVO);
@@ -147,10 +151,15 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 			        }else {
 			        	this.timeMapper.updateTimeInfo(timeinfo);
 			        }
+			        
+			        
 		        	if (vo.getSeatConfirmgubun().equals("Y")) {
 			        	//관리자 승인 일때 처리 하는 구문 
-			        	
 			        	boolean sendCk =   meetingService.sendMeetingEmpMessage(vo.getItemId(), vo);
+			        	//예약 메일 보내기 
+			        	
+			        	//Map<String, Object> resInfo = resMapper.selectResManageView(vo.getResSeq());
+			        	
 			        }else {
 			        	vo.setReservProcessGubun("PROCESS_GUBUN_2");
 			        	vo.setResSeq(String.valueOf(resSeq));
@@ -261,6 +270,12 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 						}
 					}
 					resInfo = resMapper.selectResManageView(vo.getResSeq() );
+					
+					if (resInfo.get("send_message").equals("Y") ) {
+						//카카오 메세지 보내기 
+						kkoSerice.kkoMsgInsertSevice("RES", resInfo);
+					}
+					
 			}else if (vo.getReservProcessGubun().equals("PROCESS_GUBUN_3") || vo.getReservProcessGubun().equals("PROCESS_GUBUN_5")
 					|| vo.getReservProcessGubun().equals("PROCESS_GUBUN_6") || vo.getReservProcessGubun().equals("PROCESS_GUBUN_7")){
 				
@@ -284,6 +299,10 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 						    ret = tennService.updateRetireTennantInfoManage(tennInfo);
 						}
 						LOGGER.debug("체크 시작  ------3");
+					}
+					if (resInfo.get("send_message").equals("Y") && resInfo.get("item_gubun").equals("ITEM_GUBUN_3") ) {
+						//카카오 메세지 보내기 
+						kkoSerice.kkoMsgInsertSevice("CAN", resInfo);
 					}
 			}else if (vo.getReservProcessGubun().equals("PROCESS_GUBUN_8")) {
 					info.setApprival("V");
@@ -314,9 +333,10 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 				}				
 			}	
 			LOGGER.debug("------------------------------------------------------2");
-			//메일 및 메세지 전송(회의실만 적용 예정)
-			if (vo.getItemGubun().equals("ITEM_GUBUN_1"))
-			   meetingService.sendMeetingUserMessage(resInfo);
+			//메일 및 메세지 전송(예외 처리로 하려함
+			//meetingService.sendMeetingUserMessage(resInfo);
+			
+			
 		}catch(Exception e) {
 			ret = -1;
 			StackTraceElement[] ste = e.getStackTrace();

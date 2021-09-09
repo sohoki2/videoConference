@@ -41,7 +41,7 @@ if(loginVO == null ){
                               <li><a href="/backoffice/basicManage/codeList.do">코드관리</a></li>
                               <li><a href="/backoffice/orgManage/empList.do">인사관리</a></li>
                               <!-- <li><a href="/backoffice/basicManage/holyList.do">휴일근무관리</a></li> -->
-                              <li><a href="/backoffice/orgManage/depthList.do">부서관리</a></li>
+                              <!-- <li><a href="/backoffice/orgManage/depthList.do">부서관리</a></li> -->
                               <li><a href="/backoffice/basicManage/managerList.do">관리자관리</a></li>
                               <li><a href="/backoffice/orgManage/swcInfo.do">환경설정</a></li>
                           </ul>
@@ -67,7 +67,12 @@ if(loginVO == null ){
                         }
                       %>
                       <li class="dropdown">
-                         <a href="/backoffice/resManage/resList.do?searchRoomType=swc_gubun_1" class="dropbtn">예약관리</a>
+                         <a href="/backoffice/resManage/resList.do" class="dropbtn">예약관리</a>
+                         <ul class="dropdown-content sedrop">
+                                <li><a href="/backoffice/resManage/resList.do">예약관리</a></li>
+                                <li><a href="/backoffice/visitedManage/visitedList.do?visitedGubun=VISITED_GUBUN_1">방문 신청 관리</a></li>
+                                <li><a href="/backoffice/visitedManage/visitedList.do?visitedGubun=VISITED_GUBUN_2">투어 예약 관리</a></li>
+                         </ul>
                       </li>
                     </ul>
                 </nav>

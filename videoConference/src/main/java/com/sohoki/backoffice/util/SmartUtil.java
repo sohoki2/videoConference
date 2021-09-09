@@ -277,7 +277,7 @@ public class SmartUtil {
     }
     //null or empty 체크
     public String NVL(String _val, String _replace) {
-    	return _val.isBlank() ? _replace : _val;
+    	return _val.isEmpty() ? _replace : _val;
     }
     public String NVL(Object _val, String _replace) {
     	return _val == null ? _replace : _val.toString();
@@ -294,7 +294,7 @@ public class SmartUtil {
     	if (_arrayList.size()>0) {
     		
     		List list = _arrayList.stream().filter(e ->  !e.startsWith(_nowVal)).collect(Collectors.toList()); 
-    		if (!_newVal.isBlank())
+    		if (!_newVal.isEmpty())
     	    	list.add(_newVal);
     		itemList = (String) list.stream().distinct().sorted().collect(Collectors.joining(","));
     	}
@@ -400,7 +400,7 @@ public class SmartUtil {
 	}
 	/*
 	 *   메일 문자 보내기 공용 함수
-	 * 
+	 *  
 	 */
 	public int sendSMS(String strTitle, String msg, String sendMail,  String sendName,  String empMail, String mailCheck,
 			           String emphandphone, String sendHandphone,  String smsCheck, String smsMsg) throws Exception {

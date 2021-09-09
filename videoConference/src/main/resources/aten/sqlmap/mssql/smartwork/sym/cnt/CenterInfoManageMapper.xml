@@ -65,7 +65,7 @@
              );
           ]]>
           <if test="floorlist != null">
-          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, FLOOR_PART
+          INSERT INTO TB_FLOORINFO (CENTER_ID, FLOOR_INFO, FLOOR_NAME, FLOOR_PART,
                                    REG_DATE, REG_ID, UPDATE_DATE, UPDATE_ID)
           SELECT #{centerId}, CODE, CODE_NM, 'FLOOR_PART_2' AS FLOOR_PART, getdate(), #{centerUserId,jdbcType=VARCHAR}, getdate(), #{centerUserId,jdbcType=VARCHAR}
           FROM LETTCCMMNDETAILCODE

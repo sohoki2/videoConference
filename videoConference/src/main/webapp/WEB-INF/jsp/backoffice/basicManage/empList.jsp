@@ -21,6 +21,7 @@
     
     <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/back_common.js"></script>
     <script src="/js/popup.js"></script>   
     <link rel="stylesheet" type="text/css" href="/css/toggle.css">
     <script>
@@ -334,7 +335,8 @@
 			  $("#deptName").removeAttr();
 			  $("#adminName").removeAttr();
 			  $("#deptName").val(deptname);
-			  $("#adminName").val(empname); 
+			  $("#adminName").val(empname);
+			  
 			  $("#deptName").attr("readonly",true);
 			  $("#adminName").attr("readonly",true);
 			  $("#adminId").val(empid);
@@ -345,9 +347,37 @@
 			  // 보여 주기 
 			  $("#authorCode").val("ROLE_ADMIN");
 			  toggleClick("useYn", "Y");
-			  
 			  jqGridFunc.fn_empView("basic");
-		  }
+		  },fn_empSearch : function(){
+			  //직원 조회
+			  var params = {"searchCondition" : $("#emSearchCondition").val(), "searchKeyword" : $("#emSearchKeyword").val(), "mode" : "pop" };
+			  uniAjax("/backoffice/orgManage/empListAjax.do", params, 
+		     			function(result) {
+				               if (result.status == "LOGIN FAIL"){
+						    	   alert(result.message);
+		  						   location.href="/backoffice/login.do";
+		  					   }else if (result.status == "SUCCESS"){
+								   $("#tb_searchform > tbody").empty();
+								   var obj = result.resultlist;
+								   var shtml = ""
+								   for (var i in obj){
+									   shtml= "<tr onclick=\"jqGridFunc.fn_empChoice('" + obj[i].deptname +"','"+obj[i].empname+"','" + obj[i].empno +"','"+obj[i].empno+"','"+obj[i].empmail+"','"+obj[i].deptcode+"','"+obj[i].emptelphone+"')\">"
+										    + " <td>" + obj[i].deptname +"</td>"
+										    + " <td>" + obj[i].empname +"</td>"
+										    + " <td>" + obj[i].empno +"</td>"
+									        + "</tr>";
+									   $("#tb_searchform > tbody").append(shtml);
+		  						       sHtml = "";  
+								   }
+							   }else {
+									alert("업데이트 도중 문제가 발생 하였습니다.");
+							   }	
+						 },
+						 function(request){
+							    alert("Error:" +request.status );	       						
+						 }    		
+		     );    
+	      }
     }
   </script>
     
@@ -382,7 +412,7 @@
 		                	</th>
 		                	<td>
 		                		<select name="searchCondition"  id="searchCondition">
-											<option  value="ALL">전체</option>
+											<option value="ALL">전체</option>
 											<option value="ADMIN_ID">아이디</option>
 											<option value="ADMIN_NM">이름</option>
 								</select>
@@ -394,7 +424,7 @@
                     </table>
                     <div class="text-right">
                           <a href="#" onclick="jqGridFunc.fn_empInfo('Ins','0')"><span class="blueBtn">등록</span></a>
-                          <a href="#" onclick="jqGridFunc.fn_avayaUpdate()"><span class="lightgrayBtn">인사정보연동</span></a>
+                          <!-- <a href="#" onclick="jqGridFunc.fn_avayaUpdate()"><span class="lightgrayBtn">인사정보연동</span></a> -->
                     </div>
                 
                     <br/>
@@ -490,7 +520,7 @@
 					<a href="javascript:jqGridFunc.fn_empSearch();"><span class="blueBtn">조회</span></a>
 		            <p class="searchP">이름을 선택해 주세요.</p>
 	            </div>
-				<table class="pop_table thStyle searchT" id="tb_empList">
+				<table class="pop_table thStyle searchT" id="tb_searchform">
 					<thead class="search">
 						<tr>
 							<th style="width:35%">부서명</th>

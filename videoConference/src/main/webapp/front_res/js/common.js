@@ -27,6 +27,12 @@ function fn_Check (_UniCheckFormNm, _btn_message){
 		return false;
 	}
 }
+//핸드폰 번호
+//var regExp = /^\d{3}-\d{3,4}-\d{4}$/;
+//4. 일반 전화번호 정규식
+//var regExp = /^\d{2,3}-\d{3,4}-\d{4}$/;
+
+
 function any_empt_line_span(frm_nm, alert_message){
      //if ($('#'+frm_nm).val() == "" || $('#'+frm_nm).val() == null ){
      if ($('#'+frm_nm).val() == "" ){
@@ -47,13 +53,13 @@ function fn_uniCheck(url, params, _field){
 			       var alert_message = ""; 
 			       if (result.status == "SUCCESS"){
 	                   //관련자 보여 주기 
-	                   alert_message = "중복된 내역이 없습니다.";
+	                   alert_message = "사용 가능한 아이디 입니다.";
 					   $("#"+_field).val("Y");
 				   }else {
-				      alert_message = "중복된 내역이 있습니다.";
+				      alert_message = "사용할 수 없는 아이디 입니다.";
 					  $("#"+_field).val("N");
 				   }
-				   $("#sp_message").html("중복된 내역이 없습니다.");
+				   $("#sp_message").html(alert_message);
 		           $("#btn_result").trigger("click");
 			  },
 			  function(request){
@@ -63,8 +69,6 @@ function fn_uniCheck(url, params, _field){
 }
 function verifyEmail(_field){
     var emailVal = $("#"+_field).val(); 
-	alert(emailVal);
-
 	var reg_email = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 	if (!reg_email.test(emailVal)) { 
 		$("#sp_message").html("입력한 이메일이 형식에 맞지 않습니다.");
@@ -101,8 +105,8 @@ function uniAjaxReturn(url, param){
 		        data : JSON.stringify(param)
 		    }).done(function(result){
 		           if (result.status == "LOGIN FAIL"){
-			    	   alert(result.meesage);
-					   location.href="/web/Login";
+		               alert(result.meesage);
+					   location.href="/web/Login.do";
 				   }else if (result.status == "SUCCESS"){
 				       returnVal = result;
 				   }else {
@@ -132,12 +136,12 @@ function uniAjaxReturnSerial(url, param){
 		        data : param,
 		    }).done(function(result){
 		           if (result.status == "LOGIN FAIL"){
-			    	   alert(result.meesage);
-					   location.href="/web/Login";
+			    	   alert("로그 아웃 상태 입니다.");
+					   location.href="/web/Login.do";
 				   }else if (result.status == "SUCCESS"){
 				       returnVal = result;
 				   }else {
-				       alert(result.meesage); 
+				       alert("ERROR" +result.meesage); 
 				   }
 		       }
 		    ).fail(function(request){
@@ -298,6 +302,20 @@ function timeComma(str, gubun){
    }
    return str;
 }
+function ckeckboxValue(message, checkboxNm){
+	var checkboxvalue = "";
+	var check_length = $("input:checkbox[name="+checkboxNm+"]:checked").length;
+	if (check_length <1){
+		alert(message);
+		return false;
+	}else {
+		$("input:checkbox[name="+checkboxNm+"]:checked").each(function(){
+			checkboxvalue = checkboxvalue+","+ $(this).val();
+		});	
+	}
+	return checkboxvalue.substring(1);
+}
+
 //List to Day 변경 
 function fn_ViewChange(_viewGubun){
             	var url = (_viewGubun == "List") ? "/web/meetingList.do" : "/web/meetingDay.do" ;
@@ -895,5 +913,58 @@ function notice_file_down(notice_id){
 	document.location.href = '/Common/getNoticeFileDownload.do?notice_id='+notice_id;
 }
 
+String.prototype.string = function (len) { var s = '', i = 0; while (i++ < len) { s += this; } return s; };
+String.prototype.zf = function (len) { return "0".string(len - this.length) + this; };
+Number.prototype.zf = function (len) { return this.toString().zf(len); };
 
+Date.prototype.format = function (f) {
 
+    if (!this.valueOf()) return " ";
+
+    var weekKorName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+
+    var weekKorShortName = ["일", "월", "화", "수", "목", "금", "토"];
+
+    var weekEngName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    var weekEngShortName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    var d = this;
+
+ 
+
+    return f.replace(/(yyyy|yy|MM|dd|KS|KL|ES|EL|HH|hh|mm|ss|a\/p)/gi, function ($1) {
+
+        switch ($1) {
+
+            case "yyyy": return String(d.getFullYear()).replace(' ',''); // 년 (4자리)
+
+            case "yy": return (d.getFullYear() % 1000).zf(2); // 년 (2자리)
+
+            case "MM": return (d.getMonth() + 1).zf(2); // 월 (2자리)
+
+            case "dd": return d.getDate().zf(2); // 일 (2자리)
+
+            case "KS": return weekKorShortName[d.getDay()]; // 요일 (짧은 한글)
+
+            case "KL": return weekKorName[d.getDay()]; // 요일 (긴 한글)
+
+            case "ES": return weekEngShortName[d.getDay()]; // 요일 (짧은 영어)
+
+            case "EL": return weekEngName[d.getDay()]; // 요일 (긴 영어)
+
+            case "HH": return d.getHours().zf(2); // 시간 (24시간 기준, 2자리)
+
+            case "hh": return ((h = d.getHours() % 12) ? h : 12).zf(2); // 시간 (12시간 기준, 2자리)
+
+            case "mm": return d.getMinutes().zf(2); // 분 (2자리)
+
+            case "ss": return d.getSeconds().zf(2); // 초 (2자리)
+
+            case "a/p": return d.getHours() < 12 ? "오전" : "오후"; // 오전/오후 구분
+
+            default: return $1;
+
+        }
+    });
+};

@@ -105,7 +105,7 @@
     		        shrinkToFit : true,
     		        refresh : true,
     		        loadComplete : function (data){
-    		        	
+    		        	$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);
     		        },loadError:function(xhr, status, error) {
     		            alert(error); 
     		        }, onPaging: function(pgButton){
@@ -273,7 +273,7 @@
             </div>
 
             <div class="Swrap Asearch">
-                <div class="Atitle"><spring:message code="page.common.pageCnt"  arguments="${totalCnt}"/></div>
+                <div class="Atitle">총 <span id="sp_totcnt"></span> 건의 게시물이 있습니다.</div>
                 <section class="Bclear">
                    
                 	<table class="pop_table searchThStyle">
@@ -288,7 +288,7 @@
 											<option value="2" <c:if test="${searchVO.searchCondition == '2' }"> selected="selected" </c:if>>발송시점</option>
 								</select>
 								<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}"> 
-								 <a href="javascript:search_form();"><span class="searchTableB">조회</span></a>
+								 <a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_MessageInfo('Ins','0')" ><span class="deepBtn">등록</span></a>

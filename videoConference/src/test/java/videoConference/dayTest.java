@@ -31,6 +31,8 @@ public class dayTest {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("code", "SWC_TIME");
 		
+		
+		meetingMsg("DAY");
 	}
 	public static boolean isEmpty(Object obj) {
 		if (obj instanceof String ) return obj == null || "".equals(obj.toString().trim());
@@ -38,6 +40,35 @@ public class dayTest {
 		else if (obj instanceof Map) return obj == null || ((Map)obj).isEmpty();
 		else if (obj instanceof Object[]) return obj == null || Array.getLength(obj) == 0;
 		else return obj == null;
+		
+	}
+	
+public void meetingMsg(String _dayGubun ) {
+		
+		Map<String, String> returnMsg = new HashMap<String, String>();
+		String title = "";
+		String resMessage = "";
+		
+		System.out.println("---------------------------------------------------");
+		System.out.println("-------dayGubun"+ _dayGubun);
+		System.out.println("---------------------------------------------------");
+		switch (_dayGubun) {
+		    case "RES":
+		    	title = "[회의실 예약완료 알림]";
+		    	System.out.println("[회의실 예약완료 알림");
+		    case "DAY": 
+		    	title = "[회의 D-1 알림]";
+		    	System.out.println("[회의 D-1 알림");
+		    case "STR": 
+		    	title = "[회의 시작 알림]";
+		    	System.out.println("[회의 시작 알림");
+		    default :
+		    	title = "[default]";
+		    
+		}
+		returnMsg.put("title", title);
+		
+		System.out.println("title" + title);
 		
 	}
 	public static boolean isEmpty(String s) {
@@ -62,16 +93,5 @@ public class dayTest {
 		}
 		return sHtml;
 	}
-    //요소 확인 후 삭제 하기 
-    public String checkItemList(List<String> _arrayList, String _nowVal, String _newVal) {
-    	String itemList = "";
-    	if (_arrayList.size()>0) {
-    		
-    		List list = _arrayList.stream().filter(e ->  !e.startsWith(_nowVal)).collect(Collectors.toList()); 
-    		if (!_newVal.isBlank())
-    	    	list.add(_newVal);
-    		itemList = (String) list.stream().distinct().sorted().collect(Collectors.joining(","));
-    	}
-    	return itemList;
-    }
+  
 }

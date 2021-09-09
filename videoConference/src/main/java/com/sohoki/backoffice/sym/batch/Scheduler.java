@@ -1,6 +1,7 @@
 package com.sohoki.backoffice.sym.batch;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.sohoki.backoffice.cus.kko.service.KkoMsgManageSevice;
 import com.sohoki.backoffice.cus.ten.mapper.TennantInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper;
@@ -35,6 +37,9 @@ public class Scheduler {
 	
 	@Autowired
 	private ScheduleInfoManageService  scheduleService;
+	
+	 @Autowired
+	 private KkoMsgManageSevice kkoSerice;
 	
 	/*
 	 *  23:50 분 타임 스케줄러 생성
@@ -67,8 +72,20 @@ public class Scheduler {
 		
     	try{
     		if ("Active1".equals(serverInfo().toString())) {
+    			//10분 후 입실 처리 안되는 회의실 문자 보내기
     			int ret = resMapper.updateResCancel10MinLateEmpty();
     			scheduleService.insertScheduleManage("RaiSchedule10Minute", "OK", "");
+    			
+    			//1일 전 회의실 문자 보내기
+    			List<Map<String, Object>> resDayInfos = resMapper.selectMessageInfoList("DAY");
+    			for (Map<String, Object> resDayInfo : resDayInfos) {
+    				kkoSerice.kkoMsgInsertSevice("DAY", resDayInfo);
+    			}
+    			//당일 20분전 카톡 보내기 
+    			resDayInfos = resMapper.selectMessageInfoList("STR");
+    			for (Map<String, Object> resDayInfo : resDayInfos) {
+    				kkoSerice.kkoMsgInsertSevice("STR", resDayInfo);
+    			}
     		}
     	}catch(Exception e){
     		StackTraceElement[] ste = e.getStackTrace();

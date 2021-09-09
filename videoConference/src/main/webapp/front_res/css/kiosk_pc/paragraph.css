@@ -1,4 +1,4 @@
-html, body{width: 1920px; height: 100vh; position: relative; color:#3e3e3e;}
+﻿l, body{width: 1920px; height: 100vh; position: relative; color:#3e3e3e;}
 ::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/
 }
@@ -153,7 +153,7 @@ div#meet_floor {
     border-top: 1px solid #eaeaea;
     border-bottom: 1px solid #eaeaea;
   }
-    div.meet_table table th:first-child {z-index:2;height: 65px;background-color: #f7be1d;color: white;}
+    div.meet_table table thead th:first-child {z-index:2;height: 65px;background-color: #f7be1d;color: white;}
     div.meet_table table td {
     border-bottom: 1px solid #eaeaea;
     text-align: center;
@@ -236,13 +236,13 @@ div#none_date_pop p {
 .reset_icon {
     position: absolute;
     display: inline-block;
-    width: 128px;
-    height: 128px;
+    width: 65px;
+    height: 65px;
     z-index: 9;
-    background: url(../img/reset_icon.png);
-    bottom: -30px;
-    right: -30px;
-    background: cadetblue;
+    background: url(/img/ic_btn_map_screen_fit.png)no-repeat center gray;
+    bottom: 30px;
+    right: 30px;
+    border-radius: 40px;
 }
 .seat_map {
     width: 1200px;
@@ -263,6 +263,7 @@ div#none_date_pop p {
     height: 970px;
     width: 100%;
     position: relative;
+    background-size: contain !important;
 }
 .seat li {
     position: absolute;
@@ -314,7 +315,7 @@ div#none_date_pop p {
 }
 
 .noneSeat {
-    background: url("../img/nonseat.png")left center no-repeat;
+    background: url("/img/nonseat.png")left center no-repeat;
     margin-left: 10px;
     padding-left: 19px;
 }
@@ -329,7 +330,7 @@ div#none_date_pop p {
     box-sizing: border-box;
     font-size: 2.2rem;
     font-weight: 600;
-    background: url(../img/seat_message_icon.png) no-repeat 25px 25px;
+    background: url(/img/seat_message_icon.png) no-repeat 25px 25px;
     background-size: 55px;
     padding-left: 95px;
     background-color: white;
@@ -449,7 +450,7 @@ div#mem_info {
     border-top: 1px dashed #afafaf;
     margin-top: 15px;
 }
-.pop_top{background:url(../img/pop_icon.png)no-repeat left top;}
+.pop_top{background:url(/img/pop_icon.png)no-repeat left top;}
 .pop_h5 {
     font-size: 20px;
     padding-left: 45px;
@@ -521,5 +522,10 @@ div#mem_info {
     font-size: 20px;
     padding-top: 70px;
     font-weight: bold;
-    background: url(../img/check_pop.png)no-repeat center top;
+    background: url(/img/check_pop.png)no-repeat center top;
+}
+div.meet_table table tbody th:first-child {
+    border-bottom: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    box-sizing: border-box;
 }

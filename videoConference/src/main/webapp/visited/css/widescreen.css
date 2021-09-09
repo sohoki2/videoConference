@@ -1,0 +1,75 @@
+﻿.contents {
+    max-width: 100%;
+    width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+/*header*/
+header {
+    height: 70px;
+}
+header h1 {
+    z-index: 9999;
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 15px;
+    padding: 0;
+    height: 40px;
+    width: 185px;
+}
+header h1 img {
+    width: 100%;
+}
+.menu {
+    left: 0;
+    top: 0;
+    line-height: 68px;
+    width: 100%;
+    margin: 0 auto;
+    min-width: 100%;
+    text-align: center;
+    position: relative;
+}
+.menu ul li:first-child {
+    margin-left: 0 !important;
+}
+.menu ul li {
+    display: inline-block;
+    height: 69px;
+    padding: 0 40px;
+}
+.menu ul li a {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #686868;
+    height: 100%;
+    display: block;
+}
+.leftMenu {
+    display: none;
+}
+.main_tit {font-size: 4rem;padding: 50px 0;} 
+.main_tit p {font-size: 2.2rem;}
+.main_step {text-align: center;}
+.lg-4{width: 40%;}
+.lg-3{width: 25%;}
+.lg-6{width: 50%;}
+.lg-8{width: 60%;}
+.main_wxbox {height:300px; }
+.main_wtit { padding-bottom: 20px; }
+.apply_table {
+    font-size: 1.4rem;
+}
+.step_con_tit {
+    font-size: 1.6rem;
+}
+.needpopup {width: 400px;}
+#ui-datepicker-div.datePick{
+    padding: 20px;
+}
+#ui-datepicker-div.datePick .ui-state-default {font-size: 16px;width: 40px;height: 40px;line-height: 4rem;}
+#ui-datepicker-div.datePick .ui-datepicker-current {right: 95px;top: 27px;}
+.tourStep { text-align: center;}
+.tour_table {font-size: 1.6rem;}
+.tourInfo { font-size: 1.6rem;}

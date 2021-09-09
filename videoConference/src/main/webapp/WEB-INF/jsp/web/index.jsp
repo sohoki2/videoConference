@@ -67,7 +67,7 @@
 			                                </div>
 			                                <div class="meeting_btn">
 			                                    <div class="padding_box">
-			                                        <a href="#" data-needpopup-show='#app_meeting' onclick="fn_resInfo('${resInfo.meeting_id}','${resInfo.time_seq }','${resInfo.swc_time}','${resInfo.meeting_name}','0','${resInfo.meeting_confirmgubun}' , '${resInfo.meeting_equpgubun}', '${resInfo.res_reqday}');fn_indexView();" class="booking_btn">예약하기</a>    
+			                                        <a href="#" data-needpopup-show='#app_meeting' onclick="fn_indexInfo('${resInfo.meeting_id}','${resInfo.time_seq }','${resInfo.swc_time}','${resInfo.meeting_name}','0','${resInfo.center_id}' ,'${resInfo.meeting_confirmgubun}' , '${resInfo.meeting_equpgubun}', '${resInfo.meeting_equpgubun}');" class="booking_btn">예약하기</a>  
 			                                    </div>                                    
 			                                </div>
 			                            </div>
@@ -134,9 +134,6 @@
             function fn_noticView(boardSeq){
             	document.location.href='/web/notice.do?board_seq='+boardSeq;
             }
-            function fn_indexView(){
-            	
-            }
             function fn_noticeList(){
 	        	var url =  "/backoffice/boardManage/boardListAjax.do";
 	        	var params = { 
@@ -149,7 +146,7 @@
 		    	uniAjax(url, params, 
 		      			function(result) {
 		 				       if (result.status == "LOGIN FAIL"){
-		 				    	   alert(result.meesage);
+		 				    	   alert("로그인 실패 입니다");
 		   						   location.href="/web/Login";
 		   					   }else if (result.status == "SUCCESS"){
 		   						   //총 게시물 정리 하기

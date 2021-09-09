@@ -47,7 +47,7 @@ public class CompanyInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		// TODO Auto-generated method stub
 		if (vo.getMode().equals("Ins")) 
 		     vo.setComCode(egovComIdGnrService.getNextStringId());
-		if (vo.getFloorSeq().isBlank())
+		if (vo.getFloorSeq().isEmpty())
 			vo.setFloorSeq("0");
 		return vo.getMode().equals("Ins") ? companyMapper.insertCompanyInfoManage(vo) : companyMapper.updateCompanyInfoManage(vo);
 	}

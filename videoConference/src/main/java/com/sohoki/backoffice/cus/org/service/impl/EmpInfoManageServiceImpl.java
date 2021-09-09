@@ -141,8 +141,11 @@ public class EmpInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 		
 		return 0;
 	}
-	
-	
-	
+	@Override
+	public List<Map<String, Object>> selectEmpInfoCombo(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return empMapper.selectEmpInfoCombo(params);
+		 
+	}
 	
 }

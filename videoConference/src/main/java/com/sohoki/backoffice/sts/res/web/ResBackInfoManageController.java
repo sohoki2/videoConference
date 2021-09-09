@@ -1,6 +1,8 @@
 package com.sohoki.backoffice.sts.res.web;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -149,41 +151,7 @@ public class ResBackInfoManageController {
         	return model;
         }
         //페이지 삭제 
-        @RequestMapping(value="resSendMessage.do")
-        public ModelAndView resSendMessage(@ModelAttribute("loginVO") AdminLoginVO loginVO
-												                , @ModelAttribute("searchVO") ResInfoVO searchVO
-																, HttpServletRequest request
-																, BindingResult bindingResult) throws Exception{
-        	
-        	
-        	ModelAndView model = new ModelAndView(Globals.JSONVIEW);
-        	try{
-        		
-        		List<ResInfoVO> resInfo	 = resService.selectMessagentList();	
-     		    for (int i =0; i < resInfo.size(); i ++){
-     		       //해당 관련 메일 보내기
-     		      /* // AtMessengerCommunicator amc = new AtMessengerCommunicator(propertiesService.getString("mgMessageIP"), propertiesService.getInt("mgMessagePort"));
-     				
-     				String fromUid = resInfo.get(i).getUserId();
-     				String strMessage = "[회의 초대] " + resInfo.get(i).getResTitle() + " 회의 방번호:" + resInfo.get(i).getMeetingTel() +" 예약 일자:" + resInfo.get(i).getResStartday() + " 회의 시간:" + resInfo.get(i).getResStarttime() + "~" + resInfo.get(i).getResEndtime();
-     				String[] messangetoUrlList = resInfo.get(i).getResAttendlist().split(",");
-     				
-     				for (int a = 0; a < messangetoUrlList.length; a++){
-     					//메세지 보내기
-     					amc.addMessage(fromUid, messangetoUrlList[a].toString(), strMessage, "", strMessage);
-     				}
-     				amc.send();     */		    	
-     		    }
-     		    
-        		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-        	}catch(Exception e){
-        		model.addObject(Globals.STATUS,  Globals.STATUS_FAIL);
- 	  		    model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));
-        	}
-        	
-        	return model;
-        }
-		
+        
 		@RequestMapping(value="resInfo.do")		
 		public ModelAndView resResInfoPop(@ModelAttribute("loginVO") AdminLoginVO loginVO
 				                                , @ModelAttribute("searchVO") ResInfoVO searchVO
@@ -292,11 +260,15 @@ public class ResBackInfoManageController {
 		
 		  ModelAndView model = new ModelAndView(Globals.JSONVIEW);
 		  
+		  
+		  
+
+		  	
 		  try{
-			  if (params.get("resStarttime") == null ) {
+			  if ( util.NVL(params.get("resStarttime"),"").equals("") ) {
 				  params.put("resStarttime", "0900");
 			  }
-			  if (params.get("resEndtime") == null ) {
+			  if (util.NVL(params.get("resEndtime"),"").equals("")  ) {
 				  params.put("resEndtime", "1730");
 			  }
 			  

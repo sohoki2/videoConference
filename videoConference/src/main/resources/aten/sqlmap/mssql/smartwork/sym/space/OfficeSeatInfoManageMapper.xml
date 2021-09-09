@@ -79,7 +79,7 @@
 								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN , RES_REQDAY, QR_PLAYYN)
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
-                 #{seatQrCode,jdbcType=VARCHAR}, #{seatQrCodePath,jdbcType=VARCHAR},  #{seatQrCodeFullPath,jdbcType=VARCHAR}, #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
+                 #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
                  #{userId,jdbcType=VARCHAR}, GETDATE(), #{userId,jdbcType=VARCHAR}, GETDATE(),
                  #{seatGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
                  #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  ,  #{resReqday, jdbcType=VARCHAR} ,  #{qrPlayyn, jdbcType=VARCHAR}

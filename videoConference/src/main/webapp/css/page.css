@@ -219,7 +219,7 @@
 
         .tableArea table th {
             background-color: #efefef;
-            border-top: 3px solid #213341;
+            border-top: 3px solid #fab35f;
             font-size: 14px;
             font-weight: 500;
             color: #343434;
@@ -1046,7 +1046,7 @@ td a{margin-left:5px;}
 .joinSubTxt{float:right;} 
 .id-pw-warning{font-weight: bold;color : #EA4335;}
 .id-pw-posible{font-weight: bold;color : #34A853;}
-.join_pop_main_subTxt{float:left;font-weight: 500;font-size: 16px;}.pw_pop_main_subTxt{float:left;font-weight: bold;}      
+.join_pop_main_subTxt{float:left;font-weight: 500;font-size: 16px;color: black;}.pw_pop_main_subTxt{float:left;font-weight: bold;}      
 table tr td > a{color:#616161;text-decoration: underline;}
 /*dashboard*/
 .datetimeLine{font-weight: 500;}
@@ -1056,7 +1056,7 @@ table tr td > a{color:#616161;text-decoration: underline;}
 .viewArea table th a{color: #343434;}
 .alltext{font-weight: 500; font-size: 13px; display: inline-block; margin-right: 0 !important;}
 /*20191114*/
-.needpopup input, .needpopup select{width:100%;box-sizing:border-box;margin-left:0;padding: 6px 12px;width: 100%;border: 1px solid #d5d8dc;border-radius: 6px;outline: none;-webkit-appearance: none;-moz-appearance: none;appearance: none;font-weight: 300;font-size: 15px;box-sizing: border-box;}
+.needpopup input, .needpopup select{width:100%;box-sizing:border-box;margin-left:0;padding: 6px 12px;width: 100%;border: 1px solid #d5d8dc;border-radius: 6px;outline: none;/* -webkit-appearance: none; */-moz-appearance: none;/* appearance: none; */font-weight: 300;font-size: 15px;box-sizing: border-box;}
 .needpopup select{width:100%;}
 .width40{width:40% !important;}
 .hasDatepicker{height:24px;}
@@ -1070,7 +1070,7 @@ table tr td > a{color:#616161;text-decoration: underline;}
 .pop_table .auto100 .width100{width:100% !important;}
 .pop_table .tableauto input{width:auto !important;}
 .needpopup input[type="radio"]{width:auto;}
-.pop_box100, .pop_box50{height: 70px;}
+.pop_box100, .pop_box50{min-height: 70px;}
 .inputhalf{width:48% !important;}
 .inputhalf30{width:30% !important;}
 .heightAuto{height:auto;}
@@ -1132,4 +1132,39 @@ input[type="file"] {
     .pager li {
     display: inline-block;
     margin: 0 5px;
+}
+#dv_tennPopup .popCon {
+    height: 90px !important;
+}
+
+#dv_tennPopup {
+    width: 500px;
+    left: 60%;
+}
+
+.needpopup .needpopup_remover{color: white !important;}
+.centerV_pop .top {
+    background: #32383b;
+    padding: 15px 40px;
+    font-size: 18px;
+    color: #fff;
+    font-weight: 300;
+}
+
+.centerV_pop .button.b-close {
+    top: 15px;
+}
+
+.centerV_pop .con {
+    margin: 0 !important;
+    padding: 25px 40px;
+    box-sizing: border-box;
+}
+.centerV_pop .pop_footer {
+    margin: 0;
+    background-color: white !important;
+}
+
+.centerV_pop .pop_footer a.redBtn {
+    border: none;
 }

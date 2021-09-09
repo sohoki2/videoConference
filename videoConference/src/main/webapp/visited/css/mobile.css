@@ -1,0 +1,114 @@
+﻿/*header*/
+header {
+    height: 50px;
+    padding: 0;
+}
+header h1 {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+    header h1 img {
+        width: 120px;
+    }
+
+.menu {
+    display: none;
+}
+header .userInfo {
+    display: none;
+}
+.contents {
+    position: relative;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+.leftMenu span {
+    width: 36px;
+    height: 36px;
+    background: url("../img/ic_appbar_menu.svg")no-repeat;
+    background-size: 100%;
+}
+
+.leftMenu {
+    left: 5px;
+    width: auto;
+    position: absolute;
+    top: 5px;
+}
+
+.closebtn {
+    font-size: 2.6rem !important;
+}
+a.closebtn {
+    font-size: 2.6rem !important;
+    padding-right: 0 !important;
+    right: 20px !important;
+}
+.gnb {
+    width: 90%;
+    padding-top: 0;
+}
+.gnb a {
+    font-size: 1.5rem;
+    color: #333333;
+}
+.gnb {
+    width: 100%;
+    position: relative;
+}
+.sidenav {
+    padding: 30px;
+    box-sizing: border-box;
+}
+.main_tit {font-size: 2.2rem;padding: 40px 0;} 
+.main_tit p {font-size: 1.6rem;}
+.main_step {min-width: 800px;}
+.main_step li {text-align: center;padding-right: 15px;}
+.main_scroll {width: 100%; overflow-x: auto;}
+.lg-4{width: 40%;}
+.lg-3{width: 25%;}
+.lg-6{width: 100%;}
+.lg-8{width: 100%;}
+.main_wtit { padding-bottom: 15px; }
+.main_back .contents{padding-bottom: 30px;}
+.user_reser_b p {
+    font-size: 1.8rem;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    font-weight: 800;
+    border-bottom: 1px solid #333;
+}
+.user_reser_b ul li  {
+    font-size: 1.6rem;
+    padding: 11px 0;
+    color: #a0a0a0;
+}
+/*stepper*/
+ul.stepper .step .step-title {padding:15.5px 44px 24px 55px !important}
+ul.stepper .step::before {left: 0 !important;}
+ul.stepper .step .step-content {
+    margin-left: 30px !important;
+    margin-right: 0 !important;
+}
+.table-block { overflow-x: auto;}
+.table-block table{ min-width: 800px;}
+.apply_table {
+    font-size: 1.2rem;
+}
+.step_con_tit {
+    font-size: 1.4rem;
+}
+.needpopup {width: 90%;}
+#ui-datepicker-div.datePick{
+    padding: 10px;
+}
+#ui-datepicker-div.datePick .ui-state-default {font-size: 1.4rem;width: 35px;height: 35px;line-height: 3.5rem;}
+#ui-datepicker-div.datePick .ui-datepicker-current {right: 81px;top: 16px;}
+.tourStep {overflow-x: auto; text-align: left;}
+.tourStep ul { min-width: 720px;}
+.tour_table {font-size: 1.3rem;}
+.tourInfo {font-size: 1.3rem;}

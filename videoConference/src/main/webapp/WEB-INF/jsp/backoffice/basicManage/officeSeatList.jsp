@@ -271,7 +271,7 @@
 		        }
            },clearGrid : function() {
                 $("#mainGrid").clearGridData();
-           },fn_CheckForm  : function (){
+           },fn_CheckForm:function (){
 			    if (any_empt_line_id("centerId", "지점을 선택해주세요.") == false) return;
 			    if (any_empt_line_id("floorSeq", "층수을 선택해주세요.") == false) return;
 		    	if (any_empt_line_id("seatName", "좌석명 입력해 주세요.") == false) return;	
@@ -312,6 +312,10 @@
 		   						   //총 게시물 정리 하기'
 		   						   need_close();
 		   						   jqGridFunc.fn_search();
+		   					   }else if (result.status == "FAIL"){
+		   						   alert("저장 도중 문제가 발생 하였습니다.");
+		   						   need_close();
+		   						   jqGridFunc.fn_search();
 		   					   }
 		 				    },
 		 				    function(request){
@@ -319,7 +323,6 @@
 		 					    $("#btn_needPopHide").trigger("click");
 		 				    }    		
 		        );
-		    	
 		  },fn_search: function(){
 			  //검색 
 	    	  $("#mainGrid").setGridParam({

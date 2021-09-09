@@ -46,7 +46,19 @@
 					            AND b.EMPNO =  #{params.empno}
 							</if>
 					        <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKeyword)">
-					            AND #{params.searchCondition} LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					            <choose>
+					               <when test="params.searchKeyword == 'b.EMPNO'">
+					                   AND b.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					               </when>
+					               <when test="params.searchKeyword == 'b.EMPNAME'">
+					                   AND b.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					               </when>
+					               <otherwise>
+					                  AND ( b.EMPNO LIKE CONCAT('%',#{params.searchKeyword},'%')  or 
+					                        b.EMPNAME LIKE CONCAT('%',#{params.searchKeyword},'%') 
+					                      ) 
+					               </otherwise>
+					            </choose>
 							</if>
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchUserId)">
 								 AND (a.PROXY_USER_ID = #{params.searchUserId} or a.USER_ID  = #{params.searchUserId})
@@ -120,6 +132,46 @@
 	   WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 	   ORDER BY 	TA.REG_DATE DESC 	
 	</select>
+	<select id="selectMessageInfoList" resultType="lmap">
+	   SELECT  a.RES_SEQ,  a.ITEM_ID, a.ITEM_GUBUN, 
+		       dbo.FN_TIMESPLIT(a.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)) resEndtime,  
+		       CONVERT (DATE, a.RES_STARTDAY) resStartday,
+			   CONVERT (DATE, a.RES_ENDDAY) resEndday,
+			   b.EMPNAME, b.EMPHANDPHONE, b.EMPJIKW, b.EMPMAIL, b.EMPNO, a.RES_TITLE,
+			   CASE a.ITEM_GUBUN WHEN 'ITEM_GUBUN_2' THEN 
+				    (SELECT  MEETING_NAME FROM  TB_MEETING_ROOM B WHERE b.MEETING_ID = a.ITEM_ID )
+			      ELSE 
+				    (SELECT  SEAT_NAME FROM  TB_SEATINFO C WHERE c.SEAT_ID = a.ITEM_ID )
+			      END as ITEM_NAME 
+	   FROM TB_SWCRESERVATION a , TB_EMPINFO b
+	   WHERE a.USER_ID = b.EMPID AND a.SEND_MESSAGE = 'Y' 
+	        <choose>
+	            <when test="searchDay == 'DAY'">
+	                   AND a.RES_STARTDAY = convert(varchar(8), dateadd(day, 1,  GETDATE()) , 112)
+	                   AND a.RES_STARTTIME =  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  getdate(), 114), 1,5), ':','') 
+	                   AND a.ITEM_GUBUN = 'ITEM_GUBUN_1' 
+	                   AND a.RESERV_PROCESS_GUBUN IN('PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	            </when>
+	            <when test="searchDay == 'CAN'">
+	                  AND a.RES_STARTDAY = convert(varchar(8), GETDATE() , 112)
+	                  AND a.RES_STARTTIME = REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  dateadd(MI, 10, getdate()), 114), 1,5), ':','') 
+	                  AND a.ITEM_GUBUN = 'ITEM_GUBUN_1' 
+	                  AND a.RESERV_PROCESS_GUBUN IN('PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	                  AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( a.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( a.RES_STARTTIME AS INT) ) > 10
+	            </when>
+	            <otherwise>
+	                  AND a.RES_STARTDAY = convert(varchar(8), GETDATE() , 112)
+	                  AND a.RES_STARTTIME = REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  dateadd(MI, 20, getdate()), 114), 1,5), ':','') 
+	                  AND a.ITEM_GUBUN = 'ITEM_GUBUN_1' 
+	                  AND a.RESERV_PROCESS_GUBUN IN('PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	            </otherwise>
+	        </choose>
+  
+
+     
+
+	 
+	</select>
 	<select id="selectTodayResSeatInfo" resultType="lmap">
 	   SELECT TOP 1 b.SEAT_NAME, d.CENTER_NM, c.FLOOR_NAME, a.IN_TIME, a.OT_TIME
 	   FROM TB_SWCRESERVATION a, TB_SEATINFO b, TB_FLOORINFO c, TB_CENTERINFO d
@@ -165,28 +217,7 @@
 		 ORDER BY a.DATES ASC  
 		 
     </select>
-    <!--  mssql 2014 이후 버전 
     <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
-        SELECT X.DATES, X.weekTxt , X.passDate,
-               STRING_AGG(X.FLOOR_INFO, ',') WITHIN GROUP(ORDER BY X.FLOOR_INFO) resState
-        FROM ( 
-	          SELECT DATES, 
-	                 CASE WHEN DATES > CONVERT(VARCHAR(8), GETDATE(), 112) THEN 0
-			             ELSE 1
-			          END AS passDate ,DATEPART(WEEKDAY, CONVERT (DATE, DATES)) weekTxt
-			          , CONCAT( b.MEETING_NAME,':', dbo.FN_SWCRESTATE( b.MEETING_ID, DATES)) FLOOR_INFO
-			  FROM TB_CALENDER a  , (SELECT MEETING_ID, MEETING_NAME
-			                         FROM TB_MEETING_ROOM
-			                         WHERE FLOOR_SEQ = #{floorSeq}) b
-	          WHERE SUBSTRING(dates, 1, 6) =  #{searchCalenderTitle}
-			  GROUP BY DATES , MEETING_ID, MEETING_NAME
-		 ) X
-		GROUP BY X.DATES, X.weekTxt, X.passDate
-		ORDER BY X.DATES ASC
-    </select>
-    -->
-    <!--  mssql 2014 이전 버전 -->
-     <select id="selectCalenderMeetingState"  resultType="ResInfoVO">
         SELECT DISTINCT X.DATES, X.weekTxt , X.passDate
                 ,  STUFF(
 				  (SELECT ',' + cast( CONCAT( b.MEETING_NAME,':', dbo.FN_SWCRESTATE( b.MEETING_ID, DATES)) as VARCHAR(max))
@@ -236,6 +267,14 @@
                             b.RES_REQDAY
 					FROM TB_SWCTIME a, TB_MEETING_ROOM b, TB_FLOORINFO c
 					WHERE a.ITEM_ID = b.MEETING_ID
+					      <choose>
+					          <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKisok)">
+					            AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2','SWC_GUBUN_3')
+					          </when>
+					          <otherwise>
+					            AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2')
+					          </otherwise>
+					      </choose>
 					      AND b.ROOM_TYPE IN ('SWC_GUBUN_1','SWC_GUBUN_2','SWC_GUBUN_3')
 					      AND b.FLOOR_SEQ = c.FLOOR_SEQ
 		                  <choose>
@@ -245,9 +284,13 @@
 		                                           AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
 		                                         
 					        </when>
+					        <when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKisok)">
+		                           AND a.SWC_TIME  BETWEEN REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','')  
+		                           AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, 30, GETDATE()), 114), 1,5), ':','') 
+		                    </when>
 		                    <otherwise>
-		                           AND a.SWC_TIME  BETWEEN REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')  
-		                                           AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, 30, GETDATE()), 114), 1,5), ':','') 
+		                             AND a.SWC_TIME  BETWEEN REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','')  
+		                             AND REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','') 
 					        </otherwise>
 		                  </choose>
 		                  
@@ -561,8 +604,8 @@
                                    </if>
        WHERE RES_SEQ = #{resSeq}
    </update>
-   <update id="updateResCancel10MinLateEmpty">
-        UPDATE TB_SWCRESERVATION SET RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_6',
+    <update id="updateResCancel10MinLateEmpty">
+         UPDATE TB_SWCRESERVATION SET RESERV_PROCESS_GUBUN = 'PROCESS_GUBUN_6',
 								                              CANCEL_CODE = 'CANCEL_CODE_3',
 								                              CANCEL_REASON = '10분 이후 입실 없음'
 		WHERE RES_SEQ IN  (
@@ -584,7 +627,6 @@
 						                   AND  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
 						      AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( b.RES_STARTTIME AS INT) ) > 10 
 			              ) ; 
-		 
     </update>
     <delete id="deleteResManage">
         DELETE FROM TB_SWCRESERVATION WHERE RES_SEQ = #{resSeq};

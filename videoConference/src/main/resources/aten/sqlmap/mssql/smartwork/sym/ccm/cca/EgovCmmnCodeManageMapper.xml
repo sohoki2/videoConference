@@ -61,6 +61,7 @@
 		 WHERE CODE_ID = #{codeId}
 	</update>	
 	<delete id="deleteCmmnCode">
-		DELETE FROM lettccmmncode WHERE CODE_ID = #{value}
+	    DELETE FROM LETTCCMMNDETAILCODE WHERE CODE_ID = #{value}; 
+		DELETE FROM lettccmmncode WHERE CODE_ID = #{value};
 	</delete>
 </mapper>

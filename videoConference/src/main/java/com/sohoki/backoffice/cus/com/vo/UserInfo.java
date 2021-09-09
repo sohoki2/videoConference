@@ -30,5 +30,7 @@ public class UserInfo {
 	private String newPassword = "";
 	private int result = 0;
 	
-	
+	private String ci = "";
+	private String di = "";
+	private String tid = "";
 }
