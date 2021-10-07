@@ -20,6 +20,8 @@ public interface VisitedInfoManageService {
 	
     List<Map<String, Object>> selecttourCombo() throws Exception;
     
+    int selectTourMessage() throws Exception;
+    
     List<Map<String, Object>> selecttourInfo() throws Exception;
     
 	Map<String, Object> selectVisitedManageInfo(String visitedCode) throws Exception;

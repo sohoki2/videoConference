@@ -48,7 +48,7 @@
                 <div class="login_reser_b">
                     <div class="login_reser_box">
                         <p class="reser_b_tit">아이디</p>                
-                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요." onkeypress="enterkey();">
+                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요.">
                     </div>
                     
                 </div>
@@ -65,11 +65,13 @@
 <script>  
     function login(){
     	if (any_empt_line_span("user_id", "아이디를 입력해주세요.") == false) return;
+		
+
 		var params = {"userId": $("#user_id").val(), "mode": "emp"};
     	var url = "/web/LoginProcess.do";
     	uniAjax(url, params, 
 	     			function(result) {
-    		           if (result.status == "SUCCESS"){
+				       if (result.status == "SUCCESS"){
 						   location.href="/web/index.do";
   					   }else {
   						  $("#sp_message").html(result.message);

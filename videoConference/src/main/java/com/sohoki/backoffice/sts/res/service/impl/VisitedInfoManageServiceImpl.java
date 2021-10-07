@@ -18,7 +18,10 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.sohoki.backoffice.cus.kko.mapper.KkoMsgManageMapper;
 import com.sohoki.backoffice.cus.kko.service.KkoMsgManageSevice;
+import com.sohoki.backoffice.cus.kko.vo.KkoMsgInfo;
+import com.sohoki.backoffice.cus.kko.vo.kkoMessageInfo;
 import com.sohoki.backoffice.sts.res.mapper.VisitedInfoManageMapper;
 import com.sohoki.backoffice.sts.res.service.VisitedInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.VisitedDetailInfo;
@@ -47,6 +50,9 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	
 	@Autowired
     protected EgovPropertyService propertiesService;
+	
+	@Autowired
+	private KkoMsgManageMapper kkoMapper;
 
 	@Override
 	public List<Map<String, Object>> selectVisitedManageListByPagination(Map<String, Object> params) throws Exception {
@@ -89,7 +95,12 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		//ObjectMapper mapper = new ObjectMapper();
 		//List<VisitedDetailInfo> detailList = new ArrayList<>();
 		//detailList = Arrays.asList(mapper.readValue(visitedInfo.get("visitedDetail").toString(), VisitedDetailInfo[].class));
+		System.out.println("-----------------------------------------");
+		System.out.println("visitedDetail:" + util.NVL(visitedInfo.get("visitedDetail"),"").toString());
+		System.out.println("-----------------------------------------");
 		if (!util.NVL(visitedInfo.get("visitedDetail"),"").toString().equals("") ){
+			
+			//JSONArray ja = new JSONArray(util.NVL(visitedInfo.get("visitedDetail"),"").toString());
 			
 			
 			Gson gson = new GsonBuilder().create();
@@ -108,8 +119,8 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			List<List<Object>> result = visitedMapper.selectVisitedDetailInfo(info);
 			
 			if (info.getVisitedGubun().equals("VISITED_GUBUN_1")) {
-				ret = kkoSerice.kkoVisitedInsertService("RES", result);
-				ret = kkoSerice.kkoVisitedInsertService("REQ", result); 
+				ret = kkoSerice.kkoVisitedInsertService("RES", result, info.getVisitedGubun());
+				ret = kkoSerice.kkoVisitedInsertService("REQ", result, info.getVisitedGubun()); 
 			}
 				
 		}
@@ -126,7 +137,7 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			
 			 EgovFileScrty fileScrty = new EgovFileScrty();
 			 String path =  propertiesService.getString("Globals.qrPath");
-			 String result =  util.getQrCode(path, fileScrty.encode(info.getVisitedCode()), 200, 300, info.getVisitedCode()); // qr코드 생성 및 이미지 생성
+			 String result =  util.getQrCode(path, fileScrty.encode(info.getVisitedCode()), 300, 300, info.getVisitedCode()); // qr코드 생성 및 이미지 생성
 			 info.setVisitedQrcode(result);
 			 fileScrty = null;
 		}
@@ -165,7 +176,7 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			
 		}else {
 			List<List<Object>> result_visited = visitedMapper.selectVisitedDetailInfo(info);
-			kkoSerice.kkoVisitedInsertService(_snedGubun, result_visited);
+			kkoSerice.kkoVisitedInsertService(_snedGubun, result_visited, info.getVisitedGubun());
 		}
 		
 		return ret;
@@ -202,6 +213,42 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	public List<Map<String, Object>> selectVisitedDetailInfoFront(String visitedCode) throws Exception {
 		// TODO Auto-generated method stub
 		return visitedMapper.selectVisitedDetailInfoFront(visitedCode);
+	}
+
+	@Override
+	public int selectTourMessage() throws Exception {
+		// TODO Auto-generated method stub
+		//메세지 보내기 
+		List<Map<String, Object>> tourMessages = visitedMapper.selectTourMessage();
+		
+		KkoMsgInfo vo = new KkoMsgInfo();
+		kkoMessageInfo message = new kkoMessageInfo();
+		Map<String, String> returnMsg = new HashMap<String, String>();
+		int ret = 0;
+		for (Map<String, Object> tourMessage : tourMessages) {
+			String _snedGubun = tourMessage.get("dayGubun").equals("TOD") ? "stptr03":"stptr02";
+					
+			if (!util.NVL(tourMessage.get("visited_req_celphone"), "").toString().equals("")  ) {
+				//case 할지 안할지 정리 하기
+				message.tourMsg(_snedGubun, tourMessage) ;
+				
+				vo.setPhone(tourMessage.get("visited_req_celphone").toString());
+				vo.setCallback("01021703122");
+				
+				vo.setMsg(returnMsg.get("resMessage"));
+				vo.setTemplateCode(_snedGubun);
+				
+				vo.setFailedType("MMS");
+				vo.setFailedSubject(returnMsg.get("title"));
+				vo.setFailedMsg(returnMsg.get("resMessage"));
+				ret = kkoMapper.kkoMsgInsertSevice(vo);
+			}
+			
+		}
+		returnMsg = null;
+		vo = null;
+		message = null;
+		return ret;
 	}
 	
 	

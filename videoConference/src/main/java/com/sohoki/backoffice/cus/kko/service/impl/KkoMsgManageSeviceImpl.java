@@ -67,12 +67,17 @@ public class KkoMsgManageSeviceImpl extends EgovAbstractServiceImpl implements K
 	}
 
 	@Override
-	public int kkoVisitedInsertService(String _snedGubun,  List<List< Object>> params) throws Exception {
+	public int kkoVisitedInsertService(String _snedGubun,  List<List< Object>> params, String _visitedGubun) throws Exception {
 		
 		KkoMsgInfo vo = new KkoMsgInfo();
 		kkoMessageInfo message = new kkoMessageInfo();
+		Map<String, Object> visitedInfo = null;
+		if (_visitedGubun.equals("VISITED_GUBUN_1")) {
+			visitedInfo = (Map<String, Object>) params.stream().limit(1).collect(Collectors.toList()).get(0).get(0);
+		}else {
+			visitedInfo = (Map<String, Object>) params.stream().limit(1).collect(Collectors.toList()).get(0);
+		}
 		
-		Map<String, Object> visitedInfo = (Map<String, Object>) params.stream().limit(1).collect(Collectors.toList()).get(0);
 		
 		Map<String, String> returnMsg =  visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1") ?
 				message.visitedMsg(_snedGubun, visitedInfo): message.tourMsg(_snedGubun, visitedInfo) ;
@@ -82,16 +87,19 @@ public class KkoMsgManageSeviceImpl extends EgovAbstractServiceImpl implements K
 		if (!util.NVL(visitedInfo.get("visited_req_celphone"), "").toString().equals("")  ) {
 			//case 할지 안할지 정리 하기
 			if (!_snedGubun.equals("REQ") && !_snedGubun.equals("ARR") && visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1")) {
-				vo.setPhone(  visitedInfo.get("visited_req_celphone").toString());
-				vo.setCallback(visitedInfo.get("emphandphone").toString());
+				vo.setPhone(  visitedInfo.get("visited_req_celphone").toString().replaceAll("-", ""));
+				vo.setCallback(visitedInfo.get("emphandphone").toString().replaceAll("-", ""));
 			}else if (visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1")) {
-				vo.setPhone(visitedInfo.get("emphandphone").toString());
-				vo.setCallback(visitedInfo.get("visited_req_celphone").toString());
+				vo.setPhone(visitedInfo.get("emphandphone").toString().replaceAll("-", ""));
+				vo.setCallback(visitedInfo.get("visited_req_celphone").toString().replaceAll("-", ""));
 			}else if (visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_2")) {
 				vo.setPhone(visitedInfo.get("visited_req_celphone").toString());
-				vo.setPhone("01021703122");
+				vo.setCallback("01021703122");
 			}
-			
+			System.out.println("---------------------------------------------------------");
+			System.out.println(returnMsg.get("buttonJson"));
+			System.out.println("---------------------------------------------------------");
+			vo.setButtonJson(returnMsg.get("buttonJson"));
 			vo.setMsg(returnMsg.get("resMessage"));
 			vo.setTemplateCode(returnMsg.get("templeCode"));
 			

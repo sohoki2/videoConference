@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
-<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -13,24 +12,21 @@
     <title><spring:message code="URL.TITLE" /></title>
     <link rel="stylesheet" href="/css/kiosk/paragraph.css">
     <link rel="stylesheet" href="/css/kiosk/reset.css">
-    
-
-    <script src="/front_res/js/jquery-3.5.1.min.js"></script>
-	<script src="/front_res/js/bpopup.js" ></script>
-	<link rel="stylesheet" href="/front_res/css/popup.css"/>
-    
-    
-    
-
-    <!-- 캘린더 관련 -->
-    
-      <link rel='stylesheet' href='/front_res/css/smart.css'/>
+    <link rel="stylesheet" href="/front_res/css/popup.css"/>
+    <link rel='stylesheet' href='/front_res/css/smart.css'/>
     <link rel='stylesheet' href='/front_res/css/main.css'/>
     <link rel='stylesheet' href='/front_res/css/day_main.css'/>
     <link rel='stylesheet' href='/front_res/css/time_main.css'/>
     <link rel='stylesheet' href='/front_res/css/list_main.css' />
     
-	<script src="/front_res/js/packages/main.js"></script>
+    <script src="/front_res/js/jquery-3.5.1.min.js"></script>
+    <script src="/front_res/js/bpopup.js" ></script>
+    <script src="/front_res/js/packages/main.js"></script>
+
+    <!-- 캘린더 관련 -->
+    
+   
+    
     <script type="text/javascript" src="/front_res/js/packages/day_main.js"></script>
     <script type="text/javascript" src="/front_res/js/packages/time_main.js"></script>
     
@@ -310,14 +306,10 @@
         	$('body').css('overflow', 'auto');
             e.preventDefault(); 
         });
-        
-        
-	$( function() {
-		setInterval(function() {
-			$("#sp_timeInfo").html(new Date().format('HH:mm:ss'));
-		}, 1000);
-		meetingR.meetingInfo();
-	});
+        $( function() {
+			
+        	meetingR.meetingInfo();
+        });
         
         
         var meetingR = {
@@ -366,16 +358,17 @@
 			  							    		}
 			  					                 }
 			  							    	 sHtml += "</ul>";
+												 console.log("end");
 			  							    	 $("#sp_resListPop").html(sHtml);
 												 console.log("in_time:" + obj[i].in_time + ":" + obj[i].ot_time);
 			  							    	 if ((obj[i].in_time != "" && obj[i].in_time != undefined)  &&  (obj[i].ot_time == ""  || obj[i].ot_time == undefined )){
-													 
+													 console.log("퇴실 처리");
 			  							    		 $("#p_stateInfo").html("회의 중");
 			  							    		 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("OT")').text("퇴실");
 			  							    	 }else if  (obj[i].in_time == "" || obj[i].in_time == undefined) {
-														$("#a_stateChange").show();
-            				  							$("#p_stateInfo").html("회의 예정");
-            				  							$("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("IN")').text("입실");
+													 console.log("입실 처리");
+			  							    		 $("#a_stateChange").show();
+            				  						 $("#a_stateChange").prop('href', 'javascript:;meetingR.fn_MeetingState("IN")').text("입실");
 			  							    	 }else if (obj[i].ot_time != "" || obj[i].ot_time != undefined ){
 			  							    		 $("#a_stateChange").hide();
 			  							    		 $("#p_stateInfo").html("회의 종료");
@@ -402,9 +395,9 @@
 									   }else {
 										   $("#a_btn_res").show();
 									   }
-										(resBtn == "hide") ? $("#a_btn_res").hide():$("#a_btn_res").show();
+									   (resBtn == "hide") ? $("#a_btn_res").hide():$("#a_btn_res").show();
 
-								       //$("#sp_timeInfo").html(result.timeInfo);//날짜 
+								       $("#sp_timeInfo").html(result.timeInfo);//날짜 
 								       
 								       calView( result.resTime  );
 									}else {
@@ -418,7 +411,7 @@
     		 				    }    		
     		            );
         			   //1분 마다 리로드 
-                	   window.setTimeout("meetingR.meetingInfo()", 30000);
+                	   window.setTimeout("meetingR.meetingInfo()", 3000);
         		}, fn_MeetingState : function (state){
         			//입실 하기 
         			    var params = {'resSeq' : $("#resSeq").val(), 'resState': state };
@@ -426,9 +419,8 @@
         			 			function(result) {
         					           if (result.status == "SUCCESS"){
         									    //테이블 정리 하기
-			        									 if (state == "IN"){
-			      			  								meetingR.fn_hideMessage("입실 처리 되었습니다.", "checkIn");
-															
+			        									   if (state == "IN"){
+			      			  								 meetingR.fn_hideMessage("입실 처리 되었습니다.", "checkIn");
 			      			  							 }else {
 			      			  								meetingR.fn_hideMessage("퇴실 처리  되었습니다.", "checkIn");
 			      			  							 }
@@ -459,10 +451,9 @@
 		        								$("#btn_booking").trigger("click");
 		        						    }else {
 		        						    	//예약 취소 함수 요청 
-		        						    	
+		        						    	meetingR.meetingInfo();
 		        						    	$("#btn_hide").trigger("click");
 		        						    	meetingR.fn_hideMessage("예약이 정상적으로 취소 되었습니다.", "checkIn");
-		        						    	meetingR.meetingInfo();
 		  														
 		      							    }		
     								   }else {
@@ -522,13 +513,10 @@
         			if (Num == "C"){
         				$("#userId").val("");
         				$("#li_userNumber").text("");
-        			}else if (Num == "B"){
-        				if(userId !=""){
-							$("#userId").val(userId.substring(0, parseInt(userId.length -1) )); 
-							$("#li_userNumber").text(userId.substring(0, parseInt(userId.length -1)) );
-        				}
-        				return;
-        			} else {
+        			}else if (Num == "B" && userId !=""){
+        					$("#userId").val(userId.substring(0, parseInt(userId.length -1) )); 
+        					$("#li_userNumber").text(userId.substring(0, parseInt(userId.length -1)) );
+        			}else {
         				userId += Num;
         				$("#userId").val(userId);
         				$("#li_userNumber").text(userId );
@@ -612,13 +600,11 @@
     	        	$('body').css('overflow', 'auto');
     	            
         		}, fn_hideMessage : function (resMessage, _panel){
-					
         			$("#sp_stateTxt").html("<p>"+resMessage+"</p>");
     				$("#btn_checkIn").trigger("click");
-					$('#' +_panel).fadeOut(1000).bPopup().close();
     				//1초후 클릭 
+    				//$('#'+_panel).fadeOut(1000).bPopup().close();
     	        	$('body').css('overflow', 'auto');
-					bPopup().close();
     	           
     	            
              }

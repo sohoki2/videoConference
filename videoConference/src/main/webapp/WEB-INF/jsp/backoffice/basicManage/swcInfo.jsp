@@ -68,6 +68,13 @@
 	                        	<input type="number" name="tennMonthcnt" id="tennMonthcnt" value="${regist.tennMonthcnt }" onkeypress="only_num();"  style="width:100px;"/>
 	                        </td>
 	                    </tr>
+	                    <tr>
+	                        <th><span class="redText">투어 허용 인원</th>
+	                        <td style="text-align:left" colspan="3">
+	                        	<input type="text" name="tourAllowPerson" size="10" id="comTitle" value="${regist.tourAllowPerson }" onkeypress="only_num();" style="width:260px;"/>
+	                        </td>
+	                       
+	                    </tr>
 	                </tbody>
 	            </table>
             </div>

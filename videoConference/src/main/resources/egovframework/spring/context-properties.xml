@@ -32,6 +32,13 @@
                 <entry key="Globals.qrPath" value="C:\dev\git\conference\videoConference\src\main\webapp\qrcode"/>
                 <entry key="qrCodePath" value="qrcode"/>
                 
+                <entry key="aims.storeId" value="aten"/>
+                <entry key="aims.server" value="http://10.100.2.31:9001/"/>
+                
+                <entry key="aims.connectionTimeout" value="5000"/>
+                <entry key="aims.socketTimeout" value="5000"/>
+                
+                
 	        </map>
 		</property>
 	</bean>

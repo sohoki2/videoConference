@@ -92,6 +92,7 @@
 		                <div class="flooreArea float_left" >
 		                     <a href="#" onClick="fn_boardList('res')" id="a_res" class="active">예약 내역</a>  
 		                     <a href="#" onClick="fn_boardList('ten')" id="a_tenn">크레딧내역</a>  
+		                     <a href="#" onClick="fn_boardList('vis')" id="a_vis">방문자예약</a>  
 		                </div>               
 		                <div class="clear"></div>
 		            </div>
@@ -133,6 +134,58 @@
         
         <c:import url="/web/inc/unimessage.do" />
         
+        
+        <div id="canclePopup" class="needpopup main_pop opened">
+		     <div class="box_padding">
+		         <h2 class="pop_tit">방문 예약 취소</h2>  
+		         <div class="form">
+		             <div class="pop_con">
+		                 <div class="box_2">
+		                     <textarea id="cancelReasonVisited" style="width:95%;"></textarea>
+		                 </div>                    
+		             </div>   
+		         </div>
+		         <div class="footerBtn">
+		             <a href="#" onClick="fn_cancelVisited()" class="blueBtn" >방문 예약 취소</a>
+		             <a href="#" onClick="need_close()" class="grayBtn">취소</a>
+		         </div>
+		         <div class="clear"></div>
+		     </div>            
+		     <a href="#" class="needpopup_remover"></a>
+		</div>
+		<div id="visitedDetailPopup" class="needpopup main_pop opened">
+		     <div class="box_padding">
+		         <h2 class="pop_tit">방문 예약 현황</h2>  
+		         <div class="form">
+		             <div class="pop_con">
+		                 <div class="box_2">
+		                      <h5 class='main_wsubtit'>방문자 리스트</h5>
+     						  <table class='pop_table_visit' id="tb_visitedDetail">
+     						    <thead>
+     						      <tr>
+     						    	<th>방문자</th>
+     						    	<th>휴대폰</th>
+     						    	<th>업체</th>
+     						      </tr>
+     	                        </thead>
+     	                        <tbody>
+     	                        </tbody>
+     	                      </table>
+		                 </div>                    
+		             </div>   
+		         </div>
+		         <!--  // 팝업 내 상단 x버튼이 있으므로 닫기 버튼은 삭제하겠습니다.
+		         <div class="footerBtn">
+		             <a href="#" onClick="need_close()" class="grayBtn">닫기</a>
+		         </div>
+		         <div class="clear"></div>
+				 -->
+		     </div>            
+		     <a href="#" class="needpopup_remover"></a>
+		</div>
+		
+		
+		<input type="hidden" id='visitedCode'>
         <script type="text/javascript">
 		    $( function() {
 		    	$("#boardGubun").val("res");
@@ -143,20 +196,35 @@
 		    	if (gubun == "res"){
 		    		$("#a_res").addClass("active");
 		    		$("#a_tenn").removeClass("active");
+		    		$("#a_vis").removeClass("active");
 		    		
+		    		
+		    	}else if (gubun == "vis"){
+		    		$("#a_res").removeClass("active");
+		    		$("#a_tenn").removeClass("active");
+		    		$("#a_vis").addClass("active");
 		    	}else {
 		    		$("#a_res").removeClass("active");
 		    		$("#a_tenn").addClass("active");
+		    		$("#a_vis").removeClass("active");
 		    	}
-		    	fn_bookingList(gubun);
+		    	fn_bookingList();
 		    }
 	        function fn_bookingList(){
 	        	var gubun = $("#boardGubun").val();
-	        	var url =  (gubun == "res") ? "/web/mybookingAjax.do" : "/web/myTennAjax.do";
+	        	var url = "";
+	        	if (gubun == "res"){
+	        		url = "/web/mybookingAjax.do";
+	        	}else if (gubun == "vis"){
+	        		url = "/web/visitedAjax.do";
+	        	}else {
+	        		url = "/web/myTennAjax.do";
+	        	}
+	        	
 	        	var params = { 
 			    	    		"pageIndex": $("#pageIndex").val(),
 			    	    		"searchKeyword" : $("#searchKeyword").val(),
-			         			"pageUnit": $("#pageUnit").val()
+			    	    		"pageUnit": $("#pageUnit").val()
 	     		              }; 
 		    	uniAjax(url, params, 
 		      			function(result) {
@@ -169,6 +237,8 @@
 		   						   var tHtml  = "";
 		   						   if (gubun == "res"){
 		   							  tHtml = "<tr><th>NO</th><th>구분</th><th>예약내용</th><th>이용날짜</th><th>이용시간</th><th>이용크레딧</th><th></th></tr>";
+		   						   }else if (gubun == "vis") {
+		   							  tHtml = "<tr><th>NO</th><th>신청자명</th><th>휴대폰번호</th><th>소속업체</th><th>방문장소</th><th>방문예약일</th><th>상태</th></tr>";
 		   						   }else {
 		   							  tHtml = "<tr><th>NO</th><th>구분</th><th>예약내용</th><th>이용날짜</th><th>이용시간</th><th>이용크레딧</th></tr>";  
 		   						   }
@@ -182,7 +252,7 @@
 		   							   var a = "1";
 		   							   for (var i in result.resultlist ){
 		   								
-		   								costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_4") ?
+		   								  costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_4") ?
 		   										   "<a href='' onClick='fn_resCancel(&#39;"+ obj[i].res_seq+"&#39;,&#39;PROCESS_GUBUN_6&#39;)' class='cancleBtn active' data-needpopup-show='#cancle_popup'>예약취소</a>" :
 		   										   "취소완료";
 		   								  
@@ -196,7 +266,22 @@
 						                            +"    <td>"+obj[i].tenn_cnt+"</td>"
 						                            +"    <td>"+costInfo+"</td>"
 						                            + "</tr>";
-				                          }else {
+				                          }else if (gubun == "vis"){
+				                        	  
+				                        	  consInfo = (obj[i].visited_status == "VISITED_STATE_1") ?
+				                        			   "<a href='#' onClick='fn_VisitedChange(&#39;"+ obj[i].visited_code+"&#39;,&#39;VISITED_STATE_2&#39;)' class='apply_btn'>승인</a><a href='#' onClick='fn_VisitedCancel(&#39;"+ obj[i].visited_code+"&#39;)' class='apply_btn_none' data-needpopup-show='#canclePopup'>취소</a> " :
+				                        				   obj[i].code_nm  
+				                        	  
+				                        	  sHtml	+="<tr>"
+						                            +"    <td>"+a+"</td>"
+						                            +"    <td onClick='fn_visitedDetail(&#39;"+obj[i].visited_code+"&#39;)' data-needpopup-show='#visitedDetailPopup' >"+obj[i].visited_req_name+"</td>"
+						                            +"    <td>"+obj[i].visited_req_celphone+"</td>"
+						                            +"    <td>"+obj[i].visited_req_org+"</td>"
+						                            +"    <td>"+obj[i].floor_name+"</td>"
+						                            +"    <td>"+obj[i].visited_resday+":"+ obj[i].visited_restime + "</td>"
+						                            +"    <td>"+consInfo+"</td>"
+						                            + "</tr>";
+				                          } else {
 				                        	  sHtml	+="<tr>"
 						                            +"    <td>"+a+"</td>"
 						                            +"    <td>"+obj[i].code_nm+"</td>"
@@ -226,7 +311,9 @@
 		 				    function(request){
 		 					    alert("Error:" +request.status );	   
 		 					    $("#btn_needPopHide").trigger("click");
-		 				    }    		
+		 				    }   
+		 				    
+		 				    
 		        );
 	        }
 	        function fn_search(){
@@ -238,7 +325,59 @@
 	       	   $(":hidden[name=pageIndex]").val(pageNo);
 	           fn_bookingList();
 	   	    }
-	        
+	        function fn_visitedDetail(visitedCode){
+	        	
+	        	//상세 보기 
+	        	uniAjaxSerial("/visit/VisitSearchDetailResult.do", {'visitedCode' : visitedCode}, 
+						  function(result) {
+							       if (result.status == "SUCCESS"){
+							    	   if (result.resultlist.length > 0){
+	     						    		  
+	     						    		  $("#tb_visitedDetail > tbody").empty();
+	     						    		  var shtml = "";
+	     						    		  for (var i in result.resultlist){
+	     						    			 var obj = result.resultlist[i];
+	     						    			 shtml = "<tr>"
+	       						    			       + "  <td>"+obj.visited_name +"</td>"
+	       						    			       + "  <td>"+obj.visited_celphone +"</td>"
+	       						    			       + "  <td>"+obj.visited_org +"</td>"
+	       						    			       + "</tr>"
+	       						    			  $("#tb_visitedDetail >  tbody:last").append(shtml);	 
+	     						    		  }
+							    	   }
+								   }else {
+									   $("#sp_message").text("조회중 애러가 발생 하였습니다.");
+	    							   $("#btn_result").trigger("click"); 
+								   }
+						  },
+						  function(request){
+							    alert("Error:" +request.status );	       						
+						  }    		
+			   );
+	        }
+	        function fn_VisitedCancel(visitedCode){
+			    $("#visitedCode").val(visitedCode);
+			    	
+			}
+	        function fn_cancelVisited(){
+	        	fn_VisitedChange($("#visitedCode").val(), 'VISITED_STATE_4');
+	        	need_close();
+	        }
+	        function fn_VisitedChange(visitedCode, status){
+	        	var params = {'visitedCode': visitedCode, 'mode' : 'Edt', 'visitedStatus' : status, 'visitedGubun' : 'VISITED_GUBUN_1', 'cancelReason': $("#cancelReasonVisited").val()};
+	       	    uniAjax("/visit/VisitUpdaterProcess.do", params, 
+	   	  			 function(result) {
+	   					       if (result.status == "SUCCESS"){
+	   					    	   alert("정상적으로 처리 되었습니다.");
+	   					    	   fn_bookingList();
+	   						   }else {
+	   							   alert(result.message);
+	   						   }
+	   					  },function(request){
+	   						    alert("Error:" +request.status );	       						
+	   					  }    		
+	   	       );
+			}
         </script>
 </form:form>
 </body>

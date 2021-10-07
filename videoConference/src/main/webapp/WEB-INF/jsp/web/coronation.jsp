@@ -569,8 +569,7 @@
             	var res_reqday = $("#resReqday").val();	
             	
             	var thisDay = $("#"+calId).val().replaceAll("-", "");
-				
-            	if (dateCheck( thisDay,  res_reqday ,  "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false ){ 
+				if (dateCheck( thisDay,  res_reqday ,  "사전 예약일자는 "+  res_reqday + " 이전 입니다.")  == false ){ 
             		if (calId == "searchResStartday"){
                 		$("#searchResStartday").val($("#resetStartday").val());
                 	}else {
@@ -593,8 +592,7 @@
                 	}else {
                 		$("#searchResEndday").val($("#resetEndday").val());
                 	}
-            	}	
-				
+            	}
             }
             function fn_dayReset(){
             	

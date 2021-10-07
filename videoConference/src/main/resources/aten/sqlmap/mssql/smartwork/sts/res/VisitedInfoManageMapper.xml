@@ -49,7 +49,7 @@
 								</when>
 							</choose>
 						    <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.empno)">
-					            AND b.EMPNO =  #{params.empno}
+					            AND d.EMPNO =  #{params.empno}
 							</if>
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.visitedCode)">
 					            AND a.VISITED_CODE =  #{params.visitedCode}
@@ -57,7 +57,14 @@
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.seachName)  and 
 								      !@org.apache.commons.lang3.StringUtils@isEmpty(params.seachCelphone)">
 								AND a.VISITED_REQ_NAME = #{params.seachName} AND  a.VISITED_REQ_CELPHONE= #{params.seachCelphone}
-								AND a.VISITED_STATUS IN ('VISITED_STATE_1', 'VISITED_STATE_2', 'VISITED_STATE_3')
+								 <choose>
+								     <when test="params.visitedGubun == 'VISITED_GUBUN_1'">
+								        AND a.VISITED_STATUS IN ('VISITED_STATE_1', 'VISITED_STATE_2', 'VISITED_STATE_3')
+								     </when>
+								     <otherwise>
+								        AND a.VISITED_STATUS IN ('VISITED_STATE_1', 'VISITED_STATE_2', 'VISITED_STATE_3', 'VISITED_STATE_4', 'VISITED_STATE_6')
+								     </otherwise>
+								 </choose>
 							</if>
 		    ) TB 
 	   ) TA 
@@ -89,6 +96,12 @@
     <select id="selecttourCombo" resultType="lmap">
        select TOURDAY from dbo.FN_TOURCOMBO('')
     </select>
+    <!-- 2021 메세지 신규 -->
+    <select id="selectTourMessage" resultType="lmap">
+       { call SP_TOURRESMESSAGE()}
+    </select>
+    
+    
     <select id="selecttourInfo" resultType="lmap">
 	   SELECT  dbo.FN_DAYCONVERT(TOURDAY) TOURDAY , CODE, CODE_NM, CODE_DC ,
 	         (SELECT ISNULL(SUM(VISITED_PERSON),0) FROM TB_VISITEDINFO WHERE VISITED_RESDAY = tourDAY AND VISITED_RESTIME = CODE_DC) CNT

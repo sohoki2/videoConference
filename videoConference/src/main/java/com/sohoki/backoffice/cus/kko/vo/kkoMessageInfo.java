@@ -12,7 +12,7 @@ public class kkoMessageInfo {
 		String title = "";
 		String resMessage = "";
 		String templeCode = "";
-		
+		String buttonJson = "";
 		switch (_dayGubun) {
 		    case  "RES":
 		    	title = "[서울관광플라자]";
@@ -39,7 +39,7 @@ public class kkoMessageInfo {
 	    			     "※ 투어는 정각에 진행되므로, 반드시 시간을 준수하여 주시기 바랍니다.\r\n"+
 	    			     "※ 투어 시 여러팀이 함께 동행하는 점 양해 바랍니다.\r\n"+
 	    			     "※ 일정 변경 및 취소를 희망하실 경우, 02-3788-8172로 연락 바랍니다.";
-		    	templeCode = "stpvr02";
+		    	templeCode = "stptr02";
 		    	break;
 		    case  "STA":
 		    	title = "[서울관광플라자]";
@@ -53,7 +53,7 @@ public class kkoMessageInfo {
 	    			     "※ 투어는 정각에 진행되므로, 반드시 시간을 준수하여 주시기 바랍니다.\r\n"+
 	    			     "※ 투어 시 여러팀이 함께 동행하는 점 양해 바랍니다.\r\n"+
 	    			     "※ 일정 변경 및 취소를 희망하실 경우, 02-3788-8172로 연락 바랍니다.";
-		    	templeCode = "stpvr03";
+		    	templeCode = "stptr03";
 		    	break;
 		    case  "COV":
 		    	title = "[서울관광플라자]";
@@ -64,23 +64,24 @@ public class kkoMessageInfo {
 		    	         "이점 많은 양해 부탁드리며, 정기투어 재신청을 희망하실 경우 번거로우시겠지만 신규 신청서 작성을 부탁드립니다.\r\n\r\n"+
 	    			     "건강 조심하시고 다음 기회에 뵐 수 있기를 바라겠습니다.\r\n\r\n"+
 		    	         "감사합니다.";
-		    	templeCode = "stpvr04";
+		    	templeCode = "stptr04";
 		    	break;
+		  
 		    case  "CAN":
 		    	title = "[서울관광플라자]";
 		    	resMessage = "[서울관광플라자]\r\n\r\n" +
 		    	         "안녕하세요. 서울관광플라자입니다.\r\n\r\n"+
-		    	         "서울관광플라자 건물 내 코로나19 확진자 발생에 따라 추가 확산 방지 목적으로 "+ vo.get("visited_resday") +" 예정된 투어가 취소됨을 안내드립니다. \r\n\r\n"+
+		    	         "서울관광플라자 건물 내 코로나19 확진자 발생에 따라 추가 확산 방지 목적으로 "+ vo.get("visited_resday") +" 예정된 투어가 취소됨을 안내드립니다.\r\n\r\n"+
 		    	         "이점 많은 양해 부탁드리며, 정기투어 재신청을 희망하실 경우 번거로우시겠지만 신규 신청서 작성을 부탁드립니다.\r\n\r\n"+
-	    			     "건강 조심하시고 다음 기회에 뵐 수 있기를 바라겠습니다.\r\n\r\n"+
+	    			     "건강 조심하시고 다음 기회에 다시 뵐 수 있기를 바라겠습니다.\r\n\r\n"+
 		    	         "감사합니다.";
-		    	templeCode = "stpvr05";
+		    	templeCode = "stptr05";
 		    	break;
-		   
 		}
 		returnMsg.put("title", title);
 		returnMsg.put("resMessage", resMessage);
 		returnMsg.put("templeCode", templeCode);
+		returnMsg.put("buttonJson", buttonJson);
 		return returnMsg;
 		
 	}
@@ -90,7 +91,7 @@ public class kkoMessageInfo {
 		String title = "";
 		String resMessage = "";
 		String templeCode = "";
-		
+		String buttonJson = "";
 		switch (_dayGubun) {
 		    case  "RES":
 		    	title = "[방문 예약 승인 요청]";
@@ -102,6 +103,7 @@ public class kkoMessageInfo {
 	    			     "- 신청자: "+vo.get("visited_req_name")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr01";
+		    	buttonJson = "";
 		    	break;
 		    case  "REQ":
 		    	title = "[방문 예약 승인 요청]";
@@ -113,17 +115,22 @@ public class kkoMessageInfo {
 	    			     "- 신청자: "+vo.get("visited_req_name")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr02";
+		    	buttonJson = "";
 		    	break;
 		    case  "QRS":
 		    	title = "[서울관광플라자]";
 		    	resMessage = "[서울관광플라자]\r\n\r\n" +
 		    	         "안녕하세요. 서울관광플라자입니다.\r\n"+
 		    	         "아래와 같이 방문 예약 완료되었습니다.\r\n\r\n"+
-	    			     "- 일시: "+ vo.get("visited_resday") +"\r\n" + 
+	    			     "- 일시: "+ vo.get("visited_resday").toString() +"\r\n" + 
 	    			     "- 신청자: "+ vo.get("visited_req_name")+"\r\n" + 
 	    			     "- 담당자: "+vo.get("empname")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr03";
+		    	buttonJson = "{\"button\":[{\"name\":\"QR 받기\",\"type\":\"WL\",\"url_pc\":\"\", \r\n" + 
+		    			"\"url_mobile\":\"https://room.visitseoul.net/web/visitedQr.do?visitedCode="+vo.get("visited_code")+"\"}]}";
+		    	
+		    	
 		    	break;
 		    case  "ARR":
 		    	title = "[도착알림]";
@@ -133,6 +140,7 @@ public class kkoMessageInfo {
 	    			     "- 연락처: "+ vo.get("visited_req_celphone")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr04";
+		    	buttonJson = "";
 		    	break;
 		    case  "CAN":
 		    	title = "[서울관광플라자]";
@@ -145,11 +153,13 @@ public class kkoMessageInfo {
 	    			     "- 사유: "+ vo.get("cancel_reason")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr05";
+		    	buttonJson = "";
 		    	break;
 		
 		}
 		returnMsg.put("title", title);
 		returnMsg.put("resMessage", resMessage);
+		returnMsg.put("buttonJson", buttonJson);
 		returnMsg.put("templeCode", templeCode);
 		
 		return returnMsg;

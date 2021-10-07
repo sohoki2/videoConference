@@ -59,7 +59,7 @@
         <div class="contents resource_margT">
            <div class="line">
             <!--//date picker-->
-                <div class="contents">
+                <div class="contents mobileM">
                     <div class="float_right">
                     <button type="button" class="resource" onClick="location.href='/web/meetingDay.do'">회의실 예약</button>
                   </div>
@@ -109,6 +109,7 @@
         <!--퇴실 팝업-//->
 
         <!--needpopup script-->
+    
         <c:import url="/web/inc/unimessage.do" />
         <script type="text/javascript">
 		    $( function() {
@@ -119,7 +120,7 @@
             	var params = { 
 			    	    		"pageIndex": $("#pageIndex").val(),
 			          			"searchKeyword" : $("#searchKeyword").val(),
-			          			"searchRoomType" : "SWC_GUBUN_1",
+								"searchRoomType" : "SWC_GUBUN_1",
 			         			"pageUnit": $("#pageUnit").val()
          		}; 
 		    	uniAjax(url, params, 

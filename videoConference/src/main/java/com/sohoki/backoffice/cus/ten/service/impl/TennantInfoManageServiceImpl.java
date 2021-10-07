@@ -70,7 +70,7 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	public int insertTennantPlayManages(Map<String, Object> params) throws Exception {
 		
 		String userId = params.get("userId").toString();
-		Map<String, Object> comInfo = uniService.selectFieldStatement("COM_CODE", "tb_userinfo", "USER_NO="+userId+"");
+		Map<String, Object> comInfo = uniService.selectFieldStatement("COM_CODE", "tb_userinfo", "USER_NO=["+userId+"[");
 		String comCode = comInfo.get("com_code").toString();
 		String resSeq = params.get("resSeq").toString();
 		int tennCnt = Integer.valueOf(params.get("tennCnt").toString());

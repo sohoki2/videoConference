@@ -13,7 +13,7 @@ public interface KkoMsgManageSevice {
 	
 	int kkoMsgInsertSevice(String _snedGubun, Map<String, Object> params) throws Exception;
 	
-	int kkoVisitedInsertService (String _snedGubun, List<List< Object>> params) throws Exception;
+	int kkoVisitedInsertService (String _snedGubun, List<List< Object>> params, String _visitedGubun) throws Exception;
 	
 
 }

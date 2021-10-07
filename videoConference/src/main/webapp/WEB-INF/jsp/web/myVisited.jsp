@@ -21,7 +21,7 @@
     <link href="/front_res/css/style.css" rel="stylesheet" />
     <link href="/front_res/css/paragraph.css" rel="stylesheet" />
     <link href="/front_res/css/widescreen.css" rel="stylesheet" media="only screen and (min-width : 1080px)">
-    <link href="/front_res/css/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
+    <link href="../css/mobile.css" rel="stylesheet" media="only screen and (max-width:1079px)">
     <!--js-->
     <script src="/front_res/js/jquery-2.2.4.min.js"></script>
     <script src="/front_res/js/common.js"></script>

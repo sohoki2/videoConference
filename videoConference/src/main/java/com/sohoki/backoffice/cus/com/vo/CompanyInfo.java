@@ -34,4 +34,5 @@ public class CompanyInfo {
 	private String floorSeq = "";
     private String tennUseyn = "";
     private String comPlayFloor = "";
+    private String comTennentCnt = "";
 }

@@ -236,6 +236,9 @@
 						    		   $("#seatFixGubun").val(obj.seat_fix_gubun);
 						    		   $("#seatFixUserId").val(obj.seat_fix_user_id);
 						    		   $('#resReqday').val(obj.res_reqday);
+						    		   $("#seatLabelTemplate").val(obj.seat_label_template);
+						    		   $("#seatLabelCode").val(obj.seat_label_code);
+						    		   
 						    		   if (obj.empname !== ""){
 						    			   $("#sp_fixUser").html(obj.empname + "<a href='#' onClick='jqGridFunc.fn_seatChoic(\"S\")'>[변경]</a>");
 						    		   }else {
@@ -245,9 +248,11 @@
 						    		   toggleClick("seatFixUseryn", obj.seat_fix_useryn);
 						    		   toggleClick("seatUseyn", obj.seat_useyn);
 						    		   toggleClick("seatConfirmgubun", obj.seat_confirmgubun);
+						    		   toggleClick("seatLabelUseyn", obj.seat_label_useyn);
 						    		   
 						    		   //좌석 관리 세팅으로 이동
 						    		   jqGridFunc.fn_seatChoic("V");
+						    		   jqGridFunc.fn_Label(obj.seat_label_useyn);
 		       					   }else{
 		       						   alert(result.meesage);
 		       					   }
@@ -261,13 +266,19 @@
 		        	$("#centerId").val("");
 		        	$("#orgCd").val("");
 		        	$('#resReqday').val("")
+                    $('#seatOrder').val("")
+                    $("#seatLabelCode").val("");
+        		    $("#seatLabelTemplate").val("");
+					$("#sp_fixUser").html("");
 		        	$("#floorSeq").remove();
 		        	$("#partSeq").remove();
+		        	$("#tb_userInfo > tbody").empty();
 		        	toggleDefault("seatFixUseryn");
 		        	toggleDefault("seatConfirmgubun");
 		        	toggleDefault("seatUseyn");
 		        	toggleDefault("qrPlayyn");
-		        	
+		        	toggleDefault("seatLabelUseyn");
+		        	jqGridFunc.fn_Label('N');
 		        }
            },clearGrid : function() {
                 $("#mainGrid").clearGridData();
@@ -298,6 +309,9 @@
 				    			 'seatConfirmgubun' :  fn_emptyReplace($('#seatConfirmgubun').val(),"N"),
 				    			 'seatNumber' :  $('#seatNumber').val(),
 				    			 'qrPlayyn' :  $('#qrPlayyn').val(),
+				    			 'seatLabelUseyn' :  $('#seatLabelUseyn').val(),
+				    			 'seatLabelTemplate' : $('#seatLabelTemplate').val(),
+				    			 'seatLabelCode' : $('#seatLabelCode').val(),
 				    			 'seatFixGubun' :  $('#seatFixGubun').val(),
 				    			 'seatFixUserId' :  $('#seatFixUserId').val(),
 				    			 'resReqday' :  $('#resReqday').val(),
@@ -374,7 +388,34 @@
             	 $("#tb_seatInfo").show();
                  $("#tb_userInfo").hide();
              }
-        } 
+        }, fn_Label : function (){
+        	if ($("#seatLabelUseyn").val() === "Y"){
+        		$("#seatLabelCode").show();
+        		$("#seatLabelTemplate").show();
+        	}else {
+        		$("#seatLabelCode").hide();
+        		$("#seatLabelTemplate").hide();
+        		
+        	}
+        } , fn_LabelRest : function(){
+        	uniAjax("/backoffice/basicManage/seatLabel.do", null, 
+	      			function(result) {
+	 				       if (result.status == "LOGIN FAIL"){
+	 				    	   alert(result.meesage);
+	   						   location.href="/backoffice/login.do";
+	   					   }else if (result.status == "SUCCESS"){
+	   						   //총 게시물 정리 하기'
+	   						   alert(result.message);
+	   					   }else if (result.status == "FAIL"){
+	   						   alert("저장 도중 문제가 발생 하였습니다.");
+	   					   }
+	 				    },
+	 				    function(request){
+	 					    alert("Error:" +request.status );	   
+	 					    $("#btn_needPopHide").trigger("click");
+	 				    }    		
+	        );
+        }
     }
   </script>
   
@@ -424,7 +465,7 @@
 								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
 		                	<td class="text-right">
-		                	    <a href="#" ><span class="deepBtn">라벨등록</span></a>
+		                	    <a href="javascript:jqGridFunc.fn_LabelRest()" ><span class="deepBtn">라벨초기화</span></a>
 		                	    <a href="javascript:fn_qrCreate('Seat')" ><span class="deepBtn">QR생성</span></a>
 		                		<a href="javascript:jqGridFunc.fn_SeatInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="#" onClick="jqGridFunc.fn_delCheck()"><span class="deepBtn">삭제</span></a>
@@ -557,6 +598,24 @@
 				                    	<input type="checkbox" id="qrPlayyn" name="qrPlayyn" onclick="toggleValue(this)" value="Y">
 					                    <span class="slider round"></span> 
 				                    </label> 
+		                       </td>
+		                    </tr>
+		                    <tr>
+		                       <th><span class="redText">Label 사용여부</th>
+		                       <td><label class="switch">                                               
+				                    	<input type="checkbox" id="seatLabelUseyn" name="seatLabelUseyn" onclick="toggleValue(this);jqGridFunc.fn_Label()" value="Y">
+					                    <span class="slider round"></span> 
+				                    </label> 
+		                       </td>
+		                       <th><span class="redText">AIM CODE</th>
+		                       <td>
+		                          <input type="text" id="seatLabelCode" name="seatLabelCode" placeholder="Label 코드">
+		                          <select id="seatLabelTemplate" style="width:120px">
+				                        <option value="">템플릿 코드</option>
+				                         <c:forEach items="${labelTemplate}" var="labelTemplate">
+				                            <option value="${labelTemplate.code}">${labelTemplate.codeNm}</option>
+				                         </c:forEach>
+				                  </select>
 		                       </td>
 		                    </tr>
 		                 </tbody>

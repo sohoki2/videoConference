@@ -12,7 +12,7 @@
 <script type="text/javascript">
     function fn_Qrsend(){
     	 var params = {'visitedQrcode': $("#visitedQrcode").val()};
-	     uniAjax("/visited/visitQrProcess.do", params, 
+	     uniAjax("/visit/VisitQrProcess.do", params, 
 	  			 function(result) {
 					       if (result.status == "SUCCESS"){
 							    alert(result.message);
@@ -28,7 +28,7 @@
     }
     function fn_QrImage(){
     	var params = {'visitedCode': 'V20210825001'};
-    	 uniAjaxSerial("/visited/visitQrImage.do", params, 
+    	 uniAjaxSerial("/visit/VisitQrImage.do", params, 
 	  			 function(result) {
 					       if (result.status == "SUCCESS"){
 					    	   $("#sp_qrimage").html("<img src=/qrcode/"+ result.result.visited_code+".png />")
@@ -41,8 +41,8 @@
 	     );
     }
     function fn_apprival(){
-    	var params = {'visitedCode': 'V20210909004', 'mode' : 'Edt', 'visitedStatus' : 'VISITED_STATE_2', 'visitedGubun' : 'VISITED_GUBUN_1' };
-    	 uniAjax("/visited/visitUpdaterProcess.do", params, 
+    	 var params = {'visitedCode': 'V20210909004', 'mode' : 'Edt', 'visitedStatus' : 'VISITED_STATE_2', 'visitedGubun' : 'VISITED_GUBUN_1' };
+    	 uniAjax("/visit/VisitUpdaterProcess.do", params, 
 	  			 function(result) {
 					       if (result.status == "SUCCESS"){
 					    	   alert(result.message);
@@ -56,7 +56,7 @@
     }
     function fn_cancel(){
     	var params = {'visitedCode': 'V20210909004', 'mode' : 'Edt', 'visitedStatus' : 'VISITED_STATE_4', 'visitedGubun' : 'VISITED_GUBUN_1','cancelReason' : '취소 사유' };
-    	 uniAjax("/visited/visitUpdaterProcess.do", params, 
+    	 uniAjax("/visit/VisitUpdaterProcess.do", params, 
 	  			 function(result) {
 					       if (result.status == "SUCCESS"){
 					    	   alert(result.message);
@@ -73,12 +73,13 @@
 <body>
     <input type="text" id="visitedQrcode" name="visitedQrcode" onChnage="fn_Qrsend()"/>
     <button type="button" id="btn_Submit" onClick="fn_Qrsend()">조회</button>
+    <!-- 
     <span id="sp_qrimage"></span>
     <button type="button" id="btn_Submit" onClick="fn_QrImage()">이미지 요청</button>
     <button type="button" id="btn_Submit" onClick="fn_apprival()">승인</button>
     <button type="button" id="btn_Submit" onClick="fn_cancel()">취소</button>
     <br />
-    
+     -->
  
 </body>
 </html>

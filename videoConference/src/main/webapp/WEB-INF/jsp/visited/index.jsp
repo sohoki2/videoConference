@@ -33,7 +33,7 @@
 <body>
     <div class="wrapper main_back">
         <!--//header 추가-->
-        <c:import url="/visited/inc/top_inc.do" />
+        <c:import url="/visit/inc/top_inc.do" />
         <!--header 추가//-->
         <!--left menu //-->
         <!--//contents-->
@@ -57,7 +57,7 @@
             </div>
             <div class="row">
                 <div class="lg-6">
-                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visited/visitReser.do' ">
+                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitReser.do' ">
                         <div>
                             <i class="main_icon_reser"></i>
                             <p class="main_wtit">방문신청하기</p>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="lg-6">
-                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visited//visited/visitSearch.do' ">
+                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitSearch.do' ">
                         <div>
                             <i class="main_icon_reser"></i>
                             <p class="main_wtit">방문신청 조회</p>

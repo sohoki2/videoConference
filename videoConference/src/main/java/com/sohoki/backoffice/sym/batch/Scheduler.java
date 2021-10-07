@@ -13,7 +13,9 @@ import com.sohoki.backoffice.cus.kko.service.KkoMsgManageSevice;
 import com.sohoki.backoffice.cus.ten.mapper.TennantInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.ResInfoManageMapper;
 import com.sohoki.backoffice.sts.res.mapper.TimeInfoManageMapper;
+import com.sohoki.backoffice.sts.res.service.VisitedInfoManageService;
 import com.sohoki.backoffice.sym.log.service.ScheduleInfoManageService;
+import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
 
 
 //spring 배치 서비스 정리 
@@ -40,6 +42,12 @@ public class Scheduler {
 	
 	 @Autowired
 	 private KkoMsgManageSevice kkoSerice;
+	 
+	 @Autowired
+	 private VisitedInfoManageService visitedService;
+	 
+	 @Autowired
+	 private OfficeSeatInfoManageService  officeService;
 	
 	/*
 	 *  23:50 분 타임 스케줄러 생성
@@ -86,6 +94,8 @@ public class Scheduler {
     			for (Map<String, Object> resDayInfo : resDayInfos) {
     				kkoSerice.kkoMsgInsertSevice("STR", resDayInfo);
     			}
+    			//좌석 배치 돌리기
+    			officeService.selectLableSchedule();
     		}
     	}catch(Exception e){
     		StackTraceElement[] ste = e.getStackTrace();
@@ -96,7 +106,7 @@ public class Scheduler {
     	
 	}
 	//매월 1일 크레딧 회사 적용
-	@Scheduled(cron = "0 0 * 1 * * ")
+	@Scheduled(cron = "0 0 0 1 * * ")
     public void resTennchedule1Month() throws Exception{
 		try{
     		if ( "Active1".equals(serverInfo().toString())) {
@@ -110,6 +120,22 @@ public class Scheduler {
     		scheduleService.insertScheduleManage("Tennchedule1Month", "FAIL", e.toString());
     	}
     	
+	}
+	@Scheduled(cron = "0 0 9 * * * ")
+	public void resTourMessageCreateStateSchede() throws Exception{
+		
+		try{
+			if ( "Active1".equals(serverInfo().toString())) {
+				int ret = visitedService.selectTourMessage();
+				scheduleService.insertScheduleManage("resTourMessageCreateStateSchede", "OK", "");
+			}   
+		}catch (RuntimeException re) {
+			scheduleService.insertScheduleManage("resStateCreateSchedulerService", "FAIL", re.toString());
+			LOGGER.error("resStateCreateSchedulerService run failed", re);
+		}catch (Exception e){
+			scheduleService.insertScheduleManage("resStateCreateSchedulerService", "FAIL", e.toString());
+			LOGGER.error("resStateCreateSchedulerService failed", e);
+		}
 	}
 	
 }

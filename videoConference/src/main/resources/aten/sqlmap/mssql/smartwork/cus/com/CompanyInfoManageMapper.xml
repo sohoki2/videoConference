@@ -25,7 +25,7 @@
 						               '사용안함'
 						       END TENN_INFO
 						       , a.COM_PLAY_FLOOR, dbo.FN_FLOORNM(a.COM_PLAY_FLOOR) FLOOR_NM, a.FLOOR_SEQ
-						       
+						       , a.COM_TENNENT_CNT
 					    FROM  TB_COMPANYINFO a, LETTCCMMNDETAILCODE b, TB_CENTERINFO c, TB_FLOORINFO d
 					    WHERE a.COM_STATE = b.CODE       
 					          AND a.CENTER_ID = c.CENTER_ID
@@ -71,7 +71,7 @@
                                     )
 			            ELSE 
 			               '사용안함'
-			       END TENN_TOTAL_INFO
+			       END TENN_TOTAL_INFO, COM_TENNENT_CNT
 		   FROM TB_COMPANYINFO a
 		   WHERE COM_CODE = #{comCode}
     </select>
@@ -80,12 +80,14 @@
          INSERT INTO TB_COMPANYINFO(COM_CODE, COM_NUMBER, COM_NAME, COM_GUBUN, COM_BUSCONDITION, COM_ITEM, COM_CEO_NAME, 
 								    COM_TEL, COM_FAX, COM_ZIPCODE, COM_ADDR1, COM_ADDR2, 
 								    COM_HOMEPAGE, COM_STATE, COM_LOGO, CENTER_ID, FLOOR_SEQ,
-								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN, COM_PLAY_FLOOR)
+								    COM_REGDATE, COM_REGID, COM_UPDATE, COM_UPDATEID, COM_MEMO, TENN_USEYN, COM_PLAY_FLOOR,
+								    COM_TENNENT_CNT)
          VALUES (#{comCode}, #{comNumber,jdbcType=VARCHAR}, #{comName}, #{comGubun,jdbcType=VARCHAR}, #{comBuscondition,jdbcType=VARCHAR},  #{comItem,jdbcType=VARCHAR},  #{comCeoName,jdbcType=VARCHAR}, 
                  #{comTel,jdbcType=VARCHAR}, #{comFax,jdbcType=VARCHAR},  #{comZipcode,jdbcType=VARCHAR}, #{comAddr1,jdbcType=VARCHAR}, #{comAddr2,jdbcType=VARCHAR},
                  #{comHomepage,jdbcType=VARCHAR}, #{comState,jdbcType=VARCHAR},  #{comLogo,jdbcType=VARCHAR},  #{centerId,jdbcType=VARCHAR},  #{floorSeq,jdbcType=VARCHAR}, 
                  GETDATE(), #{userId,jdbcType=VARCHAR},  GETDATE(), #{userId,jdbcType=VARCHAR}, #{comMemo,jdbcType=VARCHAR}, 
-                 #{tennUseyn,jdbcType=VARCHAR} , #{comPlayFloor,jdbcType=VARCHAR})
+                 #{tennUseyn,jdbcType=VARCHAR} , #{comPlayFloor,jdbcType=VARCHAR} , #{comTennentCnt,jdbcType=VARCHAR}
+                 )
                 
     </insert>
     <update id="updateCompanyInfoManage" >
@@ -104,6 +106,7 @@
 	                                , COM_HOMEPAGE = #{comHomepage,jdbcType=VARCHAR} 
 	                                , COM_STATE = #{comState,jdbcType=VARCHAR} 
 	                                , TENN_USEYN = #{tennUseyn,jdbcType=VARCHAR} 
+	                                , COM_TENNENT_CNT = #{comTennentCnt,jdbcType=VARCHAR} 
 	                                <if test="comLogo != '' ">                                    
 	                                 , COM_LOGO = #{comLogo,jdbcType=VARCHAR}
 	                                </if>

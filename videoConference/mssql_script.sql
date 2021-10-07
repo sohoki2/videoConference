@@ -2640,8 +2640,6 @@ begin
 					dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) attendListTxt    ,
 					CASE WHEN a.RES_PASSWORD = 'N' THEN  '비공개' ELSE '공개' end as resPassTxt,
 					CASE a.PROXY_YN WHEN 'P' THEN '승인 요청'  ELSE '본인'  END proxyYnTxt,
-					
-
 					CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(a.RES_STARTTIME), ':00')) , 20)  resDayInfo,
 					CONVERT(VARCHAR, CONVERT(DATETIME, CONCAT(a.RES_STARTDAY,' ', dbo.fn_TimeSplit(dbo.fn_upsTimedown(a.RES_ENDTIME)) , ':00')) , 20)  resDayEndInfo,
 					a.RES_EQUPINFO, a.RES_EQUPCHECK,
@@ -2810,21 +2808,26 @@ begin
 
 	                        
     
-	INSERT INTO TB_COMPAY_TENNANT(COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 
+	 INSERT INTO TB_COMPAY_TENNANT(COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 
 									   TENN_REC_NOW_CNT, TENN_REC_END, TENN_REMARK,
 									   REG_DATE, UPDATE_DATE)
 
-	 SELECT COM_CODE, CONVERT(varchar(8), getdate(), 112), @tennCnt, 0, @tennCnt, 'Y', '크레딧 배포' , getdate(), getdate() 
+	 SELECT COM_CODE, CONVERT(varchar(8), getdate(), 112), isnull(COM_TENNENT_CNT,@tennCnt), 0, isnull(COM_TENNENT_CNT,@tennCnt), 'Y', '크레딧 배포' , getdate(), getdate() 
 	 FROM TB_COMPANYINFO
 	 WHERE TENN_USEYN = 'Y'
     
                                     
      INSERT INTO   TB_COMPAY_TENNANT_HISTORY (COM_CODE, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL,TENN_SEQ)
-	 SELECT COM_CODE ,  getdate(), @tennCnt, 'TENN_PLAY_GUBUN_1', 'Y', (SELECT ISNULL(MAX(TENN_SEQ),1) 
+	 SELECT COM_CODE ,  getdate(), isnull(COM_TENNENT_CNT,@tennCnt), 'TENN_PLAY_GUBUN_1', 'Y', (SELECT ISNULL(MAX(TENN_SEQ),1) 
 	                                                                    FROM tb_compay_tennant 
 																		WHERE tb_compay_tennant.COM_CODE = TB_COMPANYINFO.COM_CODE)
 	 FROM TB_COMPANYINFO
 	 WHERE TENN_USEYN = 'Y'
+	 
+	 
+	 UPDATE TB_EMPINFO set PRE_WORKINFO =  NOW_WORKINFO , NOW_WORKINFO = ''
+     WHERE AUTHOR_CODE != 'ROLE_USER' and NOW_WORKINFO != ''
+           AND PRE_WORKINFO != NOW_WORKINFO
      
 
 end 

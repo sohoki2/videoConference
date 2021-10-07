@@ -30,9 +30,9 @@
     </select>
     <insert id="kkoMsgInsertSevice" >
          INSERT INTO KKO_MSG(REQDATE, STATUS, PHONE, CALLBACK, PROFILE_KEY, 
-							 MSG, TEMPLATE_CODE, FAILED_TYPE, FAILED_SUBJECT, FAILED_MSG)
+							 MSG, BUTTON_JSON, TEMPLATE_CODE, FAILED_TYPE, FAILED_SUBJECT, FAILED_MSG)
          VALUES (getdate(), 1, #{phone}, #{callback}, '431d7fcc52bbb4f0275c6abdf86970655c972d0a', 
-                 #{msg,jdbcType=VARCHAR},  #{templateCode,jdbcType=VARCHAR},  
+                 #{msg,jdbcType=VARCHAR}, #{buttonJson,jdbcType=VARCHAR},  #{templateCode,jdbcType=VARCHAR},  
                  #{failedType,jdbcType=VARCHAR}, #{failedSubject,jdbcType=VARCHAR},  #{failedMsg,jdbcType=VARCHAR});
                 
     </insert>

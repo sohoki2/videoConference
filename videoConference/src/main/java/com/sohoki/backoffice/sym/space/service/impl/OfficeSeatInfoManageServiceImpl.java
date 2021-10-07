@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sohoki.backoffice.sym.space.mapper.OfficeSeatInfoManageMapper;
+import com.sohoki.backoffice.sym.space.service.AimsService;
 import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
 import com.sohoki.backoffice.sym.space.vo.OfficeSeatInfo;
 
@@ -20,6 +21,9 @@ public class OfficeSeatInfoManageServiceImpl extends EgovAbstractServiceImpl imp
 	@Autowired
 	private OfficeSeatInfoManageMapper officeSeatMapper;
 
+	@Autowired
+	private AimsService aimservice;
+	
 	@Override
 	public List<Map<String, Object>> selectOfficeSeatInfoManageListByPagination(Map<String, Object> params) throws Exception {
 		// TODO Auto-generated method stub
@@ -35,13 +39,17 @@ public class OfficeSeatInfoManageServiceImpl extends EgovAbstractServiceImpl imp
 	@Override
 	public int updateOfficeSeatInfoManage(OfficeSeatInfo vo) throws Exception {
 		// TODO Auto-generated method stub
-		return vo.getMode().equals("Ins") ?  officeSeatMapper.insertOfficeSeatInfoManage(vo) :  officeSeatMapper.updateOfficeSeatInfoManage(vo);
+		
+		int ret = vo.getMode().equals("Ins") ?  officeSeatMapper.insertOfficeSeatInfoManage(vo) :  officeSeatMapper.updateOfficeSeatInfoManage(vo);
+		if (ret > 0 && vo.getSeatLabelUseyn().equals("Y") && !vo.getSeatLabelCode().equals("")) {
+			aimservice.setCheckAimsLabel(officeSeatMapper.selectOfficeSeatInfoManageDetail(vo.getSeatId()));
+		}
+		return ret ;
 	}
 
 	@Override
 	public int updateOfficeSeatPositionInfoManage(List<OfficeSeatInfo> list, String type) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("type:" + type);
 		return officeSeatMapper.updateOfficeSeatPositionInfoManage(list, type);
 	}
 
@@ -49,6 +57,15 @@ public class OfficeSeatInfoManageServiceImpl extends EgovAbstractServiceImpl imp
 	public int deleteOfficeSeatQrInfoManage(List<String> seatList) throws Exception {
 		// TODO Auto-generated method stub
 		return officeSeatMapper.deleteOfficeSeatQrInfoManage(seatList);
+	}
+
+	@Override
+	public void selectLableSchedule() throws Exception {
+		List<Map<String, Object>> seatLabels = officeSeatMapper.selectCenterLabelInfo();
+		for (Map<String, Object> seatLabel : seatLabels) {
+			int ret = aimservice.setAimsLabel(seatLabel);
+		}
+		
 	}
 
 	

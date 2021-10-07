@@ -37,7 +37,7 @@
 <body>
 <div class="wrapper sub_back">
         <!--//header 추가-->
-        <c:import url="/visited/inc/top_inc.do" />
+        <c:import url="/visit/inc/top_inc.do" />
         <!--//contents-->
         <div class="contents">
             <h2 class="sub_tit">서울관광플라자 투어 신청서</h2>
@@ -155,7 +155,7 @@
                                 </ul>
                                 <div class="step_bottom">
                                     <!-- Here goes your actions buttons -->
-                                    <button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" > 다음</button>
+                                    <button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" style="font-size: 1.6rem;background: #2196f3;color: #fff;border: none;padding: 7px 20px;"> 다음</button>
                                     <button class="waves-effect waves-dark btn next-step" id="btn_step01" style="display:none">다음</button>
                                 </div>
                             </div>                         
@@ -173,7 +173,7 @@
                                 <ul class="step_reser_list">
                                     <li>
                                         <p class="apply_hint">투어 날짜 선택</p>
-                                           <select id="visitedResday" name="visitedResday" title="투어 날짜" onChange="visited.fn_tourCheck()">
+                                           <select id="visitedResday" name="visitedResday" title="투어 날짜">
                                               <option value="">투어 일자</option>
 						                      <c:forEach items="${tourCombo}" var="tourCombo">
 						                            <option value="${tourCombo.tourday}">${tourCombo.tourday}</option>
@@ -188,7 +188,7 @@
                                         <p class="apply_hint">투어 시간/참여인원</p>
                                         <div class="row">
                                             <div class="sm-6">
-                                                <select id="visitedRestime" name="visitedRestime" title="투어 날짜" onChange="visited.fn_tourCheck()">
+                                                <select id="visitedRestime" name="visitedRestime" title="투어 날짜">
 		                                              <option value="">종료 층수</option>
 								                      <c:forEach items="${selectTourGubun}" var="selectTourGubun">
 								                            <option value="${selectTourGubun.codeDc}">${selectTourGubun.codeNm}</option>
@@ -235,13 +235,12 @@
     </div>
     <!-- 팝업 -->    
     <!--// 예약 완료 //예약 완료 및 실패 등 간략한 noti알림 팝업-->
-    <div id='visit_reser' class="needpopup reser_noti">
+    <div id='ok_reserve' class="needpopup reser_noti">
         <div class="reser_noti_pop">            
-        <span id="sp_message"></span>
+           <span id="sp_message"></span>
         </div>
     </div> 
-
-    
+    <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
     <!-- stepper 추가 -->
     <script>
         var stepper = document.querySelector('.stepper');
@@ -266,7 +265,7 @@
     			$("#btn_pre_step0"+_step).click();
     		}, fn_submit : function (){
     			
-    		   var url = "/visited/visitReserProcess.do";
+    		   var url = "/visit/VisitReserProcess.do";
     		   var parms = {"visitedReqName" : $("#visitedReqName").val(),
     				        "visitedReqCelphone" : $("#visitedReqCelphone").val(),
     				        "visitedReqOrg" : $("#visitedReqOrg").val(),
@@ -286,7 +285,7 @@
   						       if (result.status == "SUCCESS"){
   						    	 $("#sp_message").text("정상적으로 등록 되었습니다.");
   							     $("#btn_result").trigger("click");
-	   		  					 location.href="/visited/index.do";  
+	   		  					 location.href="/visit/Index.do";  
   		  					   }else {
   		  						 $("#sp_message").text(result.message);
  							     $("#btn_result").trigger("click");  
@@ -321,6 +320,7 @@
     		    }
     			if (any_empt_line_span("visitedResday", "방문 일자를 선택하세요.") == false) return  true;	
 				if (any_empt_line_span("visitedRestime", "방문시간을 선택하세요.") == false) return  true;	
+				if (any_empt_line_span("visitedPerson", "참여 인원을 선택하세요.") == false) return  true;	
 				
 				return false;
 				
@@ -335,7 +335,7 @@
        } 
     </script>
     <!--popup-->
-    <script src="../js/needpopup.min.js"></script> 
+    <script src="/visited/js/needpopup.min.js"></script>  
     <script>  
         needPopup.config.custom = {
             'removerPlace': 'outside',

@@ -41,6 +41,7 @@ import com.sohoki.backoffice.sym.cnt.service.FloorPartInfoManageService;
 import com.sohoki.backoffice.sym.cnt.vo.CenterInfo;
 import com.sohoki.backoffice.sym.cnt.vo.CenterInfoVO;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
+import com.sohoki.backoffice.sym.space.service.AimsService;
 import com.sohoki.backoffice.sym.space.service.DeviceInfoManageService;
 import com.sohoki.backoffice.sym.space.service.MeetingRoomInfoManageService;
 import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
@@ -120,7 +121,8 @@ public class OfficeItemInfoManageController {
 	@Autowired
     ServletContext servletContext;
 	
-	
+	@Autowired
+	AimsService aimservice;
 	
 	@RequestMapping(value="officeSeatList.do")
 	public ModelAndView  selectCenterInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
@@ -142,6 +144,7 @@ public class OfficeItemInfoManageController {
 		  //비용 관련 내용 넣기 
 		  model.addObject("payGubun", cmmnDetailService.selectCmmnDetailCombo("PAY_CLASSIFICATION"));
 		  model.addObject("seatGubun", cmmnDetailService.selectCmmnDetailCombo("SEAT_GUBUN"));
+		  model.addObject("labelTemplate", cmmnDetailService.selectCmmnDetailCombo("LABEL_TEMPLATE"));
 		  model.addObject("orgInfo", orgService.selectOrgInfoCombo());
 	      model.setViewName("/backoffice/basicManage/officeSeatList");
 		  return model;	
@@ -401,6 +404,92 @@ public class OfficeItemInfoManageController {
 		return model;
 		
 	}
+	//좌석 리스트 선택 
+	@RequestMapping(value = "seatLabel.do")
+    public ModelAndView updateSeatLabel() throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+            
+			Map<String,Object>  searchVO = new HashMap<String,Object>();
+		  
+	              
+	   	    PaginationInfo paginationInfo = new PaginationInfo();
+		    paginationInfo.setCurrentPageNo( Integer.parseInt("1"));
+		    paginationInfo.setRecordCountPerPage(1000);
+		    paginationInfo.setPageSize(1000);
+
+		    searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+		    searchVO.put("lastRecordIndex", paginationInfo.getLastRecordIndex());
+		    searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+		    searchVO.put("seatLabelUseyn","Y");
+		    searchVO.put("searchCenter","C21052601");
+			List<Map<String, Object>> seatLists = officeService.selectOfficeSeatInfoManageListByPagination(searchVO);
+			
+		    //지도 이미지 
+			int ret = 0;
+			for (Map<String, Object> seatList : seatLists) {
+				if (util.NVL(seatList.get("seat_label_useyn"),"").toString().equals("Y") && !util.NVL(seatList.get("label_template_txt"),"").equals("")
+				    && ! util.NVL(seatList.get("seat_label_code"), "").equals(""))
+				ret = aimservice.setInitAimsLabel(seatList);
+			}
+			
+			
+			if (ret > 0) {
+				model.addObject(Globals.STATUS_MESSAGE, "정상적으로 리셋 처리 되었습니다.");
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			} else {
+				throw new Exception();
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("deleteDeviceInfoManage ERROR : " + e.toString());
+			model.addObject(Globals.STATUS_MESSAGE, "통신중 애러가 발생 하였습니다.");
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+		}
+		return model;
+	}
+	@RequestMapping(value = "seatTest.do")
+    public ModelAndView seatLabelTest() throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+            
+			officeService.selectLableSchedule();
+			
+			model.addObject(Globals.STATUS_MESSAGE, "정상적으로 라벨 처리 되었습니다.");
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			
+			
+		} catch (Exception e) {
+			LOGGER.error("deleteDeviceInfoManage ERROR : " + e.toString());
+			model.addObject(Globals.STATUS_MESSAGE, "통신중 애러가 발생 하였습니다.");
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+		}
+		return model;
+	}
+	//템플릿 리스트 선택
+	/*
+	@RequestMapping(value = "seatTempleate.do")
+    public ModelAndView updateSeatTemplet() throws Exception {
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			int ret = aimservice.setInitAimsLabel(officeService.selectOfficeSeatInfoManageDetail(seatId));
+			if (ret > 0) {
+				model.addObject(Globals.STATUS_MESSAGE, "정상적으로 등록 되었습니다.");
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			LOGGER.error("deleteDeviceInfoManage ERROR : " + e.toString());
+			model.addObject(Globals.STATUS_MESSAGE, "통신중 애러가 발생 하였습니다.");
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+		}
+		return model;
+	}
+	*/
 	@RequestMapping(value="officeMeetingList.do")
 	public ModelAndView  selectMeetingInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
 															, HttpServletRequest request
@@ -489,6 +578,7 @@ public class OfficeItemInfoManageController {
 		}
 		return model;
 	}
+	
 	/*
 	 * 회의실 정보 상세 조회 
 	 * 

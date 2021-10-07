@@ -18,6 +18,8 @@ public interface VisitedInfoManageMapper {
 	public Map<String, Object> selectVisitedManageInfo(String visitedCode);
 	//투어 일정 combo박스
 	public List<Map<String, Object>> selecttourCombo();
+	//투어 메세지 보내기
+	public List<Map<String, Object>> selectTourMessage();
 	
 	public List<Map<String, Object>> selecttourInfo();
 	

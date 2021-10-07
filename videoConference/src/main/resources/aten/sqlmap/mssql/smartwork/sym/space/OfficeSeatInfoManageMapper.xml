@@ -19,7 +19,8 @@
 							  END USER_NAME,
 							  CASE a.SEAT_CONFIRMGUBUN WHEN 'Y' THEN '관리자승인'
 							       ELSE '바로사용'
-							  END SEAT_CONFIRMGUBUN, QR_PLAYYN
+							  END SEAT_CONFIRMGUBUN, QR_PLAYYN, a.SEAT_LABEL_USEYN, a.SEAT_LABEL_STATUS, a.SEAT_LABEL_CODE, a.SEAT_LABEL_TEMPLATE,
+							  dbo.FN_DETAILCODENM(a.SEAT_LABEL_TEMPLATE) LABEL_TEMPLATE_TXT, a.SEAT_FIX_GUBUN
 					    FROM  TB_SEATINFO a, TB_CENTERINFO b, TB_FLOORINFO c, LETTCCMMNDETAILCODE d
 					    WHERE a.CENTER_ID = b.CENTER_ID  
 					          AND a.FLOOR_SEQ = c.FLOOR_SEQ     
@@ -45,27 +46,76 @@
 							    AND a.PART_SEQ = #{params.searchPartSeq}
 							    ]]>
 							  </if>	
+							  
+							  <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.seatLabelUseyn)">
+								<![CDATA[    
+							    AND a.SEAT_LABEL_USEYN = #{params.seatLabelUseyn}
+							    ]]>
+							  </if>	
 	        ) TB  
 	        WHERE RNUM  BETWEEN #{params.firstIndex} + 1 AND #{params.firstIndex} + #{params.recordCountPerPage}  
 	        ORDER BY  CAST(REPLACE(TB.FLOOR_INFO, 'CENTER_FLOOR_','') AS INT) ASC, TB.SEAT_ORDER  DESC
 	        		 	    
     </select>
     <select id="selectOfficeSeatInfoManageDetail"  resultType="lmap">
-           SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, QR_PLAYYN,
-				   SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
-				   SEAT_ORDER, SEAT_NUMBER,
-				   REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE,
-				   SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_CONFIRMGUBUN, RES_REQDAY, 
-				   CASE  
+          SELECT  CENTER_ID, FLOOR_SEQ, PART_SEQ, SEAT_ID, SEAT_NAME, SEAT_USEYN, QR_PLAYYN,
+				  SEAT_TOP, SEAT_LEFT, SEAT_FIX_USERYN, SEAT_FIX_USER_ID, ORG_CD,
+				  SEAT_ORDER, SEAT_NUMBER,
+				  REG_ID, UPDATE_ID, REG_DATE, UPDATE_DATE,
+				  SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, SEAT_CONFIRMGUBUN, RES_REQDAY, 
+				  CASE  
 				      WHEN SEAT_FIX_USERYN = 'Y' AND SEAT_FIX_USER_ID IS NOT NULL AND SEAT_FIX_GUBUN = 'G'  THEN 
 				         ( SELECT EMPNAME FROM tb_empInfo WHERE EMPNO = a.SEAT_FIX_USER_ID )
 				      WHEN SEAT_FIX_USERYN = 'Y' AND SEAT_FIX_USER_ID IS NOT NULL AND SEAT_FIX_GUBUN = 'C'  THEN 
 				         ( SELECT USER_NAME FROM tb_userinfo WHERE USER_NO = a.SEAT_FIX_USER_ID )
-				   ELSE 
-				       ''
-				   END EMPNAME
-		    FROM TB_SEATINFO a
-		    WHERE SEAT_ID = #{seatId}
+				  ELSE 
+				      ''
+				  END EMPNAME, 
+				  SEAT_LABEL_USEYN, SEAT_LABEL_STATUS, SEAT_LABEL_CODE, SEAT_LABEL_TEMPLATE,
+				  dbo.FN_DETAILCODENM(SEAT_LABEL_TEMPLATE) LABEL_TEMPLATE_TXT, SEAT_FIX_GUBUN
+		  FROM TB_SEATINFO a
+		  WHERE SEAT_ID = #{seatId}
+    </select>
+    <select id="selectOfficeSeatUserInfoManage"  resultType="lmap">
+          SELECT EMPNAME, EMPTELPHONE, DEPT_NM, WORKINFO from dbo.fn_userinfo(#{seatFixGubun}, #{seatFixUserId})
+    </select>
+    <select id="selectCenterLabelInfo"   resultType="lmap">
+	     SELECT a.SEAT_ID, a.SEAT_NAME, a.SEAT_FIX_USERYN, a.SEAT_FIX_USER_ID,
+		       a.SEAT_LABEL_USEYN, a.SEAT_LABEL_STATUS, a.SEAT_LABEL_CODE, a.SEAT_LABEL_TEMPLATE,
+			   dbo.FN_DETAILCODENM(a.SEAT_LABEL_TEMPLATE) LABEL_TEMPLATE_TXT, a.SEAT_FIX_GUBUN,
+			   bb.EMPNAME, bb.DEPTNAME,  bb.EMPTELPHONE,  WORKINFO 
+		FROM TB_SEATINFO a
+		LEFT OUTER JOIN
+		(
+			SELECT X.* 
+			FROM (
+			SELECT b.EMPNAME, b.DEPTNAME,  b.EMPTELPHONE, dbo.FN_DETAILCODENM(b.PRE_WORKINFO) WORKINFO , EMPNO
+			FROM TB_EMPINFO b
+			) X 
+			WHERE CAST( CONVERT(time,GETDATE()) AS VARCHAR(5)) BETWEEN SUBSTRING(X.WORKINFO, 0,	  CHARINDEX('~',X.WORKINFO)) AND SUBSTRING(X.WORKINFO,   CHARINDEX('~',X.WORKINFO)+1 , 10)
+		) bb
+		ON a.SEAT_FIX_USER_ID = bb.EMPNO
+		WHERE CENTER_ID = 'C21052601' AND FLOOR_SEQ in (6, 7,  8)
+		      AND SEAT_LABEL_USEYN ='Y' AND SEAT_LABEL_CODE IS NOT NULL
+		UNION ALL
+	    SELECT a.SEAT_ID, a.SEAT_NAME, a.SEAT_FIX_USERYN, a.SEAT_FIX_USER_ID,
+		       a.SEAT_LABEL_USEYN, a.SEAT_LABEL_STATUS, a.SEAT_LABEL_CODE, a.SEAT_LABEL_TEMPLATE,
+			   dbo.FN_DETAILCODENM(a.SEAT_LABEL_TEMPLATE) LABEL_TEMPLATE_TXT, a.SEAT_FIX_GUBUN,
+			   bb.EMPNAME, bb.DEPTNAME,  bb.EMPTELPHONE,  WORKINFO 
+		FROM TB_SEATINFO a
+		LEFT OUTER JOIN
+		(
+			SELECT c.EMPNAME, c.DEPTNAME,  c.EMPTELPHONE,  EMPNO, CONCAT(RES_STARTTIME, '~',RES_ENDTIME) WORKINFO
+            FROM TB_SWCRESERVATION b, TB_EMPINFO c
+            WHERE  b.RES_STARTDAY = convert(varchar(8), getdate(), 112) 
+				   AND ITEM_GUBUN = 'ITEM_GUBUN_2'
+				   AND  replace(cast( CONVERT(time,GETDATE()) as varchar(5)), ':','') between RES_STARTTIME and RES_ENDTIME
+				   AND b.USER_ID = c.EMPNO
+				   AND b.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_6')
+		) bb
+		ON a.SEAT_FIX_USER_ID = bb.EMPNO
+		WHERE CENTER_ID = 'C21052601' AND FLOOR_SEQ in (10, 3)
+		      AND SEAT_USEYN ='Y' 
     </select>
     <insert id="insertOfficeSeatInfoManage" >
          <selectKey resultType="String"  keyProperty="seatId" order="BEFORE">
@@ -76,13 +126,14 @@
 								 SEAT_ORDER, SEAT_NUMBER,
 								 REG_ID, REG_DATE, UPDATE_ID,  UPDATE_DATE, 
 								 SEAT_GUBUN, PAY_CLASSIFICATION, PAY_GUBUN, PAY_COST, 
-								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN , RES_REQDAY, QR_PLAYYN)
+								 SEAT_CONFIRMGUBUN, SEAT_FIX_GUBUN , RES_REQDAY, QR_PLAYYN, SEAT_LABEL_USEYN, SEAT_LABEL_CODE, SEAT_LABEL_TEMPLATE)
          VALUES (#{centerId}, #{floorSeq},  #{partSeq,jdbcType=VARCHAR}, #{seatId},  #{seatName}, 'Y', 
                  #{seatTop,jdbcType=VARCHAR}, #{seatLeft,jdbcType=VARCHAR},  #{seatFixUseryn, jdbcType=VARCHAR}, #{seatFixUserId, jdbcType=VARCHAR}, #{orgCd,jdbcType=VARCHAR},
                  #{seatOrder,jdbcType=VARCHAR}, #{seatNumber,jdbcType=VARCHAR}, 
                  #{userId,jdbcType=VARCHAR}, GETDATE(), #{userId,jdbcType=VARCHAR}, GETDATE(),
                  #{seatGubun,jdbcType=VARCHAR},#{payClassification,jdbcType=VARCHAR},#{payGubun,jdbcType=VARCHAR},#{payCost,jdbcType=VARCHAR},
                  #{seatConfirmgubun,jdbcType=VARCHAR} , #{seatFixGubun,jdbcType=VARCHAR}  ,  #{resReqday, jdbcType=VARCHAR} ,  #{qrPlayyn, jdbcType=VARCHAR}
+                 #{seatLabelUseyn,jdbcType=VARCHAR}, #{seatLabelCode,jdbcType=VARCHAR}, #{seatLabelTemplate,jdbcType=VARCHAR}
                  );
                  
          UPDATE tb_floorinfo SET SEAT_CNT = SEAT_CNT + 1
@@ -217,9 +268,18 @@
 	                              , SEAT_CONFIRMGUBUN = #{seatConfirmgubun,jdbcType=VARCHAR}
 	                              , SEAT_FIX_GUBUN = #{seatFixGubun,jdbcType=VARCHAR}
 	                              , RES_REQDAY = #{resReqday, jdbcType=VARCHAR}
+	                              , SEAT_LABEL_USEYN = #{seatLabelUseyn}
 	                              , QR_PLAYYN  = #{qrPlayyn, jdbcType=VARCHAR}
+	                              , SEAT_LABEL_CODE  =  #{seatLabelCode}
+	                              , SEAT_LABEL_TEMPLATE = #{seatLabelTemplate}
 	    WHERE SEAT_ID = #{seatId}           
     </update>
+    <update id="updateOfficeLabelSeatInfoManage" >
+        UPDATE TB_SEATINFO SET SEAT_LABEL_STATUS = #{seatLabelStatus}
+                               , SEAT_LABEL_DATE = getdate()
+        WHERE SEAT_ID = #{seatId}
+    </update>
+    
     <update id="updateOfficeSeatPositionInfoManage" parameterType="java.util.List">
         <choose>
             <when test='type == "S"'>

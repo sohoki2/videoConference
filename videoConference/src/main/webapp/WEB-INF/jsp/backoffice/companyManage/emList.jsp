@@ -82,9 +82,10 @@
    		            },
     		        colModel :  [
     		 	                { label: 'empno', key: true, name:'empno',       index:'empno',      align:'center', hidden:true},
-    			                { label: '아이디',  name:'empid',         index:'empid',        align:'left',   width:'12%'},
-    			                { label: '사번',  name:'empno',         index:'empno',        align:'left',   width:'12%'},
-    			                { label: '부서명',  name:'deptname',         index:'deptname',        align:'left',   width:'12%'},
+    			                { label: '아이디',  name:'empid',         index:'empid',        align:'left',   width:'10%'},
+    			                { label: '사번',  name:'empno',         index:'empno',        align:'left',   width:'10%'},
+							    { label: '이름',  name:'empname',         index:'empname',        align:'left',   width:'10%'},
+    			                { label: '부서명',  name:'deptname',         index:'deptname',        align:'left',   width:'10%'},
     			                { label: '직급', name:'empgrad',       index:'empgrad',      align:'center', width:'15%'},
     			                { label: '직책', name:'empjikw',       index:'empjikw',      align:'center', width:'15%'},
     			                { label: '사내번호', name:'emptelphone',       index:'emptelphone',      align:'center', width:'15%'},

@@ -230,9 +230,10 @@
                 <div class="padding15">
                     <p class="pop_tit">크레딧 사용여부<span class="join_id_comment joinSubTxt"></span></p>
                     <label class="switch">                                               
-                   	   <input type="checkbox" id="tennUseyn" onclick="toggleValue(this);" value="Y">
+                   	   <input type="checkbox" id="tennUseyn" onclick="toggleValue(this);jqGridFunc.fn_TennView(this)" value="Y">
                        <span class="slider round"></span> 
                     </label> 
+                    <input type="text" id="comTennentCnt" name="comTennentCnt" style="width:120px;" placeholder="월 테넌트 수량."> 
                 </div>                
             </div>
             <div class="pop_box100">
@@ -393,7 +394,8 @@
 	    			                { label: '예약가능층수', name:'floor_nm',       index:'floor_nm',      align:'center', width:'10%'},
 	    			                { label: '대표자명', name:'com_ceo_name',       index:'com_ceo_name',      align:'center', width:'10%'},
 	    			                { label: '주소', name:'com_addr',       index:'com_addr',      align:'center', width:'20%', formatter:jqGridFunc.address },
-	    			                { label: '크레딧 여부', name:'tenn_info',       index:'tenn_info',      align:'center', width:'15%'},
+	    			                { label: '크레딧 여부', name:'tenn_info',       index:'tenn_info',      align:'center', width:'10%'},
+	    			                { label: '월 크레딧 배포', name:'com_tennent_cnt',       index:'com_tennent_cnt',      align:'center', width:'10%'},
 	    			                { label: '최종 수정자', name:'com_updateid',      index:'com_updateid',     align:'center', width:'14%'},
 	    			                { label: '최종 수정 일자', name:'com_update', index:'com_update', align:'center', width:'12%', 
 	    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}},
@@ -598,9 +600,12 @@
 				       						$("#comState").val(obj.com_state);
 								    		$("#comFax").val( obj.com_fax  );
 								    		$("#centerId").val( obj.center_id);
+								    		$("#comTennentCnt").val(obj.com_tennent_cnt);
+								    		
 								    		backoffice_common.fn_floorInfo(obj.floor_seq,'sp_floor', 'floorSeq');
 								    		backoffice_common.fn_floorPlayState(obj.com_play_floor, "sp_floorCheck", "floorPlaySeq");
 								    		toggleClick("tennUseyn", obj.tenn_useyn);
+								    		jqGridFunc.fn_TennView();
 								       }
 			     				    },
 			     				    function(request){
@@ -616,7 +621,7 @@
 			        	//층 및 예약 층 삭제 
 			        	$("#sp_floor").html("");
 			        	$("#sp_floorCheck").html("");
-			        	
+			        	jqGridFunc.fn_TennView();
 			        }
 	           },clearGrid : function() {
 	                $("#mainGrid").clearGridData();
@@ -651,6 +656,9 @@
 		     			  formData.append('floorSeq' ,  $("#floorSeq").val());
 		     			  formData.append('comPlayFloor' , ckeckboxValue("사용할 층수를 선택 하지 않았습니다.", "floorPlaySeq"));
 		     			  formData.append('tennUseyn' , fn_emptyReplace($("#tennUseyn").val(),"N"));
+		     			  formData.append('comTennentCnt' , fn_emptyReplace($("#comTennentCnt").val(),"0"));
+		     			  
+		     			 
 		     			  uniAjaxMutipart("/backoffice/companyManage/companyUpdate.do", formData, 
 		     						function(result) {
 		     						       //결과값 추후 확인 하기 	
@@ -736,6 +744,9 @@
 					  return;
 				  }
 			     
+			  }, fn_TennView : function(){
+				  //
+				  ($("#tennUseyn").val() == "Y") ?  $("#comTennentCnt").show() :$("#comTennentCnt").hide();
 			  }  
 	    }
        

@@ -28,9 +28,16 @@
     <script src="/front_res/js/jquery-ui.js"></script>
     <script src="/front_res/js/common.js"></script>
     <script src="/front_res/js/pinch-zoom.umd.js"></script>
+	<script>
+     function enterkey() {
+        if (window.event.keyCode == 13) {
+             login();
+        }
+     }
+	</script>
 </head>
 <body>
-    <form name="regist" method="post" action="/web/LoginProcess.do" autocomplete="off">
+    <form name="regist" method="post" autocomplete="off">
     
     <div class="login">
             <div class="log_b">
@@ -41,11 +48,11 @@
                 <div class="login_reser_b">
                     <div class="login_reser_box">
                         <p class="reser_b_tit">아이디</p>                
-                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요.">
+                        <input type="text" name="user_id" id="user_id" placeholder="아이디를 입력하세요." onkeyup="enterkey();">
                     </div>
                     <div class="login_reser_box">
                         <p class="reser_b_tit">비밀번호</p>                
-                        <input type="text" name="user_password" id="user_password" placeholder="비밀번호를 입력하세요." style="color:#000" >
+                        <input type="password" name="user_password" id="user_password" placeholder="비밀번호를 입력하세요." style="color:#000" onkeyup="enterkey();">
                     </div>
                 </div>
                 <!--input 박스//-->

@@ -13,6 +13,8 @@ public interface OfficeSeatInfoManageService {
 	
 	Map<String, Object> selectOfficeSeatInfoManageDetail(String seatId) throws Exception;
 	
+	void selectLableSchedule() throws Exception;
+	
 	int updateOfficeSeatInfoManage(OfficeSeatInfo vo) throws Exception;
 	
 	int updateOfficeSeatPositionInfoManage(List<OfficeSeatInfo> list , String type) throws Exception;

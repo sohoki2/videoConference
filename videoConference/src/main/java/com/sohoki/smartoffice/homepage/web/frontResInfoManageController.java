@@ -46,6 +46,7 @@ import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 import com.sohoki.backoffice.cus.ten.service.TennantInfoManageService;
 import com.sohoki.backoffice.sts.res.service.ResInfoManageService;
 import com.sohoki.backoffice.sts.res.service.TimeInfoManageService;
+import com.sohoki.backoffice.sts.res.service.VisitedInfoManageService;
 import com.sohoki.backoffice.sts.res.vo.ResInfo;
 import com.sohoki.backoffice.sts.res.vo.ResInfoVO;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
@@ -119,6 +120,10 @@ public class frontResInfoManageController {
 	
 	@Autowired
     protected SwcInfoManageService swcService;
+	
+	@Autowired
+	private VisitedInfoManageService visitedService;
+	
 	
 	
 	//로그인 페이지로 이동 
@@ -396,7 +401,83 @@ public class frontResInfoManageController {
 		}
     	return model;	
     }
+	@RequestMapping(value="visitedQr.do")
+	public ModelAndView actionQrImagedAjax(@RequestParam String  visitedCode)throws Exception{	
+		ModelAndView model = new ModelAndView();
+		
+		try {
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			model.addObject(Globals.STATUS_REGINFO, visitedService.selectVisitedManageInfo(visitedCode));
+			
+		}catch(Exception e) {
+			LOGGER.debug("visitReser error:"  + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
+		}
+		model.setViewName("/web/qr_image");
+		return model;
+		
+	}
 	
+	
+	@RequestMapping(value="visitedAjax.do")
+	public ModelAndView actionVisitedAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO 
+			                                , HttpServletRequest request
+			                                , @RequestBody Map<String, Object> params 
+			    		                    , BindingResult bindingResult) throws Exception {
+		ModelAndView mav = new ModelAndView(Globals.JSONVIEW);
+		try {
+			empInfoVO = (EmpInfoVO) request.getSession().getAttribute("empInfoVO");
+
+            
+		  	if (empInfoVO.getEmpno() ==  null) {
+		  		
+		  		
+		  		mav.addObject(Globals.STATUS, Globals.STATUS_LOGINFAIL);
+		  		mav.addObject(Globals.STATUS_MESSAGE, "로그인이 만료 되었습니다.");
+		  		
+		  	}else {
+		  		
+		  		
+                 HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		 searchVO.put("empno", empInfoVO.getEmpno());
+			     
+			     PaginationInfo paginationInfo = new PaginationInfo();
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
+				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
+				 
+				 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
+				 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
+				 searchVO.put("recordCountPerPage", paginationInfo.getRecordCountPerPage());
+				 searchVO.put("visitedGubun", "VISITED_GUBUN_1");
+		         String date1 = util.NVL(searchVO.get("searchStartDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(0)) ;
+		         String date2 =  util.NVL(searchVO.get("searchEndDay"),  com.sohoki.backoffice.util.SmartUtil.reqDay(90)) ;
+		         searchVO.put("searchStartDay", date1);
+		         searchVO.put("searchEndDay", date2);
+		          
+		  		 List<Map<String, Object>> reslist = visitedService.selectVisitedManageListByPagination(searchVO);
+		  		 int totCnt = reslist.size() > 0 ?  Integer.valueOf(reslist.get(0).get("total_record_count").toString()) : 0;
+		  		 mav.addObject(Globals.JSON_RETURN_RESULTLISR,  reslist );
+		  		 mav.addObject(Globals.STATUS_REGINFO, searchVO);
+			     
+			     paginationInfo.setTotalRecordCount(totCnt);
+			     mav.addObject(Globals.JSON_PAGEINFO, paginationInfo);
+			     mav.addObject(Globals.PAGE_TOTALCNT, totCnt);
+			    
+			     mav.addObject(Globals.STATUS_REGINFO, searchVO);
+			     mav.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		  		 
+		  		
+		  	}
+			
+			
+		}catch(Exception e) {
+			 LOGGER.error("actionLogoutProcess error:" + e.toString());
+		}
+    	return mav;	
+    }
 	
 	@NoLogging
 	@RequestMapping(value="inc/top_inc.do")
@@ -1286,10 +1367,9 @@ public class frontResInfoManageController {
 			     paginationInfo.setTotalRecordCount(totCnt);
 			     model.addObject(Globals.JSON_PAGEINFO, paginationInfo);
 			     model.addObject(Globals.PAGE_TOTALCNT, totCnt);
-			     model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
-			  
-			    model.addObject(Globals.STATUS_REGINFO, searchVO);
-		  		model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			    
+			     model.addObject(Globals.STATUS_REGINFO, searchVO);
+		  		 model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 		  	}
 		
 	    }catch(Exception e) {

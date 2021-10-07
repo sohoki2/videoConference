@@ -45,5 +45,10 @@ public class OfficeSeatInfo {
 	private String resReqday = "";
 	private String qrPlayyn ="";
 	private String qrUpdateDate = "";
+	//신규 필드 
+	private String seatLabelUseyn = "";
+	private String seatLabelStatus = "";
+	private String seatLabelCode = "";
+	private String seatLabelTemplate = "";
 }
 

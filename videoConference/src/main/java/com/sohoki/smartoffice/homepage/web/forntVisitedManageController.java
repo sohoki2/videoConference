@@ -1,14 +1,8 @@
 package com.sohoki.smartoffice.homepage.web;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.sohoki.backoffice.cus.org.service.EmpInfoManageService;
 import com.sohoki.backoffice.cus.org.vo.EmpInfoVO;
 import com.sohoki.backoffice.sts.res.service.VisitedInfoManageService;
-import com.sohoki.backoffice.sts.res.vo.VisitedDetailInfo;
 import com.sohoki.backoffice.sts.res.vo.VisitedInfo;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
 import com.sohoki.backoffice.util.SmartUtil;
 
-import egovframework.com.cmm.AdminLoginVO;
 import egovframework.com.cmm.service.Globals;
-import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.let.utl.sim.service.EgovFileScrty;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
@@ -42,7 +30,7 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 @RestController
-@RequestMapping("/visited")
+@RequestMapping("/visit")
 public class forntVisitedManageController {
 
 	
@@ -72,16 +60,8 @@ public class forntVisitedManageController {
 		model.setViewName("/visited/inc/top_inc");
 		return model;
 	}
-	@NoLogging
-	@RequestMapping(value="inc/left_inc.do")
-	public ModelAndView visitedLeft() throws Exception{		
-		ModelAndView model = new ModelAndView();
-		//다음주 설정 작업 예정 
-		
-		model.setViewName("/visited/inc/top_inc");
-		return model;
-	}
-	@RequestMapping(value="index.do")	
+	
+	@RequestMapping(value="Index.do")	
 	public ModelAndView visitedIndex() throws Exception{				
 		ModelAndView model = new ModelAndView();
 		
@@ -91,18 +71,19 @@ public class forntVisitedManageController {
 		return model;		
 	}
 	//방문자 검색 
-	@RequestMapping(value="visitSearch.do")	
-	public ModelAndView visitSearch() throws Exception{				
+	@RequestMapping(value="VisitSearch.do")	
+	public ModelAndView visitSearch(@RequestParam String  visitedGubun) throws Exception{				
 		ModelAndView model = new ModelAndView();
 		
 		LOGGER.debug("=============================================================");
 		String url = "/visited/visitSearch";
 		
-		
+		//신규 추가 
+		model.addObject("visitedGubun", visitedGubun);
 	  	model.setViewName(url);
 		return model;		
 	}
-	@RequestMapping(value="visitSearchResult.do")	
+	@RequestMapping(value="VisitSearchResult.do")	
 	public ModelAndView visitSearchResult(@RequestBody Map<String, Object> params 
 									, HttpServletRequest request
 						            , BindingResult bindingResult)throws Exception{		
@@ -119,7 +100,6 @@ public class forntVisitedManageController {
 	        String date2 =  com.sohoki.backoffice.util.SmartUtil.reqDay(90) ;
 	        params.put("searchStartDay", date1);
 	        params.put("searchEndDay", date2);
-	        params.put("visitedGubun", "VISITED_GUBUN_1");
 	          
 			List<Map<String, Object>> visitedList = visitedService.selectVisitedManageListByPagination(params);
 			int totCnt = visitedList.size() > 0 ?  Integer.valueOf(visitedList.get(0).get("total_record_count").toString()) : 0;
@@ -134,7 +114,7 @@ public class forntVisitedManageController {
 		}
 		return model;		
 	}
-	@RequestMapping(value="visitSearchDetailResult.do")	
+	@RequestMapping(value="VisitSearchDetailResult.do")	
 	public ModelAndView visitSearchDetailResult(@RequestParam String  visitedCode)throws Exception{		
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -150,7 +130,7 @@ public class forntVisitedManageController {
 		}
 		return model;		
 	}
-	@RequestMapping(value="visitCancel.do")	
+	@RequestMapping(value="VisitCancel.do")	
 	public ModelAndView visitCancel(@RequestBody VisitedInfo info)throws Exception{		
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -173,7 +153,7 @@ public class forntVisitedManageController {
 		return model;		
 	}
 	
-	@RequestMapping(value="tourReser.do")	
+	@RequestMapping(value="TourReser.do")	
 	public ModelAndView tourReser(@ModelAttribute("VisitedInfo") VisitedInfo info) throws Exception{				
 		ModelAndView model = new ModelAndView();
 		String url = "/visited/tourReser";
@@ -191,7 +171,7 @@ public class forntVisitedManageController {
 	  	model.setViewName(url);
 		return model;		
 	}
-	@RequestMapping(value="visitReser.do")	
+	@RequestMapping(value="VisitReser.do")	
 	public ModelAndView visitReser() throws Exception{				
 		ModelAndView model = new ModelAndView();
 		String url = "/visited/visitReser";
@@ -207,7 +187,7 @@ public class forntVisitedManageController {
 	  	model.setViewName(url);
 		return model;		
 	}
-	@RequestMapping(value="visitEmpsearch.do")	
+	@RequestMapping(value="VisitEmpsearch.do")	
 	public ModelAndView userSearch (@RequestBody Map<String, Object> params 
 									, HttpServletRequest request
 						            , BindingResult bindingResult)throws Exception{
@@ -225,7 +205,7 @@ public class forntVisitedManageController {
 		}
 		return model;
 	}
-	@RequestMapping(value="visitQrTest.do")	
+	@RequestMapping(value="VisitQrTest.do")	
 	public ModelAndView visitQrTest ()throws Exception{
 		
 		ModelAndView model = new ModelAndView();
@@ -242,7 +222,7 @@ public class forntVisitedManageController {
 	  	model.setViewName(url);
 		return model;	
 	}
-	@RequestMapping(value="visitQrProcess.do")	
+	@RequestMapping(value="VisitQrProcess.do")	
 	public ModelAndView visitQrProcess (@RequestBody VisitedInfo visitedInfo)throws Exception{
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -273,7 +253,7 @@ public class forntVisitedManageController {
 		}
 		return model;	
 	}
-	@RequestMapping(value="visitQrImage.do")	
+	@RequestMapping(value="VisitQrImage.do")	
 	public ModelAndView visitQrImage (@RequestParam String  visitedCode)throws Exception{
 		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -289,7 +269,7 @@ public class forntVisitedManageController {
 		}
 		return model;	
 	}
-	@RequestMapping(value="visitReserProcess.do")	
+	@RequestMapping(value="VisitReserProcess.do")	
 	public ModelAndView visitReserProcess(@RequestBody Map<String, Object> visitedInfo
 			                              , HttpServletRequest request
 					                      , BindingResult bindingResult) throws Exception{				
@@ -322,7 +302,7 @@ public class forntVisitedManageController {
 		
 		return model;		
 	}
-	@RequestMapping(value="visitUpdaterProcess.do")	
+	@RequestMapping(value="VisitUpdaterProcess.do")	
 	public ModelAndView updateVisitedStateChangeInfoManage(@RequestBody VisitedInfo visitedInfo
 						                                   , HttpServletRequest request
 								                           , BindingResult bindingResult) throws Exception{	

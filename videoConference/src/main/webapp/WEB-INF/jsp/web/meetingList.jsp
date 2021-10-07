@@ -59,12 +59,12 @@
         <div class="contents">
            <div class="line">
             <!--//date picker-->
-                <div class="contents meet_list">
+                <div class="contents mobileM meetL">
                     <div class="float_right">
-                    <button type="button" class="resource margintop15" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
+                    <button type="button" class="resource" onClick="location.href='/web/meetingResource.do'">회의자원현황</button>
                   </div>
                   <div class="dateBox float_left">
-                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday" value="${regist.searchResStartday}" onChange="fn_meeingList()">
+                      <input type="text" class="inputSearch" id="searchResStartday" name="searchResStartday" value="${regist.searchResStartday}"  onChange="fn_meeingList()">
                       <div class="dateIcon"  onClick="fn_meeingList()">
                         <a class="dateBtn">검색</a>
                       </div>
@@ -72,7 +72,7 @@
                    </div>
                   <div class="float_right btnL">
                         <a href="javascript:fn_ViewChange('List')" class="active listBtn"></a>  
-                        <a href="javascript:fn_ViewChange('Day')" class="blockBtn"></a>  
+                        <a href="javascript:fn_ViewChange('Day')" class="blockBtn"></a> 
                     </div>
                 <div class="clear"></div>
                 </div>
@@ -95,7 +95,11 @@
                    
                </ul>
                <!--//page number-->
-               <ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="linkPage"  />
+               <div id="dv_page">
+                <ul class="page_num">
+                  <ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="linkPage"  />
+                </ul>
+                </div>
                
                <!--page number//-->
            </div>
@@ -113,7 +117,7 @@
         <!--needpopup script-->
         <script>  
             $( function() {
-            	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yymmdd' });
+            	 $( "#searchResStartday" ).datepicker({ dateFormat: 'yy-mm-dd' });
             });
             function fn_meeingList(){
             	 $("form[name=regist]").attr("action", "/web/meetingList.do").submit();

@@ -81,9 +81,9 @@
     			$("#btn_pre_step0"+_step).click();
     		}, fn_equalCheck : function (){
     			var detailInfo =  new Object(); 
-    			detailInfo.visitedName = $("#visitedReqName").val();
-    			detailInfo.visitedCelphone = $("#visitedReqCelphone").val();
-    			detailInfo.visitedOrg = $("#visitedReqOrg").val();
+    			detailInfo.visitedName = "'" +$("#visitedReqName").val()+ "'";
+    			detailInfo.visitedCelphone = $("#visitedReqCelphone").val().replaceAll("-", "");
+    			detailInfo.visitedOrg = "'" +$("#visitedReqOrg").val()+ "'";
     			$("#visitedEqual").val("Y");
     			VisitedArrays.push(detailInfo);
     			visited.fn_visitedList();
@@ -95,11 +95,11 @@
     			$("#tb_visitedPersonDetail > tbody").empty();
     			for (var i = 0; i < VisitedArrays.length; i ++){
     				var obj = VisitedArrays;
-    				html  = "<tr id='"+obj[i].visitedCelphone+"'>"
+    				html  = "<tr id='"+obj[i].visitedCelphone +"'>"
     				      + "   <td><input type='checkbox' name='visitedInfo' value='"+obj[i].visitedCelphone +"'></td>"
-    				      + "   <td>" + obj[i].visitedName + "</td>"
-					      + "   <td>" + obj[i].visitedCelphone + "</td>"
-					      + "   <td>" + obj[i].visitedOrg + "</td>"
+    				      + "   <td>" + obj[i].visitedName.replaceAll("'", "") + "</td>"
+					      + "   <td>" + obj[i].visitedCelphone.replaceAll("-", "") + "</td>"
+					      + "   <td>" + obj[i].visitedOrg.replaceAll("'", "") + "</td>"
 					      + " </tr>";		   						          
 			        $("#tb_visitedPersonDetail > tbody").append(html);
     			}  
@@ -112,9 +112,9 @@
     			//기존 전화 번호 있는지 체크 하기 
     			if (visited.fn_cellphoneCheck($("#visitedCelphone").val()) != false){
     				var detailInfo =  new Object(); 
-        			detailInfo.visitedName = $("#visitedName").val();
-        			detailInfo.visitedCelphone = $("#visitedCelphone").val();
-        			detailInfo.visitedOrg = $("#visitedOrg").val();
+        			detailInfo.visitedName = "'" + $("#visitedName").val() + "'";
+        			detailInfo.visitedCelphone = $("#visitedCelphone").val() ;
+        			detailInfo.visitedOrg = "'" + $("#visitedOrg").val() + "'";
         			VisitedArrays.push(detailInfo);
         			visited.fn_visitedList();
         			
@@ -160,10 +160,10 @@
     		   if (VisitedArrays.length < 1 ){
     			   $("#sp_message").text("방문자를 등록해주세요.");
 				   $("#btn_result").trigger("click");
-				   return
+				   
     		   }
     		   
-    		   var url = "/visited/visitReserProcess.do";
+    		   var url = "/visit/VisitReserProcess.do";
     		   var parms = {"visitedReqName" : $("#visitedReqName").val(),
     				        "visitedReqCelphone" : $("#visitedReqCelphone").val(),
     				        "visitedReqOrg" : $("#visitedReqOrg").val(),
@@ -181,13 +181,16 @@
     		   
     		   uniAjax(url, parms, 
   		     			function(result) {
-  						       if (result.status == "SUCCESS"){
+    			               alert(result.status);
+    			               
+				               if (result.status == "SUCCESS"){
   						    	 $("#sp_message").text("정상적으로 등록 되었습니다.");
   							     $("#btn_result").trigger("click");
-	   		  					 location.href="/visited/index.do";  
+	   		  					 //location.href="/visit/Index.do";  
   		  					   }else {
   		  						 $("#sp_message").text("등록중 애러가 발생 하였습니다.");
- 							     $("#btn_result").trigger("click");  
+ 							     $("#btn_result").trigger("click");
+								 
   		  					   }
   						},
   						function(request){
@@ -221,14 +224,17 @@
 				if (any_empt_line_span("visitedRestime1", "방문시간을 선택하세요.") == false) return  true;	
 				if (any_empt_line_span("visitedRestime2", "방문시간을 선택하세요.") == false) return  true;	
 				if (any_empt_line_span("visitedPurpose", "방문 목적을 입력하세요.") == false) return  true;
-				if (VisitedArrays.length < 1 ){ return true;}
-				
+				if (VisitedArrays.length < 1 ){
+    			   $("#sp_message").text("방문자를 등록해주세요.");
+				   $("#btn_result").trigger("click");
+                   return  true;
+			    }
 				return false;
 				
     		}, fn_empSearch : function (){
     			//사용자 검색 
     			if (any_empt_line_span("searchTxt", "검색할 내용을 입력 하지 않았습니다.") == false) return true;	
-    			var url = "/visited/visitEmpsearch.do";
+    			var url = "/visit/VisitEmpsearch.do";
     			var param = {"searchCondition" : $("#searchGubun").val()  , "searchKeyword" : $("#searchTxt").val()}
     			var returnVal = uniAjaxReturn(url, param);
     			if (returnVal.resultlist.length > 0){
@@ -259,7 +265,7 @@
 
 <div class="wrapper sub_back">
         <!--//header 추가-->
-        <c:import url="/visited/inc/top_inc.do" />
+        <c:import url="/visit/inc/top_inc.do" />
         <!--header 추가//-->
         <!--//contents-->
         <div class="contents">
@@ -299,7 +305,7 @@
                                 </ul>
                                 <div class="step_bottom">
                                     <!-- Here goes your actions buttons -->
-                                    <button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" > 다음</button>
+                                    <button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" style="font-size: 1.6rem;background: #2196f3;color: #fff;border: none;padding: 7px 20px;"> 다음</button>
                                     <button class="waves-effect waves-dark btn next-step" id="btn_step01" style="display:none">다음</button>
                                 </div>
                             </div>                         
@@ -330,17 +336,21 @@
 					                    </select>
                                     </li>
                                     <li>
-                                    
-                                        <select id="searchGubun" style="width:120px">
-                                           <option value="">선택</option>
-                                           <option value="emphandphone">전화번호</option>
-                                           <option value="empname">이름</option>
-                                        </select>
-                                        <input type="text" id="searchTxt" placeholder="검색할 내용을 입력하세요." style="width:200px;">
-                                        <a href="javascript:visited.fn_empSearch()">검색</a>
-                                        <select id="visitedEmpno" style="width:120px">
-                                           
-                                        </select>
+										<div class="visitSearchForm">
+											<select id="searchGubun" style="width:110px">
+											   <option value="">선택</option>
+											   <option value="emphandphone">전화번호</option>
+											   <option value="empname">이름</option>
+											</select>
+											<input type="text" id="searchTxt" placeholder="검색할 내용을 입력하세요." style="width:calc(100% - 193px);">
+											<a href="javascript:visited.fn_empSearch()" class="search_btn">검색</a>
+										</div>
+										<div class="visitSearchSel">
+											<select id="visitedEmpno">
+											   
+											</select>
+										</div>
+										<span class="visitSearch_noti">※ 접견 대상자의 정보를 입력하여 선택하세요.</span>
                                     </li>
                                     <li>
                                        <input type="text" id="datePick" readonly="readonly" name="mainDate" value="today" class="datePicker">

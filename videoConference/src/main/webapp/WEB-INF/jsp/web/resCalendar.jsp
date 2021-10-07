@@ -70,7 +70,9 @@
                      <a href="/web/meetingList.do" class="listBtn"></a>  
                      <a href="/web/meetingDay.do" class="active blockBtn"></a>  
                 </div>
+                <div class="clear"></div>
            </div>
+         </div>
            <div class="whiteBack">
             <div class="infoContents float_left">
                         <span class="usingSeat">예약불가</span>

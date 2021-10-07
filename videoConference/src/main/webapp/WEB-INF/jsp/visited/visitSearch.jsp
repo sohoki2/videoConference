@@ -40,71 +40,112 @@
     			   if (any_empt_line_span("seachCelphone", "휴대폰 번호를 입력하세요.") == false) return;	
     			   
     			   
-    			   var parms = {'seachName' : $("#seachName").val(), 'seachCelphone' : $("#seachCelphone").val()};
+    			   var parms = {'seachName' : $("#seachName").val(), 'seachCelphone' : $("#seachCelphone").val(), 'visitedGubun' : $("#visitedGubun").val()};
     			   
-    			   uniAjax("/visited/visitSearchResult.do", parms, 
+    			   uniAjax("/visit/VisitSearchResult.do", parms, 
      		     			function(result) {
      						       if (result.status == "SUCCESS"){
-     						    	 
-     						    	  $("#tv_sarchResult > tbody").empty();
-     						    	  if (result.resultlist.length > 0){
-     						    		  $("#dv_sarchResult").show();
-     						    		 
-     						    		  var shtml = "";
-     						    		  var css_style = "";
-     						    		  
-     						    		  //VISITED_STATE_1, VISITED_STATE_2, VISITED_STATE_3
-     						    		 
-     						    		  for (var i in result.resultlist){
-     						    			 var obj = result.resultlist[i]; 
-     						    			 if (obj.code == "VISITED_STATE_3"){
-     						    				css_style = "status_gray";
-     						    			 }else if (obj.code == "VISITED_STATE_1"){
-     						    				css_style =  "status_red";
-     						    			 }else if (obj.code == "VISITED_STATE_2"){
-     						    				css_style = "status_blue";
-     						    			 }else {
-     						    				css_style =  "status_red"; 
-     						    			 }
-     						    			 var button_style = obj.code == "VISITED_STATE_1" ? "block" : "none";
-     						    			 shtml = "<tr class='view' id='"+obj.visited_code +"'>"
-     						    			       + "  <td>"+obj.visited_req_name +"</td>"
-     						    			       + "  <td>"+obj.visited_req_org +"</td>"
-     						    			       + "  <td>"+obj.center_nm +"</td>"
-     						    			       + "  <td>"+obj.floor_name +"</td>"
-     						    			       + "  <td>"+obj.empname +"</td>"
-     						    			       + "  <td>"+obj.visitedregdate +"</td>"
-     						    			       + "  <td>"+obj.visited_resday +":"+obj.visited_restime +"</td>"
-     						    			       + "  <td><span class='"+css_style+"'>"+obj.code_nm +"</span></td>"
-     						    			       + "  <td><button type='button' class='table_btn' style='display:"+button_style+"' onClick='visitSearch.visitedCancel(&#39;"+obj.visited_code+"&#39;)'>신청취소</button></td>"
-     						    			       + "</tr>"
-     						    			       + "<tr class='fold'> "
-     						    			       + "  <td colspan='9'>"
-     						    			       + "     <span class='main_wsubtit'>방문자 리스트</span>"
-     						    			       + "      <table class='apply_table' id='tb_"+obj.visited_code+"'>"
-     						    			       + "        <thead>"
-     						    			       + "         <tr>"
-     						    			       + "           <th>방문자</th>"
-     						    			       + "           <th>휴대폰</th>"
-     						    			       + "           <th>업체</th>"
-     						    			       + "         </tr>"
-     	                                           + "       </thead>"
-     	                                           + "       <tbody>"
-     	                                           + "       </tbody>"
-     						    			       + "     </td>"
-     						    			       + "</tr>";
-     						    			 $("#tv_sarchResult >  tbody:last").append(shtml);	
-     						    		  }
-     						    		  $(".fold-table tr.view").on("click", function(){
-     						    			
-     									    $(this).toggleClass("open").next(".fold").toggleClass("open");
-     									    visitSearch.fn_detailView($(this).attr('id'));
-     									    
-     									  });
-     						    	  }else {
-     						    		 $("#sp_message").text("방문자 예약을 신청한 내역이 없습니다.");
-        							     $("#btn_result").trigger("click"); 
-     						    	  }
+     						    	   if ($("#visitedGubun").val() == "VISITED_GUBUN_1"){
+     						    		   
+     						    		   $("#tv_visitedResult > tbody").empty();
+         						    	   if (result.resultlist.length > 0){
+         						    		  $("#dv_sarchResult").show();
+         						    		 
+         						    		  var shtml = "";
+         						    		  var css_style = "";
+         						    		  for (var i in result.resultlist){
+         						    			 var obj = result.resultlist[i]; 
+         						    			 if (obj.code == "VISITED_STATE_3"){
+         						    				css_style = "status_gray";
+         						    			 }else if (obj.code == "VISITED_STATE_1"){
+         						    				css_style =  "status_red";
+         						    			 }else if (obj.code == "VISITED_STATE_2"){
+         						    				css_style = "status_blue";
+         						    			 }else {
+         						    				css_style =  "status_red"; 
+         						    			 }
+         						    			 var button_style = obj.code == "VISITED_STATE_1" ? "block" : "none";
+         						    			 shtml = "<tr class='view' id='"+obj.visited_code +"'>"
+         						    			       + "  <td>"+obj.visited_req_name +"</td>"
+         						    			       + "  <td>"+obj.visited_req_org +"</td>"
+         						    			       + "  <td>"+obj.center_nm +"</td>"
+         						    			       + "  <td>"+obj.floor_name +"</td>"
+         						    			       + "  <td>"+obj.empname +"</td>"
+         						    			       + "  <td>"+obj.visitedregdate +"</td>"
+         						    			       + "  <td>"+obj.visited_resday +":"+obj.visited_restime +"</td>"
+         						    			       + "  <td><span class='"+css_style+"'>"+obj.code_nm +"</span></td>"
+         						    			       + "  <td><button type='button' class='table_btn' style='display:"+button_style+"' onClick='visitSearch.visitedCancel(&#39;"+obj.visited_code+"&#39;)'>신청취소</button></td>"
+         						    			       + "</tr>"
+         						    			       + "<tr class='fold'> "
+         						    			       + "  <td colspan='9'>"
+         						    			       + "     <span class='main_wsubtit'>방문자 리스트</span>"
+         						    			       + "      <table class='apply_table' id='tb_"+obj.visited_code+"'>"
+         						    			       + "        <thead>"
+         						    			       + "         <tr>"
+         						    			       + "           <th>방문자</th>"
+         						    			       + "           <th>휴대폰</th>"
+         						    			       + "           <th>업체</th>"
+         						    			       + "         </tr>"
+         	                                           + "       </thead>"
+         	                                           + "       <tbody>"
+         	                                           + "       </tbody>"
+         						    			       + "     </td>"
+         						    			       + "</tr>";
+         						    			 $("#tv_visitedResult >  tbody:last").append(shtml);	
+         						    		  }
+         						    		  $(".fold-table tr.view").on("click", function(){
+         						    			
+         									    $(this).toggleClass("open").next(".fold").toggleClass("open");
+         									    visitSearch.fn_detailView($(this).attr('id'));
+         									    
+         									  });
+         						    	  }else {
+         						    		 $("#sp_message").text("방문자 예약을 신청한 내역이 없습니다.");
+            							     $("#btn_result").trigger("click"); 
+         						    	  }
+     						    	   }else {
+     						    		  $("#tb_tourResult > tbody").empty();
+         						    	  if (result.resultlist.length > 0){
+         						    		  $("#dv_sarchResult").show();
+         						    		 
+         						    		  var shtml = "";
+         						    		  var css_style = "";
+         						    		  
+         						    		  //VISITED_STATE_1, VISITED_STATE_2, VISITED_STATE_3
+         						    		 
+         						    		  for (var i in result.resultlist){
+         						    			 var obj = result.resultlist[i]; 
+         						    			 if (obj.code == "VISITED_STATE_3"){
+         						    				css_style = "status_gray";
+         						    			 }else if (obj.code == "VISITED_STATE_1"){
+         						    				css_style =  "status_red";
+         						    			 }else if (obj.code == "VISITED_STATE_2"){
+         						    				css_style = "status_blue";
+         						    			 }else {
+         						    				css_style =  "status_red"; 
+         						    			 }
+         						    			 var button_style = obj.code == "VISITED_STATE_1" ? "block" : "none";
+         						    			 var codeNM = obj.code_nm == "취소" ? "확진자 발생" : obj.code_nm;
+         						    			 shtml = "<tr>"
+         						    			       + "  <td>"+obj.visited_req_name +"</td>"
+         						    			       + "  <td>"+obj.visited_req_celphone +"</td>"
+         						    			       + "  <td>"+obj.visited_req_org +"</td>"
+         						    			       + "  <td>"+obj.visited_group_name +"</td>"
+         						    			       + "  <td>"+obj.visited_person +"</td>"
+         						    			       + "  <td>"+obj.visitedregdate +"</td>"
+         						    			       + "  <td>"+obj.visited_resday +":"+obj.visited_restime +"</td>"
+         						    			       + "  <td><span class='"+css_style+"'>"+ codeNM +"</span></td>"
+         						    			       + "  <td><button type='button' class='table_btn' style='display:"+button_style+"' onClick='visitSearch.visitedCancel(&#39;"+obj.visited_code+"&#39;)'>신청취소</button></td>"
+         						    			       + "</tr>";
+         						    			 $("#tb_tourResult >  tbody:last").append(shtml);	
+         						    		  }
+         						    		
+         						    	  }else {
+         						    		 $("#sp_message").text("투어신청을 신청한 내역이 없습니다.");
+            							     $("#btn_result").trigger("click"); 
+         						    	  } 
+     						    	   }
+     						    	   
      		  					   }else {
      		  						 $("#sp_message").text("조회중 애러가 발생 하였습니다.");
     							     $("#btn_result").trigger("click");  
@@ -117,7 +158,7 @@
     		   }, fn_detailView : function (visitedCode){
     			   //
     			   //VISITED_SEQ, VISITED_CODE, VISITED_ORG, VISITED_NAME, VISITED_CELPHONE, VISITED_REGDATE
-    			   uniAjaxSerial("/visited/visitSearchDetailResult.do", {'visitedCode' : visitedCode}, 
+    			   uniAjaxSerial("/visit/VisitSearchDetailResult.do", {'visitedCode' : visitedCode}, 
     						  function(result) {
     							       if (result.status == "SUCCESS"){
     							    	   if (result.resultlist.length > 0){
@@ -147,7 +188,7 @@
     			   alert(visitedCode);
     			   
     			   parms = {'visitedCode': visitedCode , 'visitedStatus':'VISITED_STATE_4'};
-    			   uniAjax("/visited/visitCancel.do", parms, 
+    			   uniAjax("/visit/VisitCancel.do", parms, 
     		     			function(result) {
     						       if (result.status == "SUCCESS"){
     						    	   
@@ -173,11 +214,12 @@
 <body>
 <div class="wrapper sub_back">
         <!--//header 추가-->
-        <c:import url="/visited/inc/top_inc.do" />
+        <c:import url="/visit/inc/top_inc.do" />
         <!--header 추가//-->
         <!--//contents-->
+        <input type="hidden" id="visitedGubun" name="visitedGubun" value="${visitedGubun}" />
         <div class="contents">
-            <h2 class="sub_tit">방문신청 조회</h2>
+            <h2 class="sub_tit"><span id="sp_title">방문신청 조회</span></h2>
             <div class="sub_con_box">
                 
                 <ul class="step_reser_list">
@@ -194,7 +236,7 @@
                 </div>
                 
                 <div class="table-block" id="dv_sarchResult">
-                    <table class="apply_table fold-table" id="tv_sarchResult">
+                    <table class="apply_table fold-table" id="tv_visitedResult">
                         <thead>
                             <tr>
                                 <th>신청자</th>
@@ -204,6 +246,23 @@
                                 <th>접견자</th>
                                 <th>신청날짜</th>
                                 <th>방문일자</th>
+                                <th>신청상태</th>
+                                <th>비고</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <table class="apply_table fold-table" id="tb_tourResult">
+                        <thead>
+                            <tr>
+                                <th>신청자</th>
+                                <th>휴대폰 번호</th>
+                                <th>소속 업체</th>
+                                <th>단체예약</th>
+                                <th>신청인원</th>
+                                <th>신청날짜</th>
+                                <th>예약일자</th>
                                 <th>신청상태</th>
                                 <th>비고</th>
                             </tr>
@@ -244,6 +303,18 @@
         <script>
 			$(function(){
 			  $("#dv_sarchResult").hide();
+			    if ($("#visitedGubun").val() == "VISITED_GUBUN_1") {
+			    	$("#tv_visitedResult").show();
+			    	$("#tb_tourResult").hide();
+			    }else {
+			    	$("#tv_visitedResult").hide();
+			    	$("#tb_tourResult").show();
+			    }
+			    //alert($("#visitedGubun").val());
+			    console.log($("#visitedGubun").val());
+			    
+			    var title = ($("#visitedGubun").val() == "VISITED_GUBUN_1") ? "방문신청 조회" : "투어신청 조회";
+			    $("#sp_title").html(title);
 			  
 			});
     </script>

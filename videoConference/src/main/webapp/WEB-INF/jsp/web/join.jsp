@@ -108,6 +108,7 @@
 
 <script>  
     function fn_uas(){
+    	
     	 var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no';
     	 window.open("/web/Ready.do", "실명인증", options);
     }
@@ -125,6 +126,10 @@
 			if (join.fn_UniCheckAlert("uniCheck", "중복 검사를 하지 않았습니다") == false) return;
 			if (any_empt_line_span("userPassword1", "패스워드을 입력해주세요.") == false) return;	
 			if (any_empt_line_span("userPassword2", "패스워드을 입력해주세요.") == false) return;
+
+			
+
+
 			if(!chkPwd( $.trim($('#userPassword1').val())) == false  )return;
 			if ($.trim($('#userPassword1').val()) !=   $.trim($('#userPassword2').val())  ){
 				$("#sp_message").text("비밀 번호가 일치 하지 않습니다.");
@@ -132,6 +137,7 @@
 			    return;
 			}
 		    if (any_empt_line_span("userName", "사용자명을 입력해주세요.") == false) return;
+			if (any_empt_line_span("CI", "실명인증을 하지 않았습니다.") == false) return;
   		    if (any_empt_line_span("userCellphone", "연락처를 기입해 주세요.") == false) return;
   		    if (any_empt_line_span("userEmail", "이메일를 기입해  주세요.") == false) return;
   		    if (verifyEmail("userEmail") == false) return;

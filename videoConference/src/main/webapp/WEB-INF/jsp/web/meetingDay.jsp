@@ -99,7 +99,7 @@
                                    <td colspan="2">15시</td>
                                    <td colspan="2">16시</td>
                                    <td colspan="2">17시</td>
-                                   <!-- <td colspan="2">18시</td> -->
+                                   <!--<td colspan="2">18시</td>-->
                                </tr>
                            </thead>
                            <tbody>
@@ -120,6 +120,8 @@
         <script>  
             $( function() {
             	 $("#searchResStartday").datepicker({ dateFormat: 'yy-mm-dd' });
+				 //alert($("#searchResStartday").val());
+
             	 fn_floorMeetingInfo();
             }); 
         </script>

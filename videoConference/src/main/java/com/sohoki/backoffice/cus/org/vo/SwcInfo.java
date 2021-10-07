@@ -14,4 +14,5 @@ public class SwcInfo {
 	private String tennRetrieve = "";
 	private String comTitle = "";
 	private String tennMonthcnt = "";
+	private String tourAllowPerson = "";
 }

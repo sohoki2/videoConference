@@ -23,6 +23,14 @@
     <script src="/front_res/js/panzoom.js" ></script>
     <script src="/front_res/js/common.js"></script>
     <script src="/front_res/js/com_resInfo.js"></script>
+	<style>
+	input[type=text]::-ms-clear{
+	  display: none;
+	  }
+	input[type=password]::-ms-reveal{
+	  display: none;
+	  }
+	</style>
 </head>
 <body>
 <form:form name="regist" commandName="regist" method="post">
@@ -42,6 +50,7 @@
 <input type="hidden" name="resReqday" id="res_reqday" />	
 <input type="hidden" name="itemId" id="itemId" />		
 <input type="hidden" name="kioskGubun" id="kioskGubun" value="SEAT"/>
+
 						
  <div class="wrap">
     <div class="contents">
@@ -50,15 +59,15 @@
           <h1><img src="/images/logo.png" align="서울관광플라자"></h1>
           <div class="tit">
             <span id="sp_FloorTitle"></span>
-            <span>
-              서울관광플라자 스마트워크센터 예약 시스템<br/>
-              SEOUL TOURISM PLAZA Reservation System
-            </span>
+            <div class="tit_con">
+              <p>서울관광플라자 스마트워크센터 예약 시스템</p>
+			  <p>SEOUL TOURISM PLAZA Reservation System</p>
+            </div>
           </div>
         </div>
         <div class="floatR">
           <div class="day"><span id="sp_dayInfo"></span></div>
-          <div class="time"><strong><span id="sp_timeInfo"></span></strong></div>
+          <div class="time"><span id="sp_timeInfo"></span></div>
         </div>
         <div class="clear"></div>
       </header>
@@ -293,7 +302,7 @@
 						   //총 게시물 정리 하기
 						   if (result.regist.timeInfo!= null){
 							   var obj = result.regist.timeInfo;
-							   $("#sp_dayInfo").html(obj.dayinfo +"<br>"+obj.weekinfo);
+							   $("#sp_dayInfo").html("<p>"+obj.dayinfo +"</p><p>"+obj.weekinfo+"</p>");
 							   $("#sp_timeInfo").html("<strong>"+obj.timeinfo+"<strong>");
 						   }
 						   if (result.regist.floorInfo!= null)
@@ -315,7 +324,7 @@
 			    var url = "/backoffice/resManage/seatStateInfo.do";
 				var params = {"swcResday" : $("#searchResStartday").val().replaceAll("-",""), 
 	  					      "floorSeq" : $("#floorSeq").val(), 
-	  					       "seatUseyn" : "Y", 
+					          "seatUseyn" : "Y", 
 	  					      "resStarttime" : $("#resStarttimeKiosk").val(), 
 	  					      "resEndtime" : $("#resEndtimeKiosk").val()
 	  					      };
