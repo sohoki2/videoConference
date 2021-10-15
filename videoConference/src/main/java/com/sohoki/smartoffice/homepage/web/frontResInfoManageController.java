@@ -444,7 +444,7 @@ public class frontResInfoManageController {
 		  		 searchVO.put("empno", empInfoVO.getEmpno());
 			     
 			     PaginationInfo paginationInfo = new PaginationInfo();
-				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndex"), "1")));
 				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
 				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
 				 
@@ -886,7 +886,7 @@ public class frontResInfoManageController {
 				ret =   timeService.selectResSeatPreCheckInfo(timeinfo);
 				if (ret > 0) {
 					model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
-					model.addObject(Globals.STATUS_MESSAGE, "동일 시간때 다른데 예야된 좌석이 있습니다.");	
+					model.addObject(Globals.STATUS_MESSAGE, "동일 시간때 다른데 예약된 좌석이 있습니다.");	
 					return model;
 				}
 				
@@ -1327,6 +1327,7 @@ public class frontResInfoManageController {
 	}
 	@RequestMapping(value="mybookingAjax.do")
 	public ModelAndView webMybookingAjax(@ModelAttribute("empInfoVO") EmpInfoVO empInfoVO
+			                             , @RequestBody Map<String, Object> searchVO
 						                 , HttpServletRequest request
 						                 , BindingResult bindingResult) throws Exception{		
 		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
@@ -1340,14 +1341,20 @@ public class frontResInfoManageController {
 		  		 
 		  		 
 		  		
-		  		 HashMap<String, Object> searchVO = new HashMap<String, Object>();
+		  		 //HashMap<String, Object> searchVO = new HashMap<String, Object>();
 		  		 
 			     searchVO.put("empno", empInfoVO.getEmpno());
 			     
 			     PaginationInfo paginationInfo = new PaginationInfo();
-				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndx"), "1")));
+				 paginationInfo.setCurrentPageNo( Integer.valueOf( util.NVL(searchVO.get("pageIndex"), "1")));
 				 paginationInfo.setRecordCountPerPage(Integer.valueOf( util.NVL(searchVO.get("pageUnit"), propertiesService.getInt("pageUnit"))));
 				 paginationInfo.setPageSize(Integer.valueOf( util.NVL(searchVO.get("pageSize"), propertiesService.getInt("pageSize"))));
+				 
+				 
+				 LOGGER.debug("-----------------------------------------pageIndex");
+				 LOGGER.debug("-----------------------------------------" + searchVO.get("pageIndex"));
+				 LOGGER.debug("-----------------------------------------pageIndex");
+				 
 				 
 				 searchVO.put("firstIndex", paginationInfo.getFirstRecordIndex());
 				 searchVO.put("lastIndex", paginationInfo.getLastRecordIndex());
@@ -1798,10 +1805,28 @@ public class frontResInfoManageController {
 			
 			
 			List<Map<String, Object>> timeLists = resService.selectKioskCalendarList(meetingId);
-			JSONArray jsonArr1 = new JSONArray();
-			JSONObject jsonobj = new JSONObject();
-			JSONObject jsonobj_sub = new JSONObject();
+			JSONArray jsonArr_New = new JSONArray();
+			
+			/*
+			for (int k = 0; k < timeLists.size(); k ++) {
+				LOGGER.debug("res_starttime:" + timeLists.get(k).get("res_starttime").toString());
+				jsonobj.put("title", timeLists.get(k).get("res_title").toString() );
+				jsonobj.put("start", timeLists.get(k).get("res_starttime").toString());
+				jsonobj.put("end", timeLists.get(k).get("res_endtime").toString());
+				jsonobj_sub.put("author",  timeLists.get(k).get("empname").toString() );
+				jsonobj_sub.put("id",  timeLists.get(k).get("res_seq").toString() );
+				jsonobj.put("extendedProps", jsonobj_sub);
+				jsonobj.put("color", "#F2F2F2");
+				jsonobj.put("textColor", "#808080");	
+				LOGGER.debug("jsonobj:" +jsonobj);
+				jsonArr1.add(jsonobj);
+			}
+			*/
+			
 			for (Map<String, Object> timeList : timeLists){
+				JSONObject jsonobj = new JSONObject();
+				JSONObject jsonobj_sub = new JSONObject();
+				
 				jsonobj.put("title", timeList.get("res_title").toString() );
 				jsonobj.put("start", timeList.get("res_starttime").toString());
 				jsonobj.put("end", timeList.get("res_endtime").toString());
@@ -1809,11 +1834,13 @@ public class frontResInfoManageController {
 				jsonobj_sub.put("id",  timeList.get("res_seq").toString() );
 				jsonobj.put("extendedProps", jsonobj_sub);
 				jsonobj.put("color", "#F2F2F2");
-				jsonobj.put("textColor", "#808080");			
-				jsonArr1.add(jsonobj);
+				jsonobj.put("textColor", "#808080");	
+				jsonArr_New.add(jsonobj);
+				jsonobj = null;
+				jsonobj_sub =  null;
 			}
 			
-			model.addObject("resTime", jsonArr1);
+			model.addObject("resTime", jsonArr_New);
 			
 			//model.addObject("resTime", resTime);
 			int i = 0;

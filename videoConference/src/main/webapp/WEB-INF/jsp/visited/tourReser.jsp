@@ -40,7 +40,7 @@
         <c:import url="/visit/inc/top_inc.do" />
         <!--//contents-->
         <div class="contents">
-            <h2 class="sub_tit">서울관광플라자 투어 신청서</h2>
+            <h2 class="sub_tit">서울관광플라자 투어</h2>
             <div class="tourInfo">
                 <p class="font-bold">○ 서울관광플라자 투어 소개</p>
                                      서울관광플라자 투어는 서울관광플라자 내 공간 소개(*지상 1층, 4~11층) 및 서울관광을 체험하는 프로그램으로 진행됩니다.<br>
@@ -48,14 +48,8 @@
                                      담당자가 확인 후 유선으로 안내드립니다. <br>
                  * 지상 1층은 별도 신청 없이 자유롭게 방문하실 수 있습니다.<br><br> 
 
-                <p class="font-bold">○ 8월 투어 신청 가능일자 및 인원</p>
-                <c:forEach items="${tourInfo }" var="tourInfo" varStatus="status">
-                - ${tourInfo.tourday } ${tourInfo.code_nm } / ${tourInfo.cnt }명<br>
-                </c:forEach>
-                                           ※ 사회적 거리두기 4단계 지속 시 운영 중단될 수 있음<br><br>
 
                 <p class="font-bold">○ 유의사항</p>
-                - 8월 정기투어는 기존과 동일하게 진행되나, 코로나19 수도권 사회적 거리두기 4단계 지속 연장 시 운영이 중단될 수 있습니다.<br>
                 - 원활한 투어 진행을 위해 회차별 최대 10명을 모집하여 진행하므로, 투어 시 여러팀이 함께 동행하는 점 양해 바랍니다.<br>
                 - 동일한 일자 및 시간대에 투어가 접수될 경우, 접수시간을 기준으로 가장 먼저 접수된 건부터 투어가 진행됩니다.<br>
                                            ※위 상황의 경우, 일정 조정을 위해 담당자가 유선으로 개별 연락드립니다. <br>
@@ -94,7 +88,7 @@
                         </tr>
                         <tr>
                             <th>진행일자</th>
-                            <td>매월 2,4번째 금용일(공휴일 제외) <br>※ 상황에 따라 투어 진행 일정은 변경될 수 있습니다.</td>
+                            <td>매월 2,4번째 금요일(공휴일 제외) <br>※ 상황에 따라 투어 진행 일정은 변경될 수 있습니다.</td>
                         </tr>
                         <tr>
                             <th>투어시간</th>
@@ -116,121 +110,149 @@
                 </table>
                 <span>※ 매월 2,4 번째 금요일 투어 진행</span>            
             </div>
-            <ul class="stepper linear">
-                <!-- 신청자 정보입력 -->
-                <li class="step active">
-                    <!-- stepper 타이틀 -->
-                   <div class="step-title waves-effect">신청자 정보입력</div>
-                   <!-- stepper 내용 -->
-                   <div class="step-content">
-                        <div class="step-actions">
-                            <div>
-                                <p class="step_con_tit">신청자 정보를 입력하세요.</p>
-                                <ul class="step_reser_list">
-                                    <li>
-                                        <input type="text" id="visitedReqName" name="visitedReqName" placeholder="성명을 입력하세요. *">
-                                    </li>
-                                    <li>
-                                        <input type="text" id="visitedReqCelphone" name="visitedReqCelphone" placeholder="휴대폰 번호를 입력하세요. *">
-                                    </li>
-                                    <li>
-                                        <input type="text" id="visitedReqOrg" name="visitedReqOrg" placeholder="소속 업체명을 입력하세요.">
-                                    </li>
-                                    <li>
-                                        <div class="checks">
-                                            <input type="checkbox" id="visitedGroupCheck" name="visitedGroupCheck" value="Y"> 
-                                            <label for="visitedGroupCheck">단체예약</label> 
-                                        </div>
-                                        <input type="text" id="visitedGroupName" name="visitedGroupName" placeholder="단체명을 입력하세요.">
-                                    </li>
-                                    <li>
-                                        <div class="userApply">
-                                            1. 개인정보 수집 이용 목적: 서울관광플라자 투어 예약<br>2. 수집하려는 개인정보 항목: 회사명, 성명, 전화번호, 휴대폰번호, 이메일<br>3. 개인정보 보유 기간: 1년 <br>4. 정보주체는 본인의 개인정보 수집･이용의 동의를 거부할 권리가 있습니다. 단, 개인정보 수집･이용에 동의하지 않을 경우에는 예약이 불가할 수 있습니다.
-                                        </div>
-                                        <div class="checks">
-                                            <input type="checkbox" id="apply"> 
-                                            <label for="apply">(필수) 개인정보보호방침</label> 
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="step_bottom">
-                                    <!-- Here goes your actions buttons -->
-                                    <button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" style="font-size: 1.6rem;background: #2196f3;color: #fff;border: none;padding: 7px 20px;"> 다음</button>
-                                    <button class="waves-effect waves-dark btn next-step" id="btn_step01" style="display:none">다음</button>
-                                </div>
-                            </div>                         
-                        </div>
-                   </div>
-                </li>
-                <!-- 방문자 정보 입력  -->
-                <li class="step">
-                    <div class="step-title waves-effect">신청서 작성</div>
-                    <div class="step-content">
-                       <!-- Your step content goes here (like inputs or so) -->
-                        <div class="step-actions">
-                            <div>
-                                <p class="step_con_tit">투어 신청서를 입력하세요.</p>
-                                <ul class="step_reser_list">
-                                    <li>
-                                        <p class="apply_hint">투어 날짜 선택</p>
-                                           <select id="visitedResday" name="visitedResday" title="투어 날짜">
-                                              <option value="">투어 일자</option>
-						                      <c:forEach items="${tourCombo}" var="tourCombo">
-						                            <option value="${tourCombo.tourday}">${tourCombo.tourday}</option>
-						                      </c:forEach>
-                                           </select>
-                                         
-                                        <p class="apply_hint">
-                                                                                                                   ※ 투어는 매월 두 번째, 네 번째 금요일 오후 2시 및 4시에 진행되며(공휴일 제외), 상황에 따라 일정은 변경될 수 있습니다.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="apply_hint">투어 시간/참여인원</p>
-                                        <div class="row">
-                                            <div class="sm-6">
-                                                <select id="visitedRestime" name="visitedRestime" title="투어 날짜">
-		                                              <option value="">종료 층수</option>
-								                      <c:forEach items="${selectTourGubun}" var="selectTourGubun">
-								                            <option value="${selectTourGubun.codeDc}">${selectTourGubun.codeNm}</option>
-								                      </c:forEach>
-	                                            </select>
-                                            </div>
-                                            <div class="sm-6">
-                                                <select id="visitedPerson" name="visitedPerson" title="참여 인원" onChange="visited.fn_tourCheck()">
-		                                              <option value="">없음</option>
-								                      <option value="1">1명</option>
-								                      <option value="2">2명</option>
-								                      <option value="3">3명</option>
-								                      <option value="4">4명</option>
-								                      <option value="5">5명</option>
-								                      <option value="6">6명</option>
-								                      <option value="7">7명</option>
-								                      <option value="8">8명</option>
-								                      <option value="9">9명</option>
-								                      <option value="10">10명</option>
-	                                            </select>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </li> 
-                                    <li>
-                                        <input type="text" id="visitedPurpose" name="visitedPurpose" placeholder="어떤 경로를 통해 서울관광플라자 정기투어를 접하게 되셨나요?">
-                                    </li>
-                                    <li>
-                                        <input type="text" id="visitedRemark" name="visitedRemark" placeholder="기타 및 문의사항">
-                                    </li>
-                                </ul>
-                                <div class="step_bottom">
-                                    <!-- Here goes your actions buttons -->
-                                    <button id="btn_submit" class="waves-effect waves-dark btn apply-btn" data-needpopup-show="#visit_reser" disabled onClick="visited.fn_submit();">완료</button>
-                                    <button class="waves-effect waves-dark btn-flat previous-step">이전</button>
-                                </div>
-                            </div>                 
-                        </div>
-                    </div>
-                 </li>
-             </ul>   
-             <div class="clear"></div>               
+			<div class="row">
+				<div class="lg-4 tour_view">
+					<h2 class="sub_tit">투어 신청 가능일자 및 인원</h2>
+					<div class="tourInfo">
+						<table>
+							<thead>
+								<tr>
+									<th>투어일자</th>
+									<th>가능인원</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach items="${tourInfo }" var="tourInfo" varStatus="status">
+								<tr>
+									<td>${tourInfo.tourday } ${tourInfo.code_nm }</td>
+									<td>${tourInfo.cnt }명</td>
+								</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+						※ 사회적 거리두기 4단계 지속 시 운영 중단될 수 있음
+					</div>
+				</div>
+				<div class="lg-8">
+					<ul class="stepper linear">
+						<!-- 신청자 정보입력 -->
+						<li class="step active">
+							<!-- stepper 타이틀 -->
+						   <div class="step-title waves-effect">신청자 정보입력</div>
+						   <!-- stepper 내용 -->
+						   <div class="step-content">
+								<div class="step-actions">
+									<div>
+										<p class="step_con_tit">신청자 정보를 입력하세요.</p>
+										<ul class="step_reser_list">
+											<li>
+												<input type="text" id="visitedReqName" name="visitedReqName" placeholder="성명을 입력하세요. *">
+											</li>
+											<li>
+												<input type="text" id="visitedReqCelphone" name="visitedReqCelphone" placeholder="휴대폰 번호를 입력하세요. *">
+											</li>
+											<li>
+												<input type="text" id="visitedReqOrg" name="visitedReqOrg" placeholder="소속 업체명을 입력하세요. (개인일 경우 ‘개인’ 입력)">
+											</li>
+											<li>
+												<div class="checks">
+													<input type="checkbox" id="visitedGroupCheck" name="visitedGroupCheck" value="Y"> 
+													<label for="visitedGroupCheck">단체예약</label> 
+												</div>
+												<input type="text" id="visitedGroupName" name="visitedGroupName" placeholder="단체명을 입력하세요.">
+											</li>
+											<li>
+												<div class="userApply">
+													1. 개인정보 수집 이용 목적: 서울관광플라자 투어 예약<br>2. 수집하려는 개인정보 항목: 회사명, 성명, 전화번호, 휴대폰번호, 이메일<br>3. 개인정보 보유 기간: 1년 <br>4. 정보주체는 본인의 개인정보 수집･이용의 동의를 거부할 권리가 있습니다. 단, 개인정보 수집･이용에 동의하지 않을 경우에는 예약이 불가할 수 있습니다.
+												</div>
+												<div class="checks">
+													<input type="checkbox" id="apply"> 
+													<label for="apply">(필수)개인정보보호 방침 동의</label> 
+												</div>
+											</li>
+										</ul>
+										<div class="step_bottom">
+											<!-- Here goes your actions buttons -->
+											<button type="button" class="waves-effect waves-dark btn" onClick="visited.fn_nextStep('1')" style="font-size: 1.6rem;background: #2196f3;color: #fff;border: none;padding: 7px 20px;"> 다음</button>
+											<button class="waves-effect waves-dark btn next-step" id="btn_step01" style="display:none">다음</button>
+											
+										</div>
+									</div>                         
+								</div>
+						   </div>
+						</li>
+						<!-- 방문자 정보 입력  -->
+						<li class="step">
+							<div class="step-title waves-effect">신청서 작성</div>
+							<div class="step-content">
+							   <!-- Your step content goes here (like inputs or so) -->
+								<div class="step-actions">
+									<div>
+										<p class="step_con_tit">투어 신청서를 입력하세요.</p>
+										<ul class="step_reser_list">
+											<li>
+												<p class="apply_hint">투어 날짜 선택</p>
+												   <select id="visitedResday" name="visitedResday" title="투어 날짜">
+													  <option value="">투어 일자</option>
+													  <c:forEach items="${tourCombo}" var="tourCombo">
+															<option value="${tourCombo.tourday}">${tourCombo.tourday}</option>
+													  </c:forEach>
+												   </select>
+												 
+												<p class="apply_hint">
+												  ※ 투어는 매월 두 번째, 네 번째 금요일 오후 2시 및 4시에 진행되며(공휴일 제외), 상황에 따라 일정은 변경될 수 있습니다.
+												</p>
+											</li>
+											<li>
+												<p class="apply_hint">투어 시간/참여인원</p>
+												<div class="row">
+													<div class="sm-6">
+														<select id="visitedRestime" name="visitedRestime" title="투어 날짜">
+															  <option value="">선택</option>
+															  <c:forEach items="${selectTourGubun}" var="selectTourGubun">
+																	<option value="${selectTourGubun.codeDc}">${selectTourGubun.codeNm}</option>
+															  </c:forEach>
+														</select>
+													</div>
+													<div class="sm-6">
+														<select id="visitedPerson" name="visitedPerson" title="참여 인원" onChange="visited.fn_tourCheck()">
+															  <option value="">없음</option>
+															  <option value="1">1명</option>
+															  <option value="2">2명</option>
+															  <option value="3">3명</option>
+															  <option value="4">4명</option>
+															  <option value="5">5명</option>
+															  <option value="6">6명</option>
+															  <option value="7">7명</option>
+															  <option value="8">8명</option>
+															  <option value="9">9명</option>
+															  <option value="10">10명</option>
+														</select>
+													</div>
+												</div>
+												<div class="clear"></div>
+											</li> 
+											<li>
+												<input type="text" id="visitedPurpose" name="visitedPurpose" placeholder="어떤 경로를 통해 서울관광플라자 정기투어를 접하게 되셨나요?">
+											</li>
+											<li>
+												<input type="text" id="visitedRemark" name="visitedRemark" placeholder="기타 및 문의사항">
+											</li>
+										</ul>
+										<div class="step_bottom">
+											<!-- Here goes your actions buttons -->
+											<button type="button" id="btn_submit" class="waves-effect waves-dark btn apply-btn"  disabled onClick="visited.fn_submit();">완료</button>
+											<button class="waves-effect waves-dark btn-flat previous-step">이전</button>
+											
+										</div>
+									</div>                 
+								</div>
+							</div>
+						 </li>
+					 </ul>   
+				</div>
+				<div class="clear"></div>   
+			</div>
         </div>
     </div>
     <!-- 팝업 -->    
@@ -240,7 +262,7 @@
            <span id="sp_message"></span>
         </div>
     </div> 
-    <button type="button" id="btn_result" style="display:none" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
+    <button type="button" id="btn_result" style="display:block" data-needpopup-show='#ok_reserve'>경고창 보여 주기</button>
     <!-- stepper 추가 -->
     <script>
         var stepper = document.querySelector('.stepper');
@@ -282,19 +304,21 @@
     		   
     		   uniAjax(url, parms, 
   		     			function(result) {
-  						       if (result.status == "SUCCESS"){
-  						    	 $("#sp_message").text("정상적으로 등록 되었습니다.");
-  							     $("#btn_result").trigger("click");
+				               if (result.status == "SUCCESS"){
+  						    	 $("#sp_message").html("정상적으로 등록 되었습니다.");
+		                         $("#btn_result").trigger("click");
 	   		  					 location.href="/visit/Index.do";  
   		  					   }else {
-  		  						 $("#sp_message").text(result.message);
+								 $("#sp_message").html(result.message);
  							     $("#btn_result").trigger("click");  
+								
   		  					   }
   						},
   						function(request){
   							    alert("Error:" +request.status );	       						
   						}    		
    		      );
+			  
     			
     		}, fn_cellphoneCheck : function (_CellPhone){
     			//전화 번호 체크 하기 

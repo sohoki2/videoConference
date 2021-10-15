@@ -275,8 +275,46 @@ public class kkoMessageInfo {
 			    			 "- 일시: "+vo.get("resstartday")+" "+vo.get("resstarttime")+"~"+vo.get("resendday")+" "+vo.get("resendtime")+
 		    	             " ※문의사항이 있을 시 02-3788-0808/leejw@sto.or.kr로 연락 바랍니다.\r\n"+
 		    	             "감사합니다.";
-		    	
+		    	templeCode = "stpre03";
 		    	break;
+		    // 신규 작성 
+		    case "COV" : 
+		    	resMessage = "[서울관광플라자]\r\n"+
+		    	             "안녕하세요. 서울관광플라자입니다.\r\n" + 
+		        		     "\r\n" + 
+		        		     "사회적 거리두기 격상에 따라\r\n" + 
+		        		     "예정된 대관이 취소됨을 안내드립니다. \r\n" + 
+		        		     "\r\n" + 
+			    			 "- 시설명: "+vo.get("itme_name")+"\r\n" + 
+			    			 "- 행사명: "+ vo.get("res_title") +"\r\n" + 
+			    			 "- 신청자: "+ vo.get("empname") +"님\r\n" + 
+			    			 "- 일시: "+vo.get("resstartday")+" "+vo.get("resstarttime")+"~"+vo.get("resendday")+" "+vo.get("resendtime")+
+		    	             "  ※. 대관료 환불 예정\r\n"+
+		    	             "\r\n" + 
+		    	             "  향후 사회적 거리두기 단계 완화 시 대관 정책은 별도 문의 부탁드립니다.\r\n"+
+		    	             "\r\n" +
+		    	             "감사합니다.";
+		    	templeCode = "stpre04";
+		    	break;
+		    case "EMP" : 
+		    	resMessage = "[서울관광플라자]\r\n"+
+		    	             "안녕하세요. 서울관광플라자입니다.\r\n" + 
+		        		     "\r\n" + 
+		        		     "사회적 거리두기 격상에 따라\r\n" + 
+		        		     "예정된 대관이 취소됨을 안내드립니다. \r\n" + 
+		        		     "\r\n" + 
+			    			 "- 시설명: "+vo.get("itme_name")+"\r\n" + 
+			    			 "- 행사명: "+ vo.get("res_title") +"\r\n" + 
+			    			 "- 신청자: "+ vo.get("empname") +"님\r\n" + 
+			    			 "- 일시: "+vo.get("resstartday")+" "+vo.get("resstarttime")+"~"+vo.get("resendday")+" "+vo.get("resendtime")+
+		    	             "  ※. 대관료 환불 예정\r\n"+
+		    	             "\r\n" + 
+		    	             "  향후 사회적 거리두기 단계 완화 시 대관 정책은 별도 문의 부탁드립니다.\r\n"+
+		    	             "\r\n" +
+		    	             "감사합니다.";
+		    	templeCode = "stpre05";
+		    	break;
+		    //신규 작성 끝 부분 
 		    default :
 		    	resMessage = "[서울관광플라자]\r\n"+
 	    	             "안녕하세요. 서울관광플라자입니다.\r\n" + 

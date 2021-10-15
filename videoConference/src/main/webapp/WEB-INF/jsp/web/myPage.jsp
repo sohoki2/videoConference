@@ -226,6 +226,7 @@
 			    	    		"searchKeyword" : $("#searchKeyword").val(),
 			    	    		"pageUnit": $("#pageUnit").val()
 	     		              }; 
+	            
 		    	uniAjax(url, params, 
 		      			function(result) {
 		 				       if (result.status == "LOGIN FAIL"){
@@ -252,17 +253,19 @@
 		   							   var a = "1";
 		   							   for (var i in result.resultlist ){
 		   								
-		   								  costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_4") ?
+		   								  costInfo = (obj[i].reserv_process_gubun == "PROCESS_GUBUN_1" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_2" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_4" || obj[i].reserv_process_gubun == "PROCESS_GUBUN_8") ?
 		   										   "<a href='' onClick='fn_resCancel(&#39;"+ obj[i].res_seq+"&#39;,&#39;PROCESS_GUBUN_6&#39;)' class='cancleBtn active' data-needpopup-show='#cancle_popup'>예약취소</a>" :
 		   										   "취소완료";
 		   								  
 	   									  if (gubun == "res"){
+	   										 var resDay = obj[i].res_gubun == "SWC_GUBUN_3" ? obj[i].resstartday +" " +obj[i].resstarttime +" 부터" : obj[i].resstartday;
+											 var resTime = obj[i].res_gubun == "SWC_GUBUN_3" ? obj[i].resendday +" " +obj[i].resendtime +" 까지" : obj[i].resendtime;
 	   										 sHtml	+="<tr>"
 						                            +"    <td>"+a+"</td>"
 						                            +"    <td>"+obj[i].item_gubun_t+"</td>"
 						                            +"    <td>"+obj[i].res_title+"</td>"
-						                            +"    <td>"+obj[i].resstartday+"</td>"
-						                            +"    <td>"+obj[i].resstarttime+"~"+obj[i].resendtime+"</td>"
+						                            +"    <td>"+resDay+"</td>"
+						                            +"    <td>"+resTime+"</td>"
 						                            +"    <td>"+obj[i].tenn_cnt+"</td>"
 						                            +"    <td>"+costInfo+"</td>"
 						                            + "</tr>";
@@ -322,7 +325,7 @@
 	        	fn_bookingList();
 	        }
 	        function ajaxPageChange(pageNo) {
-	       	   $(":hidden[name=pageIndex]").val(pageNo);
+	           $("#pageIndex").val(pageNo);
 	           fn_bookingList();
 	   	    }
 	        function fn_visitedDetail(visitedCode){

@@ -594,9 +594,9 @@
         	        	               if (result.status == "SUCCESS"){
         						    	     var obj  =  result.resInfo;
         						    	     
-        						    	     
+        						    	     var attendlisttxt = (obj.attendlisttxt = 'undefined') ? "" : obj.attendlisttxt+"<br/>";
         						    	     $("#meeting_timeInfo").html (obj.resstartday +":" +   obj.resstarttime+"~"+ obj.resendtime)
-        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.res_title+"</p><span>"+obj.attendlisttxt+"<br/>"+obj.deptname+"</span>");
+        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.res_title+"</p><span>"+attendlisttxt+""+obj.deptname+"</span>");
         						       }else {
         								   $("#sp_stateTxt").html("<p>조회 도중 문제가 발생 하였습니다.</p>");
  											

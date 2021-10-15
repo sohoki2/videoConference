@@ -2808,6 +2808,21 @@ begin
 
 	                        
     
+	  --  이전 달 테넌트 회수 
+	 INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
+     SELECT TENN_SEQ, COM_CODE, 'admin', getdate(), TENN_REC_NOW_CNT, 'TENN_PLAY_GUBUN_3', 'Y', 0 
+     FROM [dbo].[TB_COMPAY_TENNANT] 
+     WHERE convert(varchar(8),   dateadd(MONTH, 1, [REG_DATE]), 112) = convert(varchar(8) , getdate(), 112) 
+              AND TENN_REC_NOW_CNT > 0
+  
+     UPDATE TB_COMPAY_TENNANT set TENN_REC_NOW_CNT = 0, TENN_REC_COUNT = TENN_REC_COUNT
+     WHERE convert(varchar(8),   dateadd(MONTH, 1, [REG_DATE]), 112) = convert(varchar(8) , getdate(), 112) 
+              AND TENN_REC_NOW_CNT > 0
+
+     declare @tennCnt int
+	 set @tennCnt = (select TENN_MONTHCNT from TB_SWCINFO)
+     -- 이번달 테넌트 지급                  
+     
 	 INSERT INTO TB_COMPAY_TENNANT(COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 
 									   TENN_REC_NOW_CNT, TENN_REC_END, TENN_REMARK,
 									   REG_DATE, UPDATE_DATE)
@@ -2824,7 +2839,7 @@ begin
 	 FROM TB_COMPANYINFO
 	 WHERE TENN_USEYN = 'Y'
 	 
-	 
+	 -- 인사 정보 업데이트 
 	 UPDATE TB_EMPINFO set PRE_WORKINFO =  NOW_WORKINFO , NOW_WORKINFO = ''
      WHERE AUTHOR_CODE != 'ROLE_USER' and NOW_WORKINFO != ''
            AND PRE_WORKINFO != NOW_WORKINFO
@@ -2962,3 +2977,61 @@ USE [master]
 GO
 ALTER DATABASE [SMART_WORK] SET  READ_WRITE 
 GO
+
+
+create proc SP_PLAYTENNENT (@USER_ID varchar(20),
+                            @TENN_SEQ int,
+							@TENN_CNT int,
+							@RES_SEQ int ,
+							@result varchar(30) output
+                            )
+as
+begin try
+      
+	   declare @COM_CODE varchar(10)
+	   set @COM_CODE = (select COM_CODE from TB_USERINFO where USER_NO = @USER_ID)
+
+	   UPDATE  TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT + @TENN_CNT
+		                                 , TENN_REC_NOW_CNT = TENN_REC_NOW_CNT - @TENN_CNT
+		                                 , UPDATE_DATE = getdate()
+		                                 , UPDATE_ID = @USER_ID
+	   WHERE TENN_SEQ = @TENN_SEQ   ;
+
+
+	   INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
+	   VALUES (@TENN_SEQ, @COM_CODE , @USER_ID, getdate(), @TENN_CNT, 'TENN_PLAY_GUBUN_2', 'Y', @RES_SEQ);
+
+
+	   set @result = 'OK'
+	   return @result
+end try
+begin catch 
+       set @result= ( select ERROR_MESSAGE() );
+	   INSERT INTO TB_ERRRORINFO (ERR_PROC, ERR_PROC_REGDATE, ERR_PROC_ERRORMESSAGE)
+	   VALUES ('SP_PLAYTENNENT', GETDATE(), @result)
+       return @result
+end catch 
+
+
+
+create proc SP_TENN_CANCEL (@HIS_SEQ int, @result varchar(30) output )
+as
+begin try
+     UPDATE TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT - b.TENN_CNT, 
+			                      TENN_REC_NOW_CNT  = TENN_REC_NOW_CNT +  b.TENN_CNT
+			
+     FROM  TB_COMPAY_TENNANT a, TB_COMPAY_TENNANT_HISTORY b
+	 WHERE a.TENN_SEQ = b.TENN_SEQ 
+		   AND b.HIS_SEQ = @HIS_SEQ
+
+     UPDATE TB_COMPAY_TENNANT_HISTORY SET TENN_PLAY_GUBUN = 'TENN_PLAY_GUBUN_4' where HIS_SEQ = @HIS_SEQ
+	 set @result = 'OK'
+	 return @result
+end try
+begin catch 
+     set @result= ( select ERROR_MESSAGE() );
+	 INSERT INTO TB_ERRRORINFO (ERR_PROC, ERR_PROC_REGDATE, ERR_PROC_ERRORMESSAGE)
+	 VALUES ('SP_TENN_CANCEL', GETDATE(), @result)
+       return @result
+
+end catch 

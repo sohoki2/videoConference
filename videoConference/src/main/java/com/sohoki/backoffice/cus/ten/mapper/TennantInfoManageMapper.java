@@ -30,6 +30,8 @@ public interface TennantInfoManageMapper {
 		public int updateTennantInfoManage(TennantInfo vo);
 		//테넌트 사용 
 		public int updatePlayTennantInfoManage(@Param("tenn") Map<String, Object> tenn);
+		//테넌트 취소 
+		public int cancelPlayTennantInfoManage(@Param("tenn") Map<String, Object> tenn);
 		//테넌트 회수
 		public int updateRetireTennantInfoManage(@Param("tenn") Map<String, Object> tenn);
 		

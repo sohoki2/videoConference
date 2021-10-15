@@ -158,6 +158,11 @@
                                , #{result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
          }    
 	</update> 
+	<update id="cancelPlayTennantInfoManage" statementType="CALLABLE">
+	    { call SP_PLAYTENNENT(#{tenn.hisSeq ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                               , #{result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
+        }  
+	</update>
 	
     <!-- <update id="updatePlayTennantInfoManage" >
            UPDATE  TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT + #{tenn.tennCnt,jdbcType=VARCHAR}

@@ -53,6 +53,9 @@
     				if (any_empt_line_span("visitedRestime1", "방문시간을 선택하세요.") == false) return;	
     				if (any_empt_line_span("visitedRestime2", "방문시간을 선택하세요.") == false) return;	
     				if (any_empt_line_span("visitedPurpose", "방문 목적을 입력하세요.") == false) return;
+					visited.fn_equal();
+
+
     			}
     			$("#btn_step0"+_step).click();
     			
@@ -88,6 +91,15 @@
     			VisitedArrays.push(detailInfo);
     			visited.fn_visitedList();
     			needPopup.hide();
+    			
+    		},fn_equal : function (){
+    			var detailInfo =  new Object(); 
+    			detailInfo.visitedName = "'" +$("#visitedReqName").val()+ "'";
+    			detailInfo.visitedCelphone = $("#visitedReqCelphone").val().replaceAll("-", "");
+    			detailInfo.visitedOrg = "'" +$("#visitedReqOrg").val()+ "'";
+    			$("#visitedEqual").val("Y");
+    			VisitedArrays.push(detailInfo);
+    			visited.fn_visitedList();
     			
     		}, fn_visitedList : function(){
     			//리스트 보여주기 
@@ -299,7 +311,7 @@
                                         </div>
                                         <div class="checks">
                                             <input type="checkbox" id="apply"> 
-                                            <label for="apply">(필수) 개인정보보호방침</label> 
+                                            <label for="apply">(필수)개인정보보호 방침 동의</label> 
                                         </div>
                                     </li>
                                 </ul>

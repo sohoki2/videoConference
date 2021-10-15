@@ -105,15 +105,15 @@
 		FROM TB_SEATINFO a
 		LEFT OUTER JOIN
 		(
-			SELECT c.EMPNAME, c.DEPTNAME,  c.EMPTELPHONE,  EMPNO, CONCAT(RES_STARTTIME, '~',RES_ENDTIME) WORKINFO
+			SELECT b.ITEM_ID, c.EMPNAME, c.DEPTNAME,  c.EMPTELPHONE,  EMPNO, CONCAT(dbo.fn_TimeSplit(RES_STARTTIME), '~', dbo.fn_TimeSplit(dbo.FN_UPSTIMEDOWN(RES_ENDTIME))) WORKINFO
             FROM TB_SWCRESERVATION b, TB_EMPINFO c
             WHERE  b.RES_STARTDAY = convert(varchar(8), getdate(), 112) 
 				   AND ITEM_GUBUN = 'ITEM_GUBUN_2'
-				   AND  replace(cast( CONVERT(time,GETDATE()) as varchar(5)), ':','') between RES_STARTTIME and RES_ENDTIME
 				   AND b.USER_ID = c.EMPNO
+				    AND  replace(cast( CONVERT(time,GETDATE()) as varchar(5)), ':','') between  RES_STARTTIME and dbo.FN_UPSTIMEDOWN(RES_ENDTIME)
 				   AND b.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_6')
 		) bb
-		ON a.SEAT_FIX_USER_ID = bb.EMPNO
+		ON a.SEAT_ID = bb.ITEM_ID
 		WHERE CENTER_ID = 'C21052601' AND FLOOR_SEQ in (10, 3)
 		      AND SEAT_USEYN ='Y' 
     </select>

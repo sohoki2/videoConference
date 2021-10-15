@@ -71,7 +71,7 @@
 	                    <tr>
 	                        <th><span class="redText">투어 허용 인원</th>
 	                        <td style="text-align:left" colspan="3">
-	                        	<input type="text" name="tourAllowPerson" size="10" id="comTitle" value="${regist.tourAllowPerson }" onkeypress="only_num();" style="width:260px;"/>
+	                        	<input type="text" name="tourAllowPerson" size="10" id="tourAllowPerson" value="${regist.tourAllowPerson }" onkeypress="only_num();" style="width:260px;"/>
 	                        </td>
 	                       
 	                    </tr>
@@ -102,6 +102,7 @@
 		    		     'endTime' : fn_emptyReplace($("#endTime").val(),"19:00"),
 		    			 'comTitle' : $("#comTitle").val(),
 		    			 'tennMonthcnt' : $("#tennMonthcnt").val(),
+		    			 'tourAllowPerson' : $("#tourAllowPerson").val()
     	               }; 
     	uniAjax(url, params, 
       			function(result) {

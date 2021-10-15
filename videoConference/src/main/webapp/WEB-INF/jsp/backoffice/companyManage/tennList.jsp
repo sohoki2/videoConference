@@ -87,6 +87,8 @@
     			                { label: '사용수량', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width:'10%'},
     			                { label: '사용일', name:'reg_date', index:'reg_date', align:'center', width:'12%', 
     			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}}
+    			                { label: '취소', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width: 100, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
+    			               
     			         ],  //상단면 
     		        rowNum : 10,  //레코드 수
     		        rowList : [10,20,30,40,50,100],  // 페이징 수
@@ -187,7 +189,16 @@
 			   var _url = "/backoffice/basicManage/floorListAjax.do";
 			   var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
 		       fn_comboListPost("sp_floorCombo", "floorSeq",_url, _params, "", "120px", "");  
-		   } 
+		   } ,rowBtn: function (cellvalue, options, rowObject){
+          	 if (rowObject.tenn_play_gubun == "TENN_PLAY_GUBUN_2")
+     	    	return '<a href="javascript:jqGridFunc.cancelTenn('+rowObject.his_seq+');">취소</a>';
+           }, cancelTenn : function(his_seq){
+        	   if (confirm("테넌트 취소를 하시겠습니까?.")) {
+        	        // 취소(아니오) 버튼 클릭 시 이벤트
+        	        
+        	        
+        	    }
+           }
     }
   </script>
 </head>

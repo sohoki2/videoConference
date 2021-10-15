@@ -616,6 +616,7 @@
 						         AND SWC_TIME BETWEEN REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','') 
 						                      AND  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
 						         AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( b.RES_STARTTIME AS INT) ) > 10  
+		                         AND b.ITEM_GUBUN =  'ITEM_GUBUN_1'
 		                    );
 		 UPDATE tb_swctime SET RES_SEQ = 0, APPRIVAL ='N'
 		 WHERE RES_SEQ in (
@@ -626,6 +627,7 @@
 						      AND SWC_TIME BETWEEN  REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -29, GETDATE()), 114), 1,5), ':','')   
 						                   AND  REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  GETDATE(), 114), 1,5), ':','')
 						      AND ( CAST( REPLACE(SUBSTRING(CONVERT (VARCHAR(12),  ISNULL( b.IN_TIME, GETDATE()), 114), 1,5), ':','') AS INT) - CAST( b.RES_STARTTIME AS INT) ) > 10 
+						      AND b.ITEM_GUBUN =  'ITEM_GUBUN_1'
 			              ) ; 
     </update>
     <delete id="deleteResManage">
