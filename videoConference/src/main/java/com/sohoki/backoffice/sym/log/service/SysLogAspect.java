@@ -187,29 +187,29 @@ public class SysLogAspect    {
 		} finally {
 			stopWatch.stop();
 			//paramToJson 나중에 수정하기 
-			/*
-			 * sysLog.setSqlParam(ParamToJson.paramToJson(sqlid));
-			 * 
-			 * String processSeCode = ParamToJson.JsonKeyToString(sqlid,
-			 * "mode").equals("Ins") ? "I" : "U"; String className =
-			 * joinPoint.getTarget().getClass().getName(); String methodName =
-			 * joinPoint.getSignature().getName(); String processTime =
-			 * Long.toString(stopWatch.getTotalTimeMillis()); String uniqId = ""; String ip
-			 * = ""; Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-			 * if(isAuthenticated.booleanValue()) { AdminLoginVO user =
-			 * (AdminLoginVO)EgovUserDetailsHelper.getAuthenticatedUser(); uniqId =
-			 * user.getAdminId();// .getUniqId(); ip = user.getIp() == null ? "":
-			 * user.getIp(); } sysLog.setErrorCode("200"); sysLog.setSrvcNm(className);
-			 * sysLog.setMethodNm(methodName); sysLog.setProcessSeCode(processSeCode);
-			 * sysLog.setProcessTime(processTime); sysLog.setRqesterId(uniqId);
-			 * sysLog.setRqesterIp(ip); sysLog.setMethodResult("");
-			 * 
-			 * 
-			 * sysLog.setSearchIp(ip); sysLog.setSearchId(uniqId); sysLog.setFirstIndex(0);
-			 * sysLog.setRecordCountPerPage(20);
-			 * 
-			 * sysLogService.logInsertSysLog(sysLog);
-			 */
+			
+			  sysLog.setSqlParam(ParamToJson.paramToJson(sqlid));
+			  
+			  String processSeCode = ParamToJson.JsonKeyToString(sqlid,
+			  "mode").equals("Ins") ? "I" : "U"; String className =
+			  joinPoint.getTarget().getClass().getName(); String methodName =
+			  joinPoint.getSignature().getName(); String processTime =
+			  Long.toString(stopWatch.getTotalTimeMillis()); String uniqId = ""; String ip
+			  = ""; Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			  if(isAuthenticated.booleanValue()) { AdminLoginVO user =
+			  (AdminLoginVO)EgovUserDetailsHelper.getAuthenticatedUser(); uniqId =
+			  user.getAdminId();// .getUniqId(); ip = user.getIp() == null ? "":
+			  user.getIp(); } sysLog.setErrorCode("200"); sysLog.setSrvcNm(className);
+			  sysLog.setMethodNm(methodName); sysLog.setProcessSeCode(processSeCode);
+			  sysLog.setProcessTime(processTime); sysLog.setRqesterId(uniqId);
+			  sysLog.setRqesterIp(ip); sysLog.setMethodResult("");
+			  
+			  
+			  sysLog.setSearchIp(ip); sysLog.setSearchId(uniqId); sysLog.setFirstIndex(0);
+			  sysLog.setRecordCountPerPage(20);
+			  
+			  sysLogService.logInsertSysLog(sysLog);
+			 
 		
  
 		}

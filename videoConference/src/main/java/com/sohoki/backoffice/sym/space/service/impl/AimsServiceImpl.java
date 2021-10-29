@@ -141,8 +141,8 @@ public class AimsServiceImpl implements AimsService {
 		 	    aim_data.put("DISPLAY_TYPE", seatInfo.get("emptelphone").toString());
 	        	 
 	        }else if (seatInfo.get("seat_fix_useryn").toString().equals("N") && !seatInfo.get("deptname").toString().equals("")
-	        		&& !seatInfo.get("deptname").toString().equals("") && !seatInfo.get("emptelphone").toString().equals("")
-	        		&& !seatInfo.get("empname").toString().equals("") && !seatInfo.get("workinfo").toString().equals("")  ){
+	        		  && !seatInfo.get("emptelphone").toString().equals("")
+	        		  && !seatInfo.get("empname").toString().equals("") && !seatInfo.get("workinfo").toString().equals("")  ){
 	        	
 	        	aim_data.put("TYPE", seatInfo.get("seat_name").toString());
 		 	    aim_data.put("ITEM_NAME", seatInfo.get("empname").toString());
