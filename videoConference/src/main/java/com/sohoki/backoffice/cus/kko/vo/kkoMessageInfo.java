@@ -123,12 +123,12 @@ public class kkoMessageInfo {
 		    	         "안녕하세요. 서울관광플라자입니다.\r\n"+
 		    	         "아래와 같이 방문 예약 완료되었습니다.\r\n\r\n"+
 	    			     "- 일시: "+ vo.get("visited_resday").toString() +"\r\n" + 
-	    			     "- 신청자: "+ vo.get("visited_req_name")+"\r\n" + 
+	    			     "- 신청자: "+ vo.get("visited_name")+"\r\n" + 
 	    			     "- 담당자: "+vo.get("empname")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr03";
 		    	buttonJson = "{\"button\":[{\"name\":\"QR 받기\",\"type\":\"WL\",\"url_pc\":\"\", \r\n" + 
-		    			"\"url_mobile\":\"https://room.visitseoul.net/web/visitedQr.do?visitedCode="+vo.get("visited_code")+"\"}]}";
+		    			"\"url_mobile\":\"https://room.visitseoul.net/web/visitedQr.do?visitedCode="+vo.get("visited_seq")+"\"}]}";
 		    	
 		    	
 		    	break;
@@ -148,7 +148,7 @@ public class kkoMessageInfo {
 		    	         "안녕하세요. 서울관광플라자입니다. \r\n"+
 		    	         "요청주신 방문 예약 신청이 아래의 사유로 거절되었습니다.\r\n\r\n"+
 	    			     "- 일시: "+ vo.get("visited_resday") +"\r\n" + 
-	    			     "- 신청자: "+vo.get("visited_req_name")+"\r\n" +
+	    			     "- 신청자: "+vo.get("visited_name")+"\r\n" +
 	    			     "- 담당자: "+ vo.get("empname")+"\r\n" + 
 	    			     "- 사유: "+ vo.get("cancel_reason")+"\r\n\r\n" + 
 	    			     "감사합니다.";

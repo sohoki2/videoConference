@@ -142,6 +142,7 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			 fileScrty = null;
 		}
 		String _snedGubun = "";
+		int ret = 0;
 		if (info.getVisitedGubun().equals("VISITED_GUBUN_1") ) {
 			
 			switch (info.getVisitedStatus() ) {
@@ -155,7 +156,8 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			    	_snedGubun = "ARR";
 			    	break;
 			}
-			
+			//신규 추가 
+			visitedMapper.updateVisitedDetailStateChangeInfoManage(info.getVisitedSeq());
 		}else {
 			switch (info.getVisitedStatus()) {
 			    case  "VISITED_STATE_2":
@@ -170,7 +172,7 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			}
 		}
 		
-		int ret = visitedMapper.updateVisitedStateChangeInfoManage(info);		
+		ret = visitedMapper.updateVisitedStateChangeInfoManage(info);		
 		
 		if (info.getVisitedGubun().equals("VISITED_GUBUN_1") && _snedGubun.equals("CAN") && info.getCancelReason().equals("") ) {
 			
@@ -249,6 +251,18 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		vo = null;
 		message = null;
 		return ret;
+	}
+
+	@Override
+	public int updateQrInfo(List<VisitedDetailInfo> detail) throws Exception {
+		// TODO Auto-generated method stub
+		return visitedMapper.updateQrInfo(detail);
+	}
+
+	@Override
+	public Map<String, Object> selectVisitedQrManageInfo(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return visitedMapper.selectVisitedQrManageInfo(params);
 	}
 	
 	

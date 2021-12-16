@@ -1,5 +1,6 @@
 package com.sohoki.smartoffice.homepage.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -235,8 +236,17 @@ public class forntVisitedManageController {
 			String visitedCode = fileScrty.decode(visitedInfo.getVisitedQrcode());
 			fileScrty = null;
 			
-			visitedInfo.setVisitedCode(visitedCode);
+			String [] visitedCodes = visitedCode.split(":");
 			
+			
+			Map<String, Object> searchVO = new HashMap<String, Object>();
+			searchVO.put("visitedCode",  visitedCodes[0] );
+			searchVO.put("visitedCelphone",  visitedCodes[1] );
+			
+			Map<String, Object> info =  visitedService.selectVisitedQrManageInfo(searchVO) ;
+			//신규 추가 
+			visitedInfo.setVisitedCode(info.get("visited_code").toString());
+			visitedInfo.setVisitedSeq(info.get("visited_seq").toString());
 			int ret = visitedService.updateVisitedStateChangeInfoManage(visitedInfo);
 			
 			if (ret > 0) {

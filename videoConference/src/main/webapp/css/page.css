@@ -871,7 +871,24 @@ textarea {
     border-radius: 5px;
     text-decoration: none;
 }
+.redBtn_new {
+    color: white !important;
+    padding: 5px 20px;
+    display: inline-block;
+    font-weight: 400 !important;
+    cursor: pointer;
+    font-size: 15px !important;
+    background: #e8392f;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+.redBtn:hover {
+    background-color: #CA242A; 
+}
 
+.redBtn_new:hover {
+    background-color: #CA242A; 
+}
 .pop_table tbody tr td select {
     padding-bottom: 4px;
 }

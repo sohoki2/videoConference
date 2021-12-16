@@ -187,7 +187,7 @@ public class SysLogAspect    {
 		} finally {
 			stopWatch.stop();
 			//paramToJson 나중에 수정하기 
-			
+			/*
 			  sysLog.setSqlParam(ParamToJson.paramToJson(sqlid));
 			  
 			  String processSeCode = ParamToJson.JsonKeyToString(sqlid,
@@ -209,7 +209,7 @@ public class SysLogAspect    {
 			  sysLog.setRecordCountPerPage(20);
 			  
 			  sysLogService.logInsertSysLog(sysLog);
-			 
+			 */
 		
  
 		}

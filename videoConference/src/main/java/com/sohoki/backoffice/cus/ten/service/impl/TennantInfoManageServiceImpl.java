@@ -83,6 +83,7 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		
 		Map<String, Object> tennInfo = new HashMap<String, Object>();
 		
+		LOGGER.debug("========================================================");
 		
 		try {
 			int nowCnt = 0;
@@ -96,15 +97,17 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 				tennInfo.put("resSeq", resSeq);
 				tennInfo.put("tennSeq", tenninfo.get("tenn_seq").toString());
 				nowCnt = Integer.valueOf(tenninfo.get("tenn_rec_now_cnt").toString());
-				if ( nowCnt >  tennCnt ) {
-					tennInfo.put("tennCnt", tennCnt);
-					LOGGER.debug("tennInfo:" + tennInfo.get("tennSeq"));
-					tennantMapper.updatePlayTennantInfoManage(tennInfo);
-					break;
-				}else {
-					tennInfo.put("tennCnt", nowCnt);
-					tennantMapper.updatePlayTennantInfoManage(tennInfo);
-					tennCnt -= nowCnt;
+				if (nowCnt > 0) {
+					if ( nowCnt >  tennCnt ) {
+						tennInfo.put("tennCnt", tennCnt);
+						LOGGER.debug("tennInfo:" + tennInfo.get("comCode") + ":" + tennInfo.get("userId")  + ":" + tennInfo.get("resSeq")+ ":" + tennInfo.get("tennSeq")+ ":" + tennInfo.get("tennCnt"));
+						tennantMapper.updatePlayTennantInfoManage(tennInfo);
+						break;
+					}else {
+						tennInfo.put("tennCnt", nowCnt);
+						tennantMapper.updatePlayTennantInfoManage(tennInfo);
+						tennCnt -= nowCnt;
+					}
 				}
 			}
 			return 1;
@@ -135,6 +138,12 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	public int insertTennantMonthManage() {
 		// TODO Auto-generated method stub
 		return tennantMapper.insertTennantMonthManage();
+	}
+
+	@Override
+	public int cancelPlayTennantInfoManage(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return tennantMapper.cancelPlayTennantInfoManage(params);
 	}
 	
 

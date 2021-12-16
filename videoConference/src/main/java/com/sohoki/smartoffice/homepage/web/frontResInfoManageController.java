@@ -860,7 +860,7 @@ public class frontResInfoManageController {
 				if (tennInfo.indexOf("|")> 0 && tennInfo.length()> 2) {
 					String tennInfosp[] =  tennInfo.split("\\|");
 					//추후 변경 예정
-					if (Integer.valueOf(tennInfosp[0]) > Integer.valueOf(tennInfosp[1])) {
+					if (Integer.valueOf(tennInfosp[0]) >= Integer.valueOf(tennInfosp[1])) {
 						searchVO.setTennCnt(tennInfosp[1]);
 					}else {
 						model.addObject(Globals.STATUS, Globals.STATUS_FAIL);

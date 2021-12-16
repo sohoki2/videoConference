@@ -298,7 +298,7 @@
              		                                	 shtml +=   " <label for=\"ex_chk04\">선택이 가능합니다</label>"	  
              		                                	       + "    <input type=\"checkbox\" id=\"show_time\" name=\"show_time\"  value="+obj[i].swc_time+">";
              		                                  }else {
-             		                                	 shtml +=   " <label for=\"ex_chk04\"><a href=''>예약된 좌석 입니다.</a></label>"	  
+             		                                	 shtml +=   " <label for=\"ex_chk04\"><a href=''>좌석 예약 완료.</a></label>"	  
              		                                	       + "    "; 
              		                                  }
              		                                

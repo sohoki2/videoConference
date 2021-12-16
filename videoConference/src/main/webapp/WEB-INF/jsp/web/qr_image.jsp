@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -33,16 +33,24 @@
 </head>
 </head>
 <body>
-<form:form name="regist" commandName="regist" method="post" >
-   <input type="hidden" name="qrInfo" id="qrInfo" value="${regist.visited_qrcode }" />
-   <div class="led_group" align="center">
-      <div id="qrImage" sytle="width:200px;height:200px;margin-top:15px;" />
-   </div>
-</form:form>
+<div class="qr_wrap">
+	<form:form name="regist" commandName="regist" method="post" >
+	   <input type="hidden" name="qrInfo" id="qrInfo" value="${regist.visited_qrcode }" />
+	   <div class="qr_header">
+			<p>출입을 위한 QR코드</p>
+			<span>방문지에서 전달 받은<br>QR코드를 통해 체크인하세요.</span>
+		</div>
+	   <div class="led_group" align="center">	   		
+			<div class="qr_pin">
+				<div id="qrImage" />
+			</div>
+	   </div>
+	</form:form>
+</div>
     <script type="text/javascript">
         var qrcode = new QRCode(document.getElementById("qrImage"), {
-          width: 200,
-          height: 200
+          width: 150,
+          height: 150
         });
         $( function() {
 	    	qrcode.makeCode($("#qrInfo").val());

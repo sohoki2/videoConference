@@ -314,7 +314,7 @@
         <div class="clear"></div>
          <div class="pop_footer">
             <span id="join_confirm_comment" class="join_pop_main_subTxt">내용을 모두 입력후 클릭해주세요.</span>
-            <a href="javascript:floorService.fn_floorUpdate();" class="redBtn" id="btnUpdate"><spring:message code="button.create" /></a>    
+            <a href="javascript:floorService.fn_floorUpdate();" class="redBtn_new" id="btnUpdate"><spring:message code="button.create" /></a>    
         </div>   
     </div>  
     

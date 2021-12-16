@@ -33,6 +33,7 @@ import com.sohoki.backoffice.sym.space.service.AimsService;
 import com.sohoki.backoffice.sym.space.vo.OfficeSeatInfo;
 import com.sohoki.backoffice.sym.space.vo.StoreInfo;
 import com.sohoki.backoffice.sym.space.vo.StoreSubInfo;
+import com.sohoki.backoffice.util.SmartUtil;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -46,6 +47,9 @@ public class AimsServiceImpl implements AimsService {
 	
 	@Autowired
 	private OfficeSeatInfoManageMapper officeSeatMapper;
+	
+	@Autowired
+	private SmartUtil util;
 	
 	/**
      * 좌석라벨 초기화
@@ -131,24 +135,31 @@ public class AimsServiceImpl implements AimsService {
 	        JSONObject  aim_data =  new JSONObject();
 	        
 	        
-	        if (seatInfo.get("seat_fix_useryn").toString().equals("Y") && !seatInfo.get("seat_fix_user_id").toString().equals("")
-	        		&& !seatInfo.get("empname").toString().equals("") && !seatInfo.get("workinfo").toString().equals("") ) {
+	        if (util.NVL(seatInfo.get("seat_fix_useryn"),"").toString().equals("Y") 
+	        	&& !util.NVL(seatInfo.get("seat_fix_user_id"),"").toString().equals("")
+	        	&& !util.NVL(seatInfo.get("empname"),"").toString().equals("") 
+	        	&& !util.NVL(seatInfo.get("workinfo"),"").toString().equals("") ) {
 	        	
+	        	
+	        	LOGGER.debug("------------------------" + seatInfo.get("empname").toString().equals("")  + ":" + seatInfo.get("workinfo").toString().equals("") );
         		aim_data.put("TYPE", seatInfo.get("seat_name").toString());
 		 	    aim_data.put("ITEM_NAME", seatInfo.get("empname").toString());
 		 	    aim_data.put("LIST_PRICE", seatInfo.get("deptname").toString());
 		 	    aim_data.put("UNIT_PRICE", seatInfo.get("workinfo").toString());
 		 	    aim_data.put("DISPLAY_TYPE", seatInfo.get("emptelphone").toString());
 	        	 
-	        }else if (seatInfo.get("seat_fix_useryn").toString().equals("N") && !seatInfo.get("deptname").toString().equals("")
-	        		  && !seatInfo.get("emptelphone").toString().equals("")
-	        		  && !seatInfo.get("empname").toString().equals("") && !seatInfo.get("workinfo").toString().equals("")  ){
+	        }else if (util.NVL(seatInfo.get("seat_fix_useryn"),"").toString().equals("N") 
+	        		  && !util.NVL(seatInfo.get("empname"),"").toString().equals("") 
+	        		  && !util.NVL(seatInfo.get("workinfo"),"").toString().equals("")  ){
+	        	
+	        	LOGGER.debug("------------------------" + seatInfo.get("empname").toString().equals("")  + ":" + seatInfo.get("workinfo").toString().equals("") );
+        		
 	        	
 	        	aim_data.put("TYPE", seatInfo.get("seat_name").toString());
 		 	    aim_data.put("ITEM_NAME", seatInfo.get("empname").toString());
-		 	    aim_data.put("LIST_PRICE", seatInfo.get("deptname").toString());
+		 	    aim_data.put("LIST_PRICE", util.NVL(seatInfo.get("deptname"), "없음").toString());
 		 	    aim_data.put("UNIT_PRICE", seatInfo.get("workinfo").toString());
-		 	    aim_data.put("DISPLAY_TYPE", seatInfo.get("emptelphone").toString());
+		 	    aim_data.put("DISPLAY_TYPE", util.NVL(seatInfo.get("emptelphone"), "없음").toString());
 	        	
 	        }else {
         		aim_data.put("TYPE", seatInfo.get("seat_name").toString());

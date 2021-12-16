@@ -26,7 +26,7 @@ if(loginVO == null ){
                         <li class="dropdown">
                             <a href="/backoffice/basicManage/centerList.do" class="dropbtn">자원 관리</a>
                             <ul class="dropdown-content">
-                                <li><a href="/backoffice/basicManage/centerList.do">회의실분류관리</a></li>
+                                <li><a href="/backoffice/basicManage/centerList.do">지점분류관리</a></li>
                                 <li><a href="/backoffice/basicManage/officeSeatList.do">좌석관리</a></li>
                                 <li><a href="/backoffice/basicManage/officeMeetingList.do">회의실관리</a></li>
                                 <li><a href="/backoffice/basicManage/holyDayList.do">휴일관리</a></li>

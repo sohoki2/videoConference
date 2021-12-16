@@ -37,7 +37,7 @@
 	</script>
 </head>
 <body>
-    <form name="regist" method="post" autocomplete="off">
+    <form name="regist" method="post" action="/web/LoginProcess.do" autocomplete="off">
     
     <div class="login">
             <div class="log_b">

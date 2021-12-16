@@ -13,7 +13,9 @@ public class VisitedDetailInfo {
 	private String visitedName = "";
 	private String visitedCelphone = "";	
 	private String visitedRegdate = "";
-	
+	//수정 
+	private String visitedQrcode = "";
+	private String visitedQrcodeCk = "";
 	
 	
 }

@@ -218,5 +218,40 @@ public class TennantInfoManageController {
 		}
 		return model;
 	}
+	@RequestMapping(value="tennCancel.do")
+	public ModelAndView  updateTennInfoChange(@ModelAttribute("loginVO") AdminLoginVO loginVO
+												, @RequestBody Map<String, Object> searchVO
+												, HttpServletRequest request
+												, BindingResult bindingResult	) throws Exception {
+		
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+		try {
+			Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+			if(!isAuthenticated) {
+				model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.login"));
+				model.setViewName("/backoffice/login");
+				return model;	
+			}else {
+		    	   HttpSession httpSession = request.getSession(true);
+		    	   loginVO = (AdminLoginVO)httpSession.getAttribute("AdminLoginVO");
+			}
+			
+			LOGGER.debug("searchVO.get(\"gubun\"):"+ searchVO.get("hisSeq"));
+			
+			int ret =  (util.NVL(searchVO.get("gubun"), "R").toString().equals("R")) ? tennService.updateRetireTennantInfoManage(searchVO) 
+					                                                                 : tennService.cancelPlayTennantInfoManage(searchVO);
+			
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+			model.addObject(Globals.JSON_RETURN_RESULT, ret);
+			
+		}catch (Exception e) {
+			LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.update"));	
+		}
+		
+		return model;	
+	}
 	
 }

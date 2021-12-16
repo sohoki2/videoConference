@@ -79,6 +79,7 @@
    		            },
     		        colModel :  [
     		        	        { label: 'his_seq', key: true, name:'his_seq',       index:'his_seq',      align:'center', hidden:true},
+    		        	        { label: 'res_seq',  name:'res_seq',       index:'res_seq',      align:'center', hidden:true},
     		 	                { label: '회사명', name:'com_name',     index:'com_name',      align:'center', width:'10%'},
     		 	                { label: '사용자명', name:'user_name',   index:'user_name',      align:'center', width:'10%' },
     			                { label: '사용구분', name:'code_nm',       index:'code_nm',      align:'center', width:'10%' },
@@ -86,8 +87,9 @@
     			                { label: '타이틀', name:'res_title', index:'res_title',      align:'center', width:'10%' },
     			                { label: '사용수량', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width:'10%'},
     			                { label: '사용일', name:'reg_date', index:'reg_date', align:'center', width:'12%', 
-    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}}
-    			                { label: '취소', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width: 100, fixed:true, sortable : false, formatter:jqGridFunc.rowBtn}
+    			                  sortable: 'date' ,formatter: "date", formatoptions: { newformat: "Y-m-d"}}, 
+    			                { label: '취소', name:'tenn_cnt', index:'tenn_cnt',     align:'center', width: 100, fixed:true, sortable : false, 
+    			                	  formatter:jqGridFunc.rowBtn}
     			               
     			         ],  //상단면 
     		        rowNum : 10,  //레코드 수
@@ -189,16 +191,47 @@
 			   var _url = "/backoffice/basicManage/floorListAjax.do";
 			   var _params = {"centerId" : $("#searchCenter").val(), "floorUseyn": "Y"};
 		       fn_comboListPost("sp_floorCombo", "floorSeq",_url, _params, "", "120px", "");  
-		   } ,rowBtn: function (cellvalue, options, rowObject){
-          	 if (rowObject.tenn_play_gubun == "TENN_PLAY_GUBUN_2")
-     	    	return '<a href="javascript:jqGridFunc.cancelTenn('+rowObject.his_seq+');">취소</a>';
-           }, cancelTenn : function(his_seq){
-        	   if (confirm("테넌트 취소를 하시겠습니까?.")) {
+		   }, rowBtn: function (cellvalue, options, rowObject){
+			   if (rowObject.tenn_play_gubun == "TENN_PLAY_GUBUN_2"){
+          		 var  return_Msg = '<a href="javascript:jqGridFunc.cancelTenn('+rowObject.his_seq+', &#39;C&#39;,'+rowObject.res_seq+');">취소</a>';
+          	   }else  {
+          		 var  return_Msg = "";
+          	   }
+     	       return return_Msg;
+           }, rowBtn_ret: function (cellvalue, options, rowObject){
+        	   if (rowObject.tenn_play_gubun == "TENN_PLAY_GUBUN_2"){
+           		 var  return_Msg = '<a href="javascript:jqGridFunc.cancelTenn('+rowObject.his_seq+', &#39;R&#39;,'+rowObject.res_seq+');">회수</a>';
+           	   }else  {
+           		 var  return_Msg = "";
+           	   }
+        	   return return_Msg;
+           }, cancelTenn : function(his_seq, gubun, res_seq){
+        	   var message = (gubun == "C") ? "테넌트 취소를 하시겠습니까?." : "테넌트 회수를 하시겠습니까?."
+        	   if (confirm(message)) {
         	        // 취소(아니오) 버튼 클릭 시 이벤트
+        	        var url = "/backoffice/companyManage/tennCancel.do";
+        	        var params = {"hisSeq" : his_seq, "gubun" : gubun, "resSeq" : res_seq};
+        		    uniAjax(url, params, 
+    		     			function(result) {
+    						       if (result.status == "LOGIN FAIL"){
+    								   location.href="/backoffice/login.do";
+    		  					   }else if (result.status == "SUCCESS"){
+    	                               //관련자 보여 주기 
+    	                               alert("정상적으로 적용 되었습니다.");
+    	                               $('#mainGrid').jqGrid().trigger("reloadGrid");
+    	                               
+    		  					   }else{
+    		  						  alert(result.message); 
+    		  					   }
+    						       
+    						},
+ 						    function(request){
+ 							    alert("Error:" +request.status );	       						
+ 						    }    		
+    		        );
         	        
-        	        
-        	    }
-           }
+        	   }
+           }, 
     }
   </script>
 </head>

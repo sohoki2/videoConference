@@ -54,8 +54,8 @@
 							   END AS ITEM_NAME, 
 							   FORMAT(a.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss') REG_DATE,
 							   c.RES_STARTDAY, c.RES_ENDDAY,
-							   dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndtime
-							   
+							   dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStarttime , dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndtime,
+							   a.RES_SEQ
 					    FROM  TB_COMPAY_TENNANT_HISTORY a, LETTCCMMNDETAILCODE b, 
 					          TB_SWCRESERVATION c, TB_COMPANYINFO d
 					    WHERE a.TENN_PLAY_GUBUN = b.CODE       
@@ -150,29 +150,34 @@
 		                                , UPDATE_ID = #{userId,jdbcType=VARCHAR}
 	      WHERE TENN_SEQ = #{tennSeq}           
     </update> 
-    <update id="updatePlayTennantInfoManage" statementType="CALLABLE">
+    <!-- <update id="updatePlayTennantInfoManage" statementType="CALLABLE">
          { call SP_PLAYTENNENT(#{tenn.userId ,mode=IN, jdbcType=VARCHAR, javaType=string}
-                               , #{tenn.tennSeq ,mode=IN, jdbcType=INTEGER, javaType=string}
-                               , #{tenn.tennCnt ,mode=IN, jdbcType=INTEGER, javaType=string}
-                               , #{tenn.resSeq ,mode=IN, jdbcType=INTEGER, javaType=string}
-                               , #{result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
+                               , #{tenn.tennSeq ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                               , #{tenn.tennCnt ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                               , #{tenn.resSeq ,mode=IN, jdbcType=VARCHAR, javaType=string}
+                               )   
          }    
-	</update> 
-	<update id="cancelPlayTennantInfoManage" statementType="CALLABLE">
-	    { call SP_PLAYTENNENT(#{tenn.hisSeq ,mode=IN, jdbcType=VARCHAR, javaType=string}
-                               , #{result ,mode=OUT, jdbcType=VARCHAR, javaType=string} )   
-        }  
+	</update>  -->
+	<update id="cancelPlayTennantInfoManage">
+	        UPDATE TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT - b.TENN_CNT, 
+			                             TENN_REC_NOW_CNT  = TENN_REC_NOW_CNT +  b.TENN_CNT
+			FROM  TB_COMPAY_TENNANT a, TB_COMPAY_TENNANT_HISTORY b
+			WHERE a.TENN_SEQ = b.TENN_SEQ 
+				   AND b.HIS_SEQ = #{tenn.hisSeq} ;
+		
+		    UPDATE TB_COMPAY_TENNANT_HISTORY SET TENN_PLAY_GUBUN = 'TENN_PLAY_GUBUN_4' where HIS_SEQ = #{tenn.hisSeq};
 	</update>
 	
-    <!-- <update id="updatePlayTennantInfoManage" >
+    <update id="updatePlayTennantInfoManage" >
            UPDATE  TB_COMPAY_TENNANT SET TENN_REC_PLAY_CNT = TENN_REC_PLAY_CNT + #{tenn.tennCnt,jdbcType=VARCHAR}
 		                                 , TENN_REC_NOW_CNT = TENN_REC_NOW_CNT - #{tenn.tennCnt,jdbcType=VARCHAR}
 		                                 , UPDATE_DATE = getdate()
 		                                 , UPDATE_ID = #{tenn.userId,jdbcType=VARCHAR}
 	       WHERE TENN_SEQ = #{tenn.tennSeq}   ;
+	       
 	       INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
 	       VALUES (#{tenn.tennSeq}, #{tenn.comCode} , #{tenn.userId,jdbcType=VARCHAR}, getdate(), #{tenn.tennCnt}, 'TENN_PLAY_GUBUN_2', 'Y', #{tenn.resSeq});
-	</update>  -->
+	</update> 
     <update id="updateRetireTennantInfoManage" >
          <selectKey resultType="int"  keyProperty="cnt" order="BEFORE">
 	            SELECT  DATEDIFF (MINUTE  , getdate(), 
@@ -180,9 +185,10 @@
 							  ) as cnt
 				FROM TB_SWCRESERVATION
 				WHERE RES_SEQ = #{tenn.resSeq}
-	    </selectKey>     
-       	<if test='cnt > 0'>
-			    INSERT INTO TB_COMPAY_TENNANT_HISTORY
+	    </selectKey>   
+	    <choose>
+	       <when test="cnt > 0">
+	            INSERT INTO TB_COMPAY_TENNANT_HISTORY
 				(TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)
 				SELECT TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, 'TENN_PLAY_GUBUN_3', TENN_APPRIVAL, RES_SEQ
 				FROM TB_COMPAY_TENNANT_HISTORY WHERE RES_SEQ =  #{tenn.resSeq};
@@ -197,11 +203,10 @@
 				      AND a.TENN_SEQ  = b.TENN_SEQ
 				      AND b.TENN_PLAY_GUBUN = 'TENN_PLAY_GUBUN_2'
 				      AND b.RES_SEQ =  #{tenn.resSeq};
-		</if>    
-		
-		UPDATE TB_SWCINFO SET COM_TITLE = COM_TITLE;
-    </update>
-
-
-     
+	       </when>
+	       <otherwise>
+	            UPDATE TB_SWCINFO SET COM_TITLE = COM_TITLE 
+	       </otherwise>
+	    </choose>  
+    </update>     
 </mapper>

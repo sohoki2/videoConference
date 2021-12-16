@@ -540,9 +540,9 @@
 		                       <td><input type="text" name="seatName" id="seatName" class="input_noti" size="10"/></td>
 		                    </tr>
 		                    <tr>
-		                       <th><span class="redText">도명 Top 위치</th>
+		                       <th><span class="redText">도면 Top 위치</th>
 		                       <td><input type="number" name="seatTop" id="seatTop" class="input_noti" size="10"  onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
-		                       <th><span class="redText"> 도명 Left 위치 </th>
+		                       <th><span class="redText">도면 Left 위치 </th>
 		                       <td><input type="number" name="seatLeft" id="seatLeft" class="input_noti" size="10" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" /></td>
 		                    </tr>
 		                    <tr>

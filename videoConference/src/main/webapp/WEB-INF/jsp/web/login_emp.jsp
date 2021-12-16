@@ -65,8 +65,6 @@
 <script>  
     function login(){
     	if (any_empt_line_span("user_id", "아이디를 입력해주세요.") == false) return;
-		
-
 		var params = {"userId": $("#user_id").val(), "mode": "emp"};
     	var url = "/web/LoginProcess.do";
     	uniAjax(url, params, 

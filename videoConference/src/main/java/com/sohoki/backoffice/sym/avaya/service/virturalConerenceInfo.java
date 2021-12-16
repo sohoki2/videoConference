@@ -204,8 +204,7 @@ public class virturalConerenceInfo {
 					    				}
 					    				
 					    			}
-				    				LOGGER.debug("----------------------------------------------------");
-				    				
+				    				LOGGER.debug("----------------------------------------------------");				    				
 				    			}
 				    			
 				    			
@@ -257,9 +256,7 @@ public class virturalConerenceInfo {
 				    	for (int k =0; k < sub_n_list.getLength(); k++ ){
 				    		sub_el = (Element) sub_n_list.item(k);
 				    		//조회가 성공적으로 되었으면
-				    		
-				    		
-				    		
+				   
 				    		if (sub_el.getNodeName().equals("ReturnValue") && sub_el.getFirstChild().getNodeValue().equals("OK")){
 				    			
 				    			

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.sohoki.backoffice.sts.res.vo.VisitedDetailInfo;
 import com.sohoki.backoffice.sts.res.vo.VisitedInfo;
 
 public interface VisitedInfoManageService {
@@ -15,6 +16,8 @@ public interface VisitedInfoManageService {
     List<List<Object>>  selectVisitedDetailInfo(VisitedInfo visitedInfo )throws Exception;
     
     List<Map<String, Object>> selectVisitedDetailInfoFront (String visitedCode )throws Exception;
+    
+    Map<String, Object> selectVisitedQrManageInfo(Map<String, Object> params)throws Exception;
     
     Map<String, Object> selectTourCount(@Param("params") Map<String, Object> params)throws Exception;
 	
@@ -27,6 +30,8 @@ public interface VisitedInfoManageService {
 	Map<String, Object> selectVisitedManageInfo(String visitedCode) throws Exception;
 	
 	int updateVisitedReqManageInfo (Map<String, Object> visitedInfo) throws Exception;
+	
+	int updateQrInfo( List<VisitedDetailInfo> detail ) throws Exception;
 	
 	int updateVisitedStateChangeInfoManage (VisitedInfo info) throws Exception;
 }

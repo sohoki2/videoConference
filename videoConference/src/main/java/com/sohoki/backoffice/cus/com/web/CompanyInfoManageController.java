@@ -26,6 +26,7 @@ import com.sohoki.backoffice.cus.com.vo.UserInfo;
 import com.sohoki.backoffice.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import com.sohoki.backoffice.sym.cnt.service.CenterInfoManageService;
 import com.sohoki.backoffice.sym.log.annotation.NoLogging;
+import com.sohoki.backoffice.sym.space.service.OfficeSeatInfoManageService;
 import com.sohoki.backoffice.util.SmartUtil;
 import com.sohoki.backoffice.util.service.UniSelectInfoManageService;
 import com.sohoki.backoffice.util.service.fileService;
@@ -70,6 +71,9 @@ public class CompanyInfoManageController {
 	 @Autowired
      private CenterInfoManageService centerInfoService;
 	 
+	 @Autowired
+	 private OfficeSeatInfoManageService  officeService;
+	 
 	 @RequestMapping(value="companyList.do")
 	 public ModelAndView  selectCompanyInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
 															, @ModelAttribute("searchVO") CompanyInfo searchVO
@@ -95,6 +99,30 @@ public class CompanyInfoManageController {
 	      model.setViewName("/backoffice/companyManage/companyList");
 		  return model;	
 	 }
+	 
+	 @RequestMapping(value="batchTest.do")
+	 public ModelAndView  selectbatchTest(@ModelAttribute("loginVO") AdminLoginVO loginVO
+										  , @ModelAttribute("searchVO") CompanyInfo searchVO
+										  , HttpServletRequest request
+										 , BindingResult bindingResult	) throws Exception {
+		
+		
+		 ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+         try {
+        	 officeService.selectLableSchedule();
+        	 
+        	 model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+         }catch (Exception e) {
+ 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+ 			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.msg"));	
+         }
+		 
+		  return model;	
+	 }
+	 
+	 
+	 
+	 
 	 @RequestMapping(value="companyListAjax.do")
 	 public ModelAndView  selectCompanyAjaxInfoManageListByPagination(@ModelAttribute("loginVO") AdminLoginVO loginVO
 																	, @RequestBody Map<String,Object>  searchVO

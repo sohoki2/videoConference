@@ -25,5 +25,7 @@ public interface TennantInfoManageService {
 	
 	int updateTennantInfoManage(TennantInfo vo)throws Exception;
 	
+	int cancelPlayTennantInfoManage (Map<String, Object> params)throws Exception;
+	
 	
 }

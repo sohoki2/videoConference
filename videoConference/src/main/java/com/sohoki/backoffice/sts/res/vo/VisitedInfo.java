@@ -39,6 +39,8 @@ public class VisitedInfo {
 	   
 	   private String visitedTitle  = "";
 	   private String cancelReason = "";
+	   //신규 추가 
+	   private String visitedSeq = "";
 	   
 	   private List<VisitedDetailInfo> detailList ;
 }

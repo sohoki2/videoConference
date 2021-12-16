@@ -264,6 +264,8 @@ public class ResInfoManageServiceImpl extends EgovAbstractServiceImpl implements
 						tennInfo.put("userId",  vo.getUserId());
 						tennInfo.put("resSeq",  vo.getResSeq());
 						tennInfo.put("tennCnt",  vo.getTennCnt());
+						
+						LOGGER.debug("테넌트 사용  시작  ------");
 						ret = tennService.insertTennantPlayManages(tennInfo);
 						if (ret < 0) {
 							throw new Exception();  
