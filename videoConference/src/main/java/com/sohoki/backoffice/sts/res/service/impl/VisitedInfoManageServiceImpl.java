@@ -95,9 +95,6 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		//ObjectMapper mapper = new ObjectMapper();
 		//List<VisitedDetailInfo> detailList = new ArrayList<>();
 		//detailList = Arrays.asList(mapper.readValue(visitedInfo.get("visitedDetail").toString(), VisitedDetailInfo[].class));
-		System.out.println("-----------------------------------------");
-		System.out.println("visitedDetail:" + util.NVL(visitedInfo.get("visitedDetail"),"").toString());
-		System.out.println("-----------------------------------------");
 		if (!util.NVL(visitedInfo.get("visitedDetail"),"").toString().equals("") ){
 			
 			//JSONArray ja = new JSONArray(util.NVL(visitedInfo.get("visitedDetail"),"").toString());
@@ -120,7 +117,6 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			
 			if (info.getVisitedGubun().equals("VISITED_GUBUN_1")) {
 				ret = kkoSerice.kkoVisitedInsertService("RES", result, info.getVisitedGubun());
-				ret = kkoSerice.kkoVisitedInsertService("REQ", result, info.getVisitedGubun()); 
 			}
 				
 		}

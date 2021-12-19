@@ -253,5 +253,23 @@ public class TennantInfoManageController {
 		
 		return model;	
 	}
+	@RequestMapping(value="tennReset.do")
+	public ModelAndView resTenncheduleReset(@ModelAttribute("loginVO") AdminLoginVO loginVO
+			                                , @RequestBody Map<String, Object> resetVO
+											, HttpServletRequest request
+											, BindingResult bindingResult) throws Exception{
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW); 
+		try{
+    		
+			//LOGGER.debug("comCode:" + resetVO.get("comCode").toString().replace("[", "").replace("]", ""));
+			int ret = tennService.insertTennantReset(resetVO.get("comCode").toString().replace("[", "").replace("]", "").replace("\"", ""));
+			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+		}catch(Exception e){
+    		LOGGER.info(e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, egovMessageSource.getMessage("fail.common.update"));	
+    	}
+    	return model;
+	}
 	
 }

@@ -19,6 +19,8 @@ public interface OfficeSeatInfoManageMapper {
 	
 	public List<Map<String, Object>>  selectCenterLabelInfo();
 	
+	public Map<String, Object> selectSeatLabelInfo(String seatId);
+	
 	public int insertOfficeSeatInfoManage(OfficeSeatInfo vo);
 	
 	public int insertFloorInfoOfficeSeatInfoManage(@Param("params") Map<String, Object> params);

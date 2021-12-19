@@ -11,6 +11,8 @@ public interface OfficeSeatInfoManageService {
 
     List<Map<String, Object>> selectOfficeSeatInfoManageListByPagination(@Param("params") Map<String, Object> params) throws Exception;
 	
+    int selectSeatLabelInfo(String seatId) throws Exception;
+    
 	Map<String, Object> selectOfficeSeatInfoManageDetail(String seatId) throws Exception;
 	
 	void selectLableSchedule() throws Exception;

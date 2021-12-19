@@ -294,8 +294,8 @@ function timeComma(str, gubun){
    if (gubun == "S"){
      str = str.substring(0,2)+":"+str.substring(2,4)
    }else {
-     if (str.substring(2,2) == "30"){
-        str = parseInt(str.substring(0,2)+1) + ":00";
+     if (str.substring(2,4) == "30"){
+        str = parseInt(parseInt(str.substring(0,2)) +1) + ":00";
      }else{
         str = str.substring(0,2)+":30";
      }

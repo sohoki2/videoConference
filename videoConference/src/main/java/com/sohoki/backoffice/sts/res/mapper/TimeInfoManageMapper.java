@@ -15,6 +15,7 @@ public interface TimeInfoManageMapper {
     //단일 예약
 	public List<Map<String, Object>> selectSTimeInfoBarList(@Param("params") Map<String, Object> params);
 	
+	public List<Map<String, Object>> selectKioskTimeInfoBarList(@Param("params") Map<String, Object> params);
 	//좌석 검색 리스트 
 	public List <Map<String, Object>> selectSeatSearchResult(@Param("params") Map<String, Object> params);
 	//좌석 예약 리스트 

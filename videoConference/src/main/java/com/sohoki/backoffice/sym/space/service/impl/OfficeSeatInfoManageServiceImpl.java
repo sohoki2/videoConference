@@ -67,6 +67,13 @@ public class OfficeSeatInfoManageServiceImpl extends EgovAbstractServiceImpl imp
 		}
 		
 	}
+    //신규
+	@Override
+	public int selectSeatLabelInfo(String seatId) throws Exception {
+		// TODO Auto-generated method stub
+		
+		return aimservice.setAimsLabel(officeSeatMapper.selectSeatLabelInfo(seatId));
+	}
 
 	
 }

@@ -9,7 +9,14 @@
     <script src="/visited/js/jquery-ui.js"></script>
     <script src="/visited/js/common.js"></script>
     <script src="/front_res/js/common.js"></script>
+	<!--css-->
+    <link href="/visited/css/reset.css" rel="stylesheet" />
+    <link href="/visited/css/paragraph.css" rel="stylesheet" />
+
 <script type="text/javascript">
+	$(function(){
+	    $("#visitedQrcode").focus();
+	});
     function fn_Qrsend(){
     	 var params = {'visitedQrcode': $("#visitedQrcode").val()};
 	     uniAjax("/visit/VisitQrProcess.do", params, 
@@ -23,6 +30,7 @@
 						    alert("Error:" +request.status );	       						
 					  }    		
 	     );
+         $("#visitedQrcode").val("");
 	     
 	    
     }
@@ -71,8 +79,12 @@
 </script>
 </head>
 <body>
-    <input type="text" id="visitedQrcode" name="visitedQrcode" onChnage="fn_Qrsend()"/>
-    <button type="button" id="btn_Submit" onClick="fn_Qrsend()">조회</button>
+	<div class="qr_wrap">
+		<div class="qr_con">
+			<input type="text" id="visitedQrcode" name="visitedQrcode" onChange="fn_Qrsend()"/>
+			<button type="button" id="btn_Submit" onClick="fn_Qrsend()" class="qr_btn">조회</button>
+		</div>			
+	</div>		
     <!-- 
     <span id="sp_qrimage"></span>
     <button type="button" id="btn_Submit" onClick="fn_QrImage()">이미지 요청</button>

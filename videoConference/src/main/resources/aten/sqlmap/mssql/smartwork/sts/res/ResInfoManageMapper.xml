@@ -243,7 +243,7 @@
 		ORDER BY X.DATES ASC
     </select>
     <select id="selectIndexList" resultType="lmap">
-		    SELECT  c.RES_TITLE,  c.RES_STARTDAY,
+		    SELECT  c.RES_TITLE,  c.RES_STARTDAY, c.RES_ENDDAY,
                     dbo.FN_TIMESPLIT(c.RES_STARTTIME) resStartTimeT ,  
                     dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(c.RES_ENDTIME)) resEndTimeT , 
                     c.RES_STARTTIME, c.RES_ENDTIME, TA.MEETING_ID, c.RES_ATTENDLIST,

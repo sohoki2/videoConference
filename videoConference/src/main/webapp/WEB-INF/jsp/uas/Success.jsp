@@ -29,12 +29,12 @@
 	 ********************************************************************************/
        
 	String BgColor	= (String)request.getParameter("BgColor");
-	 String DI	= (String)request.getParameter("DI");
-	 String CI	= (String)request.getParameter("CI");
-	 String PHONE	= (String)request.getParameter("PHONE");
-	 String TID	= (String)request.getParameter("TID");
-	 String CARRIER	= (String)request.getParameter("CARRIER");
-	 String NAME	= (String)request.getParameter("NAME");
+	String DI	= (String)request.getParameter("DI");
+	String CI	= (String)request.getParameter("CI");
+	String PHONE	= (String)request.getParameter("PHONE");
+	String TID	= (String)request.getParameter("TID");
+	String CARRIER	= (String)request.getParameter("CARRIER");
+	String NAME	= (String)request.getParameter("NAME");
 
 	/*
 	 * Get BgColor
@@ -47,16 +47,16 @@
 <title>다날 본인인증</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
-<link href="./css/style.css" type="text/css" rel="stylesheet"  media="screen" />
-<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-<script language="JavaScript" src="./js/Common.js" type="text/javascript"></script>
+<link href="/uas/css/style.css" type="text/css" rel="stylesheet"  media="screen" />
+<script src="/front_res/js/jquery-2.2.4.min.js"></script>
+<script language="JavaScript" src="/uas/js/Common.js" type="text/javascript"></script>
 <script>
   function fn_userInfo(){
 	  $("#DI", opener.document).val($("#DI").val());
 	  $("#CI", opener.document).val($("#CI").val());
 	  $("#TID", opener.document).val($("#TID").val());
 	  $("#userCellphone", opener.document).val($("#PHONE").val());
-	  $("#DI", opener.document).val($("#DI").val());
+	  $("#userCellphone", opener.document).prop('readonly', true);
 	  self.close();
   }
 </script>
@@ -68,7 +68,6 @@
 <input type="hidden" name="TID" id="TID" value="<%=TID%>">
 <input type="hidden" name="CARRIER" value="<%=CARRIER%>">
 <input type="hidden" name="NAME" value="<%=NAME%>">
-    
 	<div class="Wrap">
     <!--HEADER START-->
         <div class="header01">
@@ -117,6 +116,6 @@
     </div>
     <!--//BOARD END-->
 </div>
-    
+
 </body>
 </html>

@@ -102,7 +102,7 @@
 		    		     'endTime' : fn_emptyReplace($("#endTime").val(),"19:00"),
 		    			 'comTitle' : $("#comTitle").val(),
 		    			 'tennMonthcnt' : $("#tennMonthcnt").val(),
-		    			 'tourAllowPerson' : $("#tourAllowPerson").val()
+			              'tourAllowPerson' : $("#tourAllowPerson").val()
     	               }; 
     	uniAjax(url, params, 
       			function(result) {

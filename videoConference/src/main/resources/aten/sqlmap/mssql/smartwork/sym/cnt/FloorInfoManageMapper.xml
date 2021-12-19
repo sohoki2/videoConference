@@ -34,6 +34,7 @@
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.floorSeq)">
 							  AND b.FLOOR_SEQ = #{params.floorSeq}
 							 </if>
+							 
 							 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.authorCode)">
 							    <if test="params.authorCode == 'ROLE_USER'">
 							    AND b.FLOOR_SEQ IN ( SELECT strVALUE 

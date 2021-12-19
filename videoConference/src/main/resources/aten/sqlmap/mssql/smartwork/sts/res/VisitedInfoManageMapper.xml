@@ -51,6 +51,10 @@
 						    <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.empno)">
 					            AND d.EMPNO =  #{params.empno}
 							</if>
+							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchVisitedStatus)">
+					            AND a.VISITED_STATUS =  #{params.searchVisitedStatus}
+							</if>
+							
 							<if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.visitedCode)">
 					            AND a.VISITED_CODE =  #{params.visitedCode}
 							</if>
@@ -74,7 +78,7 @@
     <select id="selectVisitedDetailInfoFront" resultType="lmap">
        SELECT  a.VISITED_SEQ, a.VISITED_CODE, a.VISITED_ORG, a.VISITED_NAME, a.VISITED_CELPHONE, a.VISITED_REGDATE,
                dbo.FN_DAYCONVERT(b.VISITED_RESDAY) VISITED_RESDAY, 
-               c.EMPNAME, b.CANCEL_REASON
+               c.EMPNAME, b.CANCEL_REASON, b.VISITED_PURPOSE
        FROM TB_VISITEDDETAIL a , TB_VISITEDINFO b, TB_EMPINFO c
        WHERE a.VISITED_CODE = #{visitedCode}
               AND a.VISITED_CODE = b.VISITED_CODE

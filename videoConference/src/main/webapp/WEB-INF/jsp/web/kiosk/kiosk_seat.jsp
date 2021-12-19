@@ -7,7 +7,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>  
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -50,7 +50,6 @@
 <input type="hidden" name="resReqday" id="res_reqday" />	
 <input type="hidden" name="itemId" id="itemId" />		
 <input type="hidden" name="kioskGubun" id="kioskGubun" value="SEAT"/>
-
 						
  <div class="wrap">
     <div class="contents">
@@ -108,24 +107,24 @@
               <thead>
                 <tr>
                   <th>회의실</th>
-                  <th>09:00</th>
-                  <th>09:30</th>
-                  <th>10:00</th>
-                  <th>10:30</th>
-                  <th>11:00</th>
-                  <th>11:30</th>
-                  <th>12:00</th>
-                  <th>12:30</th>
-                  <th>13:00</th>
-                  <th>13:30</th>
-                  <th>14:00</th>
-                  <th>14:30</th>
-                  <th>15:00</th>
-                  <th>15:30</th>
-                  <th>16:00</th>
-                  <th>16:30</th>
-                  <th>17:00</th>
-                  <th>17:30</th>
+                  <th id="th_0900">09:00</th>
+                  <th id="th_0930">09:30</th>
+                  <th id="th_1000">10:00</th>
+                  <th id="th_1030">10:30</th>
+                  <th id="th_1100">11:00</th>
+                  <th id="th_1130">11:30</th>
+                  <th id="th_1200">12:00</th>
+                  <th id="th_1230">12:30</th>
+                  <th id="th_1300">13:00</th>
+                  <th id="th_1330">13:30</th>
+                  <th id="th_1400">14:00</th>
+                  <th id="th_1430">14:30</th>
+                  <th id="th_1500">15:00</th>
+                  <th id="th_1530">15:30</th>
+                  <th id="th_1600">16:00</th>
+                  <th id="th_1630">16:30</th>
+                  <th id="th_1700">17:00</th>
+                  <th id="th_1730">17:30</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,7 +188,7 @@
          <li onClick="res.fn_keyNumber('7')">7</li>
          <li onClick="res.fn_keyNumber('8')">8</li>
          <li onClick="res.fn_keyNumber('9')">9</li>
-         <li class="delete" onClick="res.fn_keyNumber('B')">delete</li>
+         <li class="delete" onClick="res.fn_keyNumber('B')"  style="height:54px"><font color="white" style="display:none">delete</font></li>
          <li onClick="res.fn_keyNumber('0')">0</li>
          <li class="ok" onClick="res.fn_login()">확인</li>
        </ul>
@@ -248,7 +247,7 @@
     
     <div class="footer_btn">
       <button type="button" class="graybtn floatL" onClick="need_close();res.fn_reset()">닫기</button>
-      <button type="button" class="oranbtn floatL" onClick="res.fn_ResSave()">예약</button>
+      <button type="button" class="oranbtn floatL" onClick="res.fn_ResSave()" style="Background:#FBA10A">예약</button>
       <div class="clear"></div>
     </div>
    </div>
@@ -285,6 +284,10 @@
 		res.fn_rightBtn($("#kioskGubun").val());
 		res.fn_loginForm("LOGOUT");
 		
+		
+		setInterval(function() {
+			$("#sp_timeInfo").html(new Date().format('HH:mm'));
+		}, 60000);
 	});
 	function fn_nowTime(){
 		let today = new Date();   
@@ -383,6 +386,8 @@
 					$("#seat_confirmgubun").text(seat_confirmgubun);
 					$("#res_reqday").text(res_reqday);
 					
+					
+					
 					var url = "/web/selectTimeInfoKiosk.do";
 					var params = {"itemId" :seat_id, "userId" :  $("#userId").val(), "searchResStartday" : $("#searchResStartday").val().replaceAll("-","")};
 					uniAjax(url, params, 
@@ -396,6 +401,7 @@
 			 				    		  $("#reserve_list").empty();
 			 				    		  for (var i in result.resultlist){
 			 				    			  if ( parseInt(obj[i].res_seq) >  -1){
+			 				    				  
 			 				    				  shtml= "<div class=\"menu_box\">"
 		     		                                  + " <ul class=\"sel_list etrans\">"
 		     		                                  + "   <li class=\"sel_list_time\">"+ obj[i].swc_times+"~"+obj[i].swc_timee+"</li>"
@@ -451,6 +457,8 @@
 					var maxVal = Math.max.apply(null, tempToArray);
 					$("#resStarttimeKiosk").val(stringLength(String(minVal), "4", "0"));
 					$("#resEndtimeKiosk").val(stringLength(String(maxVal), "4", "0"));
+					
+					
 					$("#sp_resStartTime").text(timeComma(stringLength(String(minVal), "4", "0"),"S"));
 					$("#sp_resEndTime").text(timeComma(stringLength(String(maxVal), "4", "0"),"E"));
 					$("#hid_history").val("res.reserve_meeting");
@@ -625,9 +633,13 @@
 				   $("#seat_floor").hide();
 				   $("#meet_floor").show();
 	               res.fn_meetingState();
+	               
+	               
 			   }
 		   }, fn_meetingState : function(){
 			   var params = {'userId' : $("#userId").val()};
+			  
+			   
 			   uniAjax("/web/meetingFloorInfo.do", params, 
 			 			function(result) {
 				           if (result.status == "SUCCESS"){
@@ -656,38 +668,52 @@
 					           'searchCenterId' : $("#searchCenterId").val(), 
 						       'searchFloorseq' :  $("#floorSeq").val(),
 						       'searchResStartday' : $("#searchResStartday").val().replaceAll("-",""), 
-						       'searchRoomType' : $("#searchRoomType").val(),
-						       'searchSeatView': 'Y' 
+						       'searchRoomType' : $("#searchRoomType").val()
 			     }; 
+			     
 			     var url = "/web/meetingDayAjaxKiosk.do";
 				 uniAjax(url, params, 
 			     			function(result) {
 							       if (result.status == "LOGIN FAIL"){
-							    	   alert(result.meesage);
-			  						   location.href="/web/Login.do";
+							    	   location.href="/web/Login.do";
 			  					   }else if (result.status == "SUCCESS"){
 			  						    $("#searchResStartday").val(day_convert(result.result.searchResStartday));
 			  						    $("#searchCenterId").val(result.result.searchCenterId);
 			  						    var setHtml = "";
+			  						    var headHtml = "";
 										$("#tb_meetingState > tbody").empty(); 
+										$("#tb_meetingState > thead").empty(); 
 										
 										for (var i in result.seatInfo){
+											
+											if (i == 0){
+												headHtml += "<tr><th>회이실</th>";
+												
+											}
+											
 											var seatinfo = result.seatInfo[i];
+											
 											setHtml += "<tr>";
 											setHtml += "<th>"+seatinfo.meeting_name+"</th>";
+											/*
 											if (seatinfo.timeinfo.length < 18){
 												setHtml += "<td colspan='18' style='text-aling:center;'>예약 불가</td>";
 											}else {
+											*/
 												//console.log("seatinfo.res_reqday:" + seatinfo.res_reqday)
 												var rowCol = 0;
 												var rowResseq = "";
 												var rowInfo = "";
 												var resTitle = "";
 												var resStart = "";
-												console.log("<resStart>" + resStart);
-
+												
 												for (var a  in seatinfo.timeinfo){
-			  										var timeInfo = seatinfo.timeinfo[a];
+													var timeInfo = seatinfo.timeinfo[a];
+													if ( i == 0){
+														headHtml += "<th>"+timeInfo.swc_times+"</th>";
+													}
+													
+													
 			  										var classInfo = "";
 			  										//색갈 넣기 및 예약자 클릭 관련 내용 넣기 \
 			  										if (timeInfo.res_seq == "-1" && timeInfo.apprival == "N" ){
@@ -718,13 +744,21 @@
 														setHtml += "<td></td>";
 			  										}
 			  									}
+												if ( i == 0){
+													console.log(headHtml);
+													headHtml += "</tr>";
+													$("#tb_meetingState >  thead").append(headHtml);
+												}
 											}
 											//centerId 값 넣기 
 											setHtml += "</tr>";
+											
+											
 											$("#tb_meetingState >  tbody:last").append(setHtml);
 											setHtml = "";
-											
+									  /*		
 			  					      }
+									  */
 			  					   }
 							},
 						    function(request){

@@ -124,7 +124,8 @@ public class frontResInfoManageController {
 	@Autowired
 	private VisitedInfoManageService visitedService;
 	
-	
+	@Autowired
+	private OfficeSeatInfoManageService  officeService;
 	
 	//로그인 페이지로 이동 
 	@RequestMapping(value="Login.do")
@@ -973,6 +974,17 @@ public class frontResInfoManageController {
 			
 
 			if (ret > 0){
+				
+				if (searchVO.getItemGubun().equals("ITEM_GUBUN_2") && 
+					Integer.valueOf(searchVO.getResStarttime()) < 
+					Integer.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"))) ) {
+					//에임즈 전송 
+					officeService.selectSeatLabelInfo(searchVO.getItemId());
+					//setAimsLabel
+				}
+				//좌석 예약 임 
+				
+				
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 				model.addObject(Globals.STATUS_MESSAGE,
 				egovMessageSource.getMessage("sucess.common.reservation")); //크레딧 차감
@@ -1282,7 +1294,7 @@ public class frontResInfoManageController {
 				}
 				String searchDay = resSearch.get("searchResStartday").equals("")  ? util.reqDay(0)  : resSearch.get("searchResStartday").toString();
 				resSearch.put("swcResday", searchDay);
-				List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(resSearch);						
+				List<Map<String, Object>> timeInfos = timeService.selectKioskTimeInfoBarList(resSearch);						
 					
 				model.addObject(Globals.JSON_RETURN_RESULTLISR, timeInfos);	
 				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
@@ -1793,6 +1805,9 @@ public class frontResInfoManageController {
 			model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
 			resSearch.put("searchKisok", "koisk");
 			List<Map<String, Object>> resInfos =  resService.selectIndexList(resSearch);
+			
+			LOGGER.debug("resInfos" + resInfos.size());
+			
 			model.addObject(Globals.JSON_RETURN_RESULTLISR , resInfos);
 			//
 			//신규 수정 
@@ -2191,6 +2206,8 @@ public class frontResInfoManageController {
 				for (Map<String, Object>  seatinfoVO : seatListVOs) {
 					Map<String, Object> searchTime = new HashMap<String, Object>();
 					searchTime.put("itemId", seatinfoVO.get("meeting_id").toString());
+					searchTime.put("searchKiosk", "Y");
+					
 					searchTime.put("swcResday", searchDay);
 					List<Map<String, Object>> timeInfos = timeService.selectSTimeInfoBarList(searchTime);						
 					seatinfoVO.put("timeInfo", timeInfos);

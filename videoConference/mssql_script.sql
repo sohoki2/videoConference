@@ -625,7 +625,7 @@ BEGIN
 	BEGIN 
         SET @costTenn = (SELECT CASE a.PAY_CLASSIFICATION WHEN 'PAY_CLASSIFICATION_2' THEN 0
                            ELSE 
-                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_2' THEN 
+                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_1' THEN 
 	                                 (SELECT ISNULL(COUNT(*), 0) 
 								      FROM tb_swctime
 								      WHERE SWC_RESDAY = @in_resDay
@@ -647,7 +647,7 @@ BEGIN
 	BEGIN
 	     SET @costTenn = (SELECT CASE a.PAY_CLASSIFICATION WHEN 'PAY_CLASSIFICATION_2' THEN 0
                            ELSE 
-                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_2' THEN 
+                               CASE a.PAY_GUBUN WHEN 'PAY_GUBUN_1' THEN 
 	                                 (SELECT ISNULL(COUNT(*), 0) 
 								      FROM tb_swctime
 								      WHERE SWC_RESDAY = @in_resDay
@@ -2525,17 +2525,53 @@ CREATE proc [dbo].[SP_KIOSKCALDARLIST] @ITEM_ID varchar(30)
 
 as
 begin
-        SELECT RES_TITLE,  dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) RES_ATTENDLIST, 
-		       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00') RES_STARTTIME , 
-               CONCAT(CONVERT (DATE, a.RES_STARTDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
-		       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
-		       a.RES_SEQ 
-		FROM TB_SWCRESERVATION a , TB_EMPINFO   b
-		WHERE ITEM_ID  = @ITEM_ID
-              AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
-              AND  RES_ENDTIME >= REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','') 
-              AND a.USER_ID = b.EMPNO 
-              AND a.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_1', 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	
+	  declare @resGubun varchar(20)
+	  set @resGubun = (SELECT  top 1 RES_GUBUN FROM TB_SWCRESERVATION WHERE ITEM_ID  = @ITEM_ID AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112) )
+	  
+	  print (@resGubun)
+
+
+	  if (@resGubun = 'SWC_GUBUN_3')
+		  begin
+		
+		        SELECT RES_TITLE,  dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) RES_ATTENDLIST, 
+				       case when (a.RES_STARTDAY = CONVERT(varchar(8), GETDATE(), 112)) then 
+					       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00')  
+					   else 
+					       concat(CONVERT(varchar(10), GETDATE(), 120), 'T', '09:00:00')
+					   end RES_STARTTIME, 
+					   
+					   case when (a.RES_ENDDAY = CONVERT(varchar(8), GETDATE(), 112)) then 
+					       CONCAT(CONVERT (DATE, a.RES_ENDDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00')
+					   else
+					       CONCAT(CONVERT(varchar(10), GETDATE(), 120), 'T', '18:30:00')
+					   end  RES_ENDTIME,
+					   
+				       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
+				       a.RES_SEQ 
+				FROM TB_SWCRESERVATION a , TB_EMPINFO   b
+				WHERE ITEM_ID  = @ITEM_ID
+		              AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
+		              AND CONVERT(varchar(8), GETDATE(), 112) between   a.RES_STARTDAY AND a.RES_ENDDAY  
+		              AND a.USER_ID = b.EMPNO 
+		              AND a.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_1', 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	     end 
+     else 
+         begin
+	            SELECT RES_TITLE,  dbo.FN_ATTENTLIST(a.RES_ATTENDLIST) RES_ATTENDLIST, 
+				       CONCAT(CONVERT (DATE, a.RES_STARTDAY)   ,'T', dbo.FN_TIMESPLIT(a.RES_STARTTIME), ':00') RES_STARTTIME , 
+		               CONCAT(CONVERT (DATE, a.RES_STARTDAY)  ,'T', dbo.FN_TIMESPLIT(dbo.FN_UPSTIMEDOWN(a.RES_ENDTIME)), ':00') RES_ENDTIME,
+				       CONCAT(b.EMPNAME, '|' , b.DEPTNAME)  EMPNAME,
+				       a.RES_SEQ 
+				FROM TB_SWCRESERVATION a , TB_EMPINFO   b
+				WHERE ITEM_ID  = @ITEM_ID
+		              AND RES_STARTDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
+		              AND  RES_ENDTIME >= REPLACE(SUBSTRING(CONVERT (VARCHAR(12), DATEADD(minute, -30, GETDATE()), 114), 1,5), ':','') 
+		              AND a.USER_ID = b.EMPNO 
+		              AND a.RESERV_PROCESS_GUBUN in ( 'PROCESS_GUBUN_1', 'PROCESS_GUBUN_2', 'PROCESS_GUBUN_4')
+	     
+	 	end 
 
 
 end 
@@ -3035,3 +3071,28 @@ begin catch
        return @result
 
 end catch 
+
+
+alter proc SP_TENNRESET (@comCode varchar(4000   ))
+
+as
+begin
+     /*
+	    테넌트 Reset
+
+	 */
+	 INSERT INTO TB_COMPAY_TENNANT_HISTORY (TENN_SEQ, COM_CODE, USER_NO, REG_DATE, TENN_CNT, TENN_PLAY_GUBUN, TENN_APPRIVAL, RES_SEQ)   
+     SELECT TENN_SEQ, COM_CODE, 'admin', getdate(), TENN_REC_NOW_CNT, 'TENN_PLAY_GUBUN_3', 'Y', 0 
+     FROM TB_COMPAY_TENNANT 
+     WHERE CONVERT(VARCHAR(6),  REG_DATE, 112) = CONVERT(VARCHAR(6) , GETDATE(), 112) 
+           AND TENN_REC_NOW_CNT > 0
+		   AND COM_CODE IN ( SELECT strValue FROM dbo.UF_SPLICT(@comCode, ','))
+
+  
+     UPDATE TB_COMPAY_TENNANT set TENN_REC_NOW_CNT = 0, TENN_REC_COUNT = TENN_REC_COUNT
+     WHERE CONVERT(VARCHAR(6),  REG_DATE, 112) = CONVERT(VARCHAR(6) , GETDATE(), 112) 
+           AND TENN_REC_NOW_CNT > 0
+		   AND COM_CODE IN ( SELECT strValue FROM dbo.UF_SPLICT(@comCode, ','))
+
+
+end 

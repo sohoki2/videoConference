@@ -56,7 +56,7 @@
                 
             </div>
             <div class="row">
-                <div class="lg-6">
+                <div class="mg-3">
                     <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitReser.do' ">
                         <div>
                             <i class="main_icon_reser"></i>
@@ -66,12 +66,30 @@
                         </div>                        
                     </div>
                 </div>
-                <div class="lg-6">
-                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitSearch.do' ">
+                <div class="mg-3">
+                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitSearch.do??visitedGubun=VISITED_GUBUN_1' ">
                         <div>
                             <i class="main_icon_reser"></i>
                             <p class="main_wtit">방문신청 조회</p>
                             <span class="main_wsubtit">방문신청 목록을 조회할 수 있습니다.</span>
+                        </div>                        
+                    </div>                  
+                </div>
+				<div class="mg-3">
+                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/TourReser.do' ">
+                        <div>
+                            <i class="main_icon_tour"></i>
+                            <p class="main_wtit">투어신청하기</p>
+                            <span class="main_wsubtit">서울관광플라자 투어신청이 가능합니다.</span>
+                        </div>                        
+                    </div>                  
+                </div>
+				<div class="mg-3">
+                    <div class="main_wbox main_wxbox dis_flex" onclick="location.href='/visit/VisitSearch.do?visitedGubun=VISITED_GUBUN_2' ">
+                        <div>
+                            <i class="main_icon_search"></i>
+                            <p class="main_wtit">투어신청 조회</p>
+                            <span class="main_wsubtit">투어신청 목록을 조회할 수 있습니다.</span>
                         </div>                        
                     </div>                  
                 </div>

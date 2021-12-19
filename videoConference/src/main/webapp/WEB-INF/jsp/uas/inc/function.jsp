@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
+<%@ page import="java.net.URL" %>
 <%!
 	/********************************************************************************
 	 *
@@ -47,19 +48,17 @@
 		
 		String REQ_STR = data2str(data);
 		String RES_STR = "";
+        
 
 		HttpClient hc = new HttpClient();
-
 		hc.setConnectionTimeout( DN_CONNECT_TIMEOUT );
 		hc.setTimeout( DN_TIMEOUT );
 
 		try{
-			
-			
 			int nStatus = hc.retrieve( "POST", DN_SERVICE_URL, REQ_STR, CHARSET, CHARSET );
 
 			if( nStatus != 0) {
-				RES_STR = "RETURNCODE=-1&RETURNMSG=NETWORK ERROR(" +nStatus+ ")";
+				RES_STR = "RETURNCODE=-1&RETURNMSG=NETWORK ERROR(" +nStatus+ ":12 : "+ DN_SERVICE_URL + ")";
 			} else {
 				RES_STR = hc.getResponseBody();
 			}

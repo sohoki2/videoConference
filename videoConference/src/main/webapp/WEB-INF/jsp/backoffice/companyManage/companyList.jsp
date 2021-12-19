@@ -104,6 +104,7 @@
 		                	<td class="text-right">
 		                		<a href="javascript:jqGridFunc.fn_ComInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
 		                		<a href="javascript:jqGridFunc.fn_tennPop();" class="deepBtn">크레딧 등록</a>
+		                		<a href="javascript:jqGridFunc.fn_tennReset();" class="deepBtn">크레딧 Reset</a>
 		                		<!-- <a href="javascript:userFunc.fn_ExcelUpload()" ><span class="deepBtn">Excel Upload</span></a> -->
 		                		
 		                		
@@ -325,18 +326,13 @@
         </div>
         <div class="popCon">
             <div class="con">
-               <div class="pop_box50">
+               <div class="pop_box">
                   <div class="padding15">
-                    <input type="number" name="tennRecCount" size="40" id="tennRecCount"  onkeypress="only_num();" style="width:250px;"/>개 
-                   </div>
-               </div>
-               <div class="pop_box50">
-                   <div class="padding15">
-                     <a href="#" onClick="jqGridFunc.fn_tennUpdate()" class="redBtn">등록</a>
+                    <input type="number" name="tennRecCount" size="40" id="tennRecCount"  onkeypress="only_num();" style="width:150px;"/>개 
+					 <a href="#" onClick="jqGridFunc.fn_tennUpdate()" class="redBtn">등록</a>
                    </div>
                </div>
             </div>
-            
         </div>
    </div>
    <c:import url="/backoffice/inc/uni_pop.do" />
@@ -747,6 +743,33 @@
 			  }, fn_TennView : function(){
 				  //
 				  ($("#tennUseyn").val() == "Y") ?  $("#comTennentCnt").show() :$("#comTennentCnt").hide();
+			  }, fn_tennReset : function(){
+				  //크레딧 reset
+				  var tenn_array = new Array();
+				  getEquipArray("mainGrid", tenn_array);
+				  if (tenn_array.length < 1){
+					  alert("체크된 값이 없습니다.");
+					  return;
+				  }
+				  
+				  var params = {"comCode":  tenn_array};
+				  
+				  var url = "/backoffice/companyManage/tennReset.do";
+				  uniAjax(url, params, 
+		   		       	     function(result) {
+	   						       if (result.status == "LOGIN FAIL"){
+	   						    	   alert(result.meesage);
+	   		  						   location.href="/backoffice/login.do";
+	   		  					   }else if (result.status == "SUCCESS"){
+		   		  					   alert('정상적으로 등록 되었습니다.');
+		   		  					   jqGridFunc.fn_search();
+		   		  				   }
+	   						 },
+	   						 function(request){
+	   							    alert("Error:" +request.status );	       						
+	   						 }    		
+		    	  );
+				  tenn_array = null;
 			  }  
 	    }
        

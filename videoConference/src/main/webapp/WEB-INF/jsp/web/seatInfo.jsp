@@ -199,7 +199,8 @@
         			var params = {"swcResday" : $("#searchResStartday").val().replaceAll("-",""), 
 		  					      "floorSeq" : $("#floorSeq").val(), 
 		  					      "resStarttime" : $("#resStarttime").val(), 
-		  					      "resEndtime" : $("#resEndtime").val()
+		  					      "resEndtime" : $("#resEndtime").val(),
+		  					      "seatUseyn": "Y"
 		  					      };
         			uniAjax(url, params, 
     		      			function(result) {

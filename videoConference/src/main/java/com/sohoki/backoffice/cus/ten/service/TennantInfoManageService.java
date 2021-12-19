@@ -17,7 +17,9 @@ public interface TennantInfoManageService {
 	
 	int insertTennantInfoManages(List<TennantInfo> list)throws Exception;
 	//한달 1번 크레딧 배포
-	int insertTennantMonthManage();
+	int insertTennantMonthManage()throws Exception;
+	//크레딧 reset
+	int insertTennantReset(String comCode)throws Exception;
 	//테넌트 사용 
 	int insertTennantPlayManages(Map<String, Object> params)throws Exception;
 	//테넌트 회수

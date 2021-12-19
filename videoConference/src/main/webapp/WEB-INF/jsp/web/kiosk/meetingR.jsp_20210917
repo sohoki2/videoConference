@@ -336,10 +336,8 @@
 											     
 											     if (obj[i].room_type == "SWC_GUBUN_3"){
 													resBtn = "hide";
-													$("#dv_time").html(obj[i].res_startday +"일"+ obj[i].resstarttimet+"~<br/>"+ obj[i].res_endday +"일"+ obj[i].resendtimet +"까지")
-					  							 }else {
+			  							    	 }else {
 			  							    		resBtn = "show";
-			  							    		$("#dv_time").html( obj[i].resstarttimet+"~"+ obj[i].resendtimet)
 			  							    	 }
 												 $("#centerId").val(obj[i].center_id);
 										    	 $("#timeSeq").val(obj[i].time_seq);
@@ -349,7 +347,8 @@
 										    	 
 											     if (obj[i].res_seq != "0"){
 											    	$("#sp_title").html(obj[i].res_title );
-			  							    	 $("#sp_userInfo").html(obj[i].empname);
+			  							    	 $("#dv_time").html( obj[i].resstarttimet+"~"+ obj[i].resendtimet)
+			  							    	 $("#sp_userInfo").html(obj[i].attendlisttxt);
 			  							    	 $("#resSeq").val(obj[i].res_seq);
 			  							    	 
 			  							    	
@@ -595,9 +594,9 @@
         	        	               if (result.status == "SUCCESS"){
         						    	     var obj  =  result.resInfo;
         						    	     
-        						    	     var attendlisttxt = (obj.attendlisttxt = 'undefined') ? "" : obj.attendlisttxt+"<br/>";
+        						    	     
         						    	     $("#meeting_timeInfo").html (obj.resstartday +":" +   obj.resstarttime+"~"+ obj.resendtime)
-        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.res_title+"</p><span>"+attendlisttxt+""+obj.deptname+"</span>");
+        						    	     $("#meeting_conInfo").html(" <p class='check_line'>"+obj.res_title+"</p><span>"+obj.attendlisttxt+"<br/>"+obj.deptname+"</span>");
         						       }else {
         								   $("#sp_stateTxt").html("<p>조회 도중 문제가 발생 하였습니다.</p>");
  											
@@ -613,15 +612,12 @@
     	        	$('body').css('overflow', 'auto');
     	            
         		}, fn_hideMessage : function (resMessage, _panel){
-					
         			$("#sp_stateTxt").html("<p>"+resMessage+"</p>");
     				$("#btn_checkIn").trigger("click");
 					$('#' +_panel).fadeOut(1000).bPopup().close();
     				//1초후 클릭 
     	        	$('body').css('overflow', 'auto');
 					bPopup().close();
-    	           
-    	            
              }
         }
        

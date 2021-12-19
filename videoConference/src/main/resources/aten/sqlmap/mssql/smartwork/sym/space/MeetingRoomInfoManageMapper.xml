@@ -107,6 +107,7 @@
 		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchFloorseq)">
 		        AND a.FLOOR_SEQ = #{params.searchFloorseq} 
 		   </if>
+		   
 		   <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchView)">
 		        AND MEETING_VIEW = #{params.searchView} 
 		   </if>  

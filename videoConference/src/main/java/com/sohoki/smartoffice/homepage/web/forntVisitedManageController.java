@@ -230,6 +230,48 @@ public class forntVisitedManageController {
 		try {
 			EgovFileScrty fileScrty = new EgovFileScrty();	
 			
+			LOGGER.debug("======================================================");
+			
+			visitedInfo.setVisitedStatus("VISITED_STATE_5");
+			visitedInfo.setVisitedGubun("VISITED_GUBUN_1");
+			String visitedCode = fileScrty.decode(visitedInfo.getVisitedQrcode());
+			fileScrty = null;
+			
+			String [] visitedCodes = visitedCode.split(":");
+			
+			
+			Map<String, Object> searchVO = new HashMap<String, Object>();
+			searchVO.put("visitedCode",  visitedCodes[0] );
+			searchVO.put("visitedCelphone",  visitedCodes[1] );
+			
+			Map<String, Object> info =  visitedService.selectVisitedQrManageInfo(searchVO) ;
+			//신규 추가 
+			visitedInfo.setVisitedCode(info.get("visited_code").toString());
+			visitedInfo.setVisitedSeq(info.get("visited_seq").toString());
+			int ret = visitedService.updateVisitedStateChangeInfoManage(visitedInfo);
+			
+			if (ret > 0) {
+				model.addObject(Globals.STATUS, Globals.STATUS_SUCCESS);
+				model.addObject(Globals.STATUS_MESSAGE, "정상적으로 담당자에게 요청 되었습니다.");
+			}else {
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, "잘못된 QR 이미지 이거나 예약되지 않는 정보 입니다.");
+			}
+		}catch(Exception e) {
+			LOGGER.debug("visitReser error:"  + e.toString());
+			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+			model.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
+		}
+		return model;	
+	}
+	@RequestMapping(value="visitQrNewProcess.do")	
+	public ModelAndView visitQrNewProcess (@RequestBody VisitedInfo visitedInfo)throws Exception{
+		
+		ModelAndView model = new ModelAndView(Globals.JSONVIEW);
+		try {
+			EgovFileScrty fileScrty = new EgovFileScrty();	
+			
+			LOGGER.debug("======================================================");
 			
 			visitedInfo.setVisitedStatus("VISITED_STATE_5");
 			visitedInfo.setVisitedGubun("VISITED_GUBUN_1");

@@ -100,7 +100,7 @@ public class kkoMessageInfo {
 		    	         "확인 후 방문승인 요청드립니다.\r\n\r\n"+
 	    			     "- 일시: "+ vo.get("visited_resday") +"\r\n" + 
 	    			     "- 목적: "+ vo.get("visited_purpose")+"\r\n" + 
-	    			     "- 신청자: "+vo.get("visited_req_name")+"\r\n\r\n" + 
+	    			     "- 신청자: "+vo.get("visited_name")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr01";
 		    	buttonJson = "";
@@ -112,7 +112,7 @@ public class kkoMessageInfo {
 		    	         "확인 후 방문승인 요청드립니다.\r\n\r\n"+
 	    			     "- 일시: "+ vo.get("visited_resday") +"\r\n" + 
 	    			     "- 목적: "+ vo.get("visited_purpose")+"\r\n" + 
-	    			     "- 신청자: "+vo.get("visited_req_name")+"\r\n\r\n" + 
+	    			     "- 신청자: "+vo.get("visited_name")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr02";
 		    	buttonJson = "";

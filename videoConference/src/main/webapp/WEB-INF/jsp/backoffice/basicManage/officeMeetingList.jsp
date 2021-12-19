@@ -527,13 +527,14 @@
 		                		<input class="nameB"  type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}"> 
 								<a href="javascript:jqGridFunc.fn_search();"><span class="searchTableB">조회</span></a>
 		                	</td>
-		                	<td class="text-right">
-		                	    <a href="javascript:fn_qrCreate('Meeting')" ><span class="deepBtn">QR생성</span></a>
-		                		<a href="javascript:jqGridFunc.fn_ObjectInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
-		                		<a href="#" onClick="jqGridFunc.fn_delCheck()"><span class="deepBtn">삭제</span></a>
-		                	</td>
+		                	
 						</tr>
                     </table>
+                    <div class="text-right">
+		                	    <a href="#" ><span class="lightgrayBtn">QR생성</span></a>
+		                		<a href="javascript:jqGridFunc.fn_ObjectInfo('Ins','0')" ><span class="deepBtn">등록</span></a>
+		                		<a href="#" onClick="jqGridFunc.fn_delCheck()"><span class="redBtn">삭제</span></a>
+		                	</div>
                 <br/>
         
                </section>
@@ -697,7 +698,7 @@
 		                             <input name="meetingFile02" id="meetingFile02" type="file"  size="20"/>
 		                        </td>
 		                    </tr>
-		                    <tr>
+		                    <tr style="display:none">
 		                        <th><span class="redText">*</span>메일 전송 여부</th>
 		                        <td style="text-align:left">
 		                             <label class="switch">                                               

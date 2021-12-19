@@ -25,6 +25,8 @@ public interface TennantInfoManageMapper {
 		//한달에 한번 크레딧 배포
 		public int insertTennantMonthManage();
 		
+		public int insertTennantReset(String comCode);
+		
 		public int insertTennantInfoManages(List<TennantInfo> list);
 		
 		public int updateTennantInfoManage(TennantInfo vo);

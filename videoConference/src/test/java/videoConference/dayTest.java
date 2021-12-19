@@ -27,12 +27,8 @@ public class dayTest {
 
 	@Test
 	public void dbTest() {
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("code", "SWC_TIME");
-		
-		
-		meetingMsg("DAY");
+		String localTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+		System.out.println(localTime );
 	}
 	public static boolean isEmpty(Object obj) {
 		if (obj instanceof String ) return obj == null || "".equals(obj.toString().trim());

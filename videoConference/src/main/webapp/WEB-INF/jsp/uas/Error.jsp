@@ -10,9 +10,9 @@
 <title>다날 본인인증</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
-<link href="./css/style.css" type="text/css" rel="stylesheet"  media="screen" />
-<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-<script language="JavaScript" src="./js/Common.js" type="text/javascript"></script>
+<link href="/uas/css/style.css" type="text/css" rel="stylesheet"  media="screen" />
+<script src="/front_res/js/jquery-2.2.4.min.js"></script>
+<script language="JavaScript" src="/uas/js/Common.js" type="text/javascript"></script>
 </head>
 <body onload="changeFontSize();">
 	
@@ -24,7 +24,7 @@
 			<li class="ci_danal">다날로고</li>
 		</ul>
 	</div>
-    <div class="step bg_<%=BgColor %>">
+    <div class="step bg_<%=BgColor%>">
         <ul>
 		<li><b>인증서비스에러</b></li>
         </ul>

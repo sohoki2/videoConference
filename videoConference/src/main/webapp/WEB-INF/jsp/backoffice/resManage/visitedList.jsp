@@ -70,7 +70,24 @@
 	    $("#ui-datepicker-div").hide(); //자동으로 생성되는 div객체 숨김
 	    // jqgrid  생성 하기
 	    jqGridFunc.setGrid("mainGrid");
+	    
+	    
+	    fn_searchCombo();
 	});	
+    function fn_searchCombo(){
+    	if ($("#visitedGubun").val() == "VISITED_GUBUN_1"){
+    		$("#searchVisitedStatus").append("<option value='VISITED_STATE_1'>예약</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_2'>승인</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_3'>대기</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_4'>취소</option>");
+    	}else {
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_1'>예약</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_2'>승인</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_3'>대기</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_4'>확진자 취소</option>");
+            $("#searchVisitedStatus").append("<option value='VISITED_STATE_6'>코로나 취소</option>");
+    	}
+    }
     </script>
 
 	 <style type="text/css">
@@ -208,6 +225,7 @@
 										    	    		"searchEndDay" : $("#searchEndDay").val(),
 															"searchCenter" : $("searchCenter").val(),
 															"searchFloorSeq" : fn_emptyReplace($("searchFloorSeq").val(),""),
+															"searchVisitedStatus" : fn_emptyReplace($("#searchVisitedStatus").val(),""), 
 										    	    		"searchCondition" : $("#searchCondition").val(),
 										    	    		"searchKeyword" : $("#searchKeyword").val(),
 										    	    		"pageUnit":$('.ui-pg-selbox option:selected').val()
@@ -301,6 +319,7 @@
 	    	    		 "searchCondition" : $("#searchCondition").val(),
 	    	    		 "searchKeyword" : $("#searchKeyword").val(),
 	    	    		 "visitedGubun" : $("#visitedGubun").val(),
+	    	    		 "searchVisitedStatus" : fn_emptyReplace($("#searchVisitedStatus").val(),""),
 	    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
 	         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
@@ -324,6 +343,7 @@
 	    							   $("#sp_visitdNm").html(obj.visited_req_name);
 	    							   $("#sp_visitdPhone").html(obj.visited_req_celphone);
 	    							   $("#sp_visitdOrg").html(obj.visited_req_org);
+	    							   
 	    							   $("#sp_visitdRegDate").html(obj.visited_regdate);
 	    							   $("#sp_visitedCenterNm").html(obj.center_nm);
 	    							   $("#sp_visitedPlace").html(obj.floor_name);
@@ -431,6 +451,10 @@
 			                	<input   size="10" maxlength="20" id="searchStartDay" style="cursor:default;" class="date-picker-input-type-text" />
 			                     ~
 			                    <input   size="10" maxlength="20" id="searchEndDay" style="cursor:default;"  class="date-picker-input-type-text" />
+	                		    <select id="searchVisitedStatus" name="searchVisitedStatus">
+	                		       <option value="">전체 선택</option>
+	                		    </select>
+	                		
 	                		</td>
 		                	<th style="width:90px;">검색어</th>
 		                	<td colspan="5"  style="text-align:left;padding-left: 20px;">

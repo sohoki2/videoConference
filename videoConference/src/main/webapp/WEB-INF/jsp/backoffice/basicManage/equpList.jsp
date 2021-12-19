@@ -74,12 +74,12 @@
 								<input class="nameB" type="text" name="searchKeyword" id="searchKeyword"  value="${regist.searchKeyword}">      
 								 <a href="javascript:search_form();"><span class="lightgrayBtn">조회</span></a>  
 		                	</td>
-		                	<td class="text-right">
-		                		<a href="#" onclick="view_equp('Ins','0')" data-needpopup-show="#equipPop" ><span class="deepBtn">등록</span></a>
-		                	</td>
+		                	
 						</tr>
                     </table>
-                
+                <div class="text-right">
+                                <a href="#" onclick="view_equp('Ins','0')" data-needpopup-show="#equipPop" ><span class="deepBtn">등록</span></a>
+                            </div>
                     <br/>
                 
                 </section>

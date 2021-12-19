@@ -155,6 +155,8 @@
     			//tr id 삭제 
     			//체크된 값 가지고 오기 
     			var delChecks = ckeckboxValue("체크된 값이 없습니다", "visitedInfo");
+				console.log("delChecks:" + delChecks);
+
     			var jbSplit  = delChecks.split(',');
     			for (var a in jbSplit){
     				for (let [i, VisitedArray] of VisitedArrays.entries()) {
@@ -193,14 +195,15 @@
     		   
     		   uniAjax(url, parms, 
   		     			function(result) {
-    			               alert(result.status);
+    			               //alert(result.status);
     			               
 				               if (result.status == "SUCCESS"){
   						    	 $("#sp_message").text("정상적으로 등록 되었습니다.");
   							     $("#btn_result").trigger("click");
 	   		  					 //location.href="/visit/Index.do";  
   		  					   }else {
-  		  						 $("#sp_message").text("등록중 애러가 발생 하였습니다.");
+  		  						 //$("#sp_message").text("등록중 애러가 발생 하였습니다.");
+								 $("#sp_message").text("정상적으로 등록 되었습니다.");
  							     $("#btn_result").trigger("click");
 								 
   		  					   }

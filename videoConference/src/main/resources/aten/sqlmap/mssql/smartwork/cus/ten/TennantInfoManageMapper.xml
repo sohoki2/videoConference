@@ -122,6 +122,11 @@
     <insert id="insertTennantMonthManage" statementType="CALLABLE">
          { call SP_TENNPAYMENT()}
     </insert>
+    
+    <insert id="insertTennantReset" statementType="CALLABLE">
+         { call SP_TENNRESET(#{comCode ,mode=IN, jdbcType=VARCHAR, javaType=string})}
+    </insert>
+    
     <insert id="insertTennantInfoManages" parameterType="java.util.List">
         <foreach collection="list" item="item" separator=";" close=";">
            INSERT INTO TB_COMPAY_TENNANT(COM_CODE, TENN_REC_DATE, TENN_REC_COUNT, TENN_REC_PLAY_CNT, 

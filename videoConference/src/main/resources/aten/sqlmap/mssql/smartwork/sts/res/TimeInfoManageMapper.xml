@@ -27,6 +27,39 @@
         	 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notSearch)">
         	    AND REPLACE(a.SWC_TIME, ':','') NOT LIKE CONCAT('%',#{params.notSearch})
         	 </if>
+        	 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.searchKiosk)">
+        	    AND a.SWC_TIME BETWEEN SUBSTRING( replace(Convert(varchar(12),Getdate(),114), ':', ''), 0,5)  and (SELECT END_TIME FROM TB_SWCINFO)
+        	 </if>
+        	 AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
+	         AND a.SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY AND HOLY_USEYN ='Y')
+	    ORDER BY SWC_RESDAY ASC, SWC_TIME ASC
+	</select>
+	
+	<select id="selectKioskTimeInfoBarList" resultType="lmap">
+      
+        SELECT a.TIME_SEQ, a.SWC_TIME,  dbo.fn_TimeSplit( a.SWC_TIME) SWC_TIMES,   dbo.fn_TimeSplit(dbo.FN_UPSTIMEDOWN(a.SWC_TIME)) SWC_TIMEE, 
+               CASE WHEN a.SWC_RESDAY != CONVERT(VARCHAR(8), GETDATE(), 112) THEN RES_SEQ
+        	        WHEN a.SWC_TIME > REPLACE(SUBSTRING(CONVERT(VARCHAR(12), DATEADD(MINUTE, -30, GETDATE()), 114), 1,5), ':','')  THEN RES_SEQ
+        	        WHEN a.RES_SEQ > 0 THEN a.RES_SEQ
+               ELSE -1
+               END AS RES_SEQ, 
+               CASE  WHEN a.RES_SEQ > 0 THEN dbo.FN_RESSTATEINFO(a.RES_SEQ)
+               ELSE ''
+               END AS RES_INFO, a.APPRIVAL, a.USE_YN, a.ITEM_ID, a.SWC_RESDAY
+	    FROM TB_SWCTIME a
+	    WHERE a.ITEM_ID = #{params.itemId} 
+	          
+	          <choose>
+        		<when test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.swcResEndday)">
+        			 AND SWC_RESDAY between  #{params.swcResday} AND #{params.swcResEndday}
+				</when>
+        		<otherwise>
+        			 AND a.SWC_RESDAY = #{params.swcResday}
+        		</otherwise>
+        	 </choose>
+        	 <if test="!@org.apache.commons.lang3.StringUtils@isEmpty(params.notSearch)">
+        	    AND REPLACE(a.SWC_TIME, ':','') NOT LIKE CONCAT('%',#{params.notSearch})
+        	 </if>
         	 AND a.SWC_TIME BETWEEN (SELECT START_TIME FROM TB_SWCINFO) and (SELECT END_TIME FROM TB_SWCINFO)
 	         AND a.SWC_RESDAY NOT IN (SELECT HOLY_DAY FROM TB_HOLYINFO WHERE HOLY_DAY = SWC_RESDAY AND HOLY_USEYN ='Y')
 	    ORDER BY SWC_RESDAY ASC, SWC_TIME ASC

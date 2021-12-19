@@ -64,7 +64,7 @@
 	 ******************************************************/
 	TransR.put( "CPID", ID );
 	TransR.put( "CPPWD", PWD );
-	TransR.put( "TARGETURL", "http://localhost:8080/web/CPCGI.do" );
+	TransR.put( "TARGETURL", "https://room.visitseoul.net/web/CPCGI.do" );
 	TransR.put( "CPTITLE", "www.danal.co.kr" );
 	
 	/***[ 선택 사항 ]**************************************/
@@ -92,9 +92,8 @@
 	 * IsCharSet	: charset 지정( EUC-KR:deault, UTF-8 )
 	 ******************************************************/
 	ByPassValue.put( "BgColor", "00" );
-	ByPassValue.put( "BackURL", "http://localhost:8080/BackURL.do" );
+	ByPassValue.put( "BackURL", "https://room.visitseoul.net/web/BackURL.do" );
 	ByPassValue.put( "IsCharSet", CHARSET );
-	
 	
 	/***[ 선택 사항 ]**************************************/
 	/******************************************************

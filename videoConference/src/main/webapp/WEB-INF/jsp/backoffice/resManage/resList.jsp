@@ -275,7 +275,7 @@
 	    	    		 "searchKeyword" : $("#searchKeyword").val(),
 	    	    		 "searchReservProcessGubun" : $("#searchReservProcessGubun").val(),
 	    	    		 "itemGubun" : $("#itemGubun").val(),
-	    	    		 "pageIndex": $("#pager .ui-pg-input").val(),
+	    	    		 "pageIndex": "1",
 	         			 "pageUnit":$('.ui-pg-selbox option:selected').val()
 	         		}),
 	    	    	loadComplete	: function(data) {$("#sp_totcnt").text(data.paginationInfo.totalRecordCount);}

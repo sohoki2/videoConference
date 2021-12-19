@@ -145,6 +145,21 @@ public class TennantInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 		// TODO Auto-generated method stub
 		return tennantMapper.cancelPlayTennantInfoManage(params);
 	}
+
+	@Override
+	public int insertTennantReset(String comCode) throws Exception {
+		// TODO Auto-generated method stub
+		try {
+			tennantMapper.insertTennantReset(comCode);
+			return 1;
+		}catch(Exception e) {
+			StackTraceElement[] ste = e.getStackTrace();
+		    int lineNumber = ste[0].getLineNumber();
+			LOGGER.error("insertTennantReset error:" + e.toString() + ":" + lineNumber );
+			return -1;
+		}
+		
+	}
 	
 
 }

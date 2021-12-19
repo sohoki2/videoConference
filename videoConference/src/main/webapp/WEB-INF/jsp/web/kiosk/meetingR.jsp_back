@@ -307,7 +307,7 @@
             e.preventDefault(); 
         });
         $( function() {
-			
+
         	meetingR.meetingInfo();
         });
         
@@ -395,7 +395,7 @@
 									   }else {
 										   $("#a_btn_res").show();
 									   }
-									   (resBtn == "hide") ? $("#a_btn_res").hide():$("#a_btn_res").show();
+									   (resBtn == "hide") ? $("#a_btn_res").hide() :$("#a_btn_res").show();
 
 								       $("#sp_timeInfo").html(result.timeInfo);//날짜 
 								       
@@ -414,27 +414,26 @@
                 	   window.setTimeout("meetingR.meetingInfo()", 3000);
         		}, fn_MeetingState : function (state){
         			//입실 하기 
-        			    var params = {'resSeq' : $("#resSeq").val(), 'resState': state };
+					    var params = {'resSeq' : $("#resSeq").val(), 'resState': state };
         				uniAjax("/web/resPadStateAjax.do", params, 
         			 			function(result) {
         					           if (result.status == "SUCCESS"){
-        									    //테이블 정리 하기
-			        									   if (state == "IN"){
-			      			  								 meetingR.fn_hideMessage("입실 처리 되었습니다.", "checkIn");
-			      			  							 }else {
-			      			  								meetingR.fn_hideMessage("퇴실 처리  되었습니다.", "checkIn");
-			      			  							 }
-        									    		 meetingR.meetingInfo();
-			      			  			   }else {
-        									    meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
-        								   }
+											//테이블 정리 하기
+											if (state == "IN"){
+												 meetingR.fn_hideMessage("입실 처리 되었습니다.", "checkIn");
+											}else {
+												meetingR.fn_hideMessage("퇴실 처리  되었습니다.", "checkIn");
+											}
+			      			  			}else {
+        								   meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
+        								}
         						    },
         						    function(request){
         						    	  meetingR.fn_hideMessage("처리 도중 문제가 발생하였습니다.", "checkIn");
         						    }    		
         			     );	
-        				meetingR.meetingInfo();
-        				$("#btn_checkIn").trigger("click");
+						 meetingR.meetingInfo();
+        				 $("#btn_checkIn").trigger("click");
         			
         		},  fn_login : function(){
         			//사용자 로그인
@@ -444,16 +443,13 @@
     					           if (result.status == "SUCCESS"){
     									    //테이블 정리 하기
 		        						    if ($("#mode").val() == "R" ){
-		        						    	
-		        						    	
-		        						    	
 		        						    	$("#btn_hide").trigger("click");
 		        								$("#btn_booking").trigger("click");
 		        						    }else {
 		        						    	//예약 취소 함수 요청 
-		        						    	meetingR.meetingInfo();
 		        						    	$("#btn_hide").trigger("click");
 		        						    	meetingR.fn_hideMessage("예약이 정상적으로 취소 되었습니다.", "checkIn");
+												meetingR.meetingInfo();
 		  														
 		      							    }		
     								   }else {
@@ -600,10 +596,11 @@
     	        	$('body').css('overflow', 'auto');
     	            
         		}, fn_hideMessage : function (resMessage, _panel){
+					
         			$("#sp_stateTxt").html("<p>"+resMessage+"</p>");
     				$("#btn_checkIn").trigger("click");
     				//1초후 클릭 
-    				//$('#'+_panel).fadeOut(1000).bPopup().close();
+    				//$('#'+_panel).fadeOut(3000).bPopup().close();
     	        	$('body').css('overflow', 'auto');
     	           
     	            

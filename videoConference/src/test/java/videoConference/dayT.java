@@ -1,6 +1,7 @@
 package videoConference;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
@@ -31,6 +32,10 @@ public class dayT {
 	@Test
 	public void dbTest() {
 
+		
+		
+		String localTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		System.out.println(localTime);
 		// 컨테이너에서 getBean()
 		//int _number = 5;
 		//LocalDate now = LocalDate.now();

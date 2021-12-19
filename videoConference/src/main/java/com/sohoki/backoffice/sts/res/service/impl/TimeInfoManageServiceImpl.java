@@ -25,6 +25,13 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 	}
 
 	@Override
+	public List<Map<String, Object>> selectKioskTimeInfoBarList(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return timeMapper.selectKioskTimeInfoBarList(params);
+	}
+
+	
+	@Override
 	public List<TimeInfo> selectLTimeInfoBarList(TimeInfoVO searchVO) throws Exception {
 		return timeMapper.selectLTimeInfoBarList(searchVO);
 	}
@@ -112,6 +119,7 @@ public class TimeInfoManageServiceImpl extends EgovAbstractServiceImpl implement
 		return timeMapper.selectResSeatPreCheckInfo(params);
 	}
 
+	
 	
 
 	

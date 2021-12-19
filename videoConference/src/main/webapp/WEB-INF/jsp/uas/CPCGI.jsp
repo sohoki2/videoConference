@@ -44,6 +44,7 @@
 	Map Res = null;
 	
 	String TID = (String)request.getParameter("TID");
+	
 	/*
 	 * - CONFIRMOPTION
 	 *		0 : NONE( default )
@@ -92,6 +93,7 @@
 
 	<%= MakeFormInputHTTP(request.getParameterMap(),"TID") %>
 	<%= MakeFormInput(Res,new String[]{"RETURNCODE","RETURNMSG"}) %>
+	
 </form>
 <script>
 	document.CPCGI.submit();
