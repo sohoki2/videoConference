@@ -53,6 +53,9 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	
 	@Autowired
 	private KkoMsgManageMapper kkoMapper;
+	
+	@Autowired
+	private VisitedInfoManageService visitedService;
 
 	@Override
 	public List<Map<String, Object>> selectVisitedManageListByPagination(Map<String, Object> params) throws Exception {
@@ -153,7 +156,30 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 			    	break;
 			}
 			//신규 추가 
-			visitedMapper.updateVisitedDetailStateChangeInfoManage(info.getVisitedSeq());
+			if (_snedGubun.equals("ARR")) {
+				
+				//도착 
+				visitedMapper.updateVisitedDetailStateChangeInfoManage(info.getVisitedSeq());
+				Map<String, Object> details = visitedService.selectVisitedDetailInfoDetail(info.getVisitedSeq() );
+						
+				KkoMsgInfo vo = new KkoMsgInfo();
+				kkoMessageInfo message = new kkoMessageInfo();
+				vo.setPhone(  details.get("emphandphone").toString().replaceAll("-", ""));
+				vo.setCallback(details.get("visited_celphone").toString().replaceAll("-", ""));
+				Map<String, String> returnMsg  =  message.visitedMsg(_snedGubun, details);
+				vo.setButtonJson(returnMsg.get("buttonJson"));
+				vo.setMsg(returnMsg.get("resMessage"));
+				vo.setTemplateCode(returnMsg.get("templeCode"));
+				
+				vo.setFailedType("MMS");
+				vo.setFailedSubject(returnMsg.get("title"));
+				vo.setFailedMsg(returnMsg.get("resMessage"));
+				ret = kkoMapper.kkoMsgInsertSevice(vo);
+				message = null;
+				vo = null;
+						
+			}
+			   
 		}else {
 			switch (info.getVisitedStatus()) {
 			    case  "VISITED_STATE_2":
@@ -259,6 +285,12 @@ public class VisitedInfoManageServiceImpl extends EgovAbstractServiceImpl implem
 	public Map<String, Object> selectVisitedQrManageInfo(Map<String, Object> params) throws Exception {
 		// TODO Auto-generated method stub
 		return visitedMapper.selectVisitedQrManageInfo(params);
+	}
+
+	@Override
+	public Map<String, Object> selectVisitedDetailInfoDetail(String visitedSeq) throws Exception {
+		// TODO Auto-generated method stub
+		return visitedMapper.selectVisitedDetailInfoDetail(visitedSeq);
 	}
 	
 	

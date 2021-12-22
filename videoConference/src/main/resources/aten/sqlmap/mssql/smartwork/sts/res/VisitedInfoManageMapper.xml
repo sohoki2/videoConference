@@ -85,6 +85,16 @@
               AND b.VISITED_EMPNO = c.EMPNO 
        ORDER BY a.VISITED_SEQ ASC
     </select>
+     <select id="selectVisitedDetailInfoDetail" resultType="lmap">
+       SELECT  a.VISITED_SEQ, a.VISITED_CODE, a.VISITED_ORG, a.VISITED_NAME, a.VISITED_CELPHONE, a.VISITED_REGDATE,
+               dbo.FN_DAYCONVERT(b.VISITED_RESDAY) VISITED_RESDAY, 
+               c.EMPNAME, b.CANCEL_REASON, b.VISITED_PURPOSE, c.EMPHANDPHONE
+       FROM TB_VISITEDDETAIL a , TB_VISITEDINFO b, TB_EMPINFO c
+       WHERE a.VISITED_SEQ = #{visitedSeq}
+              AND a.VISITED_CODE = b.VISITED_CODE
+              AND b.VISITED_EMPNO = c.EMPNO 
+       ORDER BY a.VISITED_SEQ ASC
+    </select>
     <select id="selectVisitedManageInfo" resultType="lmap">
        SELECT  a.VISITED_CODE, a.VISITED_STATUS, a.VISITED_RESDAY, a.VISITED_RESTIME, a.VISITED_PERSON,  
                a.VISITED_GUBUN, a.VISITED_QRCODE, a.CENTER_ID, 
@@ -107,6 +117,7 @@
        WHERE b.VISITED_CODE = #{params.visitedCode}
              AND b.VISITED_CELPHONE = #{params.visitedCelphone}
              AND a.VISITED_CODE = b.VISITED_CODE
+             AND a.VISITED_RESDAY = CONVERT(VARCHAR(8), GETDATE(), 112)
     </select>
     <select id="selectVisitedDetailInfo" resultMap="visitedInfo, visitedDetail">
         { call SP_VISITEDINFO(#{visitedGubun ,mode=IN, jdbcType=VARCHAR, javaType=string} , 

@@ -17,6 +17,8 @@ public interface VisitedInfoManageMapper {
 	
 	public List<Map<String, Object>> selectVisitedDetailInfoFront (String visitedCode );
 	
+	public Map<String, Object> selectVisitedDetailInfoDetail(String visitedSeq );
+	
 	public Map<String, Object> selectVisitedManageInfo(String visitedCode);
 	
 	//신규 추가 

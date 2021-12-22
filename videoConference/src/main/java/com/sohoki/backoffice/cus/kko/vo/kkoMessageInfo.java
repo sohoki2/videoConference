@@ -136,8 +136,8 @@ public class kkoMessageInfo {
 		    	title = "[도착알림]";
 		    	resMessage = "[도착알림]\r\n\r\n" +
 		    	         "방문 예약자가 서울관광플라자에 도착하였습니다.\r\n\r\n"+
-		    	         "- 신청자: "+vo.get("visited_req_name")+"\r\n" + 
-	    			     "- 연락처: "+ vo.get("visited_req_celphone")+"\r\n\r\n" + 
+		    	         "- 신청자: "+vo.get("visited_name")+"\r\n" + 
+	    			     "- 연락처: "+ vo.get("visited_celphone")+"\r\n\r\n" + 
 	    			     "감사합니다.";
 		    	templeCode = "stpvr04";
 		    	buttonJson = "";

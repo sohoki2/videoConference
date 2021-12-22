@@ -18,21 +18,21 @@
 	    $("#visitedQrcode").focus();
 	});
     function fn_Qrsend(){
-    	 var params = {'visitedQrcode': $("#visitedQrcode").val()};
-	     uniAjax("/visit/VisitQrProcess.do", params, 
-	  			 function(result) {
-					       if (result.status == "SUCCESS"){
-							    alert(result.message);
-						   }else {
-							   alert(result.message);
-						   }
-					  },function(request){
-						    alert("Error:" +request.status );	       						
-					  }    		
-	     );
-         $("#visitedQrcode").val("");
-	     
-	    
+    	 if ($("#visitedQrcode").val() != ""){
+    		 var params = {'visitedQrcode': $("#visitedQrcode").val()};
+    	     uniAjax("/visit/VisitQrProcess.do", params, 
+    	  			 function(result) {
+    					       if (result.status == "SUCCESS"){
+    							    alert(result.message);
+    						   }else {
+    							   alert(result.message);
+    						   }
+    					  },function(request){
+    						    alert("Error:" +request.status );	       						
+    					  }    		
+    	     );
+             $("#visitedQrcode").val("");
+    	 }
     }
     function fn_QrImage(){
     	var params = {'visitedCode': 'V20210825001'};

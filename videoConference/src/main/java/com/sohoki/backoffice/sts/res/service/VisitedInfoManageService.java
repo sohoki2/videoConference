@@ -17,6 +17,8 @@ public interface VisitedInfoManageService {
     
     List<Map<String, Object>> selectVisitedDetailInfoFront (String visitedCode )throws Exception;
     
+    Map<String, Object> selectVisitedDetailInfoDetail(String visitedSeq )throws Exception;
+    
     Map<String, Object> selectVisitedQrManageInfo(Map<String, Object> params)throws Exception;
     
     Map<String, Object> selectTourCount(@Param("params") Map<String, Object> params)throws Exception;

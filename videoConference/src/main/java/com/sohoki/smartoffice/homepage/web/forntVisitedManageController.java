@@ -245,6 +245,14 @@ public class forntVisitedManageController {
 			searchVO.put("visitedCelphone",  visitedCodes[1] );
 			
 			Map<String, Object> info =  visitedService.selectVisitedQrManageInfo(searchVO) ;
+			
+			if (info == null) {
+				model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
+				model.addObject(Globals.STATUS_MESSAGE, "잘못된 QR 이미지 이거나 예약일가 아닌  정보 입니다.");
+				return model;
+			}
+			
+			LOGGER.debug("======================================================   info");
 			//신규 추가 
 			visitedInfo.setVisitedCode(info.get("visited_code").toString());
 			visitedInfo.setVisitedSeq(info.get("visited_seq").toString());
@@ -258,7 +266,11 @@ public class forntVisitedManageController {
 				model.addObject(Globals.STATUS_MESSAGE, "잘못된 QR 이미지 이거나 예약되지 않는 정보 입니다.");
 			}
 		}catch(Exception e) {
-			LOGGER.debug("visitReser error:"  + e.toString());
+			
+			StackTraceElement[] ste = e.getStackTrace();
+			int lineNumber = ste[0].getLineNumber();
+			LOGGER.info("e:" + e.toString() + ":" + lineNumber);
+			
 			model.addObject(Globals.STATUS, Globals.STATUS_FAIL);
 			model.addObject(Globals.STATUS_MESSAGE, "시스템 장애 입니다. 관리자에게 문의 바랍니다.");
 		}

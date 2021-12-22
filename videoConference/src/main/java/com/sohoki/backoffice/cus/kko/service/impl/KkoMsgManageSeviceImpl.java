@@ -150,7 +150,11 @@ public class KkoMsgManageSeviceImpl extends EgovAbstractServiceImpl implements K
 				
 				return ret;
 				
-			}else if (visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1")) {
+			}else if (_snedGubun.equals("ARR") && visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1"))  {
+				//담당자에 카톡 보내기 
+				
+				
+			} else if (visitedInfo.get("visited_gubun").toString().equals("VISITED_GUBUN_1")) {
                 List<Map<String, Object>> details  = visitedService.selectVisitedDetailInfoFront(_visitedGubun);
 				
 				for(Map<String, Object> detail : details) {
